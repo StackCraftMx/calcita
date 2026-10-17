@@ -111,3 +111,10 @@ export {currentHistoryIndex, forgetPageName, pageNameAt, rememberPageName, useNa
 export {periodRangeIsValid, rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
 export {createLogger, setLogLevel} from '@/observability/logger.js';
 export {isNewBuildPublished, reportPublishedBuild, useNewBuildPublished} from '@/observability/publishedBuild.js';
+
+// ─── instalar la app (PWA): la invitación, los pasos por equipo y la entrada del menú de la cuenta ──
+export {INSTALL_VARIANT, detectPlatform, parseIOSMajor, resolveInstallVariant} from '@/pwa/installInstructions.js';
+export {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
+export {default as InstallInstructionsDialog, variantHasInstructions} from '@/pwa/InstallInstructionsDialog.jsx';
+export {default as InstallPromptBanner} from '@/pwa/InstallPromptBanner.jsx';
+export {default as InstallAppSetting} from '@/pwa/InstallAppSetting.jsx';

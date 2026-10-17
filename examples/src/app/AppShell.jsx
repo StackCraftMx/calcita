@@ -3,7 +3,7 @@
 //
 // Sin sesión no se entra: lleva a iniciar sesión, y de regreso a la pantalla que se quería abrir (?next=).
 //
-// Lo que se agrega sin tocar el framework: el ajuste del vidrio líquido en el menú de la cuenta (accountSettings), «Entrar con otro
+// Lo que se agrega sin tocar el framework: el estilo y «Instalar la app» en el menú de la cuenta (accountSettings), «Entrar con otro
 // perfil» en el menú de la cuenta (accountMenuItems) y la tarjeta de abajo del menú (sidebarFooter).
 //
 // El menú no se escribe aquí: composeMenu descubre los menu.js de los módulos y deja solo los que la sesión puede ver;
@@ -16,7 +16,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import SwitchAccountOutlinedIcon from '@mui/icons-material/SwitchAccountOutlined';
-import {AppLayout, composeMenu, useAccessChecker, useToolkitTranslation, useMenuBadges} from '@stackcraftmx/calcita';
+import {AppLayout, InstallAppSetting, composeMenu, useAccessChecker, useToolkitTranslation, useMenuBadges} from '@stackcraftmx/calcita';
 import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
 
 import {GlassModeSetting} from '@/app/GlassModeSetting.jsx';
@@ -69,7 +69,7 @@ export const AppShell = () => {
     return (
         <AppLayout logo={<Logo />} brandName={t('title')} brandCaption={t('caption')} menuItems={menuItems} user={session.user}
                    profilePath={APP_PATHS.profile} accountMenuItems={accountMenuItems} onSignOut={leave} isSigningOut={isSigningOut}
-                   isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<GlassModeSetting />} sidebarFooter={<SidebarCard />}>
+                   isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<><GlassModeSetting /><InstallAppSetting /></>} sidebarFooter={<SidebarCard />}>
             <Outlet />
         </AppLayout>
     );

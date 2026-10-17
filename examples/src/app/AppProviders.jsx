@@ -1,7 +1,7 @@
 // La raíz de la app: el ÚNICO lugar donde se conecta el framework. ToolkitProvider recibe el idioma, los textos de los
 // módulos, la zona, la moneda, el router y la regla de permisos de la sesión (SessionProvider); NuqsAdapter guarda en la
-// URL el estado de las tablas. Los avisos (Toaster) y el panel de descargas se montan aquí UNA vez, para las pantallas
-// con sesión y para las de entrar.
+// URL el estado de las tablas. Los avisos (Toaster), el panel de descargas y la invitación a instalar la app
+// (InstallPromptBanner) se montan aquí UNA vez, para las pantallas con sesión y para las de entrar.
 //
 // Va como elemento de la ruta raíz y no afuera del router porque los dos usan sus hooks (useNavigate, useLocation).
 //
@@ -12,7 +12,7 @@
 import {useEffect, useState} from 'react';
 import {Outlet} from 'react-router';
 import {NuqsAdapter} from 'nuqs/adapters/react-router/v7';
-import {DownloadManager, Toaster, ToolkitProvider} from '@stackcraftmx/calcita';
+import {DownloadManager, InstallPromptBanner, Toaster, ToolkitProvider} from '@stackcraftmx/calcita';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 
 import {APP_BUILD_ID, APP_LANGUAGES, APP_NAME, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE} from '@/app/appSettings.js';
@@ -38,6 +38,7 @@ export const AppProviders = () => {
                     </NuqsAdapter>
                     <Toaster />
                     <DownloadManager />
+                    <InstallPromptBanner />
                 </ToolkitProvider>
             )}
         </SessionProvider>
