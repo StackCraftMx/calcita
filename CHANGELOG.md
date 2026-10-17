@@ -4,6 +4,13 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.8.0] - 2026-10-17
+
+### Agregado
+
+- Marco de la aplicación: menú lateral que se encoge, menú arriba, barra de pestañas en el teléfono, menú de la cuenta
+  con los ajustes, avisos de versión nueva y contadores en el menú.
+
 ## [0.7.0] - 2026-10-17
 
 ### Agregado
@@ -48,6 +55,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.8.0]: https://github.com/StackCraftMx/calcita/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/StackCraftMx/calcita/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/StackCraftMx/calcita/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/StackCraftMx/calcita/compare/v0.4.0...v0.5.0
