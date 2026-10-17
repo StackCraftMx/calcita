@@ -155,7 +155,15 @@ export function translateWith(settings, defaultNamespace, key, values) {
         ?? textOf(PACKAGE_TEXTS_BY_LANGUAGE[settings.language], namespace, plainKey, values, settings.language)
         ?? textOf(PACKAGE_TEXTS_BY_LANGUAGE[DEFAULT_LANGUAGE], namespace, plainKey, values, DEFAULT_LANGUAGE);
 
-    return text === undefined ? `${namespace}${NAMESPACE_SEPARATOR}${plainKey}` : interpolate(text, values);
+    if (text !== undefined) {
+        return interpolate(text, values);
+    }
+    // como en i18next: sin la llave en ningún lado, el texto por omisión que pidió quien llama (un globo opcional pasa ''
+    // y no se pinta); sin él, la llave tal cual, para que se note qué falta
+    if (typeof values?.defaultValue === 'string') {
+        return interpolate(values.defaultValue, values);
+    }
+    return `${namespace}${NAMESPACE_SEPARATOR}${plainKey}`;
 }
 
 /**

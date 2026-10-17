@@ -231,7 +231,7 @@ export default function DownloadManager() {
                     zIndex: (theme) => theme.zIndex.snackbar,
                 }, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
             >
-                <Stack direction="row" sx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'background.subtle'}}>
+                <Stack direction="row" sx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
                     <Typography variant="subtitle2" component="h2" noWrap sx={{flex: 1}} aria-live="polite">
                         {summaryTextOf(downloads, t)}
                     </Typography>
