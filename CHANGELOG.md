@@ -4,6 +4,13 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.10.0] - 2026-10-17
+
+### Agregado
+
+- Los ejemplos en una imagen de Docker, para probarlos sin instalar Node ni pnpm.
+- Script para enseñar la demo por internet con un túnel de Cloudflare.
+
 ## [0.9.0] - 2026-10-17
 
 ### Agregado
@@ -62,6 +69,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.10.0]: https://github.com/StackCraftMx/calcita/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/StackCraftMx/calcita/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/StackCraftMx/calcita/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/StackCraftMx/calcita/compare/v0.6.0...v0.7.0
