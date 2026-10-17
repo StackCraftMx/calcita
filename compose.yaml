@@ -1,0 +1,14 @@
+# Los ejemplos de Calcita en Docker, para probarlos sin instalar nada (README, «Probar sin instalar nada»):
+#
+#   docker compose up -d examples        construye y arranca  →  http://localhost:8095
+#   docker compose down                  lo apaga
+#
+# EXAMPLES_PORT cambia el puerto de la máquina (p. ej. EXAMPLES_PORT=8100 docker compose up -d examples). Para enseñarlo
+# por internet con el túnel (scripts/tunnel.sh), el puerto tiene que ser al que apunta el túnel en el panel de Cloudflare.
+services:
+  examples:
+    build: .
+    image: calcita-examples
+    container_name: calcita-examples
+    ports:
+      - "${EXAMPLES_PORT:-8095}:8080"
