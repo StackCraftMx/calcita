@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="StackCraft favicon">
+  <title>StackCraft favicon 32×32</title>
+  <desc>Optimized for browser tab. Mark with minimal padding for maximum legibility at small size.</desc>
+  <rect width="32" height="32" fill="none"/>
+  <g transform="translate(2, 4) scale(0.28)">
+    <path d="M 0 20 L 8 12 L 92 12 L 100 20 L 92 28 L 58 28 L 58 50 L 80 50 L 82 72 L 18 72 L 20 50 L 42 50 L 42 28 L 8 28 Z" fill="#FF6B1A"/>
+  </g>
+</svg>
