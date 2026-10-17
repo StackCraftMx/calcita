@@ -15,7 +15,6 @@ import {parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates} from 'nuq
 export const FILTER_KINDS = Object.freeze({
     text: 'text',
     multiSelect: 'multiSelect',
-    numberRange: 'numberRange',
 });
 
 // el orden viaja como columna:dirección, legible en la barra de direcciones
@@ -24,7 +23,7 @@ const SORT_SEPARATOR = ':';
 const DEFAULT_PAGE_SIZE = 25;
 
 /**
- * ¿El filtro está puesto? Un texto vacío, una lista vacía o un rango sin extremos no cuentan.
+ * ¿El filtro está puesto? Un texto vacío o una lista vacía no cuentan.
  *
  * @param {string|undefined} kind uno de FILTER_KINDS
  * @param {unknown} value valor del filtro
@@ -37,9 +36,6 @@ export function isFilterActive(kind, value) {
     if (kind === FILTER_KINDS.multiSelect) {
         return value.length > 0;
     }
-    if (kind === FILTER_KINDS.numberRange) {
-        return value[0] !== '' || value[1] !== '';
-    }
     return value !== '';
 }
 
@@ -50,7 +46,7 @@ export function isFilterActive(kind, value) {
  * @param {unknown} defaultValue valor cuando la URL no trae el parámetro
  */
 function parserFor(kind, defaultValue) {
-    if (kind === FILTER_KINDS.multiSelect || kind === FILTER_KINDS.numberRange) {
+    if (kind === FILTER_KINDS.multiSelect) {
         return parseAsArrayOf(parseAsString).withDefault(defaultValue);
     }
     return parseAsString.withDefault(defaultValue);

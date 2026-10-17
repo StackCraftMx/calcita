@@ -55,3 +55,10 @@ test('lo que no es componente (avisos, errores) usa la configuración vigente', 
     configureToolkit({language: 'es'});
     assert.equal(translateToolkit('common', 'actions.cancel'), 'Cancelar');
 });
+
+test('una llave que no existe sale con su texto por omisión (defaultValue), como en i18next; sin él, la llave tal cual', () => {
+    assert.equal(translateWith(SPANISH, 'dictionaries', 'orderStatus.paid.tooltip', {defaultValue: ''}), '');
+    assert.equal(translateWith(SPANISH, 'dictionaries', 'orderStatus.paid.tooltip', {defaultValue: 'Pagado el {{date}}', date: '17 oct'}), 'Pagado el 17 oct');
+    assert.equal(translateWith(SPANISH, 'dictionaries', 'orderStatus.paid.tooltip'), 'dictionaries:orderStatus.paid.tooltip');
+    assert.equal(translateWith(SPANISH, 'common', 'actions.cancel', {defaultValue: 'otro'}), 'Cancelar');
+});

@@ -30,8 +30,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import {useTheme} from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import {paletteOf} from '@/theme/components/paletteOf.js';
 import {TIMELINE_EMPHASIS, timelineDotOf} from '@/ui/timeline/timelineDot.js';
 
+// el fondo del grupo resaltado: cuánto del color principal (por ciento)
+const HIGHLIGHT_TINT_PERCENT = 8;
 // en celular la línea va pegada a la izquierda: sin la columna de enfrente que @mui/lab reserva por omisión
 const LEFT_ALIGNED_TIMELINE = {m: 0, px: 0, py: 0.5, [`& .${timelineItemClasses.root}::before`]: {flex: 0, p: 0}};
 const ALTERNATE_TIMELINE = {m: 0, px: 0, py: 0.5};
@@ -86,7 +89,8 @@ export default function GroupedTimeline({groups}) {
                     <Box key={timelineGroup.key} sx={{
                         border: 1, borderRadius: 1.5, px: 1.5, pt: 1.25, pb: isExpanded ? 0 : 1.25,
                         borderColor: isHighlighted ? 'primary.main' : 'transparent',
-                        bgcolor: isHighlighted ? 'primary.lighter' : 'transparent',
+                        // un tinte del color principal: primary.lighter no existe en el tema de MUI y el grupo se quedaba sin fondo
+                        bgcolor: (theme) => (isHighlighted ? `color-mix(in srgb, ${paletteOf(theme).primary.main} ${HIGHLIGHT_TINT_PERCENT}%, transparent)` : 'transparent'),
                     }}>
                         {timelineGroup.title && (
                             <Stack direction="row" spacing={1} sx={{alignItems: 'center', justifyContent: isWide ? 'center' : 'flex-start'}}>

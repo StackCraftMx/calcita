@@ -87,8 +87,9 @@ const CASES = [
     ['SecretField tapado', h(SecretField, {label: 'Clave', value: 'secreto-123'}), 'type="password"'],
     ['FileDropzone de MUI con límite', h(FileDropzone, {value: null, onChange: () => {}, accept: 'excel', maxSize: '2 MB'}), 'Hasta 2 MB por archivo'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
+    // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)
     ['ServerTable', h(NuqsTestingAdapter, null, h(ServerTable, {
-        fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', headerName: 'Nombre'})], ariaLabel: 'Pedidos',
+        fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
     ['FormTextField', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormTextField, {name: 'email', label: 'Correo'})), 'Correo'],
     ['FormWizard con un paso opcional', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormWizard, {
