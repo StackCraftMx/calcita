@@ -4,6 +4,12 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.3.0] - 2026-10-17
+
+### Agregado
+
+- Dinero sin errores de decimales: suma, resta, multiplicación, división y formato por moneda.
+
 ## [0.2.0] - 2026-10-17
 
 ### Agregado
@@ -18,5 +24,6 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.3.0]: https://github.com/StackCraftMx/calcita/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/StackCraftMx/calcita/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/StackCraftMx/calcita/releases/tag/v0.1.0
