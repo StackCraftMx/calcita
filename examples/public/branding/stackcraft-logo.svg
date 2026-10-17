@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="StackCraft maskable icon">
+  <title>StackCraft maskable icon — 512×512</title>
+  <desc>Android adaptive icon with 20% safe zone padding. Mark stays within central 60% so circular/squircle masks don't crop it.</desc>
+  <rect width="512" height="512" fill="#FF6B1A"/>
+  <g transform="translate(102, 175) scale(3.08)">
+    <path d="M 0 20 L 8 12 L 92 12 L 100 20 L 92 28 L 58 28 L 58 50 L 80 50 L 82 72 L 18 72 L 20 50 L 42 50 L 42 28 L 8 28 Z" fill="#FAFAFA"/>
+  </g>
+</svg>
