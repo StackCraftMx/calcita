@@ -149,6 +149,33 @@ export default Object.freeze({
             "short": "Versión nueva disponible",
             "reload": "Recargar"
         },
+        "install": {
+            "banner": "Instale esta aplicación en su equipo para abrirla más rápido",
+            "action": "Instalar",
+            "howTo": "Cómo instalar",
+            "dismiss": "Ahora no",
+            "gotIt": "Entendido",
+            "menuLabel": "Instalar la app",
+            "iosModern": {
+                "title": "Instalar en su iPhone o iPad",
+                "step1": "Toque ⋯ (los tres puntos) junto a la barra de direcciones.",
+                "step2": "Toque «Compartir».",
+                "step3": "Toque «Agregar a inicio».",
+                "step4": "Deje activado «Abrir como app web» y toque «Agregar»."
+            },
+            "iosClassic": {
+                "title": "Instalar en su iPhone",
+                "step1": "Toque el botón Compartir (el cuadro con una flecha hacia arriba).",
+                "step2": "Toque «Agregar a inicio».",
+                "step3": "Toque «Agregar»."
+            },
+            "androidFirefox": {
+                "title": "Instalar en Firefox",
+                "step1": "Toque el menú ⋮.",
+                "step2": "Toque «Instalar» o «Agregar a pantalla de inicio».",
+                "step3": "Confirme."
+            }
+        },
         "upload": {
             "hint": "Arrastre aquí su archivo",
             "hintMultiple": "Arrastre aquí sus archivos",

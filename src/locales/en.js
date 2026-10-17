@@ -149,6 +149,33 @@ export default Object.freeze({
             "short": "New version available",
             "reload": "Reload"
         },
+        "install": {
+            "banner": "Install this app on your device to open it faster",
+            "action": "Install",
+            "howTo": "How to install",
+            "dismiss": "Not now",
+            "gotIt": "Got it",
+            "menuLabel": "Install the app",
+            "iosModern": {
+                "title": "Install on your iPhone or iPad",
+                "step1": "Tap ⋯ (the three dots) next to the address bar.",
+                "step2": "Tap “Share”.",
+                "step3": "Tap “Add to Home Screen”.",
+                "step4": "Keep “Open as Web App” on and tap “Add”."
+            },
+            "iosClassic": {
+                "title": "Install on your iPhone",
+                "step1": "Tap the Share button (the square with an up arrow).",
+                "step2": "Tap “Add to Home Screen”.",
+                "step3": "Tap “Add”."
+            },
+            "androidFirefox": {
+                "title": "Install in Firefox",
+                "step1": "Tap the ⋮ menu.",
+                "step2": "Tap “Install” or “Add to Home screen”.",
+                "step3": "Confirm."
+            }
+        },
         "upload": {
             "hint": "Drop your file here",
             "hintMultiple": "Drop your files here",

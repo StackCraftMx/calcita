@@ -1,0 +1,65 @@
+// Los pasos para instalar la app a mano, según el equipo (iOS 26 cambió el camino; Firefox usa su propio menú). Lo usan la
+// invitación (InstallPromptBanner) y la entrada del menú de la cuenta (InstallAppSetting): los dos abren el mismo diálogo.
+// Si la variante no lleva pasos (el navegador tiene su propio diálogo, o no hay nada que ofrecer) no pinta nada.
+//
+// OJO, para quien lo monte: NO dentro de un Menu de MUI que se cierra; el Menu quita a sus hijos al cerrarse y el diálogo
+// nunca aparecería. Va junto al Menu o en un lugar que se quede pintado.
+//
+// Genérico del paquete: function (regla de la casa).
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
+
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
+
+// cada variante con pasos a mano → su título y sus pasos en los textos del paquete (common:install.<variante>)
+const STEPS_BY_VARIANT = Object.freeze({
+    [INSTALL_VARIANT.iosModern]: ['step1', 'step2', 'step3', 'step4'],
+    [INSTALL_VARIANT.iosClassic]: ['step1', 'step2', 'step3'],
+    [INSTALL_VARIANT.androidFirefox]: ['step1', 'step2', 'step3'],
+});
+
+/**
+ * ¿Esta variante se instala con pasos a mano (y no con el diálogo del navegador)?
+ *
+ * @param {string|null} variant
+ * @returns {boolean}
+ */
+export function variantHasInstructions(variant) {
+    return Boolean(STEPS_BY_VARIANT[variant]);
+}
+
+/**
+ * @param {object} props
+ * @param {string|null} props.variant una de INSTALL_VARIANT (useInstallPrompt)
+ * @param {boolean} props.open
+ * @param {() => void} props.onClose
+ */
+export default function InstallInstructionsDialog({variant, open, onClose}) {
+    const {t} = useToolkitTranslation('common');
+    const steps = STEPS_BY_VARIANT[variant];
+    if (!steps) {
+        return null;
+    }
+
+    return (
+        <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+            <DialogTitle>{t(`install.${variant}.title`)}</DialogTitle>
+            <DialogContent>
+                {/* pasos numerados con palabras, sin dibujar los íconos del sistema: cambian entre versiones */}
+                <Typography component="ol" sx={{m: 0, pl: 3, display: 'grid', gap: 1.25}}>
+                    {steps.map((step) => (
+                        <Typography key={step} component="li" variant="body1">{t(`install.${variant}.${step}`)}</Typography>
+                    ))}
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button variant="contained" onClick={onClose}>{t('install.gotIt')}</Button>
+            </DialogActions>
+        </Dialog>
+    );
+}

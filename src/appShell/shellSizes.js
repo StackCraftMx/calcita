@@ -35,6 +35,26 @@ export const PHONE_LANDSCAPE_MEDIA_QUERY = '@media (max-height: 499.95px)';
 export const MOBILE_TAB_BAR_HEIGHT_PIXELS = Object.freeze({portrait: 60, landscape: 46});
 
 /**
+ * Lo que flota abajo al centro en el teléfono con vidrio (el aviso de versión nueva, la invitación a instalar): encima de
+ * la barra de pestañas, con la separación de la barra a la orilla, su alto, la separación pedida y la zona del gesto de
+ * inicio del iPhone. Para el sx: ...aboveMobileTabBarOf(8).
+ *
+ * @param {number} gapPixels lo que se separa de la barra de pestañas (px)
+ * @returns {object}
+ */
+export function aboveMobileTabBarOf(gapPixels) {
+    return {
+        [PHONE_MEDIA_QUERY]: {
+            top: 'auto',
+            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + gapPixels}px + env(safe-area-inset-bottom))`,
+        },
+        [PHONE_LANDSCAPE_MEDIA_QUERY]: {
+            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape + gapPixels}px + env(safe-area-inset-bottom))`,
+        },
+    };
+}
+
+/**
  * La transición que comparten el menú, la barra y el botón flotante: si cada uno usara la suya, terminarían en frames
  * distintos y el ojo lo lee como un salto.
  *

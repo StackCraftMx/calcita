@@ -22,9 +22,7 @@ import Typography from '@mui/material/Typography';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 
 import {useNewBuildPublished} from '@/observability/publishedBuild.js';
-import {
-    GLASS_PANEL_GAP_PIXELS, MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_LANDSCAPE_MEDIA_QUERY, PHONE_MEDIA_QUERY,
-} from '@/appShell/shellSizes.js';
+import {GLASS_PANEL_GAP_PIXELS, aboveMobileTabBarOf} from '@/appShell/shellSizes.js';
 import {glassStylesOf} from '@/theme/glassSurface.js';
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
 
@@ -67,13 +65,7 @@ function floatingSxOf(theme) {
         pl: 2,
         pr: 0.75,
         top: `calc(${APP_BAR_HEIGHT} + ${FLOATING_GAP_PIXELS}px)`,
-        [PHONE_MEDIA_QUERY]: {
-            top: 'auto',
-            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + FLOATING_GAP_PIXELS}px + env(safe-area-inset-bottom))`,
-        },
-        [PHONE_LANDSCAPE_MEDIA_QUERY]: {
-            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape + FLOATING_GAP_PIXELS}px + env(safe-area-inset-bottom))`,
-        },
+        ...aboveMobileTabBarOf(FLOATING_GAP_PIXELS),
         // aparece subiendo un poco y aclarándose; sin movimiento si la persona lo pidió así en su equipo
         '@keyframes calcitaNoticeEnter': {
             from: {opacity: 0, transform: 'translate(-50%, 8px) scale(0.96)'},
