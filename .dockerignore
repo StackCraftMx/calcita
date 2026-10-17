@@ -1,0 +1,14 @@
+# Lo que no entra a la imagen: se reconstruye adentro (node_modules, dist), es local de cada quien o es secreto (el token
+# del túnel). Sin esto, Docker mandaría cientos de MB de node_modules en cada build.
+**/node_modules
+**/dist
+tunnel
+.git
+.idea
+.vscode
+**/.DS_Store
+CLAUDE.md
+AGENTS.md
+graphify-out
+.graphifyignore
+.claude
