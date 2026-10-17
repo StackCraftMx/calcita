@@ -1,0 +1,65 @@
+// Los filtros activos, a la vista y desarmables de a uno.
+//
+// Un filtro que solo se ve como un icono encendido en el encabezado se olvida: alguien filtra, se va al detalle,
+// regresa y lee el total como si fuera el de todo. Por eso los filtros puestos se dicen con todas sus letras arriba de
+// la tabla.
+//
+// Van en UNA tira que se desliza (ScrollableRow), no envolviéndose en renglones que empujan la tabla fuera de la
+// pantalla. La cuenta y "Limpiar todo" van en su propio renglón, arriba, para no tener que deslizar hasta encontrarlo.
+// Sin filtros activos no se pinta nada (ni el hueco).
+//
+// Los accesos rápidos cuentan aunque no tengan chip aquí: su propio chip encendido ya dice qué está elegido.
+//
+// Genérico del paquete: function (regla de la casa).
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
+
+import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
+import Tag from '@/ui/labels/Tag.jsx';
+
+/**
+ * @param {object} props
+ * @param {Array<object>} props.chipConfig lo que arma buildChipConfig
+ * @param {object} props.filters
+ * @param {(field: string, value: unknown) => void} props.onSetFilter
+ * @param {() => void} props.onClearAll
+ * @param {number} [props.quickActiveCount] accesos rápidos puestos que no tienen chip aquí
+ */
+export default function FilterChips({chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0}) {
+    const {t} = useToolkitTranslation('table');
+    const chips = chipConfig
+        .filter((chipDeclaration) => chipDeclaration.isActive(filters[chipDeclaration.key]))
+        .flatMap((chipDeclaration) => chipDeclaration.chipsFor(filters[chipDeclaration.key], onSetFilter));
+
+    const activeCount = chips.length + quickActiveCount;
+    // guard clause: sin filtros no se pinta nada
+    if (activeCount === 0) {
+        return null;
+    }
+
+    return (
+        <Box sx={{mb: 1.5, minWidth: 0}}>
+            <Stack direction="row" spacing={1} sx={{px: 0.25, alignItems: 'center', justifyContent: 'space-between'}}>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                    {t('chips.applied', {count: activeCount})}
+                </Typography>
+                <Button size="small" color="error" startIcon={<ClearAllIcon fontSize="small" />} onClick={onClearAll}
+                        sx={{flexShrink: 0}}>
+                    {t('chips.clearAll')}
+                </Button>
+            </Stack>
+
+            {chips.length > 0 && (
+                <ScrollableRow>
+                    {chips.map(({id, label, onDelete}) => (
+                        <Tag key={id} label={label} color="primary" onDelete={onDelete} sx={{flex: '0 0 auto'}} />
+                    ))}
+                </ScrollableRow>
+            )}
+        </Box>
+    );
+}
