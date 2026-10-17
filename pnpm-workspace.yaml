@@ -1,0 +1,9 @@
+# pnpm guarda aquí su configuración y la lista de proyectos del workspace.
+# examples/ (Vite + react-router) es un proyecto aparte que instala el paquete como lo haría cualquier otro
+# (workspace:*): no viaja a npm, porque el paquete solo publica dist/ (files en package.json).
+packages:
+  - examples
+# pnpm no deja correr el script de instalación de ningún paquete sin permiso. esbuild sí lo necesita: baja el binario
+# del sistema operativo de quien instala, y Vite construye con él.
+allowBuilds:
+  esbuild: true

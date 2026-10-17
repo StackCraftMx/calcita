@@ -1,0 +1,49 @@
+// Interruptor de modo claro / oscuro.
+//
+// Dos estados visibles, no tres: el primer clic fija una preferencia explícita que ya se recuerda. Recordar lo hace MUI:
+// setMode escribe en localStorage (con las llaves que el proyecto puso en su ThemeProvider) y un script
+// en el HTML la puede leer antes del primer pintado.
+//
+// Va en la cinta de escritorio, en el cajón del teléfono y en el inicio de sesión.
+//
+// El tooltip sale de i18n.
+//
+// Genérico del paquete: function (regla de la casa).
+import {useEffect, useState} from 'react';
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import {useColorScheme} from '@mui/material/styles';
+import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeIcon from '@mui/icons-material/LightModeOutlined';
+
+import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
+
+/**
+ * @param {{size?: 'small'|'medium', inverted?: boolean}} props inverted = icono blanco para fondos oscuros
+ */
+export default function ColorSchemeToggle({size = 'small', inverted = false}) {
+    const {t} = useToolkitTranslation('common');
+    const {mode, systemMode, setMode} = useColorScheme();
+
+    // antes de montar en el cliente mode viene undefined: reservamos el lugar para que la barra no brinque
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+    if (!isMounted || !mode) {
+        return <IconButton size={size} disabled aria-hidden="true" sx={{width: 34, height: 34}} />;
+    }
+
+    const nextMode = nextColorModeOf(mode, systemMode);
+    const label = t(`colorScheme.switchTo.${nextMode}`);
+
+    return (
+        <Tooltip title={label}>
+            <IconButton size={size} aria-label={label} onClick={() => setMode(nextMode)}
+                        sx={{color: inverted ? 'common.white' : 'text.secondary'}}>
+                {nextMode === 'light' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
+            </IconButton>
+        </Tooltip>
+    );
+}

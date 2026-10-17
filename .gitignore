@@ -1,0 +1,15 @@
+node_modules
+dist
+
+# lo del editor y del sistema de cada quien
+.idea
+.vscode
+.DS_Store
+
+# notas de trabajo local, no son parte del paquete
+CLAUDE.md
+AGENTS.md
+graphify-out
+.graphifyignore
+/.claude/
+/tunnel/

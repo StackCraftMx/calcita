@@ -1,0 +1,224 @@
+{
+    "name": "@stackcraftmx/calcita",
+    "version": "0.0.0",
+    "description": "Componentes y utilidades de React con MUI para arrancar proyectos rápido: tabla de servidor, diálogos, avisos, descargas, formularios, formatos y reportes en Excel.",
+    "license": "FSL-1.1-MIT",
+    "author": "calcifux",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/StackCraftMx/calcita.git"
+    },
+    "homepage": "https://github.com/StackCraftMx/calcita#readme",
+    "bugs": "https://github.com/StackCraftMx/calcita/issues",
+    "keywords": [
+        "react",
+        "mui",
+        "material-ui",
+        "components",
+        "data-grid",
+        "server-table",
+        "formik",
+        "xstate",
+        "excel",
+        "i18n",
+        "upload",
+        "filepond",
+        "money",
+        "react-hook-form",
+        "date-picker",
+        "wizard",
+        "nextjs"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "type": "module",
+    "packageManager": "pnpm@11.5.1",
+    "engines": {
+        "node": ">=22"
+    },
+    "volta": {
+        "node": "22.22.2",
+        "pnpm": "11.5.1"
+    },
+    "sideEffects": false,
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./table": {
+            "types": "./dist/types/table.d.ts",
+            "import": "./dist/table.js"
+        },
+        "./forms": {
+            "types": "./dist/types/forms.d.ts",
+            "import": "./dist/forms.js"
+        },
+        "./charts": {
+            "types": "./dist/types/charts.d.ts",
+            "import": "./dist/charts.js"
+        },
+        "./timeline": {
+            "types": "./dist/types/timeline.d.ts",
+            "import": "./dist/timeline.js"
+        },
+        "./excel": {
+            "types": "./dist/types/excel.d.ts",
+            "import": "./dist/excel.js"
+        },
+        "./react-router": {
+            "types": "./dist/types/react-router.d.ts",
+            "import": "./dist/react-router.js"
+        },
+        "./i18next": {
+            "types": "./dist/types/i18next.d.ts",
+            "import": "./dist/i18next.js"
+        },
+        "./laravel": {
+            "types": "./dist/types/laravel.d.ts",
+            "import": "./dist/laravel.js"
+        },
+        "./money": {
+            "types": "./dist/types/money.d.ts",
+            "import": "./dist/money.js"
+        },
+        "./filepond": {
+            "types": "./dist/types/filepond.d.ts",
+            "import": "./dist/filepond.js"
+        },
+        "./react-hook-form": {
+            "types": "./dist/types/react-hook-form.d.ts",
+            "import": "./dist/react-hook-form.js"
+        },
+        "./date-pickers": {
+            "types": "./dist/types/date-pickers.d.ts",
+            "import": "./dist/date-pickers.js"
+        },
+        "./next": {
+            "types": "./dist/types/next.d.ts",
+            "import": "./dist/next.js"
+        }
+    },
+    "scripts": {
+        "prepublishOnly": "pnpm run check",
+        "build": "vite build && pnpm run types",
+        "types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json && node scripts/stripStyleImportsFromTypes.js",
+        "test": "node --import ./testing/registerAliasHooks.js --test \"src/**/*.test.js\"",
+        "check": "pnpm test && pnpm run build && node testing/smokeRender.js && tsc -p testing/typescriptConsumer/tsconfig.json && pnpm --filter @stackcraftmx/calcita-examples run check",
+        "examples": "pnpm run build && pnpm --filter @stackcraftmx/calcita-examples run dev",
+        "tunnel:start": "bash scripts/tunnel.sh start",
+        "tunnel:stop": "bash scripts/tunnel.sh stop",
+        "tunnel:status": "bash scripts/tunnel.sh status"
+    },
+    "dependencies": {
+        "formik": "2.4.9",
+        "uuid": "14.0.2",
+        "yup": "1.7.1"
+    },
+    "peerDependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@hookform/resolvers": "^5.0.0",
+        "@mui/icons-material": "^7.0.0",
+        "@mui/lab": ">=7.0.0-beta.0",
+        "@mui/material": "^7.0.0",
+        "@mui/x-data-grid": "^8.0.0",
+        "@mui/x-date-pickers": "^8.0.0",
+        "@xstate/react": "^6.0.0",
+        "dayjs": "^1.11.0",
+        "filepond": "^4.32.0",
+        "filepond-plugin-file-validate-size": "^2.2.8",
+        "filepond-plugin-file-validate-type": "^1.2.9",
+        "next": ">=15.0.0",
+        "nuqs": "^2.0.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-filepond": "^7.1.2",
+        "react-hook-form": "^7.50.0",
+        "react-router": "^7.0.0",
+        "recharts": "^3.0.0",
+        "sonner": "^2.0.0",
+        "xstate": "^5.0.0"
+    },
+    "peerDependenciesMeta": {
+        "@hookform/resolvers": {
+            "optional": true
+        },
+        "@mui/lab": {
+            "optional": true
+        },
+        "@mui/x-data-grid": {
+            "optional": true
+        },
+        "@mui/x-date-pickers": {
+            "optional": true
+        },
+        "dayjs": {
+            "optional": true
+        },
+        "filepond": {
+            "optional": true
+        },
+        "filepond-plugin-file-validate-size": {
+            "optional": true
+        },
+        "filepond-plugin-file-validate-type": {
+            "optional": true
+        },
+        "next": {
+            "optional": true
+        },
+        "nuqs": {
+            "optional": true
+        },
+        "react-filepond": {
+            "optional": true
+        },
+        "react-hook-form": {
+            "optional": true
+        },
+        "react-router": {
+            "optional": true
+        },
+        "recharts": {
+            "optional": true
+        }
+    },
+    "devDependencies": {
+        "@emotion/react": "11.14.0",
+        "@emotion/styled": "11.14.1",
+        "@hookform/resolvers": "5.9.1",
+        "@mui/icons-material": "7.3.11",
+        "@mui/lab": "7.0.1-beta.25",
+        "@mui/material": "7.3.11",
+        "@mui/x-data-grid": "8.29.3",
+        "@mui/x-date-pickers": "8.29.4",
+        "@types/react": "19.3.0",
+        "@types/react-dom": "19.3.0",
+        "@vitejs/plugin-react": "5.2.0",
+        "@xstate/react": "6.1.0",
+        "axios": "1.20.0",
+        "dayjs": "1.11.23",
+        "exceljs": "4.4.0",
+        "filepond": "4.32.12",
+        "filepond-plugin-file-validate-size": "2.2.8",
+        "filepond-plugin-file-validate-type": "1.2.9",
+        "next": "16.4.2",
+        "nuqs": "2.10.1",
+        "react": "19.3.0",
+        "react-dom": "19.3.0",
+        "react-filepond": "7.1.3",
+        "react-hook-form": "7.90.0",
+        "react-router": "7.18.3",
+        "recharts": "3.10.1",
+        "sonner": "2.0.8",
+        "tsc-alias": "1.9.7",
+        "typescript": "7.0.2",
+        "vite": "7.3.6",
+        "xstate": "5.33.0"
+    }
+}
