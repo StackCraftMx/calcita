@@ -89,7 +89,9 @@ export function formatFileSize(bytes, fallback = '—') {
             return formatter.format(Number(bytes) / unitBytes);
         }
     }
-    const formatter = cachedFormatter('fileSize-byte', {style: 'unit', unit: 'byte', maximumFractionDigits: 0},
+    // OJO: con la forma corta Intl no pone plural («74 byte», y «1 B» con el uno); la larga dice «74 bytes» y «1 byte»,
+    // como lo enseña la Mac. Las demás unidades se quedan cortas (kB, MB): ahí la abreviatura sí se lee bien.
+    const formatter = cachedFormatter('fileSize-byte', {style: 'unit', unit: 'byte', unitDisplay: 'long', maximumFractionDigits: 0},
         (locale, options) => new Intl.NumberFormat(locale, options));
     return formatter.format(Number(bytes));
 }
