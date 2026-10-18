@@ -4,6 +4,18 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.12.0] - 2026-10-17
+
+### Agregado
+
+- En el catálogo de los ejemplos, el código de cada ejemplo en JavaScript y TypeScript, con botón de copiar, y una página
+  de cómo funcionan las traducciones (los textos del paquete, los del proyecto e i18next).
+
+### Corregido
+
+- Los tipos para TypeScript de los avisos (`toastSuccess`…), el `placeholder` de `TextInput` y el avance de las
+  descargas.
+
 ## [0.11.1] - 2026-10-17
 
 ### Corregido
@@ -89,6 +101,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.12.0]: https://github.com/StackCraftMx/calcita/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/StackCraftMx/calcita/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/StackCraftMx/calcita/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/StackCraftMx/calcita/compare/v0.9.0...v0.10.0
