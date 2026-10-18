@@ -4,9 +4,12 @@
 // Las rutas no se escriben aquí: cada módulo las declara en su routes.js y se descubren solas. `routes` van dentro del
 // marco, cada grupo con el permiso del menu.js de su módulo (withAccess: quien no puede ve la página de «sin permiso»);
 // `publicRoutes` van fuera (iniciar sesión, «¿olvidó su contraseña?»). Módulo nuevo = cero ediciones aquí.
+//
+// Cada pantalla viaja en su propio archivo (lazy): si se publicó otra versión con la pestaña abierta, withChunkRecovery
+// recarga una vez, y si una pantalla truena RouteErrorScreen dice qué pasó con su botón para recargar.
 import {createBrowserRouter} from 'react-router';
 import {ERROR_PAGE_KIND, ErrorPage, FullPageLoader} from '@stackcraftmx/calcita';
-import {withAccess} from '@stackcraftmx/calcita/react-router';
+import {RouteErrorScreen, withAccess, withChunkRecovery} from '@stackcraftmx/calcita/react-router';
 
 import {AppProviders} from '@/app/AppProviders.jsx';
 import {AppShell} from '@/app/AppShell.jsx';
@@ -32,7 +35,8 @@ export const appRouter = createBrowserRouter([
         element: <AppProviders />,
         // lo que se ve al abrir la app directo en un ejemplo, mientras se descarga su pantalla (las rutas son lazy)
         HydrateFallback: FullPageLoader,
-        children: [
+        ErrorBoundary: RouteErrorScreen,
+        children: withChunkRecovery([
             ...publicRoutes,
             {
                 element: <AppShell />,
@@ -41,6 +45,6 @@ export const appRouter = createBrowserRouter([
                     {path: '*', element: <ErrorPage kind={ERROR_PAGE_KIND.notFound} />},
                 ],
             },
-        ],
+        ]),
     },
 ]);

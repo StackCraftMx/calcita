@@ -3,6 +3,7 @@
 //
 //   <ErrorPage kind={ERROR_PAGE_KIND.notFound} />                       el 404 del router (ruta '*')
 //   <ErrorPage kind={ERROR_PAGE_KIND.serverError} onRetry={reload} />   la pantalla tronó (errorElement del router)
+//   <ErrorPage kind={ERROR_PAGE_KIND.newVersion} onRetry={reload} />    se publicó otra versión con la pestaña abierta
 //
 // Los textos salen del paquete (namespace errorPage) en el idioma activo; title y text los cambian para un caso propio.
 //
@@ -14,16 +15,19 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import SystemUpdateAltRoundedIcon from '@mui/icons-material/SystemUpdateAltRounded';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
 
 /** Los errores que tiene pantalla propia. */
-export const ERROR_PAGE_KIND = Object.freeze({notFound: 'notFound', forbidden: 'forbidden', serverError: 'serverError'});
+export const ERROR_PAGE_KIND = Object.freeze({notFound: 'notFound', forbidden: 'forbidden', serverError: 'serverError', newVersion: 'newVersion'});
 
 // el ícono, el color y el código HTTP de cada uno (el código va chico: es la referencia técnica, no el mensaje)
 const ERROR_PAGE_LOOK = Object.freeze({
     [ERROR_PAGE_KIND.notFound]: {Icon: TravelExploreOutlinedIcon, color: 'info', httpStatus: 404},
     [ERROR_PAGE_KIND.forbidden]: {Icon: LockOutlinedIcon, color: 'warning', httpStatus: 403},
     [ERROR_PAGE_KIND.serverError]: {Icon: ErrorOutlineOutlinedIcon, color: 'error', httpStatus: 500},
+    // no es un error de nadie: se publicó otra versión; sin código, y el botón dice «Recargar»
+    [ERROR_PAGE_KIND.newVersion]: {Icon: SystemUpdateAltRoundedIcon, color: 'info', httpStatus: null, retryKey: 'reload'},
 });
 const ICON_PIXELS = 56;
 
@@ -46,10 +50,10 @@ export default function ErrorPage({kind, title, text, homePath = '/', onRetry}) 
             <Typography variant="h4" component="h1">{title ?? t(`${kind}.title`)}</Typography>
             <Typography variant="body1" color="text.secondary">{text ?? t(`${kind}.text`)}</Typography>
             <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5} sx={{pt: 1}}>
-                {onRetry && <Button variant="contained" onClick={onRetry}>{t('retry')}</Button>}
+                {onRetry && <Button variant="contained" onClick={onRetry}>{t(look.retryKey ?? 'retry')}</Button>}
                 <Button variant={onRetry ? 'outlined' : 'contained'} component={Link} to={homePath}>{t('goHome')}</Button>
             </Stack>
-            <Typography variant="caption" color="text.disabled">{look.httpStatus}</Typography>
+            {look.httpStatus && <Typography variant="caption" color="text.disabled">{look.httpStatus}</Typography>}
         </Stack>
     );
 }

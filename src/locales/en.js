@@ -360,6 +360,11 @@ export default Object.freeze({
     "errorPage": {
         "goHome": "Go to the home page",
         "retry": "Try again",
+        "reload": "Reload",
+        "newVersion": {
+            "title": "There is a new version",
+            "text": "An update was published while you had the page open. Reload to continue where you were."
+        },
         "notFound": {
             "title": "This page does not exist",
             "text": "The address does not match any screen. The link may be incomplete or the page may no longer exist."

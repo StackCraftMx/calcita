@@ -19,6 +19,7 @@ export const catalogTexts = {
                 charts: 'Gráficas',
                 timeline: 'Línea de tiempo',
                 translations: 'Traducciones',
+                api: 'Servidor (API)',
             },
             frameworkTitle: 'Del framework',
             code: {
@@ -643,6 +644,42 @@ export const catalogTexts = {
                     failed: 'No se pudo entregar',
                 },
             },
+            api: {
+                title: 'Servidor (API)',
+                description: 'La petición de la casa: un cliente por proyecto (createApiClient) que manda el idioma en cada petición, entiende los errores del servidor (RFC 9457) y los entrega como ApiError con el mensaje ya traducido. Sin librerías: usa fetch del navegador.',
+                client: {
+                    title: 'Cada caso, con un servidor de mentira',
+                    description: 'Cada botón pide algo y enseña lo que regresa: el JSON, o el ApiError con su título, su mensaje, los errores por campo de un 422 y la referencia para soporte. Sin red es la misma forma de error (status 0) y cancelar no es un error.',
+                    cases: {
+                        ok: 'Pedidos (200)',
+                        validation: 'Guardar con errores (422)',
+                        unauthenticated: 'Sesión vencida (401)',
+                        notFound: 'No existe (404)',
+                        serverError: 'Falla del servidor (500)',
+                        offline: 'Sin red',
+                        slow: 'Lenta (3 s)',
+                    },
+                    cancel: 'Cancelar',
+                    success: 'Respuesta del servidor',
+                    canceled: 'Se canceló. No es un error: no se avisa nada.',
+                    reference: 'Status {{status}} · referencia {{requestId}}',
+                },
+                download: {
+                    title: 'Descargas',
+                    description: 'api.download trae el archivo y el nombre que mandó el servidor, con avance, y va al panel de descargas. Un Excel que llegó cortado no se entrega.',
+                    label: 'Pedidos en CSV',
+                    ok: 'Descargar pedidos',
+                    failing: 'Descargar un reporte que no existe',
+                },
+                setup: {
+                    title: 'Armar el cliente',
+                    description: 'Uno por proyecto, en su core; cada módulo lo usa desde su *Api.ts, con sus llamadas con nombre.',
+                },
+                stale: {
+                    title: 'Cuando se publica una versión nueva',
+                    description: 'Con la pestaña abierta, una pantalla que no se había abierto pide un archivo que ya no existe. withChunkRecovery recarga una vez; si vuelve a fallar, RouteErrorScreen dice «Hay una versión nueva» con su botón para recargar.',
+                },
+            },
             translations: {
                 title: 'Traducciones',
                 description: 'De dónde salen los textos y cómo se traduce lo de su proyecto. Calcita trae su propio traductor: no necesita i18next, pero escribe igual que i18next (namespace:llave, {{variable}} y plurales con _one / _other), así que un proyecto con i18next se conecta en una línea.',
@@ -733,6 +770,7 @@ export const catalogTexts = {
                 charts: 'Charts',
                 timeline: 'Timeline',
                 translations: 'Translations',
+                api: 'Server (API)',
             },
             frameworkTitle: 'From the framework',
             code: {
@@ -1355,6 +1393,42 @@ export const catalogTexts = {
                     shipped: 'Out for delivery',
                     delivered: 'Delivered',
                     failed: 'Could not be delivered',
+                },
+            },
+            api: {
+                title: 'Server (API)',
+                description: 'The house request: one client per project (createApiClient) that sends the language on every request, understands the server errors (RFC 9457) and hands them over as ApiError with the message already translated. No libraries: it uses the browser fetch.',
+                client: {
+                    title: 'Every case, with a fake server',
+                    description: 'Each button asks for something and shows what comes back: the JSON, or the ApiError with its title, its message, the field errors of a 422 and the reference for support. No network is the same error shape (status 0) and canceling is not an error.',
+                    cases: {
+                        ok: 'Orders (200)',
+                        validation: 'Save with errors (422)',
+                        unauthenticated: 'Expired session (401)',
+                        notFound: 'Not found (404)',
+                        serverError: 'Server failure (500)',
+                        offline: 'No network',
+                        slow: 'Slow (3 s)',
+                    },
+                    cancel: 'Cancel',
+                    success: 'Server response',
+                    canceled: 'Canceled. It is not an error: nothing is announced.',
+                    reference: 'Status {{status}} · reference {{requestId}}',
+                },
+                download: {
+                    title: 'Downloads',
+                    description: 'api.download brings the file and the name the server sent, with progress, and goes to the downloads panel. An Excel file that arrived cut off is not delivered.',
+                    label: 'Orders in CSV',
+                    ok: 'Download orders',
+                    failing: 'Download a report that does not exist',
+                },
+                setup: {
+                    title: 'Set up the client',
+                    description: 'One per project, in its core; each module uses it from its *Api.ts, with named calls.',
+                },
+                stale: {
+                    title: 'When a new version is published',
+                    description: 'With the tab open, a screen that had not been opened asks for a file that no longer exists. withChunkRecovery reloads once; if it fails again, RouteErrorScreen says “There is a new version” with its reload button.',
                 },
             },
             translations: {
