@@ -13,3 +13,5 @@ graphify-out
 .graphifyignore
 /.claude/
 /tunnel/
+# la construcción del paquete se arma aquí y se cambia a dist/ de golpe (scripts/swapBuild.js)
+.dist-next
