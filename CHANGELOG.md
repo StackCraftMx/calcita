@@ -4,6 +4,59 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.22.0] - 2026-10-18
+
+### Agregado
+
+- `BarActions`: las cápsulas de UNA pantalla en la barra de arriba, como las barras de herramientas de macOS. La pantalla
+  las pone en su código y, con la barra en cápsulas, el marco las sube a la barra (cada `<BarActions>` es su cápsula);
+  con la franja entran a la franja; en el teléfono con cápsulas flotan arriba. Se extiende sin tocar el
+  framework: cualquier contenido, varias por pantalla con `order`, `sx`, `inlineSx` y `bare` (cuando lo de adentro ya es
+  una cápsula).
+- En el teléfono con cápsulas, las cápsulas de la pantalla flotan arriba a la derecha y se quedan al bajar, como los
+  botones de iOS 26, solo con ícono (la guía de Apple pide íconos antes que texto en las barras). Se ven todas las que
+  caben a lo ancho; las que no, van a un menú «⋯» con su nombre (se mide el renglón; con varios grupos cede el último).
+  La búsqueda de la tabla también flota: al picar la lupa se estira hasta las demás cápsulas.
+- `BarCapsule`: la misma cápsula (vidrio o minimalista) para usarla fuera de la barra.
+- `BarActionButton`: el botón de una acción que se acomoda solo: en una cápsula, solo el ícono con su nombre en el
+  tooltip; en el menú «⋯», un renglón con su nombre; fuera de `BarActions`, ícono y texto sin relleno. Algo propio
+  adentro de `BarActions` sabe dónde quedó con `useBarActionsPlacement` y, dentro del «⋯», cierra el menú con
+  `useCloseBarActionsMenu`.
+- Con la barra en cápsulas, las `actions` de `PageHeading` suben solas a la barra en su cápsula.
+- `ServerTable` acepta `searchInBar`: su búsqueda va arriba, en la barra (sin cápsulas, en el teléfono se queda en la tabla). Sin usar se
+  encoge a una cápsula con la lupa y se estira al picarla; con texto se queda abierta y Escape la borra y la cierra
+  (`collapseSearchInBar={false}` la deja siempre abierta). La tabla de pedidos de los ejemplos ya la usa.
+- «Hecho en Calcita» → «Marco y menú» reescrita para quien llega sin contexto: cada sección dice para qué sirve, enseña el
+  código mínimo (comentado paso a paso) y trae su tabla «Cómo se extiende» (opción, qué hace y un ejemplo). La de los
+  botones de una pantalla tiene ejemplo vivo: pone sus cápsulas en la barra de la misma app.
+- Ejemplos: «Sucursales» trae «Agregar sucursal» con su formulario en una ventana (formik, el error del servidor en su
+  campo) y la nueva sale en la lista y en el mapa.
+
+### Cambiado
+
+- Con vidrio, los botones dentro de las cápsulas de la barra van siempre del color del texto, aunque se les ponga color
+  (en las barras de Apple los símbolos son de un solo color).
+- `DownloadMenu` en una cápsula de la barra es solo el ícono de descarga con su nombre en el tooltip, como las demás
+  acciones (antes la píldora «Descargar ▾» se veía como una cápsula dentro de otra); en el «⋯» del teléfono, un renglón
+  que abre los formatos.
+- La barra de pestañas del teléfono enseña las pestañas que caben a lo ancho (al menos 60 px cada una; acostado, 104) y
+  las demás van a «Más»: en una ventana angosta salen menos y los nombres ya no se cortan; en una ancha, más. Antes eran
+  siempre 4 y «Más». `mobileTabsOf` acepta cuántas caben (tercer dato; por omisión 5).
+- `ServerTable` ya no enseña «Ir a página» por omisión: con las flechas basta en casi todas las tablas. Se prende con
+  `showGoToPage`.
+
+### Corregido
+
+- Las migas de pan ya no enseñan la barra gris de desplazamiento en el teléfono: se deslizan como los filtros rápidos
+  (sin barra, con la orilla desvanecida donde hay más).
+- El minimalista con la barra en cápsulas se separa de las orillas como el vidrio: las cápsulas y el menú lateral ya no
+  quedan pegados arriba y a la izquierda.
+- La lista desplegable de los formularios (`SelectInput` y los `FormSelectField`) ahora se nombra con su etiqueta: el lector
+  de pantalla no decía «Ciudad», solo lo elegido (la lista de MUI es un div y el `for` de la etiqueta no la unía).
+- Construir el paquete ya no tumba al servidor de desarrollo de los ejemplos: se construye aparte (`.dist-next/`) y se
+  reemplaza archivo por archivo en `dist/` (`scripts/swapBuild.js`). Antes, mientras se construía, las pantallas salían con
+  «Algo falló».
+
 ## [0.21.0] - 2026-10-18
 
 ### Agregado
@@ -224,6 +277,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.22.0]: https://github.com/StackCraftMx/calcita/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/StackCraftMx/calcita/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/StackCraftMx/calcita/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/StackCraftMx/calcita/compare/v0.18.0...v0.19.0
