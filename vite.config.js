@@ -24,6 +24,9 @@ const ENTRIES = Object.freeze({
     'date-pickers': 'src/date-pickers.js',
     next: 'src/next.js',
     passkeys: 'src/passkeys.js',
+    maps: 'src/maps.js',
+    calendar: 'src/calendar.js',
+    kanban: 'src/kanban.js',
 });
 
 // lo que instala el proyecto (peerDependencies) y las dependencias del paquete se quedan fuera del build

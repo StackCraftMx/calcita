@@ -95,7 +95,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 
 | Importar de | Trae | Pide además |
 |---|---|---|
-| `@stackcraftmx/calcita` | proveedor, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos, fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja y la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) | — |
+| `@stackcraftmx/calcita` | proveedor, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos, fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja, la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) y la bandeja tipo correo (`InboxLayout`, `MessageList`, `MessageView`) | — |
 | `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo; `Formik`, `Form` y `Yup` vienen con el paquete | — |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, y `yupResolver` | `react-hook-form`, `@hookform/resolvers` |
@@ -110,6 +110,9 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
 | `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
+| `@stackcraftmx/calcita/maps` | `MapView`: mapa con marcadores del color del tema, el elegido con su globo, se acomoda solo; en oscuro, mosaicos oscuros | `leaflet`, `react-leaflet` 5 |
+| `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
+| `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope y tarjetas que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
 
 ## El tema
 

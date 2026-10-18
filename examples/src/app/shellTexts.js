@@ -9,6 +9,7 @@ export const shellTexts = {
                 operation: 'Operación',
                 files: 'Archivos y reportes',
                 interface: 'Interfaz',
+                workspace: 'Trabajo en equipo',
                 admin: 'Administración',
             },
             glass: {
@@ -37,6 +38,7 @@ export const shellTexts = {
                 operation: 'Operations',
                 files: 'Files and reports',
                 interface: 'Interface',
+                workspace: 'Teamwork',
                 admin: 'Administration',
             },
             glass: {

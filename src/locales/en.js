@@ -602,5 +602,40 @@ export default Object.freeze({
                 "sessionsClosed": "Signed out of the other devices"
             }
         }
+    },
+    "calendar": {
+        "previous": "Previous",
+        "next": "Next",
+        "today": "Today",
+        "view": "Calendar view",
+        "views": {
+            "month": "Month",
+            "week": "Week",
+            "day": "Day",
+            "list": "List"
+        }
+    },
+    "kanban": {
+        "instructions": "To move a card with the keyboard: space to lift it, arrows to move it and space to drop it. Escape leaves it where it was.",
+        "lifted": "You lifted “{{title}}”, in {{column}}, position {{position}}.",
+        "moving": "Going to {{column}}, position {{position}}.",
+        "dropped": "You dropped “{{title}}” in {{column}}, position {{position}}.",
+        "cancelled": "“{{title}}” stayed where it was.",
+        "overLimit": "Over the limit of {{limit}} cards.",
+        "empty": "No cards. Drag one here."
+    },
+    "inbox": {
+        "listLabel": "Messages",
+        "folders": "Folders",
+        "empty": "There are no messages here.",
+        "noMessageSelected": "Choose a message to read it.",
+        "star": "Star",
+        "unstar": "Remove star",
+        "unread": "Unread",
+        "attachments": "Attachments",
+        "to": "To: {{to}}",
+        "back": "Back",
+        "unreadCount_one": "{{count}} unread",
+        "unreadCount_other": "{{count}} unread"
     }
 });

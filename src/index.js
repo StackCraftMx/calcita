@@ -122,6 +122,12 @@ export {ACCOUNT_EVENT_KIND, default as ActivityLog} from '@/security/ActivityLog
 export {default as RecoveryCodesDialog} from '@/security/RecoveryCodesDialog.jsx';
 export {default as SessionsCard} from '@/security/SessionsCard.jsx';
 
+// ─── bandeja tipo correo: las carpetas, la lista y la lectura ──
+export {default as InboxLayout} from '@/inbox/InboxLayout.jsx';
+export {default as MessageList} from '@/inbox/MessageList.jsx';
+export {default as MessageView} from '@/inbox/MessageView.jsx';
+export {inboxDateOf} from '@/inbox/inboxDates.js';
+
 // ─── instalar la app (PWA): la invitación, los pasos por equipo y la entrada del menú de la cuenta ──
 export {INSTALL_VARIANT, detectPlatform, parseIOSMajor, resolveInstallVariant} from '@/pwa/installInstructions.js';
 export {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
