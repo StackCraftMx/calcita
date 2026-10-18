@@ -4,6 +4,15 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.14.0] - 2026-10-17
+
+### Agregado
+
+- Seguridad de la cuenta: llaves de acceso (`/passkeys`), verificación en dos pasos con app autenticadora y códigos de
+  recuperación, el segundo paso al entrar, las sesiones abiertas y la bitácora de la cuenta.
+- En los ejemplos, Mi perfil → Seguridad y el segundo paso al entrar, con servidor de mentira, y una página del catálogo
+  sobre cómo evitar XSS.
+
 ## [0.13.0] - 2026-10-17
 
 ### Agregado
@@ -110,6 +119,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.14.0]: https://github.com/StackCraftMx/calcita/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/StackCraftMx/calcita/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/StackCraftMx/calcita/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/StackCraftMx/calcita/compare/v0.11.0...v0.11.1
