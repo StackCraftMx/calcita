@@ -20,6 +20,7 @@ const UploadDemo = () => {
     const [file, setFile] = useState<File | null>(null);
     const [percent, setPercent] = useState<number | null>(null);
 
+    // 2. Al picar «Subir»: el avance y, al terminar, el aviso. En su proyecto es uploadInventory (sección 2)
     const upload = async () => {
         if (!file) {
             return;
@@ -33,6 +34,7 @@ const UploadDemo = () => {
 
     return (
         <Stack spacing={2} sx={{maxWidth: 520}}>
+            {/* 1. La zona: qué acepta y cuánto pesa como máximo; lo que no cumple se explica sin subirlo */}
             <FileDropzone value={file} onChange={setFile} accept={['excel', 'csv']} maxSize="5 MB" busy={percent !== null}
                           hint="Arrastre aquí el inventario (Excel o CSV, hasta 5 MB)" />
             {percent !== null && <LinearProgress variant="determinate" value={percent} />}

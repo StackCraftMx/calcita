@@ -6,7 +6,7 @@ import {VALUE_FORMAT, fileNameSlugOf, reportCsvOf, reportSheetOf, reportWorkbook
 
 const TITLE = 'Pedidos y ventas por mes';
 
-// la hoja: secciones con sus conceptos, una cifra por periodo y el total (lo que mandaría el servidor, ya acomodado)
+// 1. La hoja: secciones con sus conceptos, una cifra por periodo y el total (lo que mandaría el servidor, ya acomodado)
 const sheet = reportSheetOf({
     conceptLabel: 'Concepto',
     periodLabels: ['Agosto', 'Septiembre', 'Octubre'],
@@ -28,7 +28,7 @@ const sheet = reportSheetOf({
     ],
 });
 
-// el archivo de cada formato: {blob, fileName}, lo que espera el panel
+// 2. El archivo de cada formato: {blob, fileName}, lo que espera el panel. ExcelJS se carga aquí, solo al pedir el Excel
 const reportFileOf = async (format: string) => {
     const fileName = `${fileNameSlugOf(TITLE)}.${format}`;
     if (format === 'csv') {
@@ -39,6 +39,7 @@ const reportFileOf = async (format: string) => {
     return {blob: new Blob([await workbook.xlsx.writeBuffer()], {type: XLSX_CONTENT_TYPE}), fileName};
 };
 
+// 3. El botón «Descargar» con sus formatos y su confirmación; el archivo va al panel de descargas
 const ReportDownloadDemo = () => (
     <DownloadMenu formats={['xlsx', 'csv']} label="Descargar el reporte" downloadLabel={TITLE} download={(format) => reportFileOf(format)}
                   confirmation={(format) => ({

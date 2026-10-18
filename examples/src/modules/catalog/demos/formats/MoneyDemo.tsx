@@ -8,12 +8,15 @@ import {MONEY_ROUNDING, Money} from '@stackcraftmx/calcita/money';
 const ORDER = {subtotal: '2499.90', shipping: '149.00', ivaRate: '0.16'};
 
 const MoneyDemo = () => {
+    // 1. Leer los montos del texto del JSON
     const subtotal = Money.fromString(ORDER.subtotal);
     const shipping = Money.fromString(ORDER.shipping);
+    // 2. Operar: la tasa también en texto; dividir con la regla de redondeo que pida el negocio
     const iva = subtotal.plus(shipping).times(ORDER.ivaRate);
     const total = subtotal.plus(shipping).plus(iva);
     const threePayments = total.dividedBy(3, {rounding: MONEY_ROUNDING.halfEven});
 
+    // 3. Pintar con format() y mandar al API con JSON.stringify (va como texto exacto)
     return (
         <DefinitionList entries={[
             {label: '0.1 + 0.2 (JavaScript)', value: String(0.1 + 0.2)},

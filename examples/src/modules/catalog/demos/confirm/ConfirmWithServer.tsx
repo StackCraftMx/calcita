@@ -23,6 +23,7 @@ const cancelOrder = async (order: Order) => {
 
 const ConfirmWithServer = () => {
     const [order] = useState<Order>({id: 2375, number: 'P-2375'});
+    // 1. Qué se hace al confirmar y qué hacer cuando salió bien
     const cancel = useConfirmAction({
         run: ({subject}) => cancelOrder(subject as Order),
         onDone: (response) => toastSuccess((response as {message: string}).message),
@@ -30,7 +31,9 @@ const ConfirmWithServer = () => {
 
     return (
         <>
+            {/* 2. Abrir la confirmación sobre el pedido */}
             <Button variant="outlined" color="error" onClick={() => cancel.open(order)}>Cancelar el pedido {order.number}</Button>
+            {/* 3. El diálogo: la pregunta y qué va a pasar. Ocupado, el error del servidor y cerrarse ya vienen en dialogProps */}
             <ConfirmDialog {...cancel.dialogProps} tone="error" title={`¿Cancelar el pedido ${order.number}?`}
                            description="El cliente recibe un correo y el pedido ya no se puede reactivar." confirmLabel="Cancelar el pedido"
                            cancelLabel="Regresar" />

@@ -14,6 +14,7 @@ const CreditWizard = () => {
         guarantorName: Yup.string().trim(),
     }), []);
 
+    // los pasos en orden: su nombre, los campos que revisa «Siguiente» y lo que lleva adentro
     const steps = [
         {key: 'company', label: 'Empresa', fields: ['company', 'rfc'], content: (
             <>

@@ -16,8 +16,23 @@ import {useToolkitTranslation} from '@stackcraftmx/calcita';
 const CODE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
 /**
+ * Las filas de la tabla de una sección. La opción y su ejemplo son código (no se traducen); qué hace sale de los textos del
+ * catálogo: <textPrefix>.extend.<id> (p. ej. 'shell.layout' → shell.layout.extend.brand).
+ *
+ * @param {(key: string) => string} t el traductor del catálogo
+ * @param {string} textPrefix dónde están los textos de la sección
+ * @param {Array<{id: string, option: string, example?: string}>} extensions
+ * @returns {Array<{option: string, what: string, example?: string}>}
+ */
+export const extensionRowsOf = (t, textPrefix, extensions) => (
+    // el id va también en el renglón: dos opciones pueden llamarse igual (fallback de Can y de RequireAccess) y la llave de
+    // React tiene que ser única
+    extensions.map(({id, option, example}) => ({id, option, example, what: t(`${textPrefix}.extend.${id}`)}))
+);
+
+/**
  * @param {object} props
- * @param {Array<{option: string, what: string, example?: string}>} props.rows ya traducidos (el ejemplo es código: no se
+ * @param {Array<{id?: string, option: string, what: string, example?: string}>} props.rows ya traducidos (el ejemplo es código: no se
  *     traduce)
  */
 export const ExtensionTable = ({rows}) => {
@@ -38,7 +53,7 @@ export const ExtensionTable = ({rows}) => {
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <TableRow key={row.option}>
+                            <TableRow key={row.id ?? row.option}>
                                 <TableCell sx={{...codeSx, fontWeight: 600, whiteSpace: 'nowrap'}}>{row.option}</TableCell>
                                 <TableCell>{row.what}</TableCell>
                                 <TableCell sx={codeSx}>{row.example}</TableCell>
@@ -50,7 +65,7 @@ export const ExtensionTable = ({rows}) => {
             {/* teléfono: un renglón por opción, apilado */}
             <Box component="ul" sx={{display: {xs: 'flex', md: 'none'}, flexDirection: 'column', gap: 1.5, listStyle: 'none', p: 0, m: 0}}>
                 {rows.map((row) => (
-                    <Box component="li" key={row.option}>
+                    <Box component="li" key={row.id ?? row.option}>
                         <Typography sx={{...codeSx, fontWeight: 600}}>{row.option}</Typography>
                         <Typography variant="body2" color="text.secondary">{row.what}</Typography>
                         {row.example && <Typography sx={{...codeSx, color: 'text.secondary'}}>{row.example}</Typography>}

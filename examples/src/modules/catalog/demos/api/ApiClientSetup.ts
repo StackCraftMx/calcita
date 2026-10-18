@@ -1,6 +1,9 @@
+// El cliente de su proyecto: UNO, en su core (core/api.ts). Cada módulo lo usa desde su *Api.ts: las pantallas nunca
+// escriben direcciones ni manejan errores de red a mano.
 import {createApiClient} from '@stackcraftmx/calcita';
 
-// El cliente del proyecto: UNO, en su core (core/api.ts), y cada módulo lo usa desde su *Api.ts.
+// 1. El cliente, con la dirección de su API y cómo entra la persona. Lo de abajo es un ejemplo con Laravel; la tabla
+//    «Cómo se extiende» trae todo lo que acepta (token en lugar de cookie, encabezados, tiempo máximo…)
 export const api = createApiClient({
     // lo que va antes de cada camino
     baseUrl: '/api/v1',
@@ -12,7 +15,8 @@ export const api = createApiClient({
     onUnauthenticated: () => window.location.assign(`/sign-in?next=${encodeURIComponent(window.location.pathname)}`),
 });
 
-// Un módulo (modules/orders/ordersApi.ts): sus llamadas con nombre, sin repetir caminos en las pantallas
+// 2. Un módulo (modules/orders/ordersApi.ts): sus llamadas con nombre. Las pantallas llaman ordersApi.list({page}), no
+//    direcciones
 export const ordersApi = {
     list: ({page, signal}: {page: number; signal?: AbortSignal}) => api.get('/orders', {params: {page}, signal}),
     create: (order: {customerId: number}) => api.post('/orders', order),
