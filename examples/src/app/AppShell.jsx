@@ -22,13 +22,13 @@ import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
 
 import {GlassModeSetting} from '@/app/GlassModeSetting.jsx';
 import {fetchMenuBadges} from '@/app/menuBadgesApi.js';
-import {APP_PATHS} from '@/core';
+import {APP_PATHS, publicUrlOf} from '@/core';
 
 // cada módulo declara su entrada en su menu.js (orden, permiso, sección, texto e ícono)
 const MENU_MODULES = import.meta.glob('@/modules/*/menu.js', {eager: true});
 
 /** El logo de los ejemplos: el de Stackcraft, redondo. */
-const Logo = () => <Box component="img" src="/branding/stackcraft-logo.svg" alt="" sx={{width: 28, height: 28, borderRadius: '50%'}} />;
+const Logo = () => <Box component="img" src={publicUrlOf('branding/stackcraft-logo.svg')} alt="" sx={{width: 28, height: 28, borderRadius: '50%'}} />;
 
 /** La tarjeta de abajo del menú lateral. */
 const SidebarCard = () => {

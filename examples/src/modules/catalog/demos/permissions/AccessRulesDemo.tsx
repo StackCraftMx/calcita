@@ -10,7 +10,8 @@ interface Order {
     status: string;
 }
 
-// lo que mandaría la sesión: sus permisos y su rol
+// 1. La regla, armada UNA vez con lo que manda la sesión (sus permisos y su rol) y las reglas de su negocio (policies).
+//    En su app la arma la cuenta (AccountProvider) y la recibe ToolkitProvider; aquí va a mano para enseñarla
 const canAccess = createAccessChecker({
     abilities: ['orders.view', 'orders.cancel'],
     roles: ['supervisor'],
@@ -18,7 +19,8 @@ const canAccess = createAccessChecker({
     context: {user: {id: 'user-ana'}, order: {ownerId: 'user-ana', status: 'paid'}},
 });
 
-// los permisos por módulo (en cada menu.js) juntos para la pantalla de perfiles
+// 2. Los permisos por módulo, juntos para la pantalla de perfiles. En su app salen de cada menu.js con
+//    composePermissionGroups; aquí van a mano
 const GROUPS = [
     {key: 'orders', label: 'Pedidos', permissions: [
         {key: 'orders.view', label: 'Ver pedidos'},
@@ -33,6 +35,7 @@ const AccessRulesDemo = () => {
     const [abilities, setAbilities] = useState(['orders.view']);
     return (
         <Stack spacing={3}>
+            {/* 3. Preguntar: cada renglón es una regla y su respuesta para esta sesión */}
             <DefinitionList entries={[
                 {label: "{ability: 'orders.cancel'}", value: yesOrNo(canAccess({ability: 'orders.cancel'}))},
                 {label: "{allOf: ['orders.view', 'reports.view']}", value: yesOrNo(canAccess({allOf: ['orders.view', 'reports.view']}))},
@@ -40,6 +43,7 @@ const AccessRulesDemo = () => {
                 {label: "{policy: 'ownsOrder'}", value: yesOrNo(canAccess({policy: 'ownsOrder'}))},
                 {label: 'sin regla (cualquiera con sesión)', value: yesOrNo(canAccess(undefined))},
             ]} />
+            {/* 4. Dar o quitar permisos a un perfil: lo elegido se guarda en su backend con onChange */}
             <PermissionMatrix groups={GROUPS} value={abilities} onChange={setAbilities} />
         </Stack>
     );

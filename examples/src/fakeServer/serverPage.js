@@ -66,6 +66,19 @@ function rowsMatching(rows, filters, filterRules, skippedField) {
 }
 
 /**
+ * Todos los renglones que cumplen los filtros de una tabla, sin paginar: lo que recibe una acción en grupo sobre «todos los
+ * que coinciden» (la pantalla manda los filtros, no los ids).
+ *
+ * @param {object[]} rows
+ * @param {Record<string, unknown>} filters
+ * @param {Record<string, (row: object, value: unknown) => boolean>} filterRules
+ * @returns {object[]}
+ */
+export function rowsMatchingFilters(rows, filters, filterRules) {
+    return rowsMatching(rows, filters, filterRules, null);
+}
+
+/**
  * La faceta de un campo: cada valor que aparece y en cuántos renglones, del más común al menos común.
  *
  * @param {object[]} rows

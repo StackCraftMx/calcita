@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
@@ -48,12 +48,18 @@ const fakeServerFetch = async (url: RequestInfo | URL, init?: RequestInit): Prom
     throw new TypeError('Failed to fetch');
 };
 
-// ─── El cliente: UNO por proyecto, en su core ───
+// ─── 1. El cliente: UNO por proyecto, en su core (vea «Armar el cliente de su proyecto») ───
+// quién escucha cada error (aquí, la lista de abajo; en su proyecto, Sentry o su aviso)
+const errorListeners = new Set<(line: string) => void>();
 const api = createApiClient({
     baseUrl: '/api',
     fetch: fakeServerFetch,
     // un 401 a media consulta: en una app de verdad, ir a iniciar sesión
     onUnauthenticated: (error) => console.info('sesión vencida:', error.message),
+    // CADA error en un solo lugar (sin red también; cancelar no cuenta): aquí se conecta Sentry o su aviso
+    onError: (error, {method, url}) => {
+        errorListeners.forEach((listener) => listener(`${method} ${url} → ${error.status || 'sin red'}${error.requestId ? ` · ${error.requestId}` : ''}`));
+    },
 });
 
 type Outcome = {kind: 'success'; data: unknown} | {kind: 'error'; error: ApiError} | {kind: 'canceled'} | null;
@@ -67,6 +73,7 @@ const CASES = [
     {key: 'offline', request: () => api.get('/sin-red')},
 ];
 
+// ─── 2. Pedir y entender lo que regresa ───
 // Cada botón pide algo al servidor de mentira y enseña lo que regresa la petición: el JSON o el ApiError con su mensaje
 // ya traducido. Los errores se avisan también con toastProblem.
 const ApiClientDemo = () => {
@@ -74,6 +81,15 @@ const ApiClientDemo = () => {
     const [outcome, setOutcome] = useState<Outcome>(null);
     const [isWaiting, setIsWaiting] = useState(false);
     const slowRequest = useRef<AbortController | null>(null);
+    // lo que va llegando a onError, lo más nuevo arriba
+    const [errorLog, setErrorLog] = useState<string[]>([]);
+    useEffect(() => {
+        const listener = (line: string) => setErrorLog((lines) => [line, ...lines].slice(0, 5));
+        errorListeners.add(listener);
+        return () => {
+            errorListeners.delete(listener);
+        };
+    }, []);
 
     const run = async (request: () => Promise<unknown>) => {
         setIsWaiting(true);
@@ -126,6 +142,15 @@ const ApiClientDemo = () => {
                         {t('api.client.reference', {status: outcome.error.status, requestId: outcome.error.requestId ?? '—'})}
                     </Typography>
                 </Alert>
+            )}
+
+            {errorLog.length > 0 && (
+                <Box>
+                    <Typography variant="subtitle2">{t('api.client.onErrorTitle')}</Typography>
+                    {errorLog.map((line, index) => (
+                        <Typography key={`${line}-${index}`} variant="body2" sx={{fontFamily: 'monospace'}}>{line}</Typography>
+                    ))}
+                </Box>
             )}
         </Stack>
     );

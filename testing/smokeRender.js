@@ -9,7 +9,8 @@ import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 
 import {
-    BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard, ModalWaiting,
+    BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
+    ModalWaiting,
     AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
@@ -63,6 +64,9 @@ const CASES = [
     ['ModalWaiting', h(ModalWaiting, {open: true}), ''],
     ['CalendarHeatmap', h(CalendarHeatmap, {startsOn: '2027-01-04', endsOn: '2027-01-31', days: [{date: '2027-01-05', value: 3}], ariaLabel: 'Actividad', valueLabel: 'Pedidos', describeValue: (value) => `${value} pedidos`}), 'Actividad'],
     ['LanguageToggle', h(LanguageToggle), 'EN'],
+    // con tres idiomas del proyecto: el botón dice el de ahora y abre el menú; portugués sin traducciones cae al español
+    ['LanguageToggle con tres idiomas', h(ToolkitProvider, {language: 'pt', languages: [...DEFAULT_LANGUAGES, {code: 'pt', label: 'Português', locale: 'pt-BR'}]},
+        h(LanguageToggle)), 'Idioma: Português. Elegir otro'],
     ['ColorSchemeToggle', h(ColorSchemeToggle), ''],
     // en el servidor no hay pestaña que comparar: no pinta nada, pero no debe tronar (useSyncExternalStore pide su versión del servidor)
     ['NewBuildNotice', h(NewBuildNotice), ''],

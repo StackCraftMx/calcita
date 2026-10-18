@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {configureToolkit, translateToolkit, translateWith} from '@/toolkit/toolkitSettings.js';
+import {DEFAULT_LANGUAGES, componentTextOf, configureToolkit, intlLocaleOf, translateToolkit, translateWith} from '@/toolkit/toolkitSettings.js';
 
 const SPANISH = {language: 'es', texts: {}, translate: null};
 
@@ -61,4 +61,30 @@ test('una llave que no existe sale con su texto por omisión (defaultValue), com
     assert.equal(translateWith(SPANISH, 'dictionaries', 'orderStatus.paid.tooltip', {defaultValue: 'Pagado el {{date}}', date: '17 oct'}), 'Pagado el 17 oct');
     assert.equal(translateWith(SPANISH, 'dictionaries', 'orderStatus.paid.tooltip'), 'dictionaries:orderStatus.paid.tooltip');
     assert.equal(translateWith(SPANISH, 'common', 'actions.cancel', {defaultValue: 'otro'}), 'Cancelar');
+});
+
+test('los textos propios de un componente ganan, con plural y variables; la capa más cercana primero', () => {
+    const ownTexts = {namespace: 'table', texts: {selection: {count_one: '{{total}} pedido elegido', count_other: '{{total}} pedidos elegidos'}}};
+    const moduleTexts = {namespace: 'table', texts: {selection: {clear: 'Deseleccionar'}, count: {records_other: '{{total}} pedidos'}}};
+    const layers = [ownTexts, moduleTexts];
+
+    assert.equal(componentTextOf(layers, 'table', 'selection.count', {count: 1, total: '1'}, 'es'), '1 pedido elegido');
+    assert.equal(componentTextOf(layers, 'table', 'selection.count', {count: 3, total: '3'}, 'es'), '3 pedidos elegidos');
+    assert.equal(componentTextOf(layers, 'table', 'selection.clear', undefined, 'es'), 'Deseleccionar');
+    // solo trae _other: sirve para todos los números
+    assert.equal(componentTextOf(layers, 'table', 'count.records', {count: 1, total: '1'}, 'es'), '1 pedidos');
+    // lo que no traen, ni de otro namespace, se busca en los textos de siempre
+    assert.equal(componentTextOf(layers, 'table', 'empty.default', undefined, 'es'), undefined);
+    assert.equal(componentTextOf(layers, 'common', 'selection.clear', undefined, 'es'), undefined);
+    assert.equal(componentTextOf([{namespace: 'table', texts: undefined}], 'table', 'selection.clear', undefined, 'es'), undefined);
+});
+
+test('los idiomas del proyecto: cada uno con su locale; uno sin locale usa su código (no los números de México)', () => {
+    const languages = [...DEFAULT_LANGUAGES, {code: 'pt', label: 'Português', locale: 'pt-BR'}, {code: 'fr', label: 'Français'}];
+
+    assert.equal(intlLocaleOf('es', languages), 'es-MX');
+    assert.equal(intlLocaleOf('pt', languages), 'pt-BR');
+    assert.equal(intlLocaleOf('fr', languages), 'fr');
+    // los de la casa aunque el proyecto no los liste
+    assert.equal(intlLocaleOf('en', [{code: 'pt', label: 'Português'}]), 'en-US');
 });

@@ -15,6 +15,7 @@ export {default as FormColorField} from '@/hookForm/FormColorField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/hookForm/FormProblemAlert.jsx';
 export {default as FormSelectField} from '@/hookForm/FormSelectField.jsx';
+export {default as FormWizard} from '@/hookForm/FormWizard.jsx';
 export {default as FormTextField} from '@/hookForm/FormTextField.jsx';
 export {default as SubmitButton} from '@/hookForm/SubmitButton.jsx';
 export {SERVER_PROBLEM_ROOT, applyServerProblem} from '@/hookForm/applyServerProblem.js';

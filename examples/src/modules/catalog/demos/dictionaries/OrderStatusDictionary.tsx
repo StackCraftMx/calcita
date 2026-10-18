@@ -5,7 +5,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {DictionaryText, StatusChip, Tag, dictionaryEntryOf, labelOf, lookup, useToolkitTranslation} from '@stackcraftmx/calcita';
 
-// los textos van en el namespace dictionaries: orderStatus.pending.label, .shortLabel y .tooltip (abajo, su archivo)
+// 1. El diccionario, UNA vez por catálogo: cada código del API con dónde están sus textos y su color. Los textos van en el
+//    namespace dictionaries: orderStatus.pending.label, .shortLabel y .tooltip (sección 2, su archivo)
 export const ORDER_STATUS = {
     pending: dictionaryEntryOf('pending', 'orderStatus.pending', 'warning', {hasShortLabel: true}),
     paid: dictionaryEntryOf('paid', 'orderStatus.paid', 'default'),
@@ -16,6 +17,7 @@ export const ORDER_STATUS = {
 
 const OrderStatusDictionary = () => {
     const {t} = useToolkitTranslation();
+    // 2. Pintarlo: como punto, como etiqueta, dentro de una frase o como texto para un Excel
     return (
         <Stack spacing={2}>
             <Stack direction="row" spacing={2} useFlexGap sx={{flexWrap: 'wrap'}}>

@@ -20,8 +20,15 @@ export const DEFAULT_CURRENCY = 'MXN';
 
 const PACKAGE_TEXTS_BY_LANGUAGE = Object.freeze({es, en});
 
-// cómo se escriben números y fechas en cada idioma (Intl)
-const INTL_LOCALE_BY_LANGUAGE = Object.freeze({es: 'es-MX', en: 'en-US'});
+/**
+ * Los idiomas que ofrece la app cuando el proyecto no dice otros: su código, su nombre en su propio idioma (así lo busca quien
+ * lo habla) y cómo se escriben sus números y fechas (Intl). El proyecto agrega los suyos en ToolkitProvider `languages` y pone
+ * sus traducciones en `texts` (lo que no traduzca sale en español); los textos del paquete solo vienen en español e inglés.
+ */
+export const DEFAULT_LANGUAGES = Object.freeze([
+    Object.freeze({code: 'es', label: 'Español', locale: 'es-MX'}),
+    Object.freeze({code: 'en', label: 'English', locale: 'en-US'}),
+]);
 
 const NAMESPACE_SEPARATOR = ':';
 const KEY_SEPARATOR = '.';
@@ -47,13 +54,15 @@ let currentSettings = Object.freeze({
     appName: '',
     // la compilación del front que corre en esta pestaña ('' en desarrollo): con ella se sabe si hay una versión nueva
     buildId: '',
+    // los idiomas que ofrece la app (DEFAULT_LANGUAGES)
+    languages: DEFAULT_LANGUAGES,
 });
 
 /**
  * Cambia la configuración que leen las funciones del paquete. La llama ToolkitProvider; un proyecto sin React (o una
  * prueba) la puede llamar directo.
  *
- * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, appName?: string, buildId?: string}} settings
+ * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, appName?: string, buildId?: string, languages?: Array<{code: string, label: string, locale?: string}>}} settings
  * @returns {void}
  */
 export function configureToolkit(settings) {
@@ -63,20 +72,23 @@ export function configureToolkit(settings) {
 /**
  * La configuración vigente.
  *
- * @returns {{language: string, texts: object, translate: Function|null, timeZone: string, currency: string, appName: string, buildId: string}}
+ * @returns {{language: string, texts: object, translate: Function|null, timeZone: string, currency: string, appName: string, buildId: string, languages: Array<{code: string, label: string, locale?: string}>}}
  */
 export function toolkitSettings() {
     return currentSettings;
 }
 
 /**
- * El locale de Intl del idioma (es → es-MX, en → en-US).
+ * El locale de Intl del idioma: el que dice su lista de idiomas (es → es-MX, pt → pt-BR) o, si no dice, el código mismo
+ * (Intl entiende «pt»). OJO: antes un idioma que no fuera es ni en salía con los números y las fechas de México.
  *
  * @param {string} language
+ * @param {Array<{code: string, locale?: string}>} [languages] por omisión los de la configuración vigente
  * @returns {string}
  */
-export function intlLocaleOf(language) {
-    return INTL_LOCALE_BY_LANGUAGE[language] ?? INTL_LOCALE_BY_LANGUAGE[DEFAULT_LANGUAGE];
+export function intlLocaleOf(language, languages = currentSettings.languages) {
+    const known = languages?.find((entry) => entry.code === language) ?? DEFAULT_LANGUAGES.find((entry) => entry.code === language);
+    return known?.locale ?? language ?? DEFAULT_LANGUAGES[0].locale;
 }
 
 /**
@@ -133,6 +145,32 @@ function textOf(texts, namespace, key, values, language) {
  */
 function interpolate(text, values) {
     return text.replace(INTERPOLATION, (placeholder, name) => (values?.[name] === undefined ? placeholder : String(values[name])));
+}
+
+/**
+ * El texto de una llave en los textos propios de los componentes (la prop `texts` de un componente y los de ComponentTexts
+ * de afuera), si alguno la trae. Cada capa es {namespace, texts} con la misma forma que ese namespace en los textos del
+ * paquete (es.js): plurales con _one/_other y {{variables}}. La primera capa que trae la llave gana.
+ *
+ * @param {Array<{namespace: string, texts: object|undefined}>} layers de la más cercana a la más lejana
+ * @param {string} namespace el de la llave
+ * @param {string} key la llave sin namespace
+ * @param {object|undefined} values
+ * @param {string} language para elegir el plural
+ * @returns {string|undefined} el texto ya con sus variables, o undefined si ninguna capa lo trae
+ */
+export function componentTextOf(layers, namespace, key, values, language) {
+    for (const layer of layers) {
+        if (layer.namespace !== namespace || !layer.texts) {
+            continue;
+        }
+        const text = textOf({[namespace]: layer.texts}, namespace, key, values, language);
+        if (text !== undefined) {
+            return interpolate(text, values);
+        }
+    }
+
+    return undefined;
 }
 
 /**

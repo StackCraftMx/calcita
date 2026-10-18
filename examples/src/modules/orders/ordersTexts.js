@@ -90,6 +90,20 @@ export const ordersTexts = {
                 confirm: 'Cancelar pedido',
                 keep: 'Conservar pedido',
             },
+            selection: {
+                count_one: '{{total}} pedido elegido',
+                count_other: '{{total}} pedidos elegidos',
+                remind: 'Recordar pago',
+                cancel: 'Cancelar',
+            },
+            bulkCancel: {
+                title_one: '¿Cancelar {{total}} pedido?',
+                title_other: '¿Cancelar {{total}} pedidos?',
+                titleAllMatching: '¿Cancelar los {{total}} pedidos que coinciden?',
+                description: 'Se cancelan los que todavía no salen a entrega; los demás se quedan como están. Cada cliente recibe un correo con la cancelación. No se puede deshacer.',
+                confirm: 'Cancelar pedidos',
+                keep: 'Conservar pedidos',
+            },
         },
         dictionaries: {
             paymentMethod: {
@@ -196,6 +210,20 @@ export const ordersTexts = {
                 reasonHelp: 'It is kept in the order history.',
                 confirm: 'Cancel order',
                 keep: 'Keep order',
+            },
+            selection: {
+                count_one: '{{total}} order selected',
+                count_other: '{{total}} orders selected',
+                remind: 'Remind payment',
+                cancel: 'Cancel',
+            },
+            bulkCancel: {
+                title_one: 'Cancel {{total}} order?',
+                title_other: 'Cancel {{total}} orders?',
+                titleAllMatching: 'Cancel the {{total}} matching orders?',
+                description: 'Orders not yet out for delivery are canceled; the rest stay as they are. Each customer receives an email about the cancellation. This cannot be undone.',
+                confirm: 'Cancel orders',
+                keep: 'Keep orders',
             },
         },
         dictionaries: {

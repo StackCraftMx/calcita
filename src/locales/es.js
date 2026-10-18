@@ -40,6 +40,20 @@ export default Object.freeze({
             "descending": "orden descendente",
             "clear": "Quitar el orden"
         },
+        "selection": {
+            "count_one": "{{total}} elegido",
+            "count_other": "{{total}} elegidos",
+            "allMatching": "Los {{total}} que coinciden están elegidos",
+            "allMatchingCapped": "Todos los que coinciden están elegidos",
+            "pageSelected_one": "Se eligió el único renglón de esta página.",
+            "pageSelected_other": "Se eligieron los {{count}} de esta página.",
+            "selectAllMatching": "Elegir los {{total}} que coinciden",
+            "selectAllMatchingCapped": "Elegir todos los que coinciden",
+            "onlyThisPage": "Elegir solo esta página",
+            "clear": "Quitar selección",
+            "summaryLabel": "Lo elegido",
+            "actionsLabel": "Acciones de los elegidos"
+        },
         "goToPage": {
             "page": "Página",
             "of_one": "de {{total}}",
@@ -112,6 +126,11 @@ export default Object.freeze({
             "colorLowContrast": "Con ese color el texto casi no se leería sobre blanco. {{suggestion}} es el mismo tono, más oscuro.",
             "colorUseSuggestion": "Usar {{color}}"
         },
+        "selection": {
+            "clear": "Quitar selección",
+            "actionsLabel": "Acciones de los elegidos",
+            "summaryLabel": "Lo elegido"
+        },
         "wizard": {
             "next": "Siguiente",
             "back": "Anterior",
@@ -124,7 +143,9 @@ export default Object.freeze({
             "switchTo": {
                 "es": "Cambiar a español",
                 "en": "Cambiar a inglés"
-            }
+            },
+            "switchToNamed": "Cambiar a {{name}}",
+            "choose": "Idioma: {{name}}. Elegir otro"
         },
         "colorScheme": {
             "label": "Claro u oscuro",
@@ -261,6 +282,7 @@ export default Object.freeze({
         },
         "charts": {
             "viewAsTable": "Ver como tabla",
+            "legend": "Qué es cada serie",
             "viewAsChart": "Ver como gráfica",
             "less": "Menos",
             "more": "Más",

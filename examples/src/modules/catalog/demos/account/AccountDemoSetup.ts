@@ -8,6 +8,7 @@ import {createDemoAccountConnector} from '@stackcraftmx/calcita/account-demo';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// con la dirección del API (en .env.local), el backend de verdad; sin ella, la cuenta de demostración
 export const accountConnector = API_URL
     ? createRestAccountConnector(createApiClient({baseUrl: API_URL}))
     : createDemoAccountConnector({

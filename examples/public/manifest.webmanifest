@@ -2,18 +2,18 @@
   "name": "Calcita · ejemplos",
   "short_name": "Calcita",
   "description": "Ejemplos del framework Calcita: React y MUI con vidrio líquido, con datos de mentira.",
-  "id": "/",
-  "start_url": "/",
-  "scope": "/",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#05070B",
   "theme_color": "#FF6B1A",
   "lang": "es-MX",
   "dir": "ltr",
   "icons": [
-    {"src": "/branding/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "/branding/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "/branding/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
-    {"src": "/branding/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {"src": "branding/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "branding/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "branding/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+    {"src": "branding/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ]
 }

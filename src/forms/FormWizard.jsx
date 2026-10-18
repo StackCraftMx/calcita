@@ -19,20 +19,16 @@
 //       </Form>
 //   </Formik>
 //
+// Lo que se ve vive en WizardLayout (inputs/), el mismo del FormWizard de react-hook-form. Los textos («Siguiente»,
+// «Anterior»…) se cambian con `texts`: {wizard: {next: 'Continuar'}}.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useRef, useState} from 'react';
 import {getIn, useFormikContext} from 'formik';
-import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import Stepper from '@mui/material/Stepper';
-import Typography from '@mui/material/Typography';
 
 import FormProblemAlert from '@/forms/FormProblemAlert.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
+import WizardLayout from '@/inputs/WizardLayout.jsx';
 
 /**
  * El primer paso que tiene un campo con error; -1 si ninguno.
@@ -54,15 +50,14 @@ function firstStepWithErrorOf(steps, errors) {
  * @param {boolean} [props.steps[].optional] se puede omitir
  * @param {import('react').ReactNode} props.steps[].content los campos del paso
  * @param {string} props.submitLabel ya traducido: el botón del último paso
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function FormWizard({steps, submitLabel}) {
-    const {t} = useToolkitTranslation('common');
+export default function FormWizard({steps, submitLabel, texts}) {
     const {validateForm, setFieldTouched, setFieldValue, initialValues, errors, isSubmitting} = useFormikContext();
     const [activeIndex, setActiveIndex] = useState(0);
     const [skippedKeys, setSkippedKeys] = useState(() => new Set());
     const wasSubmitting = useRef(false);
     const activeStep = steps[activeIndex];
-    const isLastStep = activeIndex === steps.length - 1;
 
     // al terminar un envío fallido, regresa al paso con el primer error (solo en ese momento: escribir en otro paso no
     // debe jalar a la persona de regreso)
@@ -98,48 +93,8 @@ export default function FormWizard({steps, submitLabel}) {
     };
 
     return (
-        <Stack spacing={3}>
-            {/* en el teléfono los nombres de los pasos no caben: se dice en qué paso va */}
-            <Stepper activeStep={activeIndex} alternativeLabel sx={{display: {xs: 'none', sm: 'flex'}}}>
-                {steps.map((step) => {
-                    let caption;
-                    if (skippedKeys.has(step.key)) {
-                        caption = t('wizard.skipped');
-                    } else if (step.optional) {
-                        caption = t('wizard.optional');
-                    }
-                    return (
-                        <Step key={step.key} completed={skippedKeys.has(step.key) ? false : undefined}>
-                            <StepLabel optional={caption && <Typography variant="caption" color="text.secondary">{caption}</Typography>}>
-                                {step.label}
-                            </StepLabel>
-                        </Step>
-                    );
-                })}
-            </Stepper>
-            <Box sx={{display: {xs: 'block', sm: 'none'}}}>
-                <Typography variant="overline" color="text.secondary">{t('wizard.stepOf', {current: activeIndex + 1, total: steps.length})}</Typography>
-                <Typography variant="h6">{activeStep.label}</Typography>
-            </Box>
-
-            <Box>{activeStep.content}</Box>
-
-            {isLastStep && <FormProblemAlert />}
-
-            <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} sx={{justifyContent: 'space-between'}}>
-                <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting}
-                        onClick={() => setActiveIndex((currentIndex) => currentIndex - 1)}>
-                    {t('wizard.back')}
-                </Button>
-                <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5}>
-                    {activeStep.optional && !isLastStep && (
-                        <Button variant="text" onClick={skipStep}>{t('wizard.skip')}</Button>
-                    )}
-                    {isLastStep
-                        ? <SubmitButton>{submitLabel}</SubmitButton>
-                        : <Button variant="contained" size="large" onClick={goNext}>{t('wizard.next')}</Button>}
-                </Stack>
-            </Stack>
-        </Stack>
+        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting}
+                      onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)} onNext={goNext} onSkip={skipStep}
+                      submitButton={<SubmitButton>{submitLabel}</SubmitButton>} problemAlert={<FormProblemAlert />} texts={texts} />
     );
 }

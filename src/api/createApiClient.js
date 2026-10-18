@@ -15,6 +15,11 @@
 //   - cuerpo objeto → JSON; FormData, Blob y URLSearchParams van tal cual (el navegador pone su boundary).
 //   - descargas: el Blob y el nombre que mandó el servidor, con avance; un Excel que llegó cortado (el servidor falló a
 //     media escritura después de responder 200) no se entrega.
+//   - eventos hacia afuera, para lo que cada proyecto haga a su manera: onRequest (sale), onResponse (llegó, con su status
+//     y cuánto tardó) y onError (CADA error en un solo lugar: Sentry, un aviso propio, una métrica). Cancelar no es error.
+//     Si un evento del proyecto truena, la petición sigue y se anota en el registro.
+//   - un backend que ya existe y contesta a su manera, sin cambiarlo: toProblem convierte su error a la forma RFC 9457
+//     (Laravel manda {message, errors}) y mapResponse desenvuelve sus respuestas buenas ({data: …}).
 //
 //   const api = createApiClient({baseUrl: '/api/v1', onUnauthenticated: () => navigate('/sign-in')});
 //   const orders = await api.get('/orders', {params: {page: 2}, signal});
@@ -134,6 +139,20 @@ export function retryAfterSecondsOf(retryAfterHeader) {
  * @param {Response} response
  * @returns {Promise<object|null>}
  */
+/**
+ * El problema RFC 9457 del cuerpo de error, pasado por el adaptador del proyecto (toProblem). Lo que no sea un objeto
+ * cuenta como sin problema (se usa el texto genérico del paquete).
+ *
+ * @param {(body: any, response: Response) => any} toProblem
+ * @param {object|null} body
+ * @param {Response} response
+ * @returns {object|null}
+ */
+function toProblemOrNull(toProblem, body, response) {
+    const problem = body === null ? null : toProblem(body, response);
+    return problem && typeof problem === 'object' && !Array.isArray(problem) ? problem : null;
+}
+
 async function readProblem(response) {
     try {
         const body = JSON.parse(await response.text());
@@ -234,6 +253,15 @@ async function readBlobWithProgress(response, onDownloadProgress) {
  *     {refreshPath: '/auth/csrf-token'}; por omisión la cookie XSRF-TOKEN y el header X-XSRF-TOKEN
  * @param {number} [options.timeoutMilliseconds] el tiempo máximo de una consulta (0 = sin límite); por omisión 60 s
  * @param {(error: ApiError) => void} [options.onUnauthenticated] qué hacer con un 401 (normalmente ir a iniciar sesión)
+ * @param {(request: {method: string, url: string}) => void} [options.onRequest] cada petición, al salir
+ * @param {(response: {method: string, url: string, status: number, durationMilliseconds: number}) => void} [options.onResponse]
+ *     cada respuesta, buena o mala, al llegar
+ * @param {(error: ApiError, request: {method: string, url: string}) => void} [options.onError] cada error (sin red, 4xx, 5xx,
+ *     una respuesta que no es JSON), en un solo lugar: Sentry, un aviso propio. Cancelar no es error
+ * @param {(body: any, response: Response) => object|null} [options.toProblem] el error de un backend que no contesta en
+ *     RFC 9457, a esa forma: (body) => ({title: body.message, errors: body.errors}). Por omisión el cuerpo tal cual
+ * @param {(body: any, request: {method: string, url: string}) => any} [options.mapResponse] la respuesta buena de un backend
+ *     que la envuelve: (body) => body.data. Por omisión tal cual
  * @param {typeof fetch} [options.fetch] para un servidor de mentira o para las pruebas; por omisión el del navegador
  * @returns {ApiClient}
  */
@@ -246,8 +274,21 @@ export function createApiClient({
     csrf = null,
     timeoutMilliseconds: defaultTimeoutMilliseconds = DEFAULT_TIMEOUT_MILLISECONDS,
     onUnauthenticated,
+    onRequest,
+    onResponse,
+    onError,
+    toProblem = (body) => body,
+    mapResponse = (body) => body,
     fetch: fetchImplementation,
 } = {}) {
+    // un evento del proyecto que truena no tumba la petición: se anota y se sigue (nunca en silencio)
+    const notify = (eventName, handler, ...eventArguments) => {
+        try {
+            handler?.(...eventArguments);
+        } catch (error) {
+            log.error(`el evento ${eventName} del proyecto tronó`, {message: error?.message});
+        }
+    };
     // OJO: se lee al pedir, no al armar el cliente: así un servidor de mentira que se conecta después también sirve
     const fetchOf = () => fetchImplementation ?? globalThis.fetch;
     const csrfCookieName = csrf?.cookieName ?? 'XSRF-TOKEN';
@@ -312,11 +353,25 @@ export function createApiClient({
      * @param {number} [options.timeoutMilliseconds] el de esta petición
      * @returns {Promise<any>} el JSON (null si vino vacío o 204), el Blob o la Response
      */
-    const request = async (method, path, {
-        body, params, signal, headers, parse = API_RESPONSE_PARSE.json, skipUnauthenticatedHandler = false,
+    const request = async (method, path, options = {}) => {
+        const url = apiUrlOf(baseUrl, path, options.params);
+        try {
+            return await requestOnce(method, url, options);
+        } catch (error) {
+            // cada error del servidor (o sin red) sale por onError; cancelar no es error
+            if (error instanceof ApiError) {
+                notify('onError', onError, error, {method, url});
+            }
+            throw error;
+        }
+    };
+
+    const requestOnce = async (method, url, {
+        body, signal, headers, parse = API_RESPONSE_PARSE.json, skipUnauthenticatedHandler = false,
         timeoutMilliseconds = defaultTimeoutMilliseconds,
     } = {}) => {
-        const url = apiUrlOf(baseUrl, path, params);
+        notify('onRequest', onRequest, {method, url});
+        const startedAt = Date.now();
         let response = await send(method, url, {body, signal, headers, timeoutMilliseconds});
 
         // 419 de Laravel: la cookie CSRF venció; se pide una nueva y se repite la MISMA petición una sola vez
@@ -326,13 +381,15 @@ export function createApiClient({
             response = await send(method, url, {body, signal, headers, timeoutMilliseconds});
         }
 
+        notify('onResponse', onResponse, {method, url, status: response.status, durationMilliseconds: Date.now() - startedAt});
+
         // cada respuesta (también las de error) dice qué compilación del front está publicada
         if (publishedBuildHeader) {
             reportPublishedBuild(response.headers.get(publishedBuildHeader));
         }
 
         if (!response.ok) {
-            const problem = await readProblem(response);
+            const problem = toProblemOrNull(toProblem, await readProblem(response), response);
             // un error que armó otro (nginx) puede llegar en otro idioma: ahí se usa el texto genérico del paquete
             const requestedLanguage = headersOf(url, undefined, headers)['Accept-Language'];
             const responseLanguage = response.headers.get('content-language');
@@ -366,13 +423,15 @@ export function createApiClient({
         if (!text) {
             return null;
         }
+        let json;
         try {
-            return JSON.parse(text);
+            json = JSON.parse(text);
         } catch {
             // un 200 que no es JSON: casi siempre la página de la app que respondió en lugar del API (el camino está mal)
             log.error(`${method} ${url} respondió algo que no es JSON`, {contentType: response.headers.get('content-type')});
             throw new ApiError({status: SERVER_ERROR_STATUS});
         }
+        return mapResponse(json, {method, url});
     };
 
     /**

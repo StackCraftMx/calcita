@@ -58,6 +58,8 @@ export const fakeProfiles = [
 export const fakeUsers = [
     {
         id: 'user-ana',
+        department: 'administration',
+        notifications: {newOrders: true, weeklySummary: false},
         name: 'Ana Martínez Ruiz',
         email: 'ana.martinez@ejemplo.com',
         phone: '',
@@ -66,6 +68,8 @@ export const fakeUsers = [
     },
     {
         id: 'user-sample',
+        department: 'sales',
+        notifications: {newOrders: true, weeklySummary: false},
         name: 'Usuario de Ejemplo',
         email: 'usuario@ejemplo.com',
         phone: '',
@@ -74,6 +78,8 @@ export const fakeUsers = [
     },
     {
         id: 'user-luis',
+        department: 'warehouse',
+        notifications: {newOrders: true, weeklySummary: false},
         name: 'Luis Herrera',
         email: 'luis.herrera@ejemplo.com',
         phone: '',

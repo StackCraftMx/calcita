@@ -19,6 +19,7 @@ const api = createApiClient({baseUrl: '/api', fetch: fakeServerFetch});
 // La descarga va al panel de descargas (DownloadManager, montado una vez en la app): avance, cancelar y el error del
 // servidor ya traducido. api.download trae el archivo y el nombre que mandó el servidor.
 const ApiDownloadDemo = () => {
+    // startDownload: el nombre que se ve en el panel, su formato y cómo pedir el archivo (con su avance y su cancelar)
     const {t} = useToolkitTranslation('catalog');
 
     const downloadReport = (path: string) => startDownload({

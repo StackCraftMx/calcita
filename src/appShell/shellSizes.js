@@ -34,6 +34,11 @@ export const PHONE_LANDSCAPE_MEDIA_QUERY = '@media (max-height: 499.95px)';
 /** La barra de pestañas del teléfono con vidrio (MobileTabBar): su alto parado y acostado. */
 export const MOBILE_TAB_BAR_HEIGHT_PIXELS = Object.freeze({portrait: 60, landscape: 46});
 
+// Lo que flota abajo encima de la barra de pestañas y dura un rato (las acciones de los elegidos de una tabla) pide su alto
+// aquí mientras se ve: el marco lo suma al espacio de abajo del contenido y el final de la página (el paginador) no queda
+// tapado. Lo pone quien flota con GlobalStyles; sin nada, vale 0.
+export const FLOATING_BOTTOM_SPACE_CSS_VARIABLE = '--calcita-floating-bottom-space';
+
 /**
  * Lo que flota abajo al centro en el teléfono con vidrio (el aviso de versión nueva, la invitación a instalar): encima de
  * la barra de pestañas, con la separación de la barra a la orilla, su alto, la separación pedida y la zona del gesto de

@@ -11,13 +11,16 @@
 //     selección múltiple siga siendo posible;
 //   - capped: el total es "al menos esto".
 //
+// Elegir renglones (selectionActions): una casilla por renglón y las acciones de los elegidos (rowSelection.js dice cómo
+// se conservan entre páginas y qué es «todos los que coinciden»; SelectionActions, dónde se ven sus acciones).
+//
 // Piezas: useTableState (URL con nuqs y prefijo) · tableMachine (XState: carga, error y respuestas rezagadas) ·
 // columns.jsx (encabezados con orden y filtro) · FilterChips · QuickFilters · GoToPage · EmptyState.
 //
 // Con @mui/x-data-grid 8 (compatible con MUI 7).
 //
 // Genérico del paquete: function (regla de la casa).
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useMachine} from '@xstate/react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Alert from '@mui/material/Alert';
@@ -28,20 +31,26 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import {useTheme} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
-import {DataGrid, GridPagination} from '@mui/x-data-grid';
+import {DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GRID_CHECKBOX_SELECTION_FIELD, GridPagination} from '@mui/x-data-grid';
 import {enUS as dataGridEnglish, esES as dataGridSpanish} from '@mui/x-data-grid/locales';
 
 import EmptyState from '@/DataTable/EmptyState.jsx';
 import FilterChips from '@/DataTable/FilterChips.jsx';
 import GoToPage from '@/DataTable/GoToPage.jsx';
 import {TableFilterContext} from '@/DataTable/filterContext.js';
+import {
+    EMPTY_ROW_SELECTION, canSelectAllMatching, checkedIdsOf, rowSelectionOf, selectionAfterCheck,
+} from '@/DataTable/rowSelection.js';
 import {buildTableActors, tableMachine} from '@/DataTable/tableMachine.js';
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
 import {FILTER_KINDS, isFilterActive, useTableState} from '@/DataTable/useTableState.js';
 import BarActions from '@/appShell/BarActions.jsx';
 import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
+import SelectionActions, {SELECTION_PHONE_LAYOUT, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {formatNumber} from '@/formatting.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
@@ -92,12 +101,16 @@ const SEARCH_BOX_MIN_WIDTH_PIXELS = 400;
 // en la barra de la app (searchInBar) un poco más angosta: comparte el renglón con el título y las cápsulas
 const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
+// dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
+export {SELECTION_PHONE_LAYOUT};
 
 
 // a qué altura van la celda y el encabezado fijos: los mismos que usa el DataGrid de paga para sus columnas fijas. El
 // encabezado va arriba de la raya que separa columnas (30); con menos, la raya de las otras columnas lo cruzaba al deslizar
 const FIXED_CELL_Z_INDEX = 30;
 const FIXED_HEADER_Z_INDEX = 40;
+// ancho de la columna de casillas para elegir renglones (la del DataGrid)
+const CHECKBOX_COLUMN_WIDTH_PIXELS = GRID_CHECKBOX_SELECTION_COL_DEF.width;
 
 /**
  * Estilos que dejan pegada a la izquierda una columna al deslizar la tabla de lado (en el teléfono y en una ventana angosta),
@@ -122,11 +135,15 @@ const FIXED_HEADER_Z_INDEX = 40;
  * propio: los renglones van transparentes y la celda pegada lleva el mismo material esmerilado, que tapa lo que pasa por
  * debajo sin verse como una columna blanca (así se veía con el papel sólido).
  *
+ * Con renglones que se eligen, la casilla también se queda pegada, antes que la columna fija: si no, al deslizar la fija
+ * tapaba la casilla.
+ *
  * @param {object} theme tema de MUI
  * @param {string} field campo de la columna que se queda fija
+ * @param {{withCheckboxColumn?: boolean}} [options]
  * @returns {object} estilos para el sx del DataGrid
  */
-function fixedColumnSxOf(theme, field) {
+function fixedColumnSxOf(theme, field, {withCheckboxColumn = false} = {}) {
     // un tema con variables CSS (cssVariables) las trae en theme.vars; el tema por omisión de MUI, solo en theme.palette
     const {palette} = theme.vars ?? theme;
     const paper = palette.background.paper;
@@ -136,18 +153,28 @@ function fixedColumnSxOf(theme, field) {
     const isMaterialContent = Boolean(theme.toolkit?.glass?.surfaces);
     // abajo la capa (el papel o el material) y encima el color del renglón (el ::before)
     const stickyBackground = {backgroundColor: 'inherit', ...(isMaterialContent ? materialBackgroundOf(theme, {thick: true}) : {backgroundImage: `linear-gradient(${paper}, ${paper})`})};
+    const headerBackground = isMaterialContent ? materialBackgroundOf(theme, {thick: true}) : {backgroundColor: paper};
+    const rowColorLayer = {content: '""', position: 'absolute', inset: 0, zIndex: -1, backgroundColor: 'inherit'};
+    const fixedLeft = withCheckboxColumn ? CHECKBOX_COLUMN_WIDTH_PIXELS : 0;
+    const checkboxCell = `.MuiDataGrid-cell[data-field="${GRID_CHECKBOX_SELECTION_FIELD}"]`;
+    const checkboxHeader = `.MuiDataGrid-columnHeader[data-field="${GRID_CHECKBOX_SELECTION_FIELD}"]`;
 
     return {
         '& :where(.MuiDataGrid-row)': {backgroundColor: isMaterialContent ? 'transparent' : paper},
         [`& .MuiDataGrid-cell[data-field="${field}"]`]: {
-            position: 'sticky', left: 0, zIndex: FIXED_CELL_Z_INDEX, borderRight: divider,
+            position: 'sticky', left: fixedLeft, zIndex: FIXED_CELL_Z_INDEX, borderRight: divider,
             ...stickyBackground,
-            '&::before': {content: '""', position: 'absolute', inset: 0, zIndex: -1, backgroundColor: 'inherit'},
+            '&::before': rowColorLayer,
         },
-        [`& :where(.MuiDataGrid-columnHeader[data-field="${field}"], ${ownBandHeader})`]: isMaterialContent ? materialBackgroundOf(theme, {thick: true}) : {backgroundColor: paper},
+        [`& :where(.MuiDataGrid-columnHeader[data-field="${field}"], ${ownBandHeader})`]: headerBackground,
         [`& .MuiDataGrid-columnHeader[data-field="${field}"], & ${ownBandHeader}`]: {
-            position: 'sticky', left: 0, zIndex: FIXED_HEADER_Z_INDEX, borderRight: divider,
+            position: 'sticky', left: fixedLeft, zIndex: FIXED_HEADER_Z_INDEX, borderRight: divider,
         },
+        ...(withCheckboxColumn && {
+            [`& ${checkboxCell}`]: {position: 'sticky', left: 0, zIndex: FIXED_CELL_Z_INDEX, ...stickyBackground, '&::before': rowColorLayer},
+            [`& :where(${checkboxHeader})`]: headerBackground,
+            [`& ${checkboxHeader}`]: {position: 'sticky', left: 0, zIndex: FIXED_HEADER_Z_INDEX},
+        }),
     };
 }
 const COMPACT_DENSITY_FACTOR = 0.7;
@@ -211,9 +238,11 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
     );
 }
 
+/** @typedef {import('@/DataTable/rowSelection.js').RowSelection} RowSelection */
+
 /**
  * @param {object} props
- * @param {(params: {filters: Record<string, any>, sortOrders: Array<{column: string, direction: 'asc'|'desc'}>, page: number, pageSize: number}, signal: AbortSignal) => Promise<{rows: any[], total: number, facets?: Record<string, Array<{value: any, total: number}>>, capped?: boolean}>} props.fetchPage
+ * @param {(params: {filters: Record<string, any>, sortOrders: Array<{column: string, direction: 'asc'|'desc'}>, page: number, pageSize: number}, signal: AbortSignal) => Promise<{rows: any[], total: number, facets?: Record<string, Array<{value: any, total: number}> | number>, capped?: boolean}>} props.fetchPage
  *     page cuenta desde 0; toServerTableParams lo convierte a la query del API
  * @param {string} props.queryKey cambia cuando cambia el CONJUNTO (no los filtros): dispara recarga
  * @param {boolean} [props.enabled] false mientras la sección está oculta: una tabla que nadie ve no consulta
@@ -261,6 +290,30 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {string} [props.ariaLabel] nombre de la tabla para lectores de pantalla
  * @param {string} [props.fixedColumn] campo de la columna que se queda pegada a la izquierda al deslizar de lado (como
  *     fixedSelectColumn de mui-datatables)
+ * @param {Array<{key: string, label: string, icon?: import('react').ReactNode, color?: 'inherit'|'primary'|'secondary'|'error'|'info'|'success'|'warning', isDisabled?: (selection: RowSelection) => boolean, onClick: (selection: RowSelection, helpers: {clearSelection: () => void, refresh: () => void}) => unknown}>} [props.selectionActions]
+ *     con ellas cada renglón lleva su casilla y, al elegir, sale la barra de los elegidos con estas acciones. label ya
+ *     traducido; onClick recibe la selección (con isAllMatching mande `filters`, no `ids`) y cómo quitar la selección y volver
+ *     a consultar después de actuar
+ * @param {(row: any) => boolean} [props.isRowSelectable] cuáles renglones se pueden elegir (un pedido entregado no se cancela)
+ * @param {boolean} [props.allowSelectAllMatching] la casilla de arriba elige todos los que coinciden (la acción recibe los
+ *     filtros) y el aviso deja quedarse solo con la página; por omisión sí. false: la casilla elige la página y nunca se
+ *     ofrece «todos»
+ * @param {(selection: RowSelection) => void} [props.onSelectionChange] cada que cambia la selección; también enciende las
+ *     casillas sin barra de acciones (la pantalla pinta las suyas)
+ * @param {'top'|'split'} [props.selectionPhoneLayout] SELECTION_PHONE_LAYOUT: en el teléfono con vidrio o minimalista, todo
+ *     arriba (por omisión) o el conteo arriba y las acciones abajo. Sin vidrio, en el renglón como en escritorio
+ * @param {(request: {filters: Record<string, any>, sortOrders: Array<{column: string, direction: 'asc'|'desc'}>, page: number, pageSize: number}) => void} [props.onQueryChange]
+ *     cada que cambia lo que pide la tabla (un filtro, el orden, la página), antes de consultar: para la lógica de negocio que
+ *     depende de lo filtrado («si eligió Cancelados, enseñe el motivo»)
+ * @param {(result: {rows: any[], total: number, facets: object, capped: boolean}) => void} [props.onLoaded] cada que llega una
+ *     página del servidor
+ * @param {(error: unknown) => void} [props.onLoadError] cuando la consulta falla (la tabla ya enseña su aviso con «Reintentar»)
+ * @param {object} [props.gridProps] lo demás del DataGrid de MUI, sobre todo sus eventos (onRowClick, onRowDoubleClick,
+ *     onCellKeyDown…). OJO: lo que la tabla controla (paginar, ordenar y filtrar en el servidor, el alto, la selección) no se
+ *     reemplaza desde aquí: para eso están sus props
+ * @param {object} [props.texts] los textos de la tabla que cambian, con la forma de `table` en los textos del paquete
+ *     (src/locales/es.js), ya en el idioma de la pantalla: {selection: {clear: 'Deseleccionar'}, empty: {filtered: '…'}}.
+ *     También les llegan a sus filtros de columna, sus chips y su barra de elegidos
  */
 export default function ServerTable({
     fetchPage,
@@ -297,8 +350,19 @@ export default function ServerTable({
     maxGridHeight = null,
     ariaLabel,
     fixedColumn,
+    selectionActions = [],
+    isRowSelectable,
+    allowSelectAllMatching = true,
+    onSelectionChange,
+    selectionPhoneLayout = SELECTION_PHONE_LAYOUT.top,
+    onQueryChange,
+    onLoaded,
+    onLoadError,
+    gridProps,
+    texts,
 }) {
-    const {t, language, changeLanguage} = useToolkitTranslation('table');
+    const {t, language} = useToolkitTranslation('table', texts);
+    const theme = useTheme();
     const tableState = useTableState({prefix, filterDefaults, filterKinds, defaultPageSize});
     const {filters, sortOrders, page, pageSize} = tableState;
 
@@ -313,6 +377,8 @@ export default function ServerTable({
     // NOTA: fetchPage suele ser una función nueva en cada render; la máquina siempre llama a la más reciente
     const latestFetchPage = useRef(fetchPage);
     latestFetchPage.current = fetchPage;
+    const latestEvents = useRef({onQueryChange, onLoaded, onLoadError});
+    latestEvents.current = {onQueryChange, onLoaded, onLoadError};
     const [tableSnapshot, sendToTable] = useMachine(
         tableMachine.provide({actors: buildTableActors((params, signal) => latestFetchPage.current(params, signal))}),
     );
@@ -331,9 +397,25 @@ export default function ServerTable({
         if (!queryKey || !enabled) {
             return;
         }
+        latestEvents.current.onQueryChange?.(requestParams);
         sendToTable({type: 'FETCH', params: requestParams});
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [requestFingerprint]);
+
+    // los eventos de la carga salen hacia afuera (la lógica de negocio que depende de lo que llegó). Con referencia a la
+    // función más reciente: la pantalla suele pasar funciones nuevas en cada pintada
+    const isReady = tableSnapshot.matches('ready');
+    useEffect(() => {
+        if (isReady) {
+            latestEvents.current.onLoaded?.({rows, total, facets, capped});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isReady, rows]);
+    useEffect(() => {
+        if (error) {
+            latestEvents.current.onLoadError?.(error);
+        }
+    }, [error]);
 
     const toggleSort = (column) => {
         const currentSort = sortOrders.find((sortOrder) => sortOrder.column === column);
@@ -346,6 +428,65 @@ export default function ServerTable({
             tableState.setSort([]);
         }
     };
+
+    // ─── Renglones elegidos (rowSelection.js) ───
+    // con acciones (o quien escuche los cambios) cada renglón lleva su casilla
+    const isSelectable = selectionActions.length > 0 || Boolean(onSelectionChange);
+    const [rowSelection, setRowSelection] = useState(EMPTY_ROW_SELECTION);
+    const idOf = useCallback((row) => (getRowId ? getRowId(row) : row.id), [getRowId]);
+    const pageRowsById = useMemo(() => new Map(visibleRows.map((row) => [idOf(row), row])), [visibleRows, idOf]);
+    const selectablePageIds = useMemo(
+        () => visibleRows.filter((row) => !isRowSelectable || isRowSelectable(row)).map(idOf),
+        [visibleRows, isRowSelectable, idOf],
+    );
+    const checkedIds = useMemo(() => checkedIdsOf(rowSelection, selectablePageIds), [rowSelection, selectablePageIds]);
+    const selection = rowSelectionOf(rowSelection, {total, capped, filters});
+
+    const updateSelection = (nextSelection) => {
+        setRowSelection(nextSelection);
+        onSelectionChange?.(rowSelectionOf(nextSelection, {total, capped, filters}));
+    };
+    const clearSelection = () => updateSelection(EMPTY_ROW_SELECTION);
+
+    // otro filtro u otro conjunto son otros renglones: la selección se borra para no actuar sobre lo que ya no se ve. Cambiar
+    // de página o de orden la conserva
+    const selectionResetKey = JSON.stringify({queryKey, filters});
+    const lastSelectionResetKey = useRef(selectionResetKey);
+    useEffect(() => {
+        if (lastSelectionResetKey.current === selectionResetKey) {
+            return;
+        }
+        lastSelectionResetKey.current = selectionResetKey;
+        if (rowSelection !== EMPTY_ROW_SELECTION) {
+            clearSelection();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectionResetKey]);
+
+    // el DataGrid avisa qué quedó marcado; con disableRowSelectionExcludeModel siempre es la lista de los marcados
+    const handleGridSelectionChange = (model) => {
+        // la casilla de arriba elige todos los que coinciden (si se permite); el aviso deja quedarse con la página
+        const nextSelection = selectionAfterCheck(rowSelection, model.ids, pageRowsById, selectablePageIds, {
+            allMatchingOnWholePage: allowSelectAllMatching, total, capped,
+        });
+        if (nextSelection !== rowSelection) {
+            updateSelection(nextSelection);
+        }
+    };
+
+    const hasSelection = isSelectable && selection.count > 0;
+    // en el teléfono con barra de pestañas abajo (vidrio, o minimalista con cápsulas) las acciones de los elegidos flotan
+    // (SelectionActions decide dónde) y el conteo de la tabla se queda; sin esa barra, ocupan el lugar del conteo
+    const floatsSelectionOnPhone = selectionFloatsOnPhone(theme);
+    const selectionCountText = selection.isCapped
+        ? t('selection.allMatchingCapped')
+        : t('selection.count', {count: selection.count, total: formatNumber(selection.count)});
+    // cada acción recibe la selección y cómo dejar la tabla al terminar; isDisabled se resuelve con la selección de ahora
+    const selectionHelpers = {clearSelection, refresh: () => sendToTable({type: 'FETCH', params: requestParams})};
+    const selectionActionItems = selectionActions.map(({key, label, icon, color, isDisabled, onClick}) => ({
+        key, label, icon, color, disabled: isDisabled?.(selection) ?? false, onClick: () => onClick(selection, selectionHelpers),
+    }));
+    const offersAllMatching = isSelectable && allowSelectAllMatching && canSelectAllMatching(rowSelection, selectablePageIds, {total, capped});
 
     // el texto de la caja de búsqueda no cuenta como filtro oculto: se está viendo en su propia caja
     const hasActiveFilters = Object.entries(filters)
@@ -424,6 +565,7 @@ export default function ServerTable({
     );
 
     return (
+        <ComponentTexts namespace="table" texts={texts}>
         <TableFilterContext value={tableFilterValue}>
             <Stack direction={{xs: 'column', md: 'row'}} spacing={2} sx={{mb: 1.5, alignItems: {md: 'center'}}}>
                 {searchBox && !searchInBar && searchBox}
@@ -462,6 +604,17 @@ export default function ServerTable({
                         {searchBox}
                     </BarActions>
                 )}
+                {/* con elegidos, sus acciones ocupan el lugar del conteo (en el teléfono con barra de pestañas, flotan). Sus
+                    textos son los de la tabla: así el `texts` de ServerTable también los cambia */}
+                {hasSelection && (
+                    <SelectionActions countText={selectionCountText} actions={selectionActionItems} onClear={clearSelection}
+                                      phoneLayout={selectionPhoneLayout}
+                                      texts={{selection: {clear: t('selection.clear'), actionsLabel: t('selection.actionsLabel'), summaryLabel: t('selection.summaryLabel')}}} />
+                )}
+                <Box sx={{
+                    flexGrow: 1, minWidth: 0, display: 'flex',
+                    ...(hasSelection && {display: 'none', ...(floatsSelectionOnPhone && {[PHONE_MEDIA_QUERY]: {display: 'flex'}})}),
+                }}>
                 {header ? (
                     <Box sx={{flexGrow: 1, minWidth: 0}}>
                         {header({countText: capped ? t('count.capped', {total: formattedTotal}) : countText, total, capped})}
@@ -479,6 +632,7 @@ export default function ServerTable({
                         {toolbarExtra}
                     </Stack>
                 )}
+                </Box>
             </Stack>
 
             {beforeQuickFilters}
@@ -491,6 +645,28 @@ export default function ServerTable({
 
             <FilterChips chipConfig={chipConfig} filters={filters} quickActiveCount={quickActiveCount}
                          onSetFilter={tableState.setFilter} onClearAll={tableState.clearAll} />
+
+            {/* todos los que coinciden (lo elige la casilla de arriba): se puede volver a solo esta página; la página llena a
+                mano: se ofrece elegir todos */}
+            {(offersAllMatching || (isSelectable && rowSelection.isAllMatching)) && (
+                <Alert severity="info" icon={false} sx={{mb: 1, alignItems: 'center'}}
+                       action={rowSelection.isAllMatching ? (
+                           <Button color="inherit" size="small"
+                                   onClick={() => updateSelection({
+                                       rowsById: new Map(selectablePageIds.map((id) => [id, pageRowsById.get(id)])), isAllMatching: false,
+                                   })}>
+                               {t('selection.onlyThisPage')}
+                           </Button>
+                       ) : (
+                           <Button color="inherit" size="small" onClick={() => updateSelection({rowsById: new Map(), isAllMatching: true})}>
+                               {capped ? t('selection.selectAllMatchingCapped') : t('selection.selectAllMatching', {total: formattedTotal})}
+                           </Button>
+                       )}>
+                    {rowSelection.isAllMatching
+                        ? (capped ? t('selection.allMatchingCapped') : t('selection.allMatching', {total: formattedTotal}))
+                        : t('selection.pageSelected', {count: selectablePageIds.length})}
+                </Alert>
+            )}
 
             {error && (
                 <Alert severity="error" role="alert" sx={{mb: 1}}
@@ -507,6 +683,8 @@ export default function ServerTable({
                 de lado DENTRO de su tarjeta y la página no */}
             <Paper variant="outlined" sx={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
                 <DataGrid
+                    // primero lo de la pantalla (sus eventos); lo de abajo es lo que la tabla controla y le gana
+                    {...gridProps}
                     rows={visibleRows}
                     columns={columns}
                     columnGroupingModel={columnGroupingModel}
@@ -536,6 +714,17 @@ export default function ServerTable({
                     hideFooter={isFooterHidden}
                     disableColumnMenu
                     disableRowSelectionOnClick
+                    // elegir renglones: solo con la casilla (el clic en el renglón no elige). Los elegidos de otras páginas
+                    // se conservan (keepNonExistentRowsSelected). OJO: sin disableRowSelectionExcludeModel la casilla de
+                    // arriba marca «todos los de todas las páginas» en lugar de los de esta página
+                    checkboxSelection={isSelectable}
+                    rowSelectionModel={isSelectable ? {type: 'include', ids: checkedIds} : undefined}
+                    onRowSelectionModelChange={isSelectable ? handleGridSelectionChange : undefined}
+                    isRowSelectable={isSelectable && isRowSelectable ? (params) => isRowSelectable(params.row) : undefined}
+                    keepNonExistentRowsSelected={isSelectable}
+                    disableRowSelectionExcludeModel
+                    // el conteo de los elegidos lo dice la barra de arriba; el del pie del DataGrid sobraría
+                    hideFooterSelectedRowCount
                     // con columna fija se dibuja todo: si no, la fija desaparecería al deslizar a la derecha (fixedColumnSxOf)
                     disableVirtualization={Boolean(fixedColumn)}
                     density={DATA_GRID_DENSITY}
@@ -572,11 +761,12 @@ export default function ServerTable({
                         [`& .${STRIPED_ROW_CLASS}`]: {bgcolor: 'action.hover'},
                         [`& .${STRIPED_ROW_CLASS}:hover`]: {bgcolor: 'action.selected'},
                         ...gridSx,
-                    }, (theme) => (fixedColumn ? fixedColumnSxOf(theme, fixedColumn) : {})]}
+                    }, (gridTheme) => (fixedColumn ? fixedColumnSxOf(gridTheme, fixedColumn, {withCheckboxColumn: isSelectable}) : {})]}
                 />
             </Paper>
 
             {footer?.({total, capped})}
         </TableFilterContext>
+        </ComponentTexts>
     );
 }

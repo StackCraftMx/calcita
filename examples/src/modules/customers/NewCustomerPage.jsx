@@ -3,6 +3,8 @@
 // Lo que se ve aquí:
 //   - FormTextField, FormSelectField, FormNumberField (miles y decimales; al formulario llega '50000.00', listo para
 //     Money), FormCatalogField (se busca por clave o nombre) y FormDateField (de /date-pickers; viaja 'AAAA-MM-DD');
+//   - varias opciones con `multiple`: los días en la lista (cada elegido con su palomita) y los estados en el catálogo (cada
+//     uno con su etiqueta y su ×); al formulario y al servidor llegan como listas;
 //   - el error de cada campo solo cuando ya se tocó y en el idioma activo; el correo se normaliza al salir del campo;
 //   - SubmitButton se bloquea mientras se envía; FormProblemAlert pinta lo que el servidor dijo que no es de un campo;
 //   - applyServerProblem: el 422 del servidor cae en su campo (el correo repetido, el límite de más para su tipo);
@@ -19,7 +21,7 @@ import {
     Form, Formik, FormCatalogField, FormNumberField, FormProblemAlert, FormSelectField, FormTextField, SubmitButton, applyServerProblem,
 } from '@stackcraftmx/calcita/forms';
 
-import {customerTypeOptionsOf} from '@/modules/customers/customerDictionaries.js';
+import {customerTypeOptionsOf, deliveryDayOptionsOf} from '@/modules/customers/customerDictionaries.js';
 import {SIMULATED_RESPONSES, createCustomer} from '@/modules/customers/customersApi.js';
 import {FormsNav} from '@/modules/customers/FormsNav.jsx';
 import {NEW_CUSTOMER_INITIAL_VALUES, buildNewCustomerSchema, normalizedEmailOf} from '@/modules/customers/newCustomerSchema.js';
@@ -70,6 +72,11 @@ export const NewCustomerPage = () => {
                                 <FormCatalogField name="state" label={t('form.state')} placeholder={t('form.statePlaceholder')} options={states} loading={isLoadingStates} />
                                 <FormDateField name="customer_since" label={t('form.customerSince')} helperText={t('form.customerSinceHelp')}
                                                disableFuture />
+                                </FormSection>
+                                <FormSection title={t('form.sections.delivery')} footer={t('form.sections.deliveryFooter')}>
+                                <FormSelectField name="delivery_days" label={t('form.deliveryDays')} options={deliveryDayOptionsOf(t)} multiple />
+                                <FormCatalogField name="delivery_states" label={t('form.deliveryStates')} placeholder={t('form.deliveryStatesPlaceholder')}
+                                                  options={states} loading={isLoadingStates} multiple />
                                 </FormSection>
                                 <Stack direction="row" sx={{justifyContent: 'flex-end'}}>
                                     <SubmitButton>{t('form.submit')}</SubmitButton>

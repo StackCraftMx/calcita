@@ -4,7 +4,8 @@
 //     y para el lector de pantalla. En el teléfono el tooltip sale al dejar el dedo encima, como en iOS;
 //   - en el menú «⋯» del teléfono (las que ya no caben en el renglón flotante): un renglón con ícono y texto;
 //   - suelto (fuera de BarActions): ícono con texto, botón sin relleno.
-// Lo demás va al botón (disabled, color, component y to para una liga…).
+// Lo demás va al botón (disabled, color, component y to para una liga…). Sin ícono, en la cápsula va su texto (un botón sin
+// relleno) y en el «⋯» el renglón sin ícono: mejor un texto que un botón vacío.
 //
 // Genérico del paquete: function (regla de la casa).
 import Button from '@mui/material/Button';
@@ -19,7 +20,7 @@ import {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} f
 /**
  * @param {object} props
  * @param {string} props.label el nombre de la acción, ya traducido: «Agregar sucursal»
- * @param {import('react').ReactNode} props.icon el ícono (<AddRoundedIcon />)
+ * @param {import('react').ReactNode} [props.icon] el ícono (<AddRoundedIcon />); sin él, se ve su texto
  * @param {(event: object) => void} [props.onClick]
  * @param {boolean} [props.disabled]
  * @param {'inherit'|'primary'|'secondary'|'success'|'error'|'info'|'warning'} [props.color] por omisión primary
@@ -36,12 +37,12 @@ export default function BarActionButton({label, icon, onClick, disabled, color =
         };
         return (
             <MenuItem onClick={pickFromMenu} disabled={disabled} {...buttonProps}>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText>{label}</ListItemText>
+                {icon && <ListItemIcon>{icon}</ListItemIcon>}
+                <ListItemText inset={!icon}>{label}</ListItemText>
             </MenuItem>
         );
     }
-    if (placement === BAR_ACTIONS_PLACEMENT.capsule) {
+    if (placement === BAR_ACTIONS_PLACEMENT.capsule && icon) {
         // OJO: el tooltip envuelve un span para que también salga con el botón deshabilitado (MUI no lo pinta sobre un
         // elemento deshabilitado)
         return (

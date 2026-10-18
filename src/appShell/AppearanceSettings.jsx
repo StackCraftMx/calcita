@@ -7,6 +7,8 @@ import {Fragment} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -15,8 +17,12 @@ import AutomaticModeIcon from '@mui/icons-material/BrightnessAutoOutlined';
 import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 
-import {LANGUAGES} from '@/ui/navigation/LanguageToggle.jsx';
+import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
+import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
+
+// cuántas opciones caben como botones lado a lado en el menú de la cuenta; con más, lista desplegable
+const SETTING_BUTTONS_LIMIT = 3;
 
 /**
  * Un ajuste: su nombre y sus opciones a la vista. Es público: el proyecto agrega los suyos al menú de la cuenta con la
@@ -32,6 +38,16 @@ import {useFontSize} from '@/ui/navigation/useFontSize.js';
  * @param {(value: string) => void} props.onChange
  */
 export function SettingSection({label, value, options, onChange}) {
+    // con muchas opciones (los idiomas de una app que ofrece cinco) los botones lado a lado no caben: lista desplegable
+    if (options.length > SETTING_BUTTONS_LIMIT) {
+        return (
+            <Box sx={{px: 1, py: 0.5}}>
+                <TextField select fullWidth size="small" label={label} value={value} onChange={(event) => onChange(event.target.value)}>
+                    {options.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+                </TextField>
+            </Box>
+        );
+    }
     return (
         <Box sx={{px: 1, py: 0.5}}>
             <Typography variant="overline" color="text.secondary" component="p" sx={{px: 1, lineHeight: 1.6}}>{label}</Typography>
@@ -58,6 +74,7 @@ export function SettingSection({label, value, options, onChange}) {
  */
 export default function AppearanceSettings({showFontSize = true, showLanguage = true, showColorScheme = true}) {
     const {t, language, changeLanguage} = useToolkitTranslation('layout');
+    const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const {level, setLevel, levels} = useFontSize();
     const {mode, setMode} = useColorScheme();
 
@@ -68,7 +85,8 @@ export default function AppearanceSettings({showFontSize = true, showLanguage = 
         ),
         showLanguage && (
             <SettingSection key="language" label={t('settings.language')} value={language} onChange={changeLanguage}
-                            options={LANGUAGES.map((languageCode) => ({value: languageCode, label: t(`languageName.${languageCode}`)}))} />
+                            // los idiomas de la app; español e inglés con su nombre de siempre, los del proyecto con el suyo
+                            options={languages.map((entry) => ({value: entry.code, label: t(`languageName.${entry.code}`, {defaultValue: entry.label})}))} />
         ),
         // antes de montar no se sabe el modo (el servidor no lo conoce): la sección sale ya montada.
         // Tres opciones: «Automático» (system de MUI) sigue lo que diga el equipo y es lo de omisión. Es la ÚNICA salida

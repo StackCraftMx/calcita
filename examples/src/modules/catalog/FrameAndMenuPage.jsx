@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
+import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import ScreenCapsules from '@/modules/catalog/demos/shell/ScreenCapsules.tsx';
 
 const loadLayout = () => import('@/modules/catalog/demos/shell/AppShellSetup.tsx?demo-source');
@@ -63,7 +64,7 @@ const BACK_EXTENSIONS = [
 
 export const FrameAndMenuPage = () => {
     const {t} = useToolkitTranslation('catalog');
-    const rowsOf = (section, extensions) => extensions.map(({id, option, example}) => ({option, example, what: t(`shell.${section}.extend.${id}`)}));
+    const rowsOf = (section, extensions) => extensionRowsOf(t, `shell.${section}`, extensions);
 
     return (
         <Stack spacing={3}>

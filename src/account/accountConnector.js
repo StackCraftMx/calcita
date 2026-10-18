@@ -94,7 +94,8 @@
  * @property {() => Promise<void>} signOut
  * @property {(input: {email: string}) => Promise<void>} requestPasswordReset contesta igual exista o no el correo
  * @property {(input: {token: string, newPassword: string}) => Promise<void>} resetPassword desde el enlace del correo
- * @property {(input: {name: string, phone: string}) => Promise<{message?: string}|void>} updateProfile
+ * @property {(input: {name: string, phone: string} & Record<string, any>) => Promise<{message?: string}|void>} updateProfile name, phone y
+ *     los campos propios de ProfileScreen (extraFields)
  * @property {(input: {currentPassword?: string, newPassword: string}) => Promise<void>} changePassword
  * @property {() => Promise<AccountSecurity>} loadSecurity
  * @property {() => Promise<{secret: string, qrImageUrl?: string|null}>} startTotp una clave nueva (todavía sin activar)
