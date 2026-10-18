@@ -23,7 +23,8 @@ import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 
 import {useNewBuildPublished} from '@/observability/publishedBuild.js';
 import {GLASS_PANEL_GAP_PIXELS, aboveMobileTabBarOf} from '@/appShell/shellSizes.js';
-import {glassStylesOf} from '@/theme/glassSurface.js';
+import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
+import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
 
 /** Las formas del aviso: franja (dentro de la barra del proyecto) o cápsula flotante (la del marco con vidrio). */
@@ -50,7 +51,8 @@ function reloadPage() {
  */
 function floatingSxOf(theme) {
     return {
-        ...glassStylesOf(theme),
+        // con vidrio, cápsula de vidrio; con el minimalista (barra en cápsulas), sólida del gris de lo que flota
+        ...(isGlassTheme(theme) ? glassStylesOf(theme) : minimalFloatingStylesOf(theme)),
         position: 'fixed',
         left: '50%',
         transform: 'translateX(-50%)',

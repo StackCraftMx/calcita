@@ -16,7 +16,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import InstallMobileRoundedIcon from '@mui/icons-material/InstallMobileRounded';
 
 import {aboveMobileTabBarOf} from '@/appShell/shellSizes.js';
-import {isGlassTheme} from '@/theme/glassSurface.js';
+import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
@@ -58,7 +58,7 @@ export default function InstallPromptBanner({message}) {
     return (
         <>
             <Snackbar open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                      sx={(theme) => (isGlassTheme(theme)
+                      sx={(theme) => (usesMobileTabBar(theme)
                           ? aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)
                           : {mb: 'env(safe-area-inset-bottom)'})}>
                 <Alert severity="info" icon={<InstallMobileRoundedIcon />} sx={{width: '100%', alignItems: 'center'}}

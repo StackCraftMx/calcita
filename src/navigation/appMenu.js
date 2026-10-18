@@ -175,19 +175,42 @@ export function menuBadgeOf(menuItem, menuBadges = {}) {
 
 // cuántas pestañas caben en la barra del teléfono, como las de Apple: hasta 5; si hay más entradas, 4 y «Más» con el resto
 const MOBILE_TAB_LIMIT = 5;
+/** Cuántas puede fijar la persona en la barra: las que caben junto a «Más». */
+export const PINNABLE_TAB_LIMIT = MOBILE_TAB_LIMIT - 1;
 
 /**
- * Las pestañas de la barra del teléfono y lo que va en «Más». Van las que el menu.js marca con mobileTab: true (en su
- * orden); si ninguna lo dice, las primeras. Con 5 o menos entradas van todas y no hay «Más».
+ * Con qué se reconoce una entrada del menú para recordarla (las pestañas que fijó la persona): su ruta, o su llave de
+ * texto si no navega. No el texto traducido: cambia con el idioma.
+ *
+ * @param {{to?: string, labelKey?: string, label?: string}} menuItem
+ * @returns {string}
+ */
+export function menuItemKeyOf(menuItem) {
+    return menuItem.to ?? menuItem.labelKey ?? menuItem.label;
+}
+
+/**
+ * Las pestañas de la barra del teléfono y lo que va en «Más». Van las que fijó la persona (pinnedKeys, en el orden del
+ * menú); si no fijó ninguna, las que el menu.js marca con mobileTab: true; si ninguna lo dice, las primeras. Con 5 o
+ * menos entradas van todas y no hay «Más».
  *
  * @param {object[]} menuItems lo que regresa composeMenu
+ * @param {string[]|null} [pinnedKeys] las que eligió la persona (menuItemKeyOf); las que ya no existen o ya no puede ver
+ *     no cuentan
  * @returns {{tabs: object[], more: object[]}}
  */
-export function mobileTabsOf(menuItems) {
+export function mobileTabsOf(menuItems, pinnedKeys = null) {
     if (menuItems.length <= MOBILE_TAB_LIMIT) {
         return {tabs: menuItems, more: []};
     }
+    const pinned = menuItems.filter((menuItem) => (pinnedKeys ?? []).includes(menuItemKeyOf(menuItem)));
     const marked = menuItems.filter((menuItem) => menuItem.mobileTab);
-    const tabs = (marked.length > 0 ? marked : menuItems).slice(0, MOBILE_TAB_LIMIT - 1);
+    let candidates = menuItems;
+    if (pinned.length > 0) {
+        candidates = pinned;
+    } else if (marked.length > 0) {
+        candidates = marked;
+    }
+    const tabs = candidates.slice(0, PINNABLE_TAB_LIMIT);
     return {tabs, more: menuItems.filter((menuItem) => !tabs.includes(menuItem))};
 }

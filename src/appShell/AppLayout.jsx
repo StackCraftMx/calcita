@@ -33,6 +33,13 @@
 //     barra y el menú lateral flotan a 8 px de la orilla y entre ellos, con esquinas redondas, para que el contenido pase
 //     por detrás y se vea desenfocado; encogido, el menú es una cápsula. En el teléfono la barra sigue de orilla a orilla
 //     (como en iOS). Sin vidrio, todo igual que siempre: el marco lo sabe por el tema (isGlassTheme), sin otra prop.
+//   - Con vidrio y con el minimalista la barra no lleva franja, como las ventanas de macOS Tahoe (TOP_BAR.capsules, lo de
+//     omisión): la ☰ con el nombre, el menú de arriba y la cuenta van cada uno en su cápsula, y el título queda suelto.
+//     Con vidrio las cápsulas son de vidrio y el contenido pasa por debajo, desenfocado en la orilla (scrollEdgeStylesOf);
+//     con el minimalista son bloques del tono de las tarjetas sobre la barra del color del fondo, también en el teléfono.
+//     Con cápsulas el menú encogido ya no se funde con la barra: la cuenta y los ajustes se quedan arriba. Con
+//     bar: TOP_BAR.band, la franja de lado a lado. Mismo alto y mismo lugar las dos: el menú lateral y las páginas no se
+//     mueven.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useMemo, useState} from 'react';
@@ -62,12 +69,15 @@ import {
     MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_MEDIA_QUERY, drawerTransitionOf,
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
+import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import TopMenu from '@/appShell/TopMenu.jsx';
 import {useDrawerCollapsed} from '@/appShell/useDrawerCollapsed.js';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import {activeMenuItemOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
-import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {paletteOf} from '@/theme/components/paletteOf.js';
+import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
+import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassStylesOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
 
@@ -75,6 +85,27 @@ import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight
 export const MENU_POSITION = Object.freeze({side: 'side', top: 'top'});
 
 const NAVIGATING_BAR_PIXELS = 2;
+// la barra en cápsulas: lo alto de cada cápsula (px), centrada en el alto de siempre de la barra
+const BAR_CAPSULE_HEIGHT_PIXELS = 48;
+
+/**
+ * Un grupo de la barra: con la barra en cápsulas, su cápsula (de vidrio, o con el minimalista un bloque del tono de las
+ * tarjetas, sin borde ni sombra); con la franja, sus piezas tal cual (sin caja de más, para que la franja se quede idéntica).
+ */
+const BarGroup = ({isCapsule, isGlass, sx, children}) => {
+    if (!isCapsule) {
+        return children;
+    }
+    return (
+        <Box sx={[(theme) => ({
+            ...(isGlass ? glassStylesOf(theme, {isControl: true}) : {backgroundColor: paletteOf(theme).background.paper}),
+            display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0, minWidth: 0,
+            height: BAR_CAPSULE_HEIGHT_PIXELS, px: 0.75, borderRadius: '999px',
+        }), sx]}>
+            {children}
+        </Box>
+    );
+};
 
 /** «Saltar al contenido»: escondido arriba hasta que llega el foco del teclado. */
 const SkipToContentLink = () => {
@@ -165,9 +196,9 @@ const AppLayoutFrame = ({
 
     const theme = useTheme();
     const isGlass = isGlassTheme(theme);
-    // la barra de pestañas del teléfono (estilo Apple) va solo con vidrio; sin vidrio y con el minimalista se queda la barra de
-    // MUI arriba con su cajón (en el minimalista la barra de abajo «se perdía», lo dijo el autor)
-    const usesTabBar = isGlass;
+    // la barra de pestañas del teléfono (estilo Apple): con vidrio, y con el minimalista en cápsulas (usesMobileTabBar);
+    // sin vidrio, o con el minimalista en franja, se queda la barra de MUI arriba con su cajón
+    const usesTabBar = usesMobileTabBar(theme);
     // con vidrio, la barra y el menú lateral flotan a GLASS_PANEL_GAP_PIXELS de la orilla: la columna del menú mide eso de más
     const panelGap = isGlass ? GLASS_PANEL_GAP_PIXELS : 0;
 
@@ -175,7 +206,13 @@ const AppLayoutFrame = ({
     // con vidrio y el menú encogido, en escritorio la barra de arriba desaparece y se funde con el menú: la ☰ y el logo van
     // arriba del menú y los ajustes y la cuenta abajo (lo pidió el autor). Si el proyecto trae avisos en la barra (ribbons),
     // la barra se queda: los avisos no tendrían dónde ir
-    const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons;
+    // la barra sin franja, en cápsulas (lo de omisión con vidrio y con el minimalista; TOP_BAR.band pide la franja). El
+    // estilo de Stackcraft sin vidrio se queda con su barra de siempre
+    const isMinimalLook = theme.toolkit?.look === THEME_LOOK.minimal;
+    const usesBarCapsules = (isGlass || isMinimalLook) && theme.toolkit?.bar === TOP_BAR.capsules;
+    // con cápsulas no se funde: no hay franja que esconder, y la cuenta y los ajustes se quedan arriba en su cápsula en
+    // lugar de bajar al pie del menú encogido (lo pidió el autor)
+    const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons && !usesBarCapsules;
     const drawerWidth = collapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH_EXPANDED;
     const activeItem = activeMenuItemOf(menuItems, pathname);
     const sideMenuProps = {logo, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter};
@@ -185,7 +222,18 @@ const AppLayoutFrame = ({
             <SkipToContentLink />
             <GlassLensFilter />
 
-            <AppBar ref={appBarRef} position="sticky"
+            {/* en cápsulas, lo que pasa por debajo de la barra se desenfoca en la orilla: debajo del menú lateral, que sigue nítido */}
+            {isGlass && usesBarCapsules && (
+                <Box aria-hidden="true"
+                     sx={(theme) => ({
+                         ...scrollEdgeStylesOf(theme), display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'},
+                         position: 'fixed', top: 0, left: 0, right: 0, height: `calc(${APP_BAR_HEIGHT} + ${panelGap}px)`,
+                         zIndex: theme.zIndex.drawer - 1, pointerEvents: 'none',
+                     })} />
+            )}
+            {/* en cápsulas con vidrio la barra va transparente (color="transparent": el tema no le pone vidrio) y cada grupo
+                lleva el suyo; con el minimalista se queda del color del fondo, que tapa lo que pasa por debajo */}
+            <AppBar ref={appBarRef} position="sticky" color={isGlass && usesBarCapsules ? 'transparent' : undefined}
                     sx={(theme) => ({
                         pt: 'env(safe-area-inset-top)',
                         // encima del menú lateral, como en el DashboardLayout de MUI
@@ -194,10 +242,13 @@ const AppLayoutFrame = ({
                         // como la barra de Safari en el iPhone (en el teléfono se veía cuadrada y pegada arriba; lo reportaron).
                         // Abajo se suma la zona del gesto de inicio del iPhone (safe-area) a la separación
                         ...(isGlass && {
-                            overflow: 'hidden',
+                            // en cápsulas no se recorta: la sombra de cada cápsula se saldría cortada
+                            overflow: usesBarCapsules ? 'visible' : 'hidden',
                             [DESKTOP_MEDIA_QUERY]: {
                                 top: panelGap, mt: `${panelGap}px`, mx: `${panelGap}px`, width: 'auto',
                                 borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+                                // sin la raya de abajo de la barra fija: no hay franja que separar
+                                ...(usesBarCapsules && {borderBottom: 0, boxShadow: 'none'}),
                                 ...(isBarMerged && {display: 'none'}),
                             },
                         }),
@@ -206,38 +257,45 @@ const AppLayoutFrame = ({
                     })}>
                 {/* a la izquierda, la ☰ queda alineada con los íconos del menú lateral (los dos a 32 px de su orilla) */}
                 <Toolbar disableGutters sx={{minHeight: {xs: APP_BAR_HEIGHT_PIXELS, sm: APP_BAR_HEIGHT_PIXELS}, gap: 1, pl: {xs: 1.5, md: isSideMenu ? 1.5 : 3}, pr: {xs: 1.5, md: 3}}}>
-                    {/* OJO: en la cápsula del teléfono (vidrio) sin el margen negativo de «orilla de inicio» de MUI (-12 px): el
-                        botón quedaba pegado a la curva. Así su círculo queda concéntrico con la cápsula (12 px de cada lado) */}
-                    <IconButton edge="start" aria-label={t('drawer.open')} aria-expanded={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(true)}
-                                sx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...(isGlass && {ml: 0})}}>
-                        <MenuIcon />
-                    </IconButton>
+                    {/* la ☰ del teléfono va en la primera cápsula (en escritorio la de encoger el menú y el nombre). OJO: dentro de
+                        una cápsula, sin el margen negativo de «orilla de inicio» de MUI (-12 px): el botón quedaba pegado a la
+                        curva. Así su círculo queda concéntrico con la cápsula */}
+                    <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass}>
+                        <IconButton edge="start" aria-label={t('drawer.open')} aria-expanded={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(true)}
+                                    sx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...((isGlass || usesBarCapsules) && {ml: 0})}}>
+                            <MenuIcon />
+                        </IconButton>
+                        {isSideMenu && <CollapseMenuButton collapsed={collapsed} onToggle={toggle} />}
+                        <BarBrand logo={logo} brandName={brandName} brandCaption={brandCaption} homePath={homePath}
+                                  sx={isSideMenu ? {display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}} : {display: 'flex'}} />
+                    </BarGroup>
                     {isSideMenu ? (
-                        <>
-                            <CollapseMenuButton collapsed={collapsed} onToggle={toggle} />
-                            <BarBrand logo={logo} brandName={brandName} brandCaption={brandCaption} homePath={homePath} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}}} />
-                            <BarTitle brandName={brandName} />
-                        </>
+                        <BarTitle brandName={brandName} />
                     ) : (
                         <>
-                            <BarBrand logo={logo} brandName={brandName} brandCaption={brandCaption} homePath={homePath} sx={{display: 'flex'}} />
-                            <TopMenu menuItems={menuItems} activeItem={activeItem} />
+                            {/* el menú de arriba no sale en el teléfono: su cápsula tampoco (vacía se vería) */}
+                            <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}}}>
+                                <TopMenu menuItems={menuItems} activeItem={activeItem} />
+                            </BarGroup>
                             <Box sx={{flexGrow: 1}} />
                         </>
                     )}
-                    <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle} showLanguageToggle={showLanguageToggle}
-                                 showColorSchemeToggle={showColorSchemeToggle} user={user} profilePath={profilePath} accountMenuItems={accountMenuItems}
-                                 onSignOut={onSignOut} isSigningOut={isSigningOut} />
+                    <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass}>
+                        <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle} showLanguageToggle={showLanguageToggle}
+                                     showColorSchemeToggle={showColorSchemeToggle} user={user} profilePath={profilePath} accountMenuItems={accountMenuItems}
+                                     onSignOut={onSignOut} isSigningOut={isSigningOut} />
+                    </BarGroup>
                 </Toolbar>
                 {ribbons}
-                {/* con vidrio el aviso de versión nueva flota aparte, en su cápsula (abajo); sin vidrio, franja dentro de la barra */}
-                {!isGlass && <NewBuildNotice />}
+                {/* con la barra de pestañas el aviso de versión nueva flota aparte, en su cápsula (en el teléfono esta barra no
+                    se ve); sin ella, franja dentro de la barra */}
+                {!usesTabBar && <NewBuildNotice />}
                 {isNavigating && (
                     <LinearProgress aria-label={t('navigating')} color="inherit"
                                     sx={{position: 'absolute', bottom: 0, left: 0, right: 0, height: NAVIGATING_BAR_PIXELS}} />
                 )}
             </AppBar>
-            {isGlass && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
+            {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
                               account={(

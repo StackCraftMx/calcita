@@ -276,6 +276,11 @@ export default Object.freeze({
             "collapse": "Collapse the side menu",
             "more": "More",
             "showTabs": "Show the tabs",
+            "editTabs": "Edit the bar",
+            "editTabsHint": "Choose up to {{count}} screens for the bottom bar; the rest stay in “More”.",
+            "tabInBar": "{{label}} in the bar",
+            "resetTabs": "Restore defaults",
+            "doneEditing": "Done",
             "scrollDown": "See more of the menu",
             "scrollUp": "See the top of the menu"
         },

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {createToolkitTheme} from '@/theme/createToolkitTheme.js';
+import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
 
 test('sin vidrio el tema no lo anota y los componentes del framework pintan sólido', () => {
@@ -32,6 +32,13 @@ test('la opacidad que pide el proyecto llega a las superficies', () => {
 
 test('una opacidad fuera de 0 a 1 truena con su motivo (un 80 en lugar de 0.8 dejaba la barra sin fondo)', () => {
     assert.throws(() => createToolkitTheme({glass: {opacity: 80}}), /va de 0 a 1/);
+});
+
+test('la barra de arriba: cápsulas por omisión (con vidrio y con el minimalista), franja si se pide, y un nombre mal escrito truena', () => {
+    assert.equal(createToolkitTheme({glass: true}).toolkit.bar, TOP_BAR.capsules);
+    assert.equal(createToolkitTheme({look: THEME_LOOK.minimal}).toolkit.bar, TOP_BAR.capsules);
+    assert.equal(createToolkitTheme({glass: true, bar: TOP_BAR.band}).toolkit.bar, TOP_BAR.band);
+    assert.throws(() => createToolkitTheme({bar: 'capsulas'}), /bar es 'capsules' o 'band'/);
 });
 
 test('los ajustes de vidrio se suman a los normales: la barra fija es vidrio neutro y cambia su línea por el brillo', () => {

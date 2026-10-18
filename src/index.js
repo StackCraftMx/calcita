@@ -32,7 +32,7 @@ export {
 export {DOWNLOAD_STATUS, DownloadManager, cancelDownload, clearFinishedDownloads, downloadsMachine, startDownload} from '@/downloads/index.js';
 
 // ─── el tema (opcional): el estilo de Stackcraft, con claro / oscuro y vidrio líquido ─
-export {THEME_LOOK, createToolkitTheme} from '@/theme/createToolkitTheme.js';
+export {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 export {isAndroidDevice} from '@/theme/androidDevice.js';
 export {MINIMAL_BACKGROUND} from '@/theme/components/minimalComponents.js';
 export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
@@ -41,6 +41,7 @@ export {mergeComponents} from '@/theme/mergeComponents.js';
 export {
     GLASS_INSET_PIXELS, GLASS_MENU_RADIUS_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassDropOf, glassStylesOf, glassSurfaceOf,
     accentTextStylesOf, canvasFieldStylesOf, fieldWellStylesOf, fixedBackgroundLayerOf, isGlassTheme, materialBackgroundOf, materialStylesOf, materialSurfaceOf,
+    scrollEdgeStylesOf,
 } from '@/theme/glassSurface.js';
 
 // ─── el marco de la app, el menú compuesto y los permisos (RBAC / ABAC del proyecto) ─

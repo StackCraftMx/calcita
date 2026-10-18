@@ -5,10 +5,10 @@
 // vidrio es de Apple y el desenfoque pesa en los teléfonos baratos). resetThemeChoices regresa todo a lo de fábrica.
 //
 // Lo renderiza la app: arrow (regla de la casa).
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
-import {isAndroidDevice} from '@stackcraftmx/calcita';
+import {TOP_BAR, isAndroidDevice} from '@stackcraftmx/calcita';
 
 import {DEFAULT_THEME_CHOICES, GLASS_MODES, buildAppTheme} from '@/app/appTheme.js';
 import {AppThemeChoiceContext, THEME_COLOR_KEYS, useAppThemeChoice} from '@/core';
@@ -40,9 +40,9 @@ const readStoredGlassMode = () => {
 };
 
 /**
- * Los colores y esquinas guardados, revisados: lo que no sea válido se queda con lo de fábrica.
+ * Los colores, las esquinas y la barra guardados, revisados: lo que no sea válido se queda con lo de fábrica.
  *
- * @returns {{colors: Record<string, string>, cornerRadius: number}}
+ * @returns {{colors: Record<string, string>, cornerRadius: number, bar: string}}
  */
 const readStoredThemeChoices = () => {
     try {
@@ -56,7 +56,8 @@ const readStoredThemeChoices = () => {
         const radius = Number(stored.cornerRadius);
         const cornerRadius = Number.isInteger(radius) && radius >= CORNER_RADIUS_LIMITS.min && radius <= CORNER_RADIUS_LIMITS.max
             ? radius : DEFAULT_THEME_CHOICES.cornerRadius;
-        return {colors, cornerRadius};
+        const bar = Object.values(TOP_BAR).includes(stored.bar) ? stored.bar : DEFAULT_THEME_CHOICES.bar;
+        return {colors, cornerRadius, bar};
     } catch {
         return DEFAULT_THEME_CHOICES;
     }
@@ -81,21 +82,40 @@ export const AppThemeProvider = ({children}) => {
         }
     }, []);
 
+    // los colores, las esquinas y la barra también se guardan SOLO cuando la persona los cambia (antes se guardaban al abrir
+    // la página y lo de fábrica de ese día tapaba lo de fábrica nuevo, igual que pasó con el estilo). Qué hacer con lo
+    // guardado lo decide quien cambia: 'save' al elegir, 'remove' al regresar a lo de fábrica
+    const pendingThemeSave = useRef(null);
+    const rememberThemeChoices = useCallback((update) => {
+        pendingThemeSave.current = 'save';
+        setThemeChoices(update);
+    }, []);
+
     const choice = useMemo(() => ({
         glassMode,
         setGlassMode: rememberGlassMode,
         themeChoices,
-        setThemeChoices,
-        // todo a lo de fábrica: colores, esquinas y estilo
+        setThemeChoices: rememberThemeChoices,
+        // todo a lo de fábrica: colores, esquinas, barra y estilo (y se borra lo guardado)
         resetThemeChoices: () => {
+            pendingThemeSave.current = 'remove';
             setThemeChoices(DEFAULT_THEME_CHOICES);
             rememberGlassMode(null);
         },
-    }), [glassMode, themeChoices, rememberGlassMode]);
+    }), [glassMode, themeChoices, rememberGlassMode, rememberThemeChoices]);
 
     useEffect(() => {
+        const pending = pendingThemeSave.current;
+        if (!pending) {
+            return;
+        }
+        pendingThemeSave.current = null;
         try {
-            window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themeChoices));
+            if (pending === 'remove') {
+                window.localStorage.removeItem(THEME_STORAGE_KEY);
+            } else {
+                window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themeChoices));
+            }
         } catch {
             // almacenamiento bloqueado: cambia igual, solo no se recuerda
         }

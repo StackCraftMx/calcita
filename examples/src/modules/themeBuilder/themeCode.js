@@ -12,8 +12,12 @@ import {THEME_COLOR_KEYS, darkStatusColorOf, isStatusColor} from '@/core/themeCo
 /** Cómo va el vidrio en el tema que se exporta: apagado, en lo que flota o también en las tarjetas. */
 export const THEME_GLASS = Object.freeze({off: 'off', floating: 'floating', surfaces: 'surfaces'});
 
+/** La barra de arriba con vidrio o minimalista: en cápsulas (la de omisión de Calcita) o la franja (TOP_BAR de Calcita). */
+export const THEME_BAR = Object.freeze({band: 'band', capsules: 'capsules'});
+
 /**
- * La opción glass de createToolkitTheme para lo elegido (la misma en la vista previa y en el código exportado).
+ * La opción glass de createToolkitTheme para lo elegido (la misma en la vista previa y en el código exportado). Con lo
+ * de fábrica queda lo más corto: glass: true.
  *
  * @param {string} glass una de THEME_GLASS
  * @returns {boolean|{surfaces: boolean}}
@@ -43,10 +47,11 @@ function colorTextOf(color) {
  * @param {string} choices.glass una de THEME_GLASS
  * @param {number} choices.cornerRadius el radio de las esquinas en px
  * @param {string} [choices.look] 'minimal' para el estilo minimalista (sin vidrio)
+ * @param {string} [choices.bar] la barra de arriba con vidrio o minimalista, una de THEME_BAR
  * @param {boolean} [typed] la versión de TypeScript (con el tipo del tema)
  * @returns {string}
  */
-export function themeCodeOf({colors, glass, cornerRadius, look}, typed = false) {
+export function themeCodeOf({colors, glass, cornerRadius, look, bar}, typed = false) {
     const colorLinesOf = (isDark) => THEME_COLOR_KEYS
         .filter((key) => colors[key])
         .map((key) => {
@@ -59,6 +64,9 @@ export function themeCodeOf({colors, glass, cornerRadius, look}, typed = false) 
         .join('\n');
     const glassOption = glassOptionOf(glass);
     const glassText = typeof glassOption === 'object' ? '{surfaces: true}' : String(glassOption);
+    // la barra va solo si se aparta de lo de omisión (las cápsulas) y solo donde aplica: con vidrio o con el minimalista
+    const hasBarChoice = look === 'minimal' || glass !== THEME_GLASS.off;
+    const barLine = hasBarChoice && bar === THEME_BAR.band ? `    bar: '${THEME_BAR.band}',` : null;
     const themeType = typed ? ': Theme' : '';
     return [
         `// El tema de la app, armado en el configurador de Calcita.`,
@@ -80,6 +88,7 @@ export function themeCodeOf({colors, glass, cornerRadius, look}, typed = false) 
         `export const appTheme${themeType} = createToolkitTheme({`,
         `    colorSchemes: {light: {palette: lightPalette}, dark: {palette: darkPalette}},`,
         look === 'minimal' ? `    look: 'minimal',` : `    glass: ${glassText},`,
+        barLine,
         `    overrides: {shape: {borderRadius: ${cornerRadius}}},`,
         `});`,
         ``,
