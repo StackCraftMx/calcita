@@ -30,7 +30,7 @@ import Tooltip from '@mui/material/Tooltip';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
-import BarCapsule from '@/appShell/BarCapsule.jsx';
+import BarCapsule, {monochromeButtonsSxOf} from '@/appShell/BarCapsule.jsx';
 import {
     BAR_ACTIONS_PLACEMENT, BarActionsMenuCloseContext, BarActionsPlacementContext, useBarActionsSlot,
 } from '@/appShell/barActionsSlot.js';
@@ -127,7 +127,7 @@ export default function BarActions({children, label, order, sx, inlineSx, bare =
     // principal no se vería)
     return createPortal(
         <Box role="group" aria-label={label}
-             sx={[{display: 'flex', alignItems: 'center', gap: 0.5, '& .MuiIconButton-root, & .MuiButton-text': {color: 'inherit'}}, orderSx, ...extraSx]}>
+             sx={[{display: 'flex', alignItems: 'center', gap: 0.5, ...monochromeButtonsSxOf('inherit')}, orderSx, ...extraSx]}>
             <InCapsule>{children}</InCapsule>
         </Box>,
         target,
