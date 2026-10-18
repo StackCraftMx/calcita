@@ -112,3 +112,15 @@ test('las pestañas del teléfono: las marcadas con mobileTab (o las primeras), 
     assert.deepEqual(mobileTabsOf(marked).tabs.map((item) => item.label), ['b', 'd', 'f']);
     assert.deepEqual(mobileTabsOf(items.slice(0, 5)), {tabs: items.slice(0, 5), more: []});
 });
+
+test('las pestañas que fijó la persona ganan a las marcadas, en el orden del menú', () => {
+    const items = ['a', 'b', 'c', 'd', 'e', 'f'].map((name) => ({to: `/${name}`, label: name, mobileTab: name === 'a'}));
+
+    assert.deepEqual(mobileTabsOf(items, ['/f', '/c']).tabs.map((item) => item.label), ['c', 'f']);
+    assert.deepEqual(mobileTabsOf(items, ['/f', '/c']).more.map((item) => item.label), ['a', 'b', 'd', 'e']);
+    // una que ya no puede ver (o que el proyecto quitó) no cuenta; si no queda ninguna, vuelven las marcadas
+    assert.deepEqual(mobileTabsOf(items, ['/borrada', '/e']).tabs.map((item) => item.label), ['e']);
+    assert.deepEqual(mobileTabsOf(items, ['/borrada']).tabs.map((item) => item.label), ['a']);
+    // nunca más de las que caben junto a «Más»
+    assert.equal(mobileTabsOf(items, items.map((item) => item.to)).tabs.length, 4);
+});

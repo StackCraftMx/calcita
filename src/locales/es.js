@@ -276,6 +276,11 @@ export default Object.freeze({
             "collapse": "Encoger el menú lateral",
             "more": "Más",
             "showTabs": "Ver las pestañas",
+            "editTabs": "Editar la barra",
+            "editTabsHint": "Elija hasta {{count}} pantallas para la barra de abajo; las demás quedan en «Más».",
+            "tabInBar": "{{label}} en la barra",
+            "resetTabs": "Como venía",
+            "doneEditing": "Listo",
             "scrollDown": "Ver más del menú",
             "scrollUp": "Ver lo de arriba del menú"
         },

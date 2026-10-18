@@ -1,10 +1,13 @@
 // La barra de pestañas del teléfono con vidrio, como la de iOS 26: una cápsula de vidrio flotando abajo con las secciones
 // principales (mobileTabsOf: hasta 5, o 4 y «Más»), y aparte, en su círculo de vidrio, la cuenta (con todos los ajustes
 // adentro). La reemplaza a la barra de abajo con ☰ y al cajón del menú (lo pidió el autor: «estilo Apple pero con sus
-// submenús de acciones»).
+// submenús de acciones»). También va con el minimalista cuando la barra va en cápsulas (usesMobileTabBar), sólida y
+// del gris de lo que flota (minimalFloatingStylesOf).
 //
 //   - Una pestaña con submenú no navega: abre el menú de acciones de Apple arriba de ella (SubmenuActionsMenu).
-//   - «Más» abre una hoja desde abajo con el resto del menú, por secciones (SideMenu, el mismo del escritorio).
+//   - «Más» abre una hoja desde abajo con el resto del menú, por secciones (SideMenu, el mismo del escritorio). Arriba trae
+//     «Editar la barra»: cada quien elige qué pantallas van abajo (TabBarEditor; se recuerda con usePinnedMobileTabs),
+//     como pide la guía de Apple. Sin elegir, van las que marca el proyecto (mobileTab en menu.js).
 //   - Cada pestaña lleva su badge como los de Apple (HIG «Tab bars»): ROJO con el número en blanco y solo para conteos (lo
 //     pendiente, del servidor); un badge de texto («Nuevo») no va en la pestaña, se queda en el menú: Apple los reserva para
 //     lo que pide atención.
@@ -18,6 +21,7 @@
 import {useState} from 'react';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
@@ -29,10 +33,13 @@ import {
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
 import SubmenuActionsMenu, {SUBMENU_PLACEMENT} from '@/appShell/SubmenuActionsMenu.jsx';
+import TabBarEditor from '@/appShell/TabBarEditor.jsx';
+import {usePinnedMobileTabs} from '@/appShell/usePinnedMobileTabs.js';
 import {useTabBarMinimized} from '@/appShell/useTabBarMinimized.js';
-import {menuBadgeOf, mobileTabsOf} from '@/navigation/appMenu.js';
+import {menuBadgeOf, menuItemKeyOf, mobileTabsOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
-import {accentTextStylesOf, glassStylesOf} from '@/theme/glassSurface.js';
+import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
+import {accentTextStylesOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -79,12 +86,16 @@ function appearStylesOf(theme, isShown, transformOrigin) {
 
 /**
  * La superficie de la barra y del círculo de la cuenta: vidrio más opaco, su línea fina y su sombra (la sombra va en una
- * capa detrás, ::before, para no pisar el filo de luz del vidrio, que también es una sombra).
+ * capa detrás, ::before, para no pisar el filo de luz del vidrio, que también es una sombra). Con el minimalista, sólida.
  *
  * @param {object} theme
  * @returns {object}
  */
 function floatingSurfaceOf(theme) {
+    // con el minimalista (barra en cápsulas) la barra es sólida: su gris de lo que flota, sin línea ni sombra
+    if (!isGlassTheme(theme)) {
+        return {...minimalFloatingStylesOf(theme), position: 'relative', borderRadius: '999px', height: '100%'};
+    }
     return {
         ...glassStylesOf(theme, {opacity: FLOATING_GLASS_OPACITY}),
         position: 'relative',
@@ -162,9 +173,23 @@ function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPo
 export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true}) {
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
-    const {tabs, more} = mobileTabsOf(menuItems);
+    const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();
+    const {tabs, more} = mobileTabsOf(menuItems, pinnedKeys);
     const [submenu, setSubmenu] = useState({anchorElement: null, menuItem: null});
     const [isMoreOpen, setIsMoreOpen] = useState(false);
+    const [isEditingTabs, setIsEditingTabs] = useState(false);
+    // al salir del editor su botón desaparece con el foco adentro: el foco regresa a «Editar la barra» (sin eso se perdía
+    // y Escape ya no cerraba la hoja; también lo necesita quien usa lector de pantalla)
+    const [returnsFromEditor, setReturnsFromEditor] = useState(false);
+    const leaveEditor = () => {
+        setIsEditingTabs(false);
+        setReturnsFromEditor(true);
+    };
+    const closeMore = () => {
+        setIsMoreOpen(false);
+        setIsEditingTabs(false);
+        setReturnsFromEditor(false);
+    };
     const {isMinimized, expand} = useTabBarMinimized(minimizeOnScroll);
     const closeSubmenu = () => setSubmenu({anchorElement: null, menuItem: null});
     const isInside = (menuItem) => menuItem === activeItem || (menuItem.children ?? []).includes(activeItem);
@@ -245,14 +270,31 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
             )}
 
             {/* «Más»: el resto del menú en una hoja desde abajo, separada de las orillas como las hojas de iOS */}
-            <Drawer anchor="bottom" open={isMoreOpen} onClose={() => setIsMoreOpen(false)}
+            <Drawer anchor="bottom" open={isMoreOpen} onClose={closeMore}
                     slotProps={{paper: {sx: {
                         m: `${GLASS_PANEL_GAP_PIXELS}px auto calc(${GLASS_PANEL_GAP_PIXELS}px + env(safe-area-inset-bottom))`,
                         width: `min(${MORE_SHEET_MAX_WIDTH_PIXELS}px, calc(100% - ${GLASS_PANEL_GAP_PIXELS * 2}px))`,
                         maxHeight: MORE_SHEET_MAX_HEIGHT, borderRadius: '20px', overflow: 'hidden',
                     }}}}>
-                <SideMenu menuItems={more} activeItem={activeItem} menuBadges={menuBadges} collapsed={false} showBrand={false} footer={moreFooter}
-                          onNavigate={() => setIsMoreOpen(false)} />
+                {isEditingTabs ? (
+                    <TabBarEditor menuItems={menuItems} pinnedKeys={tabs.map(menuItemKeyOf)}
+                                  onDone={(keys) => {
+                                      setPinnedKeys(keys);
+                                      leaveEditor();
+                                  }}
+                                  onReset={() => {
+                                      setPinnedKeys(null);
+                                      leaveEditor();
+                                  }} />
+                ) : (
+                    <>
+                        <Box sx={{display: 'flex', justifyContent: 'flex-end', px: 1.5, pt: 1, flexShrink: 0}}>
+                            <Button size="small" autoFocus={returnsFromEditor} onClick={() => setIsEditingTabs(true)}>{t('drawer.editTabs')}</Button>
+                        </Box>
+                        <SideMenu menuItems={more} activeItem={activeItem} menuBadges={menuBadges} collapsed={false} showBrand={false} footer={moreFooter}
+                                  onNavigate={closeMore} />
+                    </>
+                )}
             </Drawer>
         </>
     );
