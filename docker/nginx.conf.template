@@ -1,0 +1,58 @@
+# Sirve los ejemplos ya construidos (la imagen del Dockerfile de la raíz) DETRÁS DE UN PREFIJO, como en un servidor con
+# reverse proxy sin subdominio: calcita.stackcraft.com.mx/demo/. El prefijo es la variable ASSET_URL (/demo): la misma con que
+# se construyeron los ejemplos (Dockerfile); la imagen de nginx la pone aquí al arrancar (las plantillas de /etc/nginx/templates).
+# OJO: aquí tiene que ser un prefijo; vacío, la raíz se redirigiría a sí misma.
+#
+# Los ejemplos son una sola página con rutas del navegador (react-router): /demo/orders, /demo/customers… no existen como
+# archivos. Cualquier dirección bajo el prefijo que no sea un archivo regresa su index.html y la app decide qué pintar; sin
+# esto, recargar en /demo/orders daba 404.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    # nada de la versión de nginx en los errores ni en los encabezados
+    server_tokens off;
+    # las redirecciones sin servidor ni puerto («/demo/»): detrás del túnel, el puerto de adentro (8080) no existe afuera
+    absolute_redirect off;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+
+    # la raíz y cualquier dirección de cuando la demo vivía en la raíz (/orders, un ícono anclado al iPhone) llevan a la
+    # misma bajo el prefijo
+    location = / {
+        return 302 ${ASSET_URL}/;
+    }
+    location = ${ASSET_URL} {
+        return 301 ${ASSET_URL}/;
+    }
+    location / {
+        return 302 ${ASSET_URL}$request_uri;
+    }
+
+    # los archivos de assets llevan su huella en el nombre (index-a1b2c3.js): se guardan un año en el navegador
+    location ${ASSET_URL}/assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable" always;
+        add_header X-Content-Type-Options nosniff always;
+        try_files $uri =404;
+    }
+
+    # el manifiesto para instalar la app: nginx no conoce la extensión .webmanifest y lo mandaba como archivo genérico
+    location = ${ASSET_URL}/manifest.webmanifest {
+        default_type application/manifest+json;
+        add_header Cache-Control "no-cache" always;
+        add_header X-Content-Type-Options nosniff always;
+        try_files $uri =404;
+    }
+
+    location ${ASSET_URL}/ {
+        # index.html y version.json nunca se guardan: así una versión nueva se ve al recargar
+        add_header Cache-Control "no-cache" always;
+        add_header X-Content-Type-Options nosniff always;
+        try_files $uri $uri/ ${ASSET_URL}/index.html;
+    }
+}
