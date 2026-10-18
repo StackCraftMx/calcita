@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.21.0] - 2026-10-18
+
+### Agregado
+
+- En el teléfono con vidrio, «Más» → «Editar la barra»: cada quien elige qué pantallas van en la barra de pestañas (hasta
+  4, en el orden del menú), se recuerda en su navegador y «Como venía» regresa a las del proyecto. Solo se puede fijar lo
+  que la persona puede ver.
+- La barra de arriba en cápsulas, como las ventanas de macOS Tahoe, ya es la de omisión con vidrio y con el minimalista:
+  sin franja, la ☰ con el nombre, el menú y la cuenta en cápsulas y el título suelto. Con vidrio, cápsulas de vidrio y el
+  contenido pasando por debajo, desenfocado en la orilla (`scrollEdgeStylesOf`); con el minimalista, bloques del tono de
+  las tarjetas, también en el teléfono. Con cápsulas, el menú encogido ya no se funde con la barra: la cuenta y los
+  ajustes se quedan arriba. La franja se pide con `createToolkitTheme({bar: TOP_BAR.band})`. En los ejemplos se elige en
+  el menú de la cuenta y en el configurador de tema, y su código la trae.
+- El minimalista con cápsulas también lleva en el teléfono la barra de pestañas de abajo (con «Más», «Editar la barra» y
+  la cápsula chica al bajar), sólida y del gris 5 de Apple para que no se pierda sobre las tarjetas. Con la franja sigue
+  la barra de arriba con su cajón. La regla vive en un solo lugar (`usesMobileTabBar`) y la siguen los avisos que flotan
+  encima de esa barra.
+
+### Corregido
+
+- Ejemplos: los colores, las esquinas y la barra del configurador se guardaban al abrir la página aunque nadie eligiera
+  nada, y lo de fábrica de ese día tapaba lo de fábrica nuevo. Ahora se guardan solo cuando la persona los cambia.
+
 ## [0.20.0] - 2026-10-18
 
 ### Agregado
@@ -201,6 +224,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.21.0]: https://github.com/StackCraftMx/calcita/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/StackCraftMx/calcita/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/StackCraftMx/calcita/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/StackCraftMx/calcita/compare/v0.17.0...v0.18.0
