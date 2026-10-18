@@ -35,7 +35,7 @@ const abortControllerByDownloadId = new Map();
  * @param {string} options.label ya traducido; lo que se ve en el panel mientras todavía no se sabe el nombre del
  *     archivo
  * @param {'xlsx'|'csv'|'pdf'} [options.format] para el ícono del tipo de archivo en el panel
- * @param {(transferOptions: {signal: AbortSignal, onDownloadProgress: Function}) => Promise<{blob: Blob, fileName: string}>} options.request
+ * @param {(transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void}) => Promise<{blob: Blob, fileName: string}>} options.request
  * @param {(fileName: string) => void} [options.onCompleted] p. ej. volver a pedir la tabla (si la descarga cambia algo
  *     en el servidor)
  * @returns {Promise<string>} id de la descarga; la promesa se cumple cuando termina (bien, mal o cancelada), nunca falla

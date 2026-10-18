@@ -26,7 +26,7 @@ export {default as toolkitTextsEn} from '@/locales/en.js';
 
 // ─── avisos, confirmaciones y descargas ──────────────────────────────────────
 export {
-    ConfirmDialog, ModalWaiting, NEW_BUILD_NOTICE_VARIANT, NewBuildNotice, TOAST_DEFAULT_OPTIONS, Toaster, confirmActionMachine, dismissToast, errorsObjectToMessage,
+    ConfirmDialog, ModalWaiting, NEW_BUILD_NOTICE_VARIANT, NewBuildNotice, StaleBuildBoundary, TOAST_DEFAULT_OPTIONS, Toaster, confirmActionMachine, dismissToast, errorsObjectToMessage,
     toastDefault, toastError, toastInfo, toastLoading, toastProblem, toastPromise, toastSuccess, toastWarn, useConfirmAction,
 } from '@/feedback/index.js';
 export {DOWNLOAD_STATUS, DownloadManager, cancelDownload, clearFinishedDownloads, downloadsMachine, startDownload} from '@/downloads/index.js';
@@ -111,6 +111,11 @@ export {currentHistoryIndex, forgetPageName, pageNameAt, rememberPageName, useNa
 export {periodRangeIsValid, rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
 export {createLogger, setLogLevel} from '@/observability/logger.js';
 export {isNewBuildPublished, reportPublishedBuild, useNewBuildPublished} from '@/observability/publishedBuild.js';
+
+// ─── la petición de la casa: el cliente del servidor, sus errores y la recarga por una versión publicada ──
+export {API_ERROR_STATUS, ApiError} from '@/api/ApiError.js';
+export {API_RESPONSE_PARSE, apiUrlOf, createApiClient} from '@/api/createApiClient.js';
+export {isStaleChunkError, recoverFromStaleChunk} from '@/api/staleChunks.js';
 
 // ─── instalar la app (PWA): la invitación, los pasos por equipo y la entrada del menú de la cuenta ──
 export {INSTALL_VARIANT, detectPlatform, parseIOSMajor, resolveInstallVariant} from '@/pwa/installInstructions.js';

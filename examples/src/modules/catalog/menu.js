@@ -2,6 +2,7 @@
 // piezas: así cada componente se revisa por separado, en claro y en oscuro, con y sin vidrio.
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CloudSyncOutlinedIcon from '@mui/icons-material/CloudSyncOutlined';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
@@ -38,6 +39,7 @@ export function buildMenuItem() {
             {to: CATALOG_PATHS.charts, labelKey: 'catalog:nav.charts', Icon: BarChartOutlinedIcon},
             {to: CATALOG_PATHS.timeline, labelKey: 'catalog:nav.timeline', Icon: TimelineOutlinedIcon},
             {to: CATALOG_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
+            {to: CATALOG_PATHS.api, labelKey: 'catalog:nav.api', Icon: CloudSyncOutlinedIcon},
         ],
     };
 }
