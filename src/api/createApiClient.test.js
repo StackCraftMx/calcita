@@ -176,3 +176,54 @@ test('un Excel que llegó cortado no se entrega: ApiError 500 con el id de la pe
     assert.equal(error.status, 500);
     assert.equal(error.requestId, 'req-9');
 });
+
+test('los eventos salen hacia afuera: onRequest, onResponse y onError con cada error (sin red también), no al cancelar', async () => {
+    const events = [];
+    const {fakeFetch} = serverReplying(jsonReply({id: 1}), jsonReply({title: 'Falló'}, 500), new TypeError('Failed to fetch'));
+    const api = createApiClient({
+        baseUrl: '/api', fetch: fakeFetch,
+        onRequest: ({method, url}) => events.push(`sale ${method} ${url}`),
+        onResponse: ({status, durationMilliseconds}) => events.push(`llega ${status} ${typeof durationMilliseconds}`),
+        onError: (error, {url}) => events.push(`error ${error.status} ${url}`),
+    });
+
+    await api.get('/orders');
+    await api.get('/orders/9').catch(() => {});
+    await api.get('/ping').catch(() => {});
+    assert.deepEqual(events, [
+        'sale GET /api/orders', 'llega 200 number',
+        'sale GET /api/orders/9', 'llega 500 number', 'error 500 /api/orders/9',
+        'sale GET /api/ping', 'error 0 /api/ping',
+    ]);
+
+    const controller = new AbortController();
+    const abortError = new DOMException('cancelado', 'AbortError');
+    const aborting = createApiClient({
+        fetch: async () => { controller.abort(); throw abortError; }, onError: () => events.push('no debería'),
+    });
+    await aborting.get('/orders', {signal: controller.signal}).catch(() => {});
+    assert.equal(events.includes('no debería'), false);
+});
+
+test('un evento del proyecto que truena no tumba la petición', async () => {
+    const {fakeFetch} = serverReplying(jsonReply({id: 1}));
+    const api = createApiClient({fetch: fakeFetch, onRequest: () => { throw new Error('evento roto'); }});
+    assert.deepEqual(await api.get('/orders'), {id: 1});
+});
+
+test('un backend que ya existe: toProblem lee su error ({message, errors} de Laravel) y mapResponse desenvuelve {data}', async () => {
+    const {fakeFetch} = serverReplying(
+        jsonReply({message: 'Los datos no son válidos.', errors: {email: ['El correo ya existe.']}}, 422, {'content-language': 'es'}),
+        jsonReply({data: [{id: 7}], meta: {total: 1}}),
+    );
+    const api = createApiClient({
+        fetch: fakeFetch,
+        toProblem: (body) => ({title: body.message, detail: body.message, errors: body.errors}),
+        mapResponse: (body) => body.data ?? body,
+    });
+
+    const error = await api.post('/customers', {}).catch((caught) => caught);
+    assert.equal(error.message, 'Los datos no son válidos.');
+    assert.deepEqual(error.problem.errors, {email: ['El correo ya existe.']});
+    assert.deepEqual(await api.get('/customers'), [{id: 7}]);
+});
