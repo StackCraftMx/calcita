@@ -186,6 +186,17 @@ const theme = createToolkitTheme({glass: {surfaces: true}});          // tambié
 equipos modestos) y la guía de Apple pide el contenido sin vidrio. Va bien en una portada o una demostración, no en
 pantallas de trabajo.
 
+La barra de arriba va sin franja, como las ventanas de macOS Tahoe: la ☰ con el nombre, el menú y la cuenta en cápsulas,
+y el título suelto. Con vidrio las cápsulas son de vidrio y el contenido pasa por debajo, desenfocado en la orilla para
+que todo se lea (`scrollEdgeStylesOf`); con el minimalista son bloques del tono de las tarjetas, también en el teléfono.
+Con cápsulas, el menú encogido deja la cuenta arriba en su cápsula, y en el teléfono el minimalista también lleva la
+barra de pestañas de abajo (sólida, del gris 5 de Apple). Quien prefiera la franja de lado a lado la pide;
+está en el mismo alto y el mismo lugar, así que nada más se mueve. El estilo de Stackcraft sin vidrio sigue con su barra.
+
+```js
+const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});   // la franja; por omisión TOP_BAR.capsules
+```
+
 En Android conviene arrancar con el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa
 en los teléfonos baratos. `isAndroidDevice()` lo dice; con Next, desde el servidor, se le pasa la identificación del
 navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para elegir un estilo, no para seguridad.
@@ -206,7 +217,8 @@ cuando el grande sale de la vista, el tamaño de letra, el idioma, claro u oscur
 el proyecto y Salir). Con `menuPosition="top"` el menú va dentro de la barra. En el teléfono, la hamburguesa abre el menú
 en un cajón y los ajustes se juntan detrás de un engrane. Con vidrio, en el teléfono las secciones van en una barra de
 pestañas abajo que se encoge al leer hacia abajo y regresa al subir, como en iOS 26 (`minimizeTabBarOnScroll={false}` la
-deja fija).
+deja fija). Van las que el `menu.js` marca con `mobileTab: true`, y en «Más» → «Editar la barra» cada quien elige las suyas
+(se recuerda en su navegador; «Como venía» regresa a las del proyecto).
 
 Claro u oscuro tiene tres opciones en el menú de la cuenta: Claro, Oscuro y Automático, que sigue lo que diga el equipo y
 es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la forma de volver a seguir al equipo.
