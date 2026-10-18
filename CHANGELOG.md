@@ -4,6 +4,18 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.23.0] - 2026-10-18
+
+### Agregado
+
+- `usePublishedBuildWatch`: la app se entera sola de que se publicó otra versión del front, sin depender del API. El build
+  deja `version.json` con su versión y la app lo vuelve a leer al regresar del segundo plano y cada tanto. Si estuvo fuera
+  15 minutos o más, se recarga sola; si no, sale el aviso «Hay una versión nueva» con su botón. Resuelve la app anclada al
+  inicio del iPhone, que al abrirla retomaba la versión vieja de memoria. Opciones: `checkEveryMinutes`,
+  `reloadAfterHiddenMinutes` (null: solo el aviso), `onReload` y `url`. La decisión es pura y se prueba sola
+  (`buildWatchActionOf`).
+- Ejemplos: su build deja `version.json` y la versión en `VITE_BUILD_ID`, y la raíz vigila con `usePublishedBuildWatch`.
+
 ## [0.22.0] - 2026-10-18
 
 ### Agregado
