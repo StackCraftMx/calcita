@@ -30,7 +30,7 @@ const AUDIT_FILTER_KINDS = {event: FILTER_KINDS.multiSelect};
  * @param {Record<string, object>} props.eventDictionary
  * @param {Record<string, object>} [props.resultDictionary]
  * @param {Array<object>} [props.extraColumns] columnas del DataGrid propias del módulo (archivo, origen, motivo...)
- * @param {(row: object) => string|null} [props.eventSuffixOf] texto que va después del evento con « · » (p. ej. para
+ * @param {(row: any) => string|null} [props.eventSuffixOf] texto que va después del evento con « · » (p. ej. para
  *     quién era la descarga); null = solo el evento
  * @param {string} props.ariaLabel
  * @param {number} [props.maxGridHeight]

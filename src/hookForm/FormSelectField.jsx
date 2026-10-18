@@ -6,10 +6,8 @@ import SelectInput from '@/inputs/SelectInput.jsx';
 import {useHookFormField} from '@/hookForm/useHookFormField.js';
 
 /**
- * @param {object} props las de SelectInput, sin value / onChange / onBlur / error
- * @param {string} props.name el campo del formulario
- * @param {string} props.label ya traducido
- * @param {object} [props.control] el de useForm, si la pantalla no usa FormProvider
+ * @param {{name: string, control?: object} & Omit<Parameters<typeof import('@/inputs/SelectInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las del campo de la casa, sin
+ *     value / onChange / onBlur / error; control: el de useForm, si la pantalla no usa FormProvider
  */
 export default function FormSelectField({name, control, ...inputProps}) {
     const fieldProps = useHookFormField(name, control);

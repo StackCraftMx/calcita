@@ -6,9 +6,7 @@ import TextInput from '@/inputs/TextInput.jsx';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
- * @param {object} props las de TextInput, sin value / onChange / onBlur / error
- * @param {string} props.name el campo del formulario
- * @param {string} props.label ya traducido
+ * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/TextInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de TextInput, sin value / onChange / onBlur / error
  */
 export default function FormTextField({name, ...textInputProps}) {
     const fieldProps = useFormikField(name);

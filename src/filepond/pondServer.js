@@ -38,7 +38,7 @@ function problemTitleOf(request) {
  * @param {string} [options.fieldName] el campo del archivo en el FormData; por omisión el name de la zona
  * @param {Record<string, string>} [options.headers] p. ej. Authorization
  * @param {boolean} [options.withCredentials] manda las cookies a otro dominio
- * @returns {{process: Function, revert: Function}} lo que recibe la prop server de FileDropzone
+ * @returns {{process: (...args: any[]) => any, revert: (...args: any[]) => any}} lo que recibe la prop server de FileDropzone
  */
 export function createPondServer({url, fieldName, headers = {}, withCredentials = false}) {
     return {

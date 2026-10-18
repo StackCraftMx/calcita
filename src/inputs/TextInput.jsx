@@ -51,6 +51,17 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {(value: string) => string} [props.normalizeOnBlur]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef] para enfocar el campo (react-hook-form lo usa)
  * @param {boolean} [props.clearable] la ⓧ para borrar el texto; por omisión sí (no en contraseñas ni con adorno propio)
+ * @param {boolean} [props.multiline] (y lo demás de TextField de MUI: minRows, autoComplete, autoFocus, slotProps, sx…)
+ * @param {number} [props.minRows]
+ * @param {number} [props.maxRows]
+ * @param {string} [props.autoComplete]
+ * @param {boolean} [props.autoFocus]
+ * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required]
+ * @param {boolean} [props.fullWidth]
+ * @param {string} [props.id]
+ * @param {object} [props.slotProps]
+ * @param {object} [props.sx]
  */
 export default function TextInput({
     name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,

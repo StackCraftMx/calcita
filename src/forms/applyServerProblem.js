@@ -11,7 +11,7 @@ import {formLevelMessageOf, splitServerFieldErrors} from '@/forms/serverProblemF
 import {fieldErrorsOf} from '@/problems.js';
 
 /**
- * @param {Error & {problem?: object}} error normalmente un ApiError (trae problem y message ya traducidos)
+ * @param {unknown} error normalmente un ApiError (trae problem y message ya traducidos)
  * @param {{setFieldError: Function, setStatus: Function, values: object}} formikHelpers
  */
 export function applyServerProblem(error, {setFieldError, setStatus, values}) {

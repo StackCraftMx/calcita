@@ -38,7 +38,7 @@ const ICON_BY_FORMAT = {
 /**
  * @param {object} props
  * @param {Array<'pdf'|'xlsx'|'csv'>} props.formats
- * @param {(format: string, transferOptions: {signal: AbortSignal, onDownloadProgress: Function}) => Promise<{blob: Blob, fileName: string}>} props.download
+ * @param {(format: string, transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void}) => Promise<{blob: Blob, fileName: string}>} props.download
  * @param {string} [props.label] ya traducido; por defecto "Descargar"
  * @param {string} [props.downloadLabel] ya traducido; lo que se ve en el panel de descargas antes de saber el nombre
  *     del archivo

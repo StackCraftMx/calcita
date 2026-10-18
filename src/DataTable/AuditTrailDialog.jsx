@@ -25,7 +25,7 @@ import ContentDialog from '@/ui/layout/ContentDialog.jsx';
  * @param {Array<object>} [props.extraColumns]
  * @param {import('react').ReactNode} [props.header] va entre el subtítulo y la tabla (p. ej. pestañas que cambian lo que se
  *     consulta)
- * @param {(row: object) => string|null} [props.eventSuffixOf] complemento del evento de un renglón (AuditTrailTable)
+ * @param {(row: any) => string|null} [props.eventSuffixOf] complemento del evento de un renglón (AuditTrailTable)
  */
 export default function AuditTrailDialog({
     open, onClose, title, subtitle, subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], header = null, eventSuffixOf = null,

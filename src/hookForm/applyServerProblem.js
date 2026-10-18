@@ -17,7 +17,7 @@ export const SERVER_PROBLEM_ROOT = 'root.server';
 const SERVER_ERROR_TYPE = 'server';
 
 /**
- * @param {Error & {problem?: object}} error normalmente un ApiError (trae problem y message ya traducidos)
+ * @param {unknown} error normalmente un ApiError (trae problem y message ya traducidos)
  * @param {{setError: Function, getValues: Function}} form lo que regresa useForm
  */
 export function applyServerProblem(error, {setError, getValues}) {

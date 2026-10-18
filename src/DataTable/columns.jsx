@@ -65,9 +65,18 @@ function FacetHeader({field, label, facetKey, renderOption, sort}) {
 }
 
 /**
+ * Las props de columna del DataGrid que más se usan, con su tipo, y cualquier otra suya (Record). OJO: tipo propio y no
+ * GridColDef del DataGrid: apuntar a sus tipos hace que un proyecto estricto (skipLibCheck: false) revise los internos del
+ * DataGrid, que no compilan con TypeScript 7.
+ *
+ * @typedef {{width?: number, minWidth?: number, maxWidth?: number, flex?: number, align?: 'left'|'center'|'right', headerAlign?: 'left'|'center'|'right', valueFormatter?: (value: any, row: any) => string, valueGetter?: (value: any, row: any) => any, renderCell?: (params: any) => import('react').ReactNode} & Record<string, any>} GridColumnProps
+ */
+
+/**
  * Columna de texto con orden y filtro "contiene" en el servidor.
  *
- * @param {{field: string, label: string, sort?: boolean, filter?: boolean} & object} columnDeclaration label ya traducido
+ * @param {{field: string, label: string, sort?: boolean, filter?: boolean} & GridColumnProps} columnDeclaration
+ *     label ya traducido; lo demás son props de columna del DataGrid (width, flex, valueFormatter, renderCell…)
  */
 export function textColumn({field, label, sort = true, filter = true, ...gridColumnProps}) {
     return {
@@ -83,7 +92,7 @@ export function textColumn({field, label, sort = true, filter = true, ...gridCol
 /**
  * Columna con filtro de opciones alimentado por las FACETAS del servidor.
  *
- * @param {{field: string, label: string, facetKey?: string, renderOption?: Function, sort?: boolean} & object} columnDeclaration
+ * @param {{field: string, label: string, facetKey?: string, renderOption?: (value: string) => import('react').ReactNode, sort?: boolean} & GridColumnProps} columnDeclaration
  */
 export function facetColumn({field, label, facetKey, renderOption, sort = true, ...gridColumnProps}) {
     return {
@@ -115,7 +124,7 @@ function DetailCell({row, onOpen, ariaLabelOf}) {
  * Columna de acción al final de la fila: un icono que abre el detalle (la ruta propia del renglón). Un icono y no la
  * fila entera a propósito: la fila como botón se dispara al seleccionar texto y no se ve que se puede abrir.
  *
- * @param {{onOpen: (row: object) => void, ariaLabelOf?: (row: object) => string}} declaration ariaLabelOf ya traducido
+ * @param {{onOpen: (row: any) => void, ariaLabelOf?: (row: any) => string}} declaration ariaLabelOf ya traducido
  */
 export function detailColumn({onOpen, ariaLabelOf}) {
     return {

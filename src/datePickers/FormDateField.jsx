@@ -7,9 +7,8 @@ import DateInput from '@/datePickers/DateInput.jsx';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
- * @param {object} props las de DateInput (minDate, maxDate, disableFuture, openTo…), sin value / onChange / onBlur / error
- * @param {string} props.name el campo del formulario
- * @param {string} props.label ya traducido
+ * @param {{name: string} & Omit<Parameters<typeof import('@/datePickers/DateInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
+ *     DateInput (minDate, maxDate, disableFuture, openTo…), sin value / onChange / onBlur / error
  */
 export default function FormDateField({name, ...dateInputProps}) {
     const fieldProps = useFormikField(name);

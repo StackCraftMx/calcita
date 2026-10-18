@@ -52,7 +52,7 @@ function DefaultCard({card}) {
  * @param {Array<{id: string, columnId: string, title: string, description?: string, tags?: string[]}>} props.cards el orden
  *     de cada columna es el orden en este arreglo
  * @param {(move: {cardId: string, fromColumnId: string, toColumnId: string, toIndex: number}) => void} props.onMove
- * @param {(card: object) => import('react').ReactNode} [props.renderCard] lo de adentro de cada tarjeta
+ * @param {(card: any) => import('react').ReactNode} [props.renderCard] lo de adentro de cada tarjeta (recibe la tarjeta de cards)
  * @param {(cardId: string) => void} [props.onCardClick]
  * @param {string} props.ariaLabel ya traducido
  */

@@ -22,10 +22,24 @@ export const catalogTexts = {
                 api: 'Servidor (API)',
                 security: 'Seguridad (XSS)',
                 account: 'Cuenta y seguridad',
+                downloads: 'Descargas',
                 maps: 'Mapa',
                 calendar: 'Calendario',
                 kanban: 'Tablero kanban',
                 inbox: 'Bandeja',
+                installApp: 'Instalar la app',
+                errorsAndLogs: 'Errores y registro',
+                themeAndGlass: 'Tema y vidrio',
+                shell: 'Marco y menú',
+                forms: 'Formularios',
+                permissions: 'Permisos',
+                uploads: 'Subir archivos',
+                excelReports: 'Reportes en Excel y CSV',
+                formats: 'Formatos, fechas y dinero',
+                dictionaries: 'Diccionarios y etiquetas',
+                cards: 'Encabezados y tarjetas',
+                confirmAndNotify: 'Confirmar y avisar',
+                serverTable: 'Tabla de servidor',
             },
             frameworkTitle: 'Del framework',
             code: {
@@ -704,6 +718,173 @@ export const catalogTexts = {
                     description: 'useAccount da quién está dentro, cómo volver a leer la sesión (después de guardar sus datos) y cómo salir.',
                 },
             },
+            downloads: {
+                title: 'Descargas',
+                description: 'El panel de descargas al estilo de Google Drive: sale abajo a la derecha solo mientras hay descargas, con el avance de cada archivo, cancelar, el motivo si falla y el archivo guardado al terminar. Las pantallas solo llaman startDownload; el panel es el único que avisa.',
+                panel: {title: 'Mandar archivos al panel', description: 'Cada botón manda un archivo de un servidor de mentira. Cancele uno desde el panel, o deje que falle el último: el panel se queda con el motivo hasta que lo cierre.'},
+                setup: {title: 'Montarlo una vez', description: 'En la raíz de la app, junto a los avisos. Sin descargas no se pinta nada.'},
+                fromApi: {title: 'Desde una pantalla, con la petición de la casa', description: 'apiClient.download trae el archivo con el nombre que manda el servidor y su avance. Detrás de una confirmación, el diálogo se cierra al confirmar y el avance sigue en el panel.'},
+            },
+            serverTable: {
+                title: 'Tabla de servidor',
+                description: 'Pagina, filtra y ordena en el servidor, con el total real: nunca trae todo para filtrar en el navegador. Filtros en el encabezado de cada columna, búsqueda, accesos rápidos con su conteo, chips de lo filtrado y la columna fija al deslizar.',
+                demo: {
+                    title: 'Pedidos',
+                    description: 'Busque, filtre por estado (los accesos rápidos dicen cuántos hay de cada uno), ordene con clic en el encabezado y cambie de página. Lo de mentira está marcado: en su proyecto, fetchPage llama a su API.',
+                },
+                api: {
+                    title: 'Conectarla a su API',
+                    description: 'toServerTableParams convierte lo que pide la tabla a la query del contrato (página desde 1, orden y filtros; los vacíos no viajan). Con prefix, los filtros viven en la dirección y se comparten por enlace.',
+                },
+            },
+            confirmAndNotify: {
+                title: 'Confirmar y avisar',
+                description: 'La confirmación antes de lo que no se deshace, con el servidor de por medio, y los avisos de lo que pasó. Un solo lugar avisa cada cosa: nada de avisar dos veces lo mismo.',
+                confirm: {
+                    title: 'Confirmar con el servidor',
+                    description: 'El diálogo se queda ocupado mientras contesta el servidor. Si dice que no, el motivo sale dentro del diálogo y la persona decide; si sale bien, se cierra y avisa. La primera vez este ejemplo contesta que no, a propósito.',
+                },
+                toasts: {
+                    title: 'Avisos',
+                    description: 'toastSuccess, toastInfo, toastWarn y toastError con texto ya traducido; toastProblem pinta un error del servidor con su título y su detalle; toastPromise acompaña algo que tarda y dice cómo terminó.',
+                },
+            },
+            cards: {
+                title: 'Encabezados y tarjetas',
+                description: 'Las piezas con que se arma una pantalla: el encabezado (que pone el título de la pestaña y lo sube a la barra), las tarjetas de métricas, las secciones con su acción y los datos en «dato: valor».',
+                cards: {
+                    title: 'Tarjetas y secciones',
+                    description: 'MetricCard con su tendencia (verde si es bueno, rojo si es malo) y su liga a la lista; SectionCard con una acción; DefinitionList; CollapsibleSection para lo largo.',
+                },
+                headers: {
+                    title: 'Encabezados de página',
+                    description: 'PageHeading para una pantalla normal (las migas salen solas del menú), PageHeader para una portada y DetailHeader para un detalle con su estado y sus botones.',
+                },
+            },
+            dictionaries: {
+                title: 'Diccionarios y etiquetas',
+                description: 'Los estados y catálogos que manda el API como código («pending») se pintan con su texto, su explicación y su color desde un diccionario: uno por catálogo, no repetido en cada pantalla. El color es información.',
+                demo: {
+                    title: 'El estado de un pedido',
+                    description: 'StatusChip como punto o chip (con palabra corta para columnas angostas y un conteo), DictionaryText dentro de un texto y labelOf para un Excel o un correo. Un código que no está en el diccionario se pinta tal cual, en gris.',
+                },
+                texts: {
+                    title: 'Sus textos',
+                    description: 'Van en el archivo de textos del módulo, en el namespace dictionaries: el texto, la palabra corta y la explicación, en español e inglés.',
+                },
+            },
+            formats: {
+                title: 'Formatos, fechas y dinero',
+                description: 'Nada de armar textos a mano: montos, números, porcentajes, fechas y tamaños salen en el idioma activo y en la zona del producto (la de ToolkitProvider), y el dinero se opera con Money, al centavo.',
+                formats: {
+                    title: 'Formatos',
+                    description: 'Un instante (con hora, en UTC) se pinta en la zona del producto; un día del calendario, sin moverlo. Un valor vacío sale como «—», nunca como 0. Cambie el idioma y vea cómo cambian.',
+                },
+                money: {
+                    title: 'Dinero sin decimales de más',
+                    description: 'Money guarda centavos enteros, como el backend: se lee en texto del JSON, se suma, multiplica y divide con la regla de redondeo que se elija, y se manda al API otra vez en texto.',
+                },
+            },
+            excelReports: {
+                title: 'Reportes en Excel y CSV',
+                description: 'Un reporte se arma una vez (reportSheetOf) y de ahí sale lo que se ve en pantalla, el Excel con formato (Resumen y Datos, con montos y porcentajes de verdad, no texto) y el CSV. Así el archivo y la pantalla dicen lo mismo.',
+                demo: {
+                    title: 'Descargar un reporte',
+                    description: 'Elija Excel o CSV: se confirma y el archivo va al panel de descargas. ExcelJS se carga solo al pedir el Excel (pesa casi 1 MB) y se le pasa al armar el libro: el paquete no lo trae.',
+                },
+            },
+            uploads: {
+                title: 'Subir archivos',
+                description: 'La zona para soltar o elegir un archivo revisa el tipo y el peso antes de subirlo (lo que no cumple se explica sin viajar), queda con candado mientras sube y enseña el avance. Para varios archivos con avance por cada uno, la de /filepond tiene el mismo uso.',
+                demo: {
+                    title: 'Subir un inventario',
+                    description: 'Pruebe con un PDF o con un Excel de más de 5 MB: se rechaza con su motivo. Con uno válido, «Subir» enseña el avance (el servidor es de mentira).',
+                },
+                api: {
+                    title: 'Subirlo a su API',
+                    description: 'uploadWithProgress manda el FormData con el idioma y avisa el avance; si el servidor dice que no, su problema llega como ApiError.',
+                },
+            },
+            permissions: {
+                title: 'Permisos',
+                description: 'El framework no sabe de roles: cada proyecto declara sus reglas (por permisos, por rol o por atributos del registro) y el menú, las rutas y los botones preguntan con la misma. Lo que decide es lo que se pinta; el backend lo vuelve a decidir en cada petición.',
+                demo: {
+                    title: 'Las reglas y la matriz de permisos',
+                    description: 'Cada renglón es una regla con lo que mandó la sesión de este ejemplo. Abajo, PermissionMatrix: los permisos de un perfil por grupo, con «todos» y cuántos tiene.',
+                },
+                screens: {
+                    title: 'En el menú, las rutas y los botones',
+                    description: 'Cada módulo declara en su menu.js quién lo ve (access) y sus permisos; Can y useCan para un botón; RequireAccess para una parte de la pantalla.',
+                },
+            },
+            forms: {
+                title: 'Formularios',
+                description: 'Los mismos campos con formik (viene con Calcita) o con react-hook-form: se llaman igual, se ven igual y aplican las mismas reglas de yup, con los mensajes en el idioma activo. El número viaja como texto exacto y el error del servidor llega a su campo.',
+                formik: {
+                    title: 'Un alta con formik',
+                    description: 'FormSection acomoda los campos como en Apple (etiqueta a la izquierda, valor a la derecha). Pruebe con el correo ana@ejemplo.com: el servidor de mentira lo rechaza y el error sale en su campo.',
+                },
+                hookForm: {
+                    title: 'La misma, con react-hook-form',
+                    description: 'Cambia el import y cómo se arma el formulario (useForm con yupResolver y FormProvider); los campos y el error del servidor, igual.',
+                },
+                wizard: {
+                    title: 'Por pasos',
+                    description: 'FormWizard: la pantalla solo declara sus pasos y qué campos lleva cada uno. «Siguiente» revisa solo los del paso, el aval se puede omitir y un error del servidor regresa al paso donde está.',
+                },
+            },
+            shell: {
+                title: 'Marco y menú',
+                description: 'El marco de esta misma app: la barra, el menú a un lado o arriba que se encoge a íconos, la cuenta con sus ajustes y, en el teléfono, la barra de pestañas. Cada módulo declara su entrada en su menu.js y el menú se arma solo con lo que la sesión puede ver.',
+                layout: {
+                    title: 'El marco',
+                    description: 'AppLayout con el menú compuesto, los numeritos que manda el servidor, la persona de la sesión y los ajustes de la cuenta.',
+                },
+                menu: {
+                    title: 'La entrada de un módulo',
+                    description: 'Su lugar, su sección, quién la ve (access, que también protege sus rutas), su numerito (badgeKey) y su submenú.',
+                },
+                back: {
+                    title: 'Regresar a la lista como estaba',
+                    description: 'La lista anota su dirección con los filtros al salir y el detalle regresa ahí, no a la lista sin filtros.',
+                },
+            },
+            themeAndGlass: {
+                title: 'Tema y vidrio',
+                description: 'El tema de Calcita ajusta cada componente: claro y oscuro, el vidrio líquido en lo que flota (como pide la guía de Apple: el contenido, sólido) o el estilo minimalista, con los colores del proyecto. El configurador de tema de estos ejemplos arma el archivo con vista previa.',
+                appearance: {
+                    title: 'Lo que elige cada persona',
+                    description: 'Tamaño de letra, idioma y claro u oscuro (lo mismo que el menú de la cuenta) y GlassPanel, una superficie de vidrio propia. Cambiarlo aquí cambia toda la app.',
+                },
+                setup: {
+                    title: 'Armar el tema',
+                    description: 'Con vidrio y un color propio, minimalista, o los colores de MUI con un ajuste propio de un componente (se suma a los de Calcita).',
+                },
+            },
+            errorsAndLogs: {
+                title: 'Errores y registro',
+                description: 'Lo que ve la persona cuando algo no sale: la página de cada caso en palabras normales (con el código chico como referencia), el registro para quien da soporte (sin datos personales) y el aviso cuando se publicó otra versión con la pestaña abierta.',
+                pages: {
+                    title: 'Páginas de error',
+                    description: 'No existe, sin permiso, falla del servidor (con «Intentar de nuevo») y versión nueva (con «Recargar»).',
+                },
+                logs: {
+                    title: 'Registro y versión nueva',
+                    description: 'createLogger por tema, con datos estructurados y sin datos personales; por omisión solo errores y advertencias. NewBuildNotice avisa que hay otra versión.',
+                },
+            },
+            installApp: {
+                title: 'Instalar la app',
+                description: 'Que la app se instale como una más del teléfono o la computadora: en Chrome con el aviso del navegador y en iPhone, iPad y Firefox de Android con los pasos de su equipo. Sin modo sin conexión: guardar datos en el navegador es de cada proyecto.',
+                setting: {
+                    title: '«Instalar la app»',
+                    description: 'El renglón del menú de la cuenta. Ya instalada, no sale.',
+                },
+                setup: {
+                    title: 'Lo que lleva el proyecto',
+                    description: 'El manifiesto con el nombre, los colores y los íconos, sus ligas en index.html, la invitación una vez en la raíz y el renglón en la cuenta.',
+                },
+            },
             maps: {
                 title: 'Mapa',
                 description: 'MapView, con Leaflet y los mosaicos de OpenStreetMap: alfileres del color del tema y mosaicos oscuros en modo oscuro. Pide leaflet y react-leaflet.',
@@ -853,10 +1034,24 @@ export const catalogTexts = {
                 api: 'Server (API)',
                 security: 'Security (XSS)',
                 account: 'Account and security',
+                downloads: 'Downloads',
                 maps: 'Map',
                 calendar: 'Calendar',
                 kanban: 'Kanban board',
                 inbox: 'Inbox',
+                installApp: 'Install the app',
+                errorsAndLogs: 'Errors and logs',
+                themeAndGlass: 'Theme and glass',
+                shell: 'Frame and menu',
+                forms: 'Forms',
+                permissions: 'Permissions',
+                uploads: 'File uploads',
+                excelReports: 'Excel and CSV reports',
+                formats: 'Formats, dates and money',
+                dictionaries: 'Dictionaries and tags',
+                cards: 'Headers and cards',
+                confirmAndNotify: 'Confirm and notify',
+                serverTable: 'Server table',
             },
             frameworkTitle: 'From the framework',
             code: {
@@ -1533,6 +1728,173 @@ export const catalogTexts = {
                 session: {
                     title: 'The session in your own screen',
                     description: 'useAccount gives who is signed in, how to read the session again (after saving their details) and how to sign out.',
+                },
+            },
+            downloads: {
+                title: 'Downloads',
+                description: 'The downloads panel, Google Drive style: it shows at the bottom right only while there are downloads, with each file’s progress, cancel, the reason if it fails and the file saved when done. Screens only call startDownload; the panel is the only one that tells.',
+                panel: {title: 'Send files to the panel', description: 'Each button sends a file from a fake server. Cancel one from the panel, or let the last one fail: the panel keeps the reason until you close it.'},
+                setup: {title: 'Mount it once', description: 'At the root of the app, next to the toasts. Without downloads nothing is painted.'},
+                fromApi: {title: 'From a screen, with the house request', description: 'apiClient.download brings the file with the name the server sends and its progress. Behind a confirmation, the dialog closes on confirm and the progress continues in the panel.'},
+            },
+            serverTable: {
+                title: 'Server table',
+                description: 'It paginates, filters and sorts on the server, with the real total: it never brings everything to filter in the browser. Filters in each column header, search, quick filters with their count, chips of what is filtered and the pinned column when scrolling sideways.',
+                demo: {
+                    title: 'Orders',
+                    description: 'Search, filter by status (the quick filters say how many of each there are), sort by clicking the header and change pages. The fake part is marked: in your project, fetchPage calls your API.',
+                },
+                api: {
+                    title: 'Connect it to your API',
+                    description: 'toServerTableParams turns what the table asks for into the contract query (page from 1, sorting and filters; empty ones do not travel). With prefix, the filters live in the address and are shared by link.',
+                },
+            },
+            confirmAndNotify: {
+                title: 'Confirm and notify',
+                description: 'The confirmation before what cannot be undone, with the server in between, and the toasts of what happened. A single place tells each thing: never telling the same twice.',
+                confirm: {
+                    title: 'Confirm with the server',
+                    description: 'The dialog stays busy while the server answers. If it says no, the reason shows inside the dialog and the person decides; if it works, it closes and tells. The first time this example says no on purpose.',
+                },
+                toasts: {
+                    title: 'Toasts',
+                    description: 'toastSuccess, toastInfo, toastWarn and toastError with text already translated; toastProblem paints a server error with its title and detail; toastPromise follows something slow and says how it ended.',
+                },
+            },
+            cards: {
+                title: 'Headers and cards',
+                description: 'The pieces a screen is built with: the header (which sets the tab title and lifts it to the bar), metric cards, sections with their action and data as “label: value”.',
+                cards: {
+                    title: 'Cards and sections',
+                    description: 'MetricCard with its trend (green if good, red if bad) and its link to the list; SectionCard with an action; DefinitionList; CollapsibleSection for long content.',
+                },
+                headers: {
+                    title: 'Page headers',
+                    description: 'PageHeading for a normal screen (breadcrumbs come from the menu), PageHeader for a home page and DetailHeader for a detail with its status and buttons.',
+                },
+            },
+            dictionaries: {
+                title: 'Dictionaries and tags',
+                description: 'The statuses and catalogs the API sends as codes (“pending”) are painted with their text, explanation and color from a dictionary: one per catalog, not repeated in every screen. Color is information.',
+                demo: {
+                    title: 'An order’s status',
+                    description: 'StatusChip as a dot or a chip (with a short word for narrow columns and a count), DictionaryText inside a text and labelOf for an Excel file or an email. A code not in the dictionary is painted as is, in gray.',
+                },
+                texts: {
+                    title: 'Its texts',
+                    description: 'They go in the module’s text file, in the dictionaries namespace: the text, the short word and the explanation, in Spanish and English.',
+                },
+            },
+            formats: {
+                title: 'Formats, dates and money',
+                description: 'No hand-built text: amounts, numbers, percentages, dates and sizes come out in the active language and in the product’s time zone (ToolkitProvider’s), and money is handled with Money, to the cent.',
+                formats: {
+                    title: 'Formats',
+                    description: 'An instant (with time, in UTC) is painted in the product’s zone; a calendar day, without moving it. An empty value shows as “—”, never as 0. Change the language and see them change.',
+                },
+                money: {
+                    title: 'Money without extra decimals',
+                    description: 'Money keeps whole cents, like the backend: read as text from JSON, added, multiplied and divided with the chosen rounding rule, and sent back to the API as text.',
+                },
+            },
+            excelReports: {
+                title: 'Excel and CSV reports',
+                description: 'A report is built once (reportSheetOf) and from there come what shows on screen, the formatted Excel file (Summary and Data, with real amounts and percentages, not text) and the CSV. So the file and the screen say the same.',
+                demo: {
+                    title: 'Download a report',
+                    description: 'Choose Excel or CSV: it is confirmed and the file goes to the downloads panel. ExcelJS loads only when the Excel file is asked for (almost 1 MB) and is passed in to build the workbook: the package does not bundle it.',
+                },
+            },
+            uploads: {
+                title: 'File uploads',
+                description: 'The zone to drop or choose a file checks the type and size before uploading (what does not fit is explained without traveling), locks while uploading and shows the progress. For several files with progress for each, the /filepond one is used the same way.',
+                demo: {
+                    title: 'Upload an inventory',
+                    description: 'Try a PDF or an Excel file over 5 MB: it is rejected with its reason. With a valid one, “Upload” shows the progress (the server is fake).',
+                },
+                api: {
+                    title: 'Upload it to your API',
+                    description: 'uploadWithProgress sends the FormData with the language and reports the progress; if the server says no, its problem arrives as an ApiError.',
+                },
+            },
+            permissions: {
+                title: 'Permissions',
+                description: 'The framework knows nothing about roles: each project declares its rules (by permission, by role or by record attributes) and the menu, routes and buttons ask with the same one. It decides what is painted; the backend decides again on every request.',
+                demo: {
+                    title: 'Rules and the permission matrix',
+                    description: 'Each row is a rule with what this example’s session sent. Below, PermissionMatrix: a profile’s permissions by group, with “all” and how many it has.',
+                },
+                screens: {
+                    title: 'In the menu, routes and buttons',
+                    description: 'Each module declares in its menu.js who sees it (access) and its permissions; Can and useCan for a button; RequireAccess for a part of the screen.',
+                },
+            },
+            forms: {
+                title: 'Forms',
+                description: 'The same fields with formik (bundled with Calcita) or react-hook-form: same names, same look and the same yup rules, with messages in the active language. Numbers travel as exact text and server errors land on their field.',
+                formik: {
+                    title: 'A sign-up with formik',
+                    description: 'FormSection lays the fields out Apple-style (label on the left, value on the right). Try the email ana@ejemplo.com: the fake server rejects it and the error shows on its field.',
+                },
+                hookForm: {
+                    title: 'The same, with react-hook-form',
+                    description: 'The import changes and so does how the form is built (useForm with yupResolver and FormProvider); the fields and the server error, the same.',
+                },
+                wizard: {
+                    title: 'In steps',
+                    description: 'FormWizard: the screen only declares its steps and which fields each has. “Next” checks only that step’s fields, the guarantor can be skipped and a server error goes back to the step where it is.',
+                },
+            },
+            shell: {
+                title: 'Frame and menu',
+                description: 'This very app’s frame: the bar, the side or top menu that shrinks to icons, the account with its settings and, on a phone, the tab bar. Each module declares its entry in its menu.js and the menu builds itself with what the session can see.',
+                layout: {
+                    title: 'The frame',
+                    description: 'AppLayout with the composed menu, the counts the server sends, the session’s person and the account settings.',
+                },
+                menu: {
+                    title: 'A module’s entry',
+                    description: 'Its place, its section, who sees it (access, which also guards its routes), its count (badgeKey) and its submenu.',
+                },
+                back: {
+                    title: 'Back to the list as it was',
+                    description: 'The list saves its address with the filters when leaving and the detail goes back there, not to the unfiltered list.',
+                },
+            },
+            themeAndGlass: {
+                title: 'Theme and glass',
+                description: 'The Calcita theme tunes every component: light and dark, liquid glass on what floats (as Apple’s guidelines ask: content stays solid) or the minimal style, with the project’s colors. The theme builder in these examples writes the file with a live preview.',
+                appearance: {
+                    title: 'What each person chooses',
+                    description: 'Text size, language and light or dark (the same as the account menu) and GlassPanel, a glass surface of your own. Changing it here changes the whole app.',
+                },
+                setup: {
+                    title: 'Build the theme',
+                    description: 'With glass and your own color, minimal, or MUI’s colors with your own tweak to a component (added on top of Calcita’s).',
+                },
+            },
+            errorsAndLogs: {
+                title: 'Errors and logs',
+                description: 'What a person sees when something goes wrong: each case’s page in plain words (with the small code as a reference), the log for whoever gives support (without personal data) and the notice when another version was published with the tab open.',
+                pages: {
+                    title: 'Error pages',
+                    description: 'Not found, no permission, server failure (with “Try again”) and new version (with “Reload”).',
+                },
+                logs: {
+                    title: 'Logs and new version',
+                    description: 'createLogger by topic, with structured data and no personal data; by default only errors and warnings. NewBuildNotice tells there is another version.',
+                },
+            },
+            installApp: {
+                title: 'Install the app',
+                description: 'Let the app install like any other on the phone or computer: in Chrome with the browser prompt and on iPhone, iPad and Firefox for Android with the steps for that device. No offline mode: storing data in the browser is up to each project.',
+                setting: {
+                    title: '“Install the app”',
+                    description: 'The row in the account menu. Once installed, it does not show.',
+                },
+                setup: {
+                    title: 'What the project needs',
+                    description: 'The manifest with the name, colors and icons, its links in index.html, the invitation once at the root and the row in the account.',
                 },
             },
             maps: {

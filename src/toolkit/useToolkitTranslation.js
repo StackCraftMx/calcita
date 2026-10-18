@@ -12,7 +12,8 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {translateWith} from '@/toolkit/toolkitSettings.js';
 
 /**
- * @param {string|string[]} namespace el namespace de las llaves sin prefijo; con una lista, el primero
+ * @param {string|string[]} [namespace] el namespace de las llaves sin prefijo; con una lista, el primero. Sin él, cada
+ *     llave lleva el suyo ('orders:list.title')
  * @returns {{t: (key: string, values?: object) => string, language: string, changeLanguage: (language: string) => void}}
  */
 export function useToolkitTranslation(namespace) {

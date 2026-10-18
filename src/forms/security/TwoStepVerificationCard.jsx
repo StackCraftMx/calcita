@@ -223,11 +223,11 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
 /**
  * @param {object} props
  * @param {{isEnabled: boolean, enabledAt?: string|null, passkeys: Array<{id: string, name: string, createdAt: string, lastUsedAt?: string|null}>, totp: {isEnabled: boolean, enabledAt?: string|null}, recoveryCodesRemaining: number}} props.security
- * @param {(security: object) => void} props.onSecurityChange
+ * @param {(security: {isEnabled: boolean, enabledAt?: string|null, passkeys: Array<{id: string, name: string, createdAt: string, lastUsedAt?: string|null}>, totp: {isEnabled: boolean, enabledAt?: string|null}, recoveryCodesRemaining: number}) => void} props.onSecurityChange
  * @param {object} props.actions lo que hace el proyecto en cada caso; cada una regresa {security, recoveryCodes?}
  * @param {(name: string) => Promise<{security: object, recoveryCodes?: string[]}>} props.actions.addPasskey crea la llave
  *     (createPasskey) y la guarda en el servidor
- * @param {(passkey: object, password: string) => Promise<{security: object}>} props.actions.removePasskey
+ * @param {(passkey: {id: string, name: string}, password: string) => Promise<{security: object}>} props.actions.removePasskey
  * @param {() => Promise<{secret: string, qrImageUrl: string, extra?: import('react').ReactNode}>} props.actions.startTotp
  *     la clave y su QR; extra va abajo del campo (p. ej. un atajo de los ejemplos)
  * @param {(code: string) => Promise<{security: object, recoveryCodes?: string[]}>} props.actions.confirmTotp

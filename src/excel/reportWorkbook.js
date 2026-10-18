@@ -327,7 +327,8 @@ function figureColumnWidthOf(headerTitle, style) {
  * @param {object} sheet de reportSheetOf
  * @param {{summarySheetName: string, dataSheetName: string, title: string, subtitle?: string, style?: object}} texts
  *        los nombres de las dos hojas, lo que va arriba del Resumen y, si se quiere, lo que cambia de DEFAULT_REPORT_STYLE
- * @returns {object} el libro (ExcelJS.Workbook); se escribe con workbook.xlsx.writeBuffer()
+ * @returns {{xlsx: {writeBuffer: () => Promise<ArrayBuffer>}} & Record<string, any>} el libro (ExcelJS.Workbook); se escribe
+ *     con workbook.xlsx.writeBuffer(). Tipo propio y no el de ExcelJS: el paquete no depende de sus tipos
  */
 export function reportWorkbookOf(ExcelJS, sheet, {summarySheetName, dataSheetName, title, subtitle = '', style: customStyle = {}}) {
     const style = {

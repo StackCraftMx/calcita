@@ -90,7 +90,7 @@
  * @property {(input: {method: string, code: string}) => Promise<void>} signInSecondStep el código de la app (totp) o uno
  *     de recuperación (recoveryCode)
  * @property {() => Promise<object>} secondStepPasskeyOptions las opciones de WebAuthn para firmar (JSON del servidor)
- * @property {(credential: object) => Promise<void>} signInWithPasskey la firma del navegador
+ * @property {(credential: any) => Promise<void>} signInWithPasskey la firma del navegador (JSON de WebAuthn)
  * @property {() => Promise<void>} signOut
  * @property {(input: {email: string}) => Promise<void>} requestPasswordReset contesta igual exista o no el correo
  * @property {(input: {token: string, newPassword: string}) => Promise<void>} resetPassword desde el enlace del correo
@@ -101,7 +101,7 @@
  * @property {(code: string) => Promise<AccountSecurityChange>} confirmTotp
  * @property {(password: string) => Promise<AccountSecurityChange>} disableTotp
  * @property {() => Promise<object>} passkeyRegistrationOptions las opciones de WebAuthn para crear una llave
- * @property {(input: {name: string, credential: object}) => Promise<AccountSecurityChange>} savePasskey
+ * @property {(input: {name: string, credential: any}) => Promise<AccountSecurityChange>} savePasskey
  * @property {(input: {passkeyId: string, password: string}) => Promise<AccountSecurityChange>} removePasskey
  * @property {(password: string) => Promise<AccountSecurityChange>} regenerateRecoveryCodes
  * @property {() => Promise<AccountDeviceSession[]>} listSessions
