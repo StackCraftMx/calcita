@@ -17,7 +17,7 @@
 // Con @mui/x-data-grid 8 (compatible con MUI 7).
 //
 // Genérico del paquete: function (regla de la casa).
-import {useEffect, useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useMachine} from '@xstate/react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Alert from '@mui/material/Alert';
@@ -39,6 +39,9 @@ import {TableFilterContext} from '@/DataTable/filterContext.js';
 import {buildTableActors, tableMachine} from '@/DataTable/tableMachine.js';
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
 import {FILTER_KINDS, isFilterActive, useTableState} from '@/DataTable/useTableState.js';
+import BarActions from '@/appShell/BarActions.jsx';
+import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
+import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import {formatNumber} from '@/formatting.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
@@ -86,6 +89,8 @@ const DATA_GRID_DENSITY = 'compact';
 // ancho de la caja de búsqueda en escritorio: cabe un texto de ayuda como «Buscar por pedido, cliente o producto…».
 // OJO: con 280 se cortaba («…cliente o pro»); en el teléfono la caja toma todo el ancho
 const SEARCH_BOX_MIN_WIDTH_PIXELS = 400;
+// en la barra de la app (searchInBar) un poco más angosta: comparte el renglón con el título y las cápsulas
+const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
 
 
@@ -220,6 +225,11 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     isOverridden, renderExtra, allCountKey, hideAllCount}
  * @param {string|null} [props.searchField] filtro de texto que se saca a la barra; null quita la caja
  * @param {string} [props.searchPlaceholder]
+ * @param {boolean} [props.searchInBar] la caja de búsqueda va arriba, en la barra de la app (BarActions): en escritorio,
+ *     como el buscador de una ventana de macOS; en el teléfono con cápsulas flota arriba con las demás; sin cápsulas se
+ *     queda aquí. Por omisión no
+ * @param {boolean} [props.collapseSearchInBar] en la barra, sin usar se encoge a la lupa y se estira al picarla; por
+ *     omisión sí (false: siempre abierta)
  * @param {string} [props.emptyLabel]
  * @param {(total: number) => string} [props.countLabel] "12 pedidos"; por defecto "12 registros"
  * @param {number[]} [props.pageSizeOptions]
@@ -244,6 +254,8 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {(params: any) => number|'auto'|null} [props.getRowHeight]
  * @param {boolean} [props.hideFooterWhenAllRowsFit] esconde el pie (el paginador) mientras todo lo que hay cabe en la
  *     página; si un día no cabe, el pie vuelve solo. Para tablas que casi nunca pasan de una página
+ * @param {boolean} [props.showGoToPage] «Ir a página N» junto al paginador; por omisión escondido (con las flechas basta en
+ *     casi todas las tablas). Para listas de muchas páginas que se recorren por número
  * @param {object} [props.gridSx] estilos extra del DataGrid (clases de renglón)
  * @param {number} [props.maxGridHeight] alto máximo del contenedor; sin él la tabla crece con sus renglones (default)
  * @param {string} [props.ariaLabel] nombre de la tabla para lectores de pantalla
@@ -261,6 +273,8 @@ export default function ServerTable({
     quickFilters = [],
     searchField = 'contains',
     searchPlaceholder,
+    searchInBar = false,
+    collapseSearchInBar = true,
     emptyLabel,
     countLabel,
     pageSizeOptions = [10, 25, 50, 100],
@@ -276,6 +290,7 @@ export default function ServerTable({
     getRowClassName,
     isRowVisible,
     hideFooterWhenAllRowsFit = false,
+    showGoToPage = false,
     striped = false,
     getRowHeight,
     gridSx,
@@ -288,6 +303,8 @@ export default function ServerTable({
     const {filters, sortOrders, page, pageSize} = tableState;
 
     // la caja de búsqueda rebota: se escribe sin latencia y al servidor va una consulta cuando se deja de teclear
+    // si la caja de búsqueda tiene el foco (en la barra, con el foco se estira)
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [searchDraft, setSearchDraft] = useDebouncedFilter(
         searchField ? filters[searchField] : '',
         (value) => searchField && tableState.setFilter(searchField, value),
@@ -379,22 +396,71 @@ export default function ServerTable({
     const formattedTotal = formatNumber(total);
     const countText = countLabel ? countLabel(total) : t('count.records', {count: total, total: formattedTotal});
 
+    const searchText = searchPlaceholder ?? t('search.placeholder');
+    // en la barra, chica cuando no se usa: ni tiene el foco ni tiene texto
+    const isSearchCompact = searchInBar && collapseSearchInBar && !isSearchFocused && !searchDraft;
+    const searchBox = searchField && (
+        <TextField
+            type="search"
+            size="small"
+            value={searchDraft}
+            onChange={(event) => setSearchDraft(event.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            // Escape borra lo escrito y suelta la caja (en la barra, regresa a la lupa)
+            onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                    setSearchDraft('');
+                    event.currentTarget.querySelector('input')?.blur();
+                }
+            }}
+            placeholder={searchText}
+            sx={{minWidth: {xs: 0, md: SEARCH_BOX_MIN_WIDTH_PIXELS}}}
+            slotProps={{
+                input: {startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment>},
+                htmlInput: {'aria-label': searchText},
+            }}
+        />
+    );
+
     return (
         <TableFilterContext value={tableFilterValue}>
             <Stack direction={{xs: 'column', md: 'row'}} spacing={2} sx={{mb: 1.5, alignItems: {md: 'center'}}}>
-                {searchField && (
-                    <TextField
-                        type="search"
-                        size="small"
-                        value={searchDraft}
-                        onChange={(event) => setSearchDraft(event.target.value)}
-                        placeholder={searchPlaceholder ?? t('search.placeholder')}
-                        sx={{minWidth: {xs: 0, md: SEARCH_BOX_MIN_WIDTH_PIXELS}}}
-                        slotProps={{
-                            input: {startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment>},
-                            htmlInput: {'aria-label': searchPlaceholder ?? t('search.placeholder')},
-                        }}
-                    />
+                {searchBox && !searchInBar && searchBox}
+                {/* en la barra: el buscador ya es su propia cápsula (bare), del alto y la forma de las demás y más angosto.
+                    OJO: la barra es un Paper y el tema le pone al campo el radio de «campo dentro de tarjeta», con el lente
+                    (body[data-glass-lens] .MuiPaper-root …) aún más específica: por eso las tres clases (con menos salía con
+                    esquinas de 12 px y no en cápsula; medido en Chrome) */}
+                {/* sin usar se encoge a la lupa (collapseSearchInBar), como el buscador de las ventanas de macOS; al picarla o
+                    llegar con Tab se estira, y con texto se queda abierta. La lupa no atrapa el clic: lo deja pasar a la caja,
+                    que es la que se enfoca (si no, picar la lupa no hacía nada) */}
+                {searchBox && searchInBar && (
+                    <BarActions label={searchText} bare order={0}
+                                sx={(theme) => ({
+                                    // en el teléfono flota arriba junto a las demás cápsulas. Su lugar SIEMPRE ocupa lo libre del
+                                    // renglón y la caja va pegada a la derecha: así se abre de derecha a izquierda y regresa igual
+                                    // (el ancho pasa de 48 px a 100 % con transición). OJO: antes el lugar brincaba de golpe
+                                    // (flex-grow no se anima) y la caja crecía de izquierda a derecha; se veía muy mal. El hueco de
+                                    // la izquierda deja pasar el dedo a lo de abajo; solo la caja lo recibe
+                                    [PHONE_MEDIA_QUERY]: {
+                                        flexGrow: 1, minWidth: 0, justifyContent: 'flex-end', pointerEvents: 'none',
+                                        '& .MuiTextField-root': {pointerEvents: 'auto'},
+                                    },
+                                    '& .MuiTextField-root': {
+                                        width: isSearchCompact ? BAR_CAPSULE_HEIGHT_PIXELS : SEARCH_IN_BAR_WIDTH_PIXELS,
+                                        minWidth: 0,
+                                        transition: theme.transitions.create('width', {duration: theme.transitions.duration.short}),
+                                        '@media (prefers-reduced-motion: reduce)': {transition: 'none'},
+                                        [PHONE_MEDIA_QUERY]: {width: isSearchCompact ? BAR_CAPSULE_HEIGHT_PIXELS : '100%'},
+                                    },
+                                    '& .MuiFormControl-root .MuiInputBase-root.MuiOutlinedInput-root': {
+                                        height: BAR_CAPSULE_HEIGHT_PIXELS, borderRadius: '999px', cursor: isSearchCompact ? 'pointer' : 'text',
+                                    },
+                                    '& .MuiInputAdornment-root': {pointerEvents: 'none'},
+                                    '& input::placeholder': {opacity: isSearchCompact ? 0 : undefined},
+                                })}>
+                        {searchBox}
+                    </BarActions>
                 )}
                 {header ? (
                     <Box sx={{flexGrow: 1, minWidth: 0}}>
@@ -479,13 +545,16 @@ export default function ServerTable({
                         loadingOverlay: {variant: 'linear-progress', noRowsVariant: 'skeleton'},
                     }}
                     slots={{
-                        // "ir a la página N" pegado a la paginación: ahí lo busca quien ya está leyendo "51-75 de 1,234"
-                        pagination: () => (
-                            <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
-                                <GoToPage page={page} pageCount={Math.ceil(total / pageSize) || 1} onChange={tableState.setPage} />
-                                <GridPagination />
-                            </Stack>
-                        ),
+                        // "ir a la página N" (solo si se pide) pegado a la paginación: ahí lo busca quien ya está leyendo
+                        // "51-75 de 1,234". Sin él, la paginación de siempre del DataGrid
+                        ...(showGoToPage && {
+                            pagination: () => (
+                                <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                                    <GoToPage page={page} pageCount={Math.ceil(total / pageSize) || 1} onChange={tableState.setPage} />
+                                    <GridPagination />
+                                </Stack>
+                            ),
+                        }),
                         noResultsOverlay: () => <EmptyState filtered label={emptyLabel} onClearFilters={tableState.clearAll} />,
                         noRowsOverlay: () => <EmptyState filtered={hasActiveFilters} label={emptyLabel} onClearFilters={tableState.clearAll} />,
                     }}

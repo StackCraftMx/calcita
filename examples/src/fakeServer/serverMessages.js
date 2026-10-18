@@ -22,6 +22,13 @@ const SERVER_TEXTS = Object.freeze({
             expired: 'Pasaron más de 5 minutos. Vuelva a escribir su contraseña.',
             defaultPasskeyName: 'Llave de acceso {{number}}',
         },
+        branches: {
+            nameRequired: 'Escriba el nombre de la sucursal.',
+            duplicateName: 'Ya hay una sucursal «{{name}}» en {{city}}.',
+            cityRequired: 'Elija la ciudad de la sucursal.',
+            addressRequired: 'Escriba la dirección de la sucursal.',
+            created: 'Se agregó la sucursal {{name}}.',
+        },
         calendar: {
             sundayTitle: 'Los domingos no hay entregas',
             sunday: 'La tienda no entrega en domingo. Elija otro día.',
@@ -118,6 +125,13 @@ const SERVER_TEXTS = Object.freeze({
             expiredTitle: 'Too much time went by',
             expired: 'More than 5 minutes went by. Type your password again.',
             defaultPasskeyName: 'Passkey {{number}}',
+        },
+        branches: {
+            nameRequired: 'Type the branch name.',
+            duplicateName: 'There is already a «{{name}}» branch in {{city}}.',
+            cityRequired: 'Choose the branch city.',
+            addressRequired: 'Type the branch address.',
+            created: 'The {{name}} branch was added.',
         },
         calendar: {
             sundayTitle: 'No deliveries on Sundays',

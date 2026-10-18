@@ -30,7 +30,8 @@ import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/acco
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
-    withPermissionGroup, TOP_BAR, isAndroidDevice,
+    withPermissionGroup, TOP_BAR, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
+    useBarActionsPlacement, useCloseBarActionsMenu,
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
@@ -62,6 +63,17 @@ const emailSchema = Yup.string().email();
 const toolkitTheme = createToolkitTheme({glass: true});
 const surfacesTheme = createToolkitTheme({glass: {opacity: 0.7, surfaces: true}});
 const capsulesTheme = createToolkitTheme({look: 'minimal', bar: TOP_BAR.band});
+// las cápsulas de una pantalla en la barra y una cápsula suelta
+const screenCapsules = [
+    createElement(BarActions, {label: 'Acciones de pedidos', order: 2, sx: {gap: 1}, children: createElement(SubmitButton, {children: 'Agregar'})}),
+    createElement(BarActions, {label: 'Buscar', bare: true, inlineSx: {width: '100%'}, children: null}),
+    createElement(BarCapsule, {'aria-label': 'Zoom', children: null}),
+    createElement(BarActionButton, {label: 'Agregar sucursal', icon: null, onClick: () => {}, color: 'inherit'}),
+];
+// algo propio dentro de BarActions sabe si quedó en una cápsula (solo ícono) o en el «⋯» del teléfono, y cómo cerrarlo
+const isInCapsule = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.capsule;
+const isInMoreMenu = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.menu;
+const readCloseMoreMenu: () => () => void = useCloseBarActionsMenu;
 const startsMinimal: boolean = isAndroidDevice({userAgent: 'Mozilla/5.0 (Linux; Android 14)'});
 // @ts-expect-error la barra es 'capsules' o 'band', no otro texto
 createToolkitTheme({bar: 'capsulas'});
@@ -137,5 +149,5 @@ const applyCaught = (caught: unknown) => applyServerProblem(caught, {setFieldErr
 // @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
 const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
 
-export {capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+export {screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

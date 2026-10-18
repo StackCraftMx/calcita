@@ -173,7 +173,8 @@ export function menuBadgeOf(menuItem, menuBadges = {}) {
     return null;
 }
 
-// cuántas pestañas caben en la barra del teléfono, como las de Apple: hasta 5; si hay más entradas, 4 y «Más» con el resto
+// cuántas pestañas van en la barra del teléfono si no se dice otra cosa, como las de Apple: hasta 5; si hay más entradas,
+// 4 y «Más» con el resto. La barra (MobileTabBar) pasa las que de verdad caben a lo ancho
 const MOBILE_TAB_LIMIT = 5;
 /** Cuántas puede fijar la persona en la barra: las que caben junto a «Más». */
 export const PINNABLE_TAB_LIMIT = MOBILE_TAB_LIMIT - 1;
@@ -191,16 +192,17 @@ export function menuItemKeyOf(menuItem) {
 
 /**
  * Las pestañas de la barra del teléfono y lo que va en «Más». Van las que fijó la persona (pinnedKeys, en el orden del
- * menú); si no fijó ninguna, las que el menu.js marca con mobileTab: true; si ninguna lo dice, las primeras. Con 5 o
- * menos entradas van todas y no hay «Más».
+ * menú); si no fijó ninguna, las que el menu.js marca con mobileTab: true; si ninguna lo dice, las primeras. Si todas
+ * las entradas caben (tabLimit), van todas y no hay «Más»; si no, tabLimit - 1 y «Más» con el resto.
  *
  * @param {object[]} menuItems lo que regresa composeMenu
  * @param {string[]|null} [pinnedKeys] las que eligió la persona (menuItemKeyOf); las que ya no existen o ya no puede ver
  *     no cuentan
+ * @param {number} [tabLimit] cuántas caben en la barra contando «Más» (por omisión 5; la barra mide su ancho)
  * @returns {{tabs: object[], more: object[]}}
  */
-export function mobileTabsOf(menuItems, pinnedKeys = null) {
-    if (menuItems.length <= MOBILE_TAB_LIMIT) {
+export function mobileTabsOf(menuItems, pinnedKeys = null, tabLimit = MOBILE_TAB_LIMIT) {
+    if (menuItems.length <= tabLimit) {
         return {tabs: menuItems, more: []};
     }
     const pinned = menuItems.filter((menuItem) => (pinnedKeys ?? []).includes(menuItemKeyOf(menuItem)));
@@ -211,6 +213,7 @@ export function mobileTabsOf(menuItems, pinnedKeys = null) {
     } else if (marked.length > 0) {
         candidates = marked;
     }
-    const tabs = candidates.slice(0, PINNABLE_TAB_LIMIT);
+    // una de las que caben es para «Más»
+    const tabs = candidates.slice(0, Math.max(tabLimit - 1, 1));
     return {tabs, more: menuItems.filter((menuItem) => !tabs.includes(menuItem))};
 }

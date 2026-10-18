@@ -61,6 +61,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 import {AppMenuContext} from '@/appShell/appMenuContext.js';
+import BarCapsule from '@/appShell/BarCapsule.jsx';
+import {BarActionsSlotContext} from '@/appShell/barActionsSlot.js';
 import HeaderTools from '@/appShell/HeaderTools.jsx';
 import MobileTabBar from '@/appShell/MobileTabBar.jsx';
 import {PageTitleProvider, usePageTitle} from '@/appShell/pageTitle.jsx';
@@ -75,9 +77,8 @@ import {useDrawerCollapsed} from '@/appShell/useDrawerCollapsed.js';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import {activeMenuItemOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
-import {paletteOf} from '@/theme/components/paletteOf.js';
 import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
-import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassStylesOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
+import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
 
@@ -85,26 +86,17 @@ import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight
 export const MENU_POSITION = Object.freeze({side: 'side', top: 'top'});
 
 const NAVIGATING_BAR_PIXELS = 2;
-// la barra en cápsulas: lo alto de cada cápsula (px), centrada en el alto de siempre de la barra
-const BAR_CAPSULE_HEIGHT_PIXELS = 48;
 
 /**
- * Un grupo de la barra: con la barra en cápsulas, su cápsula (de vidrio, o con el minimalista un bloque del tono de las
- * tarjetas, sin borde ni sombra); con la franja, sus piezas tal cual (sin caja de más, para que la franja se quede idéntica).
+ * Un grupo de la barra: con la barra en cápsulas, su cápsula (BarCapsule: de vidrio, o con el minimalista un bloque del
+ * tono de las tarjetas); con la franja, sus piezas tal cual (sin caja de más, para que la franja se quede idéntica).
  */
-const BarGroup = ({isCapsule, isGlass, sx, children}) => {
+const BarGroup = ({isCapsule, sx, children}) => {
     if (!isCapsule) {
         return children;
     }
-    return (
-        <Box sx={[(theme) => ({
-            ...(isGlass ? glassStylesOf(theme, {isControl: true}) : {backgroundColor: paletteOf(theme).background.paper}),
-            display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0, minWidth: 0,
-            height: BAR_CAPSULE_HEIGHT_PIXELS, px: 0.75, borderRadius: '999px',
-        }), sx]}>
-            {children}
-        </Box>
-    );
+    // presentation: lo de adentro (la ☰, el nombre, la cuenta) ya se anuncia solo; el grupo es solo la forma
+    return <BarCapsule role="presentation" sx={sx}>{children}</BarCapsule>;
 };
 
 /** «Saltar al contenido»: escondido arriba hasta que llega el foco del teclado. */
@@ -199,8 +191,6 @@ const AppLayoutFrame = ({
     // la barra de pestañas del teléfono (estilo Apple): con vidrio, y con el minimalista en cápsulas (usesMobileTabBar);
     // sin vidrio, o con el minimalista en franja, se queda la barra de MUI arriba con su cajón
     const usesTabBar = usesMobileTabBar(theme);
-    // con vidrio, la barra y el menú lateral flotan a GLASS_PANEL_GAP_PIXELS de la orilla: la columna del menú mide eso de más
-    const panelGap = isGlass ? GLASS_PANEL_GAP_PIXELS : 0;
 
     const isSideMenu = menuPosition !== MENU_POSITION.top;
     // con vidrio y el menú encogido, en escritorio la barra de arriba desaparece y se funde con el menú: la ☰ y el logo van
@@ -210,14 +200,30 @@ const AppLayoutFrame = ({
     // estilo de Stackcraft sin vidrio se queda con su barra de siempre
     const isMinimalLook = theme.toolkit?.look === THEME_LOOK.minimal;
     const usesBarCapsules = (isGlass || isMinimalLook) && theme.toolkit?.bar === TOP_BAR.capsules;
+    // con vidrio, o con cápsulas, la barra y el menú lateral van a GLASS_PANEL_GAP_PIXELS de la orilla: la columna del menú
+    // mide eso de más. OJO: con el minimalista en cápsulas era 0 y las cápsulas quedaban pegadas arriba (a 4 px) y el menú
+    // pegado a la izquierda (lo reportó el autor; medido en Chrome)
+    const panelGap = isGlass || usesBarCapsules ? GLASS_PANEL_GAP_PIXELS : 0;
     // con cápsulas no se funde: no hay franja que esconder, y la cuenta y los ajustes se quedan arriba en su cápsula en
     // lugar de bajar al pie del menú encogido (lo pidió el autor)
     const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons && !usesBarCapsules;
     const drawerWidth = collapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH_EXPANDED;
     const activeItem = activeMenuItemOf(menuItems, pathname);
     const sideMenuProps = {logo, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter};
+    // el lugar de la barra donde caen las acciones de cada pantalla (BarActions); con la barra fundida con el menú no hay
+    // barra en escritorio y se quedan en la pantalla
+    const [barActionsSlot, setBarActionsSlot] = useState(null);
+    // en el teléfono con cápsulas no hay barra de arriba (la de pestañas va abajo): las acciones flotan arriba a la derecha
+    const usesPhoneFloatingActions = usesTabBar && usesBarCapsules;
+    const [phoneBarActionsSlot, setPhoneBarActionsSlot] = useState(null);
+    const barActions = useMemo(() => ({
+        slot: isBarMerged ? null : barActionsSlot,
+        phoneSlot: usesPhoneFloatingActions ? phoneBarActionsSlot : null,
+        usesCapsules: usesBarCapsules,
+    }), [isBarMerged, barActionsSlot, usesPhoneFloatingActions, phoneBarActionsSlot, usesBarCapsules]);
 
     return (
+        <BarActionsSlotContext.Provider value={barActions}>
         <Box sx={[{display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default'}, isGlass && ambientBackgroundOf]}>
             <SkipToContentLink />
             <GlassLensFilter />
@@ -252,6 +258,11 @@ const AppLayoutFrame = ({
                                 ...(isBarMerged && {display: 'none'}),
                             },
                         }),
+                        // el minimalista en cápsulas no flota (su barra es del color del fondo y tapa lo que pasa por debajo):
+                        // la separación de las orillas va por dentro, para que las cápsulas queden donde las del vidrio
+                        ...(!isGlass && usesBarCapsules && {
+                            [DESKTOP_MEDIA_QUERY]: {pt: `calc(env(safe-area-inset-top) + ${panelGap}px)`, px: `${panelGap}px`},
+                        }),
                         // en el teléfono la barra de pestañas (MobileTabBar) la reemplaza: con ella van el menú y la cuenta
                         ...(usesTabBar && {[PHONE_MEDIA_QUERY]: {display: 'none'}}),
                     })}>
@@ -260,7 +271,7 @@ const AppLayoutFrame = ({
                     {/* la ☰ del teléfono va en la primera cápsula (en escritorio la de encoger el menú y el nombre). OJO: dentro de
                         una cápsula, sin el margen negativo de «orilla de inicio» de MUI (-12 px): el botón quedaba pegado a la
                         curva. Así su círculo queda concéntrico con la cápsula */}
-                    <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass}>
+                    <BarGroup isCapsule={usesBarCapsules}>
                         <IconButton edge="start" aria-label={t('drawer.open')} aria-expanded={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(true)}
                                     sx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...((isGlass || usesBarCapsules) && {ml: 0})}}>
                             <MenuIcon />
@@ -274,13 +285,16 @@ const AppLayoutFrame = ({
                     ) : (
                         <>
                             {/* el menú de arriba no sale en el teléfono: su cápsula tampoco (vacía se vería) */}
-                            <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}}}>
+                            <BarGroup isCapsule={usesBarCapsules} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}}}>
                                 <TopMenu menuItems={menuItems} activeItem={activeItem} />
                             </BarGroup>
                             <Box sx={{flexGrow: 1}} />
                         </>
                     )}
-                    <BarGroup isCapsule={usesBarCapsules} isGlass={isGlass}>
+                    {/* las acciones de la pantalla abierta (BarActions, y las de PageHeading con cápsulas): cada grupo cae aquí,
+                        antes de la cuenta. Solo en escritorio: en el teléfono flotan arriba (phoneBarActionsSlot, en el contenido) */}
+                    <Box ref={setBarActionsSlot} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}, alignItems: 'center', gap: 1, minWidth: 0}} />
+                    <BarGroup isCapsule={usesBarCapsules}>
                         <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle} showLanguageToggle={showLanguageToggle}
                                      showColorSchemeToggle={showColorSchemeToggle} user={user} profilePath={profilePath} accountMenuItems={accountMenuItems}
                                      onSignOut={onSignOut} isSigningOut={isSigningOut} />
@@ -312,7 +326,7 @@ const AppLayoutFrame = ({
                                 display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'}, width: drawerWidth + panelGap, flexShrink: 0, whiteSpace: 'nowrap',
                                 transition: drawerTransitionOf(theme),
                                 '& .MuiDrawer-paper': {
-                                    width: drawerWidth, boxSizing: 'border-box', overflowX: 'hidden', transition: drawerTransitionOf(theme, ['width']),
+                                    width: drawerWidth, left: panelGap, boxSizing: 'border-box', overflowX: 'hidden', transition: drawerTransitionOf(theme, ['width']),
                                     // justo debajo de la barra (su alto real, con avisos o sin ellos) y hasta abajo; si la barra se
                                     // fundió con el menú, de arriba a abajo
                                     ...(isBarMerged
@@ -321,7 +335,7 @@ const AppLayoutFrame = ({
                                     // el panel flotante: separado de las orillas y sin la línea de la derecha (lo separa su brillo).
                                     // Encogido es una cápsula (radio de la mitad de su ancho), como las barras de pestañas de vidrio
                                     ...(isGlass && {
-                                        left: panelGap, border: 0,
+                                        border: 0,
                                         borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
                                     }),
                                 },
@@ -354,6 +368,22 @@ const AppLayoutFrame = ({
                              },
                          }),
                      })}>
+                    {/* teléfono con cápsulas: el renglón de las acciones de la pantalla, arriba a la derecha. Va pegado (sticky)
+                        y no fijo: así ocupa su lugar arriba de la página (no tapa las migas ni el título) y al bajar se queda
+                        flotando. Vacío no se ve. Solo las cápsulas reciben clics: el hueco de la izquierda deja pasar el dedo
+                        a lo de abajo */}
+                    {usesPhoneFloatingActions && (
+                        <Box ref={setPhoneBarActionsSlot} data-phone-bar-actions=""
+                             sx={(theme) => ({
+                                 display: 'none',
+                                 [PHONE_MEDIA_QUERY]: {
+                                     display: 'flex', '&:empty': {display: 'none'},
+                                     position: 'sticky', top: `calc(env(safe-area-inset-top) + ${GLASS_PANEL_GAP_PIXELS}px)`, zIndex: theme.zIndex.appBar,
+                                     justifyContent: 'flex-end', alignItems: 'center', gap: 1, mb: 2,
+                                     pointerEvents: 'none', '& > *': {pointerEvents: 'auto'},
+                                 },
+                             })} />
+                    )}
                     <Box sx={{maxWidth: contentMaxWidth, mx: 'auto'}}>{children}</Box>
                 </Box>
             </Box>
@@ -365,6 +395,7 @@ const AppLayoutFrame = ({
                 <SideMenu {...sideMenuProps} collapsed={false} onNavigate={() => setIsMobileMenuOpen(false)} />
             </Drawer>
         </Box>
+        </BarActionsSlotContext.Provider>
     );
 };
 

@@ -15,6 +15,7 @@ import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
 import {SectionCard, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeViewer} from '@/modules/catalog/CodeViewer.jsx';
+import {ExtensionTable} from '@/modules/catalog/ExtensionTable.jsx';
 
 /**
  * @param {object} props
@@ -23,8 +24,9 @@ import {CodeViewer} from '@/modules/catalog/CodeViewer.jsx';
  * @param {import('react').ComponentType} props.Demo el ejemplo (demos/…/Algo.tsx)
  * @param {() => Promise<{default: {ts: string, js: string}}>} props.loadSource () => import('…/Algo.tsx?demo-source')
  * @param {boolean} [props.bare] sin tarjeta: para un ejemplo que ya trae las suyas (el formulario de Apple)
+ * @param {Array<{option: string, what: string, example?: string}>} [props.extensions] «Cómo se extiende» (ExtensionTable)
  */
-export const DemoSection = ({title, description, Demo, loadSource, bare = false}) => {
+export const DemoSection = ({title, description, Demo, loadSource, bare = false, extensions}) => {
     const {t} = useToolkitTranslation('catalog');
     const [isCodeOpen, setIsCodeOpen] = useState(false);
     const [sources, setSources] = useState(null);
@@ -42,6 +44,7 @@ export const DemoSection = ({title, description, Demo, loadSource, bare = false}
     const content = (
         <>
             {description && <Typography variant="body2" color="text.secondary" sx={{mb: 2.5}}>{description}</Typography>}
+            {extensions && <ExtensionTable rows={extensions} />}
             <Box sx={{minWidth: 0}}>
                 <Demo />
             </Box>
@@ -77,8 +80,9 @@ export const DemoSection = ({title, description, Demo, loadSource, bare = false}
  * @param {string} [props.description] ya traducido
  * @param {() => Promise<{default: {ts: string, js: string}}>} [props.loadSource] () => import('…/archivo.ts?demo-source')
  * @param {{js?: string, ts?: string}} [props.sources] código fijo, en lugar de loadSource
+ * @param {Array<{option: string, what: string, example?: string}>} [props.extensions] «Cómo se extiende» (ExtensionTable)
  */
-export const CodeSection = ({title, description, loadSource, sources: fixedSources}) => {
+export const CodeSection = ({title, description, loadSource, sources: fixedSources, extensions}) => {
     const [loadedSources, setLoadedSources] = useState(null);
 
     useEffect(() => {
@@ -97,6 +101,7 @@ export const CodeSection = ({title, description, loadSource, sources: fixedSourc
     return (
         <SectionCard title={title}>
             {description && <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{description}</Typography>}
+            {extensions && <ExtensionTable rows={extensions} />}
             {sources && <CodeViewer sources={sources} />}
         </SectionCard>
     );

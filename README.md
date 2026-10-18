@@ -197,6 +197,23 @@ está en el mismo alto y el mismo lugar, así que nada más se mueve. El estilo 
 const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});   // la franja; por omisión TOP_BAR.capsules
 ```
 
+Cada pantalla puede poner sus propias cápsulas en la barra (buscar, agregar, exportar) con `BarActions`: las escribe en
+su código donde quiera y, en escritorio con cápsulas, el marco las sube a la barra; con la franja entran a la franja, y en
+el teléfono, con cápsulas, flotan arriba a la derecha y se quedan al bajar: las que caben, solo con ícono, y las que no,
+en un menú «⋯». Las `actions` de `PageHeading` ya suben solas, y `ServerTable` sube su búsqueda con
+`searchInBar`. «Hecho en Calcita» → «Marco y menú» lo enseña vivo.
+
+```jsx
+<BarActions label="Buscar en pedidos" order={1}>
+    <IconButton aria-label="Buscar" onClick={openSearch}><SearchRoundedIcon /></IconButton>
+</BarActions>
+<BarActions label="Acciones de pedidos" order={2}>                       {/* otro grupo, otra cápsula */}
+    {/* en la cápsula, solo el ícono con su nombre en el tooltip */}
+    <BarActionButton label="Agregar pedido" icon={<AddRoundedIcon />} onClick={openNew} />
+</BarActions>
+<BarCapsule aria-label="Zoom">…</BarCapsule>                              {/* la misma cápsula, fuera de la barra */}
+```
+
 En Android conviene arrancar con el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa
 en los teléfonos baratos. `isAndroidDevice()` lo dice; con Next, desde el servidor, se le pasa la identificación del
 navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para elegir un estilo, no para seguridad.
@@ -218,7 +235,8 @@ el proyecto y Salir). Con `menuPosition="top"` el menú va dentro de la barra. E
 en un cajón y los ajustes se juntan detrás de un engrane. Con vidrio, en el teléfono las secciones van en una barra de
 pestañas abajo que se encoge al leer hacia abajo y regresa al subir, como en iOS 26 (`minimizeTabBarOnScroll={false}` la
 deja fija). Van las que el `menu.js` marca con `mobileTab: true`, y en «Más» → «Editar la barra» cada quien elige las suyas
-(se recuerda en su navegador; «Como venía» regresa a las del proyecto).
+(se recuerda en su navegador; «Como venía» regresa a las del proyecto). Van tantas como quepan a lo ancho sin cortar su
+nombre; las demás, en «Más».
 
 Claro u oscuro tiene tres opciones en el menú de la cuenta: Claro, Oscuro y Automático, que sigue lo que diga el equipo y
 es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la forma de volver a seguir al equipo.

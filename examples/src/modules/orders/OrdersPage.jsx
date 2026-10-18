@@ -117,6 +117,8 @@ export const OrdersPage = () => {
                 chipConfig={chipConfig}
                 quickFilters={quickFilters}
                 searchPlaceholder={t('search.placeholder')}
+                // la búsqueda arriba, en la barra de la app (en el teléfono se queda aquí)
+                searchInBar
                 countLabel={(total) => t('count', {count: total, total: formatNumber(total)})}
                 emptyLabel={t('empty')}
                 ariaLabel={t('list.ariaLabel')}

@@ -1,7 +1,7 @@
 // La barra de pestañas del teléfono con vidrio, como la de iOS 26: una cápsula de vidrio flotando abajo con las secciones
-// principales (mobileTabsOf: hasta 5, o 4 y «Más»), y aparte, en su círculo de vidrio, la cuenta (con todos los ajustes
-// adentro). La reemplaza a la barra de abajo con ☰ y al cajón del menú (lo pidió el autor: «estilo Apple pero con sus
-// submenús de acciones»). También va con el minimalista cuando la barra va en cápsulas (usesMobileTabBar), sólida y
+// principales (mobileTabsOf: las que caben a lo ancho, y «Más» con el resto), y aparte, en su círculo de vidrio, la cuenta
+// (con todos los ajustes adentro). La reemplaza a la barra de abajo con ☰ y al cajón del menú (lo pidió el autor: «estilo
+// Apple pero con sus submenús de acciones»). También va con el minimalista cuando la barra va en cápsulas (usesMobileTabBar), sólida y
 // del gris de lo que flota (minimalFloatingStylesOf).
 //
 //   - Una pestaña con submenú no navega: abre el menú de acciones de Apple arriba de ella (SubmenuActionsMenu).
@@ -11,6 +11,8 @@
 //   - Cada pestaña lleva su badge como los de Apple (HIG «Tab bars»): ROJO con el número en blanco y solo para conteos (lo
 //     pendiente, del servidor); un badge de texto («Nuevo») no va en la pestaña, se queda en el menú: Apple los reserva para
 //     lo que pide atención.
+//   - Cuántas pestañas van se mide (useFittingTabCount): las que caben con al menos MIN_TAB_PIXELS cada una; las demás van
+//     a «Más». En una ventana angosta salen menos y en una ancha más, y los nombres no se cortan («Compone…»).
 //   - Acostado (pantalla bajita), la barra va compacta: ícono y nombre lado a lado, para dejarle el alto al contenido.
 //   - Al leer hacia abajo se encoge (como iOS 26): queda una cápsula chica con la pestaña donde está la persona, y la cuenta
 //     más chica; al subir un poco, o al tocar la cápsula, regresa completa (cuándo: tabBarScroll.js). Se mueve solo con
@@ -18,13 +20,14 @@
 // Solo se ve en el teléfono (PHONE_MEDIA_QUERY); en escritorio no ocupa nada.
 //
 // Genérico del paquete: function (regla de la casa).
-import {useState} from 'react';
+import {useLayoutEffect, useState} from 'react';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
 import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
 import {menuItemLabelOf} from '@/appShell/menuItemText.js';
@@ -48,6 +51,11 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 const TAB_LABEL_PIXELS = Object.freeze({portrait: 10, landscape: 12});
 const TAB_ICON_SIZE = '1.5rem';
 const TAB_BAR_MAX_WIDTH_PIXELS = 560;
+// lo menos que mide una pestaña (px) para que su nombre se lea entero: parada, un nombre de unas 11 letras («Formularios»
+// pide 61 px, medido en Chrome); acostada, ícono y nombre lado a lado. Con menos, la pestaña se va a «Más»
+const MIN_TAB_PIXELS = Object.freeze({portrait: 60, landscape: 104});
+// antes de medir (o si la barra no se ve): las de siempre, 4 y «Más»
+const DEFAULT_TAB_COUNT = 5;
 const MORE_SHEET_MAX_WIDTH_PIXELS = 640;
 const MORE_SHEET_MAX_HEIGHT = '75vh';
 const BADGE_MAX = 99;
@@ -162,6 +170,37 @@ function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPo
 }
 
 /**
+ * Cuántas pestañas caben en la cápsula (contando «Más»). Se mide la cápsula, que no cambia de ancho con sus pestañas (se
+ * estira hasta su tope), así que la cuenta no da vueltas. Se vuelve a medir al girar el teléfono o cambiar la ventana.
+ *
+ * @param {HTMLElement|null} capsule
+ * @param {number} minTabPixels lo menos que mide una pestaña
+ * @returns {number}
+ */
+function useFittingTabCount(capsule, minTabPixels) {
+    const [tabCount, setTabCount] = useState(DEFAULT_TAB_COUNT);
+    // antes de pintar: así no se ve un momento con las pestañas apretadas
+    useLayoutEffect(() => {
+        if (!capsule) {
+            return undefined;
+        }
+        const measure = () => {
+            const style = window.getComputedStyle(capsule);
+            const innerWidth = capsule.clientWidth - Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight);
+            // en escritorio la barra no se ve (ancho 0): se quedan las de siempre
+            if (innerWidth > 0) {
+                setTabCount(Math.max(2, Math.floor(innerWidth / minTabPixels)));
+            }
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(capsule);
+        return () => observer.disconnect();
+    }, [capsule, minTabPixels]);
+    return tabCount;
+}
+
+/**
  * @param {object} props
  * @param {object[]} props.menuItems lo que regresa composeMenu
  * @param {object|null} props.activeItem la entrada de la pantalla abierta
@@ -174,7 +213,10 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();
-    const {tabs, more} = mobileTabsOf(menuItems, pinnedKeys);
+    const [tabsCapsule, setTabsCapsule] = useState(null);
+    const isLandscape = useMediaQuery(PHONE_LANDSCAPE_MEDIA_QUERY);
+    const tabCount = useFittingTabCount(tabsCapsule, isLandscape ? MIN_TAB_PIXELS.landscape : MIN_TAB_PIXELS.portrait);
+    const {tabs, more} = mobileTabsOf(menuItems, pinnedKeys, tabCount);
     const [submenu, setSubmenu] = useState({anchorElement: null, menuItem: null});
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isEditingTabs, setIsEditingTabs] = useState(false);
@@ -218,7 +260,7 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                      height: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait,
                      [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                  })}>
-                <Box inert={isMinimized}
+                <Box ref={setTabsCapsule} inert={isMinimized}
                      sx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
                                       ...appearStylesOf(theme, !isMinimized, 'left bottom')})}>
                     {tabs.map((menuItem) => {

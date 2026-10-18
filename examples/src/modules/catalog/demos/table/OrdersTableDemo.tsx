@@ -1,6 +1,16 @@
 // La tabla de servidor (ServerTable de /table): pagina, filtra y ordena en el SERVIDOR, con el total real y las opciones
 // de cada filtro con su conteo (facetas). Filtros en el encabezado de cada columna, búsqueda arriba, accesos rápidos por
 // estado y chips de lo filtrado. Se copia cambiando las columnas y fetchPage (abajo, «Conectarla a su API»).
+//
+// Cómo se extiende, sin tocar el framework:
+//   - la búsqueda arriba, en la barra de la app: `searchInBar` (sin usar se encoge a la lupa y se estira al picarla;
+//     `collapseSearchInBar={false}` la deja siempre abierta). En el teléfono con cápsulas flota arriba con las demás.
+//     Así la usa Tabla;
+//   - su propio renglón de arriba con `header` (título, conteo y controles en uno), algo junto al conteo con `toolbarExtra`,
+//     algo arriba de los accesos rápidos con `beforeQuickFilters`, y el pie con `footer`;
+//   - cómo se pinta cada celda con las columnas (renderCell, valueFormatter) y cada renglón con getRowClassName;
+//   - qué renglones se ven sin volver a consultar con isRowVisible, y la columna pegada con fixedColumn.
+//   - «Ir a página N» junto al paginador con `showGoToPage` (por omisión escondido).
 import {useMemo} from 'react';
 import {DictionaryText, StatusChip, dictionaryEntryOf, formatNumber} from '@stackcraftmx/calcita';
 import {FILTER_KINDS, ServerTable, buildChipConfig, facetColumn, textColumn} from '@stackcraftmx/calcita/table';

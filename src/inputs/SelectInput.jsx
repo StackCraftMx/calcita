@@ -34,6 +34,9 @@ export default function SelectInput({
     const {t} = useToolkitTranslation('common');
     const generatedId = useId();
     const inputId = `${name ?? 'select'}-${generatedId}`;
+    // OJO: la lista desplegable de MUI es un div y no un <input>: el `for` de la etiqueta no la une. Se nombra con su etiqueta
+    // por aria-labelledby (labelId); sin esto el lector de pantalla no decía «Ciudad», solo lo elegido
+    const labelId = `${inputId}-label`;
     const errorText = translateValidationMessage(t, error);
     const placeholderText = (
         <Typography component="span"
@@ -43,7 +46,7 @@ export default function SelectInput({
     const renderSelectedValue = (selectedValue) => options.find((option) => option.value === selectedValue)?.label ?? placeholderText;
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} labelId={labelId} label={label}>
             <TextField
                 name={name}
                 id={inputId}
@@ -57,7 +60,7 @@ export default function SelectInput({
                 onBlur={onBlur}
                 error={Boolean(errorText)}
                 helperText={errorText ?? helperText}
-                slotProps={{select: {displayEmpty: true, renderValue: renderSelectedValue}}}>
+                slotProps={{select: {displayEmpty: true, renderValue: renderSelectedValue, labelId}}}>
                 <MenuItem value="" disabled>{placeholderText}</MenuItem>
                 {options.map((option) => (
                     <MenuItem key={option.value} value={option.value} sx={{whiteSpace: 'normal', flexDirection: 'column', alignItems: 'flex-start'}}>
