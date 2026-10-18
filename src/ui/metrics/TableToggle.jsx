@@ -9,10 +9,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
 /**
- * @param {{asTable: boolean, onToggle: () => void}} props
+ * @param {{asTable: boolean, onToggle: () => void, texts?: object}} props texts: los textos que cambian, con la forma de
+ *     `common` ({charts: {viewAsTable, viewAsChart}})
  */
-export default function TableToggle({asTable, onToggle}) {
-    const {t} = useToolkitTranslation('common');
+export default function TableToggle({asTable, onToggle, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
 
     return (
         <Box sx={{display: 'flex', justifyContent: 'flex-end', mb: 1}}>

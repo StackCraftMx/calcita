@@ -1,4 +1,5 @@
-// El tooltip de las gráficas de Recharts con el look de la app.
+// El tooltip de las gráficas de Recharts con el look de la app. Se exporta para las gráficas propias del proyecto con
+// recharts (una de pastel, una de área): <Tooltip content={<ChartTooltip render={(row) => …} />} />.
 //
 // El de Recharts trae su propio estilo (fondo blanco, borde gris); este usa el Paper del tema y habla igual que los
 // tooltips del resto de la app (y se voltea solo cuando llegue el modo oscuro). Con el vidrio del tema
@@ -10,13 +11,14 @@ import Typography from '@mui/material/Typography';
 
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 
-/**
- * @param {{active?: boolean, payload?: Array<{payload: any}>, render: (item: any) => import('react').ReactNode}} props
- */
 // el vidrio del cuadrito, casi opaco (el material «grueso»): es para leer una cifra encima de la gráfica; con el vidrio de
 // los controles (60 %) se veía la barra de atrás a través del texto (lo reportaron)
 const CHART_TOOLTIP_OPACITY = 0.92;
 
+/**
+ * @param {{active?: boolean, payload?: Array<{payload: any}>, render: (item: any) => import('react').ReactNode}} props
+ *     active y payload los pone recharts; render recibe el renglón de data del punto o la columna
+ */
 export default function ChartTooltip({active, payload, render}) {
     // guard clause: Recharts lo monta siempre; solo se pinta sobre una barra
     if (!active || !payload?.length) {
@@ -24,7 +26,8 @@ export default function ChartTooltip({active, payload, render}) {
     }
     return (
         <Paper elevation={3} sx={[{px: 1.5, py: 1, pointerEvents: 'none'}, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme, {opacity: CHART_TOOLTIP_OPACITY}) : {})]}>
-            <Typography variant="body2">{render(payload[0].payload)}</Typography>
+            {/* div: el globo puede llevar varios renglones (una serie por renglón) */}
+            <Typography variant="body2" component="div">{render(payload[0].payload)}</Typography>
         </Paper>
     );
 }
