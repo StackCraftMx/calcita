@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.24.0] - 2026-10-18
+
+### Agregado
+
+- `calcita new`: el proyecto nuevo nace con la actualización sola. Su build deja `version.json` y la versión en
+  `VITE_BUILD_ID`, la raíz vigila con `usePublishedBuildWatch` y `ToolkitProvider` recibe su `buildId`. Su README explica
+  qué no debe guardar el servidor.
+- `usePublishedBuildWatch` acepta `buildId` (la versión de la pestaña). Sin él tomaba la de `ToolkitProvider`, que la raíz
+  todavía no tenía en su primera revisión (`AccountProvider` lo pinta hasta tener la sesión): al abrir la app en la
+  pantalla de entrar, el aviso no salía.
+- `AuthLayout` también pinta el aviso de versión nueva (cápsula flotante): antes solo salía en las pantallas con sesión, y
+  quien abría la app sin sesión no se enteraba.
+
 ## [0.23.0] - 2026-10-18
 
 ### Agregado
