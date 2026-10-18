@@ -42,6 +42,13 @@ src/
   validaciones) ya vienen.
 - **Imports con el alias `@/`** (= `src/`), declarado en `vite.config.js` y en `jsconfig.json`.
 
+## Publicar una versión nueva
+
+`pnpm build` deja la app en `dist/`, con `version.json` (la versión de esa compilación). La app publicada lo vuelve a leer al
+abrirla y cada tanto: si ya hay otra, se recarga sola cuando estuvo fuera 15 minutos o más (una pestaña de ayer, la app
+anclada al inicio del iPhone) y, si no, enseña el aviso «Versión nueva» con su botón. Para que funcione, el servidor no
+debe guardar `index.html` ni `version.json` (`Cache-Control: no-cache`); los archivos de `dist/assets/` sí, un año.
+
 ## Crecer la app con el CLI
 
 ```bash

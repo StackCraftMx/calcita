@@ -24,7 +24,7 @@ import {APP_TEXTS} from '@/app/appTexts.js';
 export const AppProviders = () => {
     const [language, setLanguage] = useState(APP_LANGUAGES.spanish);
     // si estuvo fuera 15 minutos o más se recarga sola con la versión nueva; si no, sale el aviso con «Actualizar»
-    usePublishedBuildWatch({url: BUILD_VERSION_URL});
+    usePublishedBuildWatch({url: BUILD_VERSION_URL, buildId: APP_BUILD_ID});
 
     // el idioma de la página, para el lector de pantalla y el corrector del navegador
     useEffect(() => {

@@ -52,7 +52,7 @@ reportPublishedBuild('build-b', 'build-a');
 const watchAction: string = buildWatchActionOf({runningBuildId: 'a', publishedBuildId: 'b', hiddenMilliseconds: 0, reloadAfterHiddenMilliseconds: null});
 const isNotice: boolean = watchAction === BUILD_WATCH_ACTION.notice;
 const fileBuildId: string | null = publishedBuildIdOf({buildId: 'b'});
-const watchBuilds = (): void => usePublishedBuildWatch({url: '/version.json', checkEveryMinutes: 10, reloadAfterHiddenMinutes: null});
+const watchBuilds = (): void => usePublishedBuildWatch({url: '/version.json', buildId: 'build-a', checkEveryMinutes: 10, reloadAfterHiddenMinutes: null});
 const attachmentsServer = createPondServer({url: '/api/adjuntos', headers: {Authorization: 'Bearer prueba'}});
 const installment: Money = Money.fromString('10.00', {currency: 'MXN'}).dividedBy(3, {rounding: MONEY_ROUNDING.halfEven});
 const installmentText: string = installment.format();

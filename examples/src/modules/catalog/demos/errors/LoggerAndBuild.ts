@@ -8,7 +8,8 @@
 //     El build deja ese archivo con su versión (vea el plugin de vite.config.js de los ejemplos: version.json + VITE_BUILD_ID).
 //
 // Cómo se extiende: cada cuánto revisa (checkEveryMinutes), desde cuánto tiempo fuera recarga sola (reloadAfterHiddenMinutes;
-// null = nunca, solo el aviso), cómo recarga (onReload, p. ej. guardar un borrador antes) y dónde está el archivo (url).
+// null = nunca, solo el aviso), cómo recarga (onReload, p. ej. guardar un borrador antes), dónde está el archivo (url) y la
+// versión de la pestaña (buildId; páselo siempre: la raíz monta esto antes que ToolkitProvider).
 import {createLogger, setLogLevel, usePublishedBuildWatch} from '@stackcraftmx/calcita';
 
 if (import.meta.env.DEV) {
@@ -26,5 +27,5 @@ export function logCancelFailed(orderId: number, status: number, requestId: stri
 
 // en la raíz de la app, una vez: vigila si ya se publicó otra versión (solo en lo construido)
 export function useAppBuildWatch() {
-    usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, reloadAfterHiddenMinutes: 15});
+    usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, buildId: import.meta.env.VITE_BUILD_ID, reloadAfterHiddenMinutes: 15});
 }

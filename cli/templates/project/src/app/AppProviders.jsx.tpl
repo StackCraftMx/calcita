@@ -1,5 +1,7 @@
 // La raíz de la app: el ÚNICO lugar donde se conecta el framework. ToolkitProvider recibe el idioma, los textos, la zona, la
-// moneda y el router; los avisos (Toaster) se montan aquí una vez, para todas las pantallas.
+// moneda y el router; los avisos (Toaster) se montan aquí una vez, para todas las pantallas. Aquí también se vigila si ya se
+// publicó otra versión (usePublishedBuildWatch): una pestaña abierta desde ayer, o la app anclada al inicio del iPhone, se
+// actualiza sola si estuvo fuera 15 minutos o más; si no, sale el aviso «Versión nueva» con su botón.
 //#if auth
 //
 // AccountProvider carga la sesión con el conector de la cuenta (core/accountConnector.js) y le pasa a ToolkitProvider la regla
@@ -17,6 +19,7 @@ import {
 //#endif
     Toaster,
     ToolkitProvider,
+    usePublishedBuildWatch,
 } from '@stackcraftmx/calcita';
 //#if auth
 import {AccountProvider} from '@stackcraftmx/calcita/account';
@@ -26,7 +29,7 @@ import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
 //#endif
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 
-import {APP_LANGUAGES, APP_NAME, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE} from '@/app/appSettings.js';
+import {APP_BUILD_ID, APP_LANGUAGES, APP_NAME, BUILD_VERSION_URL, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE} from '@/app/appSettings.js';
 //#if !i18next
 import {APP_TEXTS} from '@/app/appTexts.js';
 //#endif
@@ -44,6 +47,7 @@ const translate = translateWithI18next(i18n);
 
 export const AppProviders = () => {
     const [language, setLanguage] = useState(APP_LANGUAGES.spanish);
+    usePublishedBuildWatch({url: BUILD_VERSION_URL, buildId: APP_BUILD_ID});
 
     // el idioma de la página, para el lector de pantalla y el corrector del navegador
     useEffect(() => {
@@ -70,7 +74,7 @@ export const AppProviders = () => {
                                  onLanguageChange={changeLanguage} translate={translate}
 //#endif
                                  timeZone={PRODUCT_TIME_ZONE} currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation}
-                                 canAccess={canAccess}>
+                                 buildId={APP_BUILD_ID} canAccess={canAccess}>
                     <Outlet />
                     <Toaster />
 //#if pwa
@@ -90,7 +94,8 @@ export const AppProviders = () => {
 //#if i18next
                          onLanguageChange={changeLanguage} translate={translate}
 //#endif
-                         timeZone={PRODUCT_TIME_ZONE} currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation}>
+                         timeZone={PRODUCT_TIME_ZONE} currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation}
+                         buildId={APP_BUILD_ID}>
             <Outlet />
             <Toaster />
 //#if pwa

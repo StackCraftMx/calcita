@@ -9,9 +9,13 @@
 // Si ya hay otra (buildWatchActionOf): si estuvo fuera al menos reloadAfterHiddenMinutes, se recarga sola; si no, sale el
 // aviso «Hay una versión nueva · Actualizar» (NewBuildNotice, que el marco ya pinta) para no borrar lo que llevaba escrito.
 //
-// Se monta UNA vez, en la raíz de la app:
-//   usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null});
+// Se monta UNA vez, en la raíz de la app, con la versión de la pestaña (la misma que va a ToolkitProvider buildId):
+//   usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, buildId: APP_BUILD_ID});
 // Sin url no hace nada (en desarrollo no hay versión que comparar).
+//
+// OJO buildId: sin él se toma el de ToolkitProvider, pero la raíz suele montar este gancho ANTES de que ToolkitProvider se
+// pinte (AccountProvider lo pinta hasta tener la sesión): la primera revisión no tenía con qué comparar y, al abrir la app
+// en la pantalla de entrar, el aviso no salía (medido en el proyecto que arma calcita new).
 //
 // OJO: el archivo se pide con cache 'no-store' y el servidor no debe guardarlo (en el nginx de los ejemplos, «location /»
 // ya va con no-cache). Sin red (el teléfono en el metro) no pasa nada: se vuelve a intentar en la siguiente revisión.
@@ -38,6 +42,7 @@ function reloadPage() {
 /**
  * @param {object} [options]
  * @param {string|null} [options.url] dónde está el archivo de versión ({"buildId": "…"}); null: no vigila
+ * @param {string} [options.buildId] la versión de esta pestaña; por omisión el buildId de ToolkitProvider (ver el OJO)
  * @param {number} [options.checkEveryMinutes] cada cuánto revisa mientras se usa; por omisión 5
  * @param {number|null} [options.reloadAfterHiddenMinutes] desde cuántos minutos fuera se recarga sola al volver; por
  *     omisión 15. null: nunca se recarga sola, siempre el aviso
@@ -46,7 +51,7 @@ function reloadPage() {
  * @returns {void}
  */
 export function usePublishedBuildWatch({
-    url = null, checkEveryMinutes = DEFAULT_CHECK_EVERY_MINUTES, reloadAfterHiddenMinutes = DEFAULT_RELOAD_AFTER_HIDDEN_MINUTES, onReload = reloadPage,
+    url = null, buildId, checkEveryMinutes = DEFAULT_CHECK_EVERY_MINUTES, reloadAfterHiddenMinutes = DEFAULT_RELOAD_AFTER_HIDDEN_MINUTES, onReload = reloadPage,
 } = {}) {
     useEffect(() => {
         if (!url || typeof document === 'undefined') {
@@ -65,7 +70,7 @@ export function usePublishedBuildWatch({
                 const response = await fetch(url, {cache: 'no-store', headers: {Accept: 'application/json'}});
                 const publishedBuildId = response.ok ? publishedBuildIdOf(await response.json()) : null;
                 const action = buildWatchActionOf({
-                    runningBuildId: toolkitSettings().buildId,
+                    runningBuildId: buildId ?? toolkitSettings().buildId,
                     publishedBuildId,
                     hiddenMilliseconds,
                     reloadAfterHiddenMilliseconds: reloadAfterHiddenMinutes === null ? null : reloadAfterHiddenMinutes * MILLISECONDS_PER_MINUTE,
@@ -73,7 +78,7 @@ export function usePublishedBuildWatch({
                 if (action === BUILD_WATCH_ACTION.reload) {
                     onReload();
                 } else if (action === BUILD_WATCH_ACTION.notice) {
-                    reportPublishedBuild(publishedBuildId);
+                    reportPublishedBuild(publishedBuildId, buildId ?? toolkitSettings().buildId);
                 }
             } catch (error) {
                 // sin red o con un archivo que no es JSON: no es algo que la persona pueda arreglar; queda en el registro
@@ -106,5 +111,5 @@ export function usePublishedBuildWatch({
             window.clearInterval(timer);
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [url, checkEveryMinutes, reloadAfterHiddenMinutes, onReload]);
+    }, [url, buildId, checkEveryMinutes, reloadAfterHiddenMinutes, onReload]);
 }
