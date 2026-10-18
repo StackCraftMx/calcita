@@ -4,6 +4,15 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.13.0] - 2026-10-17
+
+### Agregado
+
+- `createApiClient`: la petición de la casa con el idioma, los errores RFC 9457 como `ApiError`, la sesión vencida, el
+  CSRF de Laravel, el tiempo límite, la cancelación y las descargas con avance.
+- Versión vieja en la pestaña: `StaleBuildBoundary`, `withChunkRecovery` y `RouteErrorScreen` recargan una vez
+  cuando la pantalla que se pide ya no existe; `ErrorPage` con el tipo `newVersion`.
+
 ## [0.12.0] - 2026-10-17
 
 ### Agregado
@@ -101,6 +110,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.13.0]: https://github.com/StackCraftMx/calcita/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/StackCraftMx/calcita/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/StackCraftMx/calcita/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/StackCraftMx/calcita/compare/v0.10.0...v0.11.0
