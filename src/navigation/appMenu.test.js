@@ -124,3 +124,18 @@ test('las pestañas que fijó la persona ganan a las marcadas, en el orden del m
     // nunca más de las que caben junto a «Más»
     assert.equal(mobileTabsOf(items, items.map((item) => item.to)).tabs.length, 4);
 });
+
+test('las pestañas del teléfono según las que caben a lo ancho (la barra mide su ancho)', () => {
+    const items = ['a', 'b', 'c', 'd', 'e', 'f'].map((name) => ({to: `/${name}`, label: name}));
+
+    // pantalla angosta: caben 3 → 2 pestañas y «Más»
+    assert.deepEqual(mobileTabsOf(items, null, 3).tabs.map((item) => item.label), ['a', 'b']);
+    assert.deepEqual(mobileTabsOf(items, null, 3).more.map((item) => item.label), ['c', 'd', 'e', 'f']);
+    // pantalla ancha: caben todas y no hay «Más»
+    assert.deepEqual(mobileTabsOf(items, null, 8), {tabs: items, more: []});
+    // las marcadas siguen mandando aunque quepan más
+    const marked = items.map((item) => ({...item, mobileTab: item.label === 'b' || item.label === 'e'}));
+    assert.deepEqual(mobileTabsOf(marked, null, 5).tabs.map((item) => item.label), ['b', 'e']);
+    // aunque no quepa nada, al menos una pestaña junto a «Más»
+    assert.equal(mobileTabsOf(items, null, 1).tabs.length, 1);
+});
