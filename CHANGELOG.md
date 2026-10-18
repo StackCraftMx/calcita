@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.18.0] - 2026-10-17
+
+### Agregado
+
+- «Hecho en Calcita» en los ejemplos: una página por cada pieza propia del framework, con su ejemplo vivo y su código en
+  JavaScript y TypeScript, completo para copiar y pegar: cuenta y seguridad, marco y menú, permisos, servidor, tabla de
+  servidor, formularios, confirmar y avisar, encabezados y tarjetas, diccionarios, formatos y dinero, descargas, reportes
+  en Excel y CSV, subir archivos, gráficas, mapa, calendario, tablero, bandeja, traducciones, tema y vidrio, errores y
+  registro, instalar la app y seguridad web.
+
+### Corregido
+
+- Tipos para TypeScript, encontrados al revisar cada ejemplo con TypeScript estricto:
+  - los campos de formik y react-hook-form aceptan las props de su campo (`type`, `prefix`, `options`, `multiline`…)
+    y `SubmitButton` las del botón de MUI; `applyServerProblem` acepta el error tal como llega a un `catch`;
+  - las columnas de la tabla aceptan `width`, `flex`, `valueFormatter` y `renderCell`, y `fetchPage` recibe la forma
+    real de la petición;
+  - `composeMenu` y `composePermissionGroups` aceptan lo que regresa `import.meta.glob`;
+  - `useConfirmAction`, las políticas de permisos, las gráficas, el tablero, el reintento de CSRF y el conector de la
+    cuenta aceptan funciones con los tipos del proyecto;
+  - el libro de Excel trae `xlsx.writeBuffer()`, `createToolkitTheme` acepta `light: true` y `useToolkitTranslation`
+    se puede llamar sin namespace.
+
 ## [0.17.0] - 2026-10-17
 
 ### Agregado
@@ -152,6 +175,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.18.0]: https://github.com/StackCraftMx/calcita/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/StackCraftMx/calcita/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/StackCraftMx/calcita/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/StackCraftMx/calcita/compare/v0.14.0...v0.15.0
