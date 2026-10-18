@@ -152,7 +152,8 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 
 const AppLayoutFrame = ({
     logo, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions, accountSettings, menuBadges,
-    sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, contentMaxWidth, children,
+    sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
+    children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
@@ -238,7 +239,7 @@ const AppLayoutFrame = ({
             </AppBar>
             {isGlass && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
-                <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter}
+                <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
                               account={(
                                   <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle}
                                                showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} user={user}
@@ -334,13 +335,15 @@ const AppLayoutFrame = ({
  * @param {import('react').ReactNode} [props.ribbons] avisos propios dentro de la barra
  * @param {boolean} [props.isNavigating] la pantalla siguiente se está descargando (react-router: useIsNavigating)
  * @param {boolean} [props.defaultCollapsed] el menú lateral empieza encogido (la persona lo cambia y se recuerda)
+ * @param {boolean} [props.minimizeTabBarOnScroll] en el teléfono con vidrio, la barra de pestañas se encoge al leer hacia
+ *     abajo y regresa al subir (como iOS 26); por omisión sí
  * @param {number|string} [props.contentMaxWidth] por omisión 1400
  * @param {import('react').ReactNode} props.children el contenido
  */
 export const AppLayout = ({
     logo, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
-    isNavigating = false, defaultCollapsed = false, contentMaxWidth = 1400, children,
+    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, children,
 }) => {
     const {appName} = useToolkitSettings();
     const appMenu = useMemo(() => ({menuItems}), [menuItems]);
@@ -351,7 +354,8 @@ export const AppLayout = ({
                                 user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
                                 headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
                                 showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
-                                isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} contentMaxWidth={contentMaxWidth}>
+                                isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
+                                contentMaxWidth={contentMaxWidth}>
                     {children}
                 </AppLayoutFrame>
             </AppMenuContext.Provider>
