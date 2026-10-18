@@ -95,7 +95,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 
 | Importar de | Trae | Pide además |
 |---|---|---|
-| `@stackcraftmx/calcita` | proveedor, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos, fechas, errores RFC 9457 | — |
+| `@stackcraftmx/calcita` | proveedor, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos, fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja y la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) | — |
 | `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo; `Formik`, `Form` y `Yup` vienen con el paquete | — |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, y `yupResolver` | `react-hook-form`, `@hookform/resolvers` |
@@ -109,6 +109,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/filepond` | `FileDropzone` con FilePond: el mismo uso que la de la puerta principal, más varios archivos, avance por archivo y `createPondServer` | `filepond`, `react-filepond`, `filepond-plugin-file-validate-type`, `filepond-plugin-file-validate-size` |
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
+| `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
 
 ## El tema
 
@@ -193,6 +194,50 @@ La misma regla protege las rutas (`withAccess(access, routes)` de `/react-router
 los botones (`<Can access={…}>`, `useCan`). El framework no sabe de roles: RBAC por permisos o roles y ABAC por políticas
 con nombre o reglas escritas ahí mismo, como cada proyecto las necesite. Lo que se pinta no protege nada: el backend
 vuelve a revisar cada petición. `ErrorPage` trae las pantallas de 404, 403 y 500.
+
+## La petición de la casa
+
+Todo lo que habla con el servidor pasa por un cliente, armado una vez por proyecto con `fetch` del navegador (sin axios):
+
+```js
+import {createApiClient} from '@stackcraftmx/calcita';
+
+export const api = createApiClient({
+    baseUrl: '/api/v1',
+    csrf: {refreshPath: '/auth/csrf-token'},          // Laravel Sanctum: la cookie XSRF-TOKEN y el reintento del 419
+    onUnauthenticated: () => navigate('/sign-in'),    // un 401 a media consulta
+});
+
+const orders = await api.get('/orders', {params: {page: 2}, signal});
+await api.post('/orders', {customerId: 7});
+const {blob, fileName} = await api.download('/orders/export', {onDownloadProgress});
+```
+
+- Cada petición lleva el idioma vigente (`Accept-Language`): el servidor responde sus mensajes ya traducidos.
+- Un error es siempre un `ApiError`: el problema RFC 9457 del servidor con su mensaje ya traducido, su status, su
+  `requestId` para soporte y los errores por campo de un 422 (los formularios los ponen en su campo). Sin red es la misma
+  forma (status 0); cancelar no es un error.
+- Cada respuesta le avisa al aviso de versión nueva qué compilación está publicada (header `X-Frontend-Build`).
+- Un Excel que llegó cortado no se entrega.
+
+Si se publica otra versión con la pestaña abierta, la pantalla que no se había abierto pide un archivo que ya no existe.
+`withChunkRecovery` (de `/react-router`) recarga una vez y `RouteErrorScreen` dice «Hay una versión nueva» con su botón;
+sin router de datos, `recoverFromStaleChunk` en el `.catch()` del import y `StaleBuildBoundary` alrededor de las pantallas.
+
+## Seguridad de la cuenta
+
+- En `/forms`, `TwoStepVerificationCard`: llaves de acceso, app autenticadora y códigos de recuperación. Lo que quita
+  protección pide la contraseña. El proyecto conecta las acciones con su API; la tarjeta no sabe del servidor.
+- En `/forms`, `SecondStepForm`: el segundo paso al entrar (llave, código de la app o de recuperación), con los intentos
+  que quedan.
+- `RecoveryCodesDialog`: los códigos se enseñan una vez y no se cierra sin «Ya los guardé»; se copian o se bajan en .txt.
+- `SessionsCard`: dónde está abierta la cuenta y «cerrar la sesión en los demás equipos». `ActivityLog`: la bitácora.
+- En `/passkeys`, `createPasskey` y `signWithPasskey`: el navegador pide la huella, el rostro o el PIN.
+
+Contra XSS: los textos del servidor se pintan como texto (nunca `dangerouslySetInnerHTML`), `safeInternalPath` solo deja
+seguir direcciones de la app en `?next=`, la sesión va en una cookie HttpOnly (sin tokens en `localStorage`) y el CSRF con
+la cookie doble de Sanctum. Los ejemplos lo enseñan en Componentes → Seguridad, y la verificación funciona con su
+teléfono de verdad en Mi perfil → Seguridad.
 
 ## Entrar, Mi perfil y los permisos (el template)
 

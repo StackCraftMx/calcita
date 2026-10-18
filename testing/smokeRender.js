@@ -13,10 +13,13 @@ import {
     AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
+    ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary,
 } from '@stackcraftmx/calcita';
 import {ServerTable, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
-import {ChangePasswordForm, ForgotPasswordForm, FormTextField, FormWizard, Formik, SignInForm} from '@stackcraftmx/calcita/forms';
+import {
+    ChangePasswordForm, ForgotPasswordForm, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard,
+} from '@stackcraftmx/calcita/forms';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 
@@ -97,6 +100,24 @@ const CASES = [
     })), 'Opcional'],
     ['BarList', h(BarList, {items: [{key: 'a', label: 'Producto A', value: 3}], emptyLabel: 'Sin datos'}), ''],
     ['ColumnChart', h(ColumnChart, {data: [{key: 'ene', value: 3, label: 'ene'}], periodLabel: 'Mes', valueLabel: 'Pedidos', ariaLabel: 'Pedidos por mes', emptyLabel: 'Sin datos'}), ''],
+    ['ErrorPage de versión nueva', h(ErrorPage, {kind: ERROR_PAGE_KIND.newVersion, onRetry: () => {}}), 'Hay una versión nueva'],
+    ['StaleBuildBoundary sin error', h(StaleBuildBoundary, {resetKey: '/'}, 'la pantalla'), 'la pantalla'],
+    ['SessionsCard con este equipo y otro', h(SessionsCard, {
+        sessions: [
+            {id: 's1', browser: 'Chrome', platform: 'macOS', startedAt: '2026-10-17T15:00:00Z', network: '187.190.x.x', isCurrent: true},
+            {id: 's2', browser: 'Safari', platform: 'iOS', isMobile: true, startedAt: '2026-10-16T09:30:00Z'},
+        ],
+        onCloseOthers: async () => 1,
+    }), 'Este equipo'],
+    ['ActivityLog', h(ActivityLog, {events: [{id: 'e1', kind: 'signInFailed', occurredAt: '2026-10-17T15:00:00Z', device: 'Chrome en macOS', network: '187.190.x.x'}]}),
+        'Intento de entrar con contraseña equivocada'],
+    ['TwoStepVerificationCard activa', h(TwoStepVerificationCard, {
+        security: {isEnabled: true, enabledAt: '2026-10-01T10:00:00Z', passkeys: [{id: 'p1', name: 'MacBook', createdAt: '2026-10-01T10:00:00Z'}],
+            totp: {isEnabled: true, enabledAt: '2026-10-01T10:00:00Z'}, recoveryCodesRemaining: 2},
+        onSecurityChange: () => {}, canUsePasskeys: true, actions: {},
+    }), 'Le quedan 2 códigos sin usar.'],
+    ['SecondStepForm con app y recuperación', h(SecondStepForm, {methods: ['totp', 'recoveryCode'], onSubmitCode: async () => {}, onCancel: () => {}}),
+        'Código de su app autenticadora'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 

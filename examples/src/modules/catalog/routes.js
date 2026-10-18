@@ -15,4 +15,5 @@ export const routes = [
     {path: CATALOG_PATHS.timeline, lazy: async () => ({Component: (await import('@/modules/catalog/TimelinePage.jsx')).TimelinePage})},
     {path: CATALOG_PATHS.translations, lazy: async () => ({Component: (await import('@/modules/catalog/TranslationsPage.jsx')).TranslationsPage})},
     {path: CATALOG_PATHS.api, lazy: async () => ({Component: (await import('@/modules/catalog/ApiPage.jsx')).ApiPage})},
+    {path: CATALOG_PATHS.security, lazy: async () => ({Component: (await import('@/modules/catalog/SecurityPage.jsx')).SecurityPage})},
 ];

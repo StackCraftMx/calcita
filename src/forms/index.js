@@ -10,6 +10,11 @@ export {default as FormWizard} from '@/forms/FormWizard.jsx';
 export {default as ChangePasswordForm} from '@/forms/auth/ChangePasswordForm.jsx';
 export {default as ForgotPasswordForm} from '@/forms/auth/ForgotPasswordForm.jsx';
 export {default as SignInForm} from '@/forms/auth/SignInForm.jsx';
+export {SECOND_STEP_METHOD, default as SecondStepForm} from '@/forms/security/SecondStepForm.jsx';
+export {default as TwoStepVerificationCard} from '@/forms/security/TwoStepVerificationCard.jsx';
+export {
+    RECOVERY_CODE_PATTERN, TOTP_CODE_PATTERN, normalizeRecoveryCode, normalizeTotpCode,
+} from '@/forms/security/securityRules.js';
 export {default as SubmitButton} from '@/forms/SubmitButton.jsx';
 export {applyServerProblem} from '@/forms/applyServerProblem.js';
 export {formLevelMessageOf, splitServerFieldErrors} from '@/forms/serverProblemFields.js';

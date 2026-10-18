@@ -10,6 +10,18 @@ import {toolkitSettings} from '@stackcraftmx/calcita';
 
 const SERVER_TEXTS = Object.freeze({
     es: {
+        security: {
+            noSessionTitle: 'Necesita iniciar sesión',
+            noSession: 'Su sesión terminó. Vuelva a entrar para continuar.',
+            passwordRequired: 'Escriba su contraseña.',
+            wrongCodeTitle: 'Código incorrecto',
+            wrongCode: 'Ese código no es correcto.',
+            lockedTitle: 'Demasiados intentos',
+            locked: 'Se acabaron los intentos. Vuelva a escribir su contraseña para empezar de nuevo.',
+            expiredTitle: 'Pasó demasiado tiempo',
+            expired: 'Pasaron más de 5 minutos. Vuelva a escribir su contraseña.',
+            defaultPasskeyName: 'Llave de acceso {{number}}',
+        },
         accounts: {
             store: 'Tienda de ejemplo',
             signInFailedTitle: 'No pudimos iniciar su sesión',
@@ -76,6 +88,18 @@ const SERVER_TEXTS = Object.freeze({
         },
     },
     en: {
+        security: {
+            noSessionTitle: 'You need to sign in',
+            noSession: 'Your session ended. Sign in again to continue.',
+            passwordRequired: 'Type your password.',
+            wrongCodeTitle: 'Wrong code',
+            wrongCode: 'That code is not correct.',
+            lockedTitle: 'Too many attempts',
+            locked: 'You ran out of attempts. Type your password again to start over.',
+            expiredTitle: 'Too much time went by',
+            expired: 'More than 5 minutes went by. Type your password again.',
+            defaultPasskeyName: 'Passkey {{number}}',
+        },
         accounts: {
             store: 'Sample store',
             signInFailedTitle: 'We could not sign you in',

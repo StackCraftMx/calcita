@@ -101,6 +101,10 @@
         "./next": {
             "types": "./dist/types/next.d.ts",
             "import": "./dist/next.js"
+        },
+        "./passkeys": {
+            "types": "./dist/types/passkeys.d.ts",
+            "import": "./dist/passkeys.js"
         }
     },
     "scripts": {
@@ -128,6 +132,7 @@
         "@mui/material": "^7.0.0",
         "@mui/x-data-grid": "^8.0.0",
         "@mui/x-date-pickers": "^8.0.0",
+        "@simplewebauthn/browser": "^14.0.0",
         "@xstate/react": "^6.0.0",
         "dayjs": "^1.11.0",
         "filepond": "^4.32.0",
@@ -155,6 +160,9 @@
             "optional": true
         },
         "@mui/x-date-pickers": {
+            "optional": true
+        },
+        "@simplewebauthn/browser": {
             "optional": true
         },
         "dayjs": {
@@ -197,6 +205,7 @@
         "@mui/material": "7.3.11",
         "@mui/x-data-grid": "8.29.3",
         "@mui/x-date-pickers": "8.29.4",
+        "@simplewebauthn/browser": "14.0.0",
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",
         "@vitejs/plugin-react": "5.2.0",

@@ -23,6 +23,7 @@ const ENTRIES = Object.freeze({
     'react-hook-form': 'src/react-hook-form.js',
     'date-pickers': 'src/date-pickers.js',
     next: 'src/next.js',
+    passkeys: 'src/passkeys.js',
 });
 
 // lo que instala el proyecto (peerDependencies) y las dependencias del paquete se quedan fuera del build

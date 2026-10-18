@@ -20,6 +20,7 @@ export const catalogTexts = {
                 timeline: 'Línea de tiempo',
                 translations: 'Traducciones',
                 api: 'Servidor (API)',
+                security: 'Seguridad (XSS)',
             },
             frameworkTitle: 'Del framework',
             code: {
@@ -644,6 +645,33 @@ export const catalogTexts = {
                     failed: 'No se pudo entregar',
                 },
             },
+            security: {
+                title: 'Seguridad: evitar XSS',
+                description: 'Un XSS es código ajeno que corre en su página: un mensaje con HTML adentro, una liga armada. Lo que ya hace el framework y lo que le toca al proyecto, con ejemplos que se pueden probar.',
+                escaped: {
+                    title: 'Los textos del servidor van como texto',
+                    description: 'Este mensaje llegó del servidor con una imagen que corre código si se pinta como HTML. Aquí se ve tal cual: React y los avisos del framework lo pintan como texto. La regla: nunca dangerouslySetInnerHTML con algo que no escribió el equipo.',
+                    showToast: 'Enseñarlo en un aviso',
+                },
+                redirect: {
+                    title: 'Redirecciones solo dentro de la app',
+                    description: 'safeInternalPath decide si una dirección de ?next= es de la app; si no, se va al inicio. La pantalla de entrar ya la usa.',
+                    candidate: 'Lo que llegó en ?next=',
+                    result: '¿Se sigue?',
+                    allowed: 'Sí: es de la app',
+                    blocked: 'No: se va al inicio',
+                },
+                session: {
+                    title: 'La sesión en una cookie que JavaScript no lee',
+                    description: 'Sin tokens en localStorage: una cookie HttpOnly no la puede leer ni un script malicioso. Contra las peticiones falsas desde otro sitio (CSRF), la cookie doble de Laravel Sanctum con el csrf de createApiClient.',
+                },
+                links: {
+                    title: 'Ligas a otros sitios',
+                    description: 'Con target="_blank", siempre rel="noopener noreferrer": la otra pestaña no puede cambiar esta. Para leer más:',
+                    csp: 'Política de seguridad de contenido (MDN)',
+                    owasp: 'Cómo evitar XSS (OWASP)',
+                },
+            },
             api: {
                 title: 'Servidor (API)',
                 description: 'La petición de la casa: un cliente por proyecto (createApiClient) que manda el idioma en cada petición, entiende los errores del servidor (RFC 9457) y los entrega como ApiError con el mensaje ya traducido. Sin librerías: usa fetch del navegador.',
@@ -771,6 +799,7 @@ export const catalogTexts = {
                 timeline: 'Timeline',
                 translations: 'Translations',
                 api: 'Server (API)',
+                security: 'Security (XSS)',
             },
             frameworkTitle: 'From the framework',
             code: {
@@ -1393,6 +1422,33 @@ export const catalogTexts = {
                     shipped: 'Out for delivery',
                     delivered: 'Delivered',
                     failed: 'Could not be delivered',
+                },
+            },
+            security: {
+                title: 'Security: avoiding XSS',
+                description: 'XSS is someone else’s code running in your page: a message with HTML inside, a crafted link. What the framework already does and what is up to the project, with examples you can try.',
+                escaped: {
+                    title: 'Server texts go as text',
+                    description: 'This message came from the server with an image that runs code if it is painted as HTML. Here it shows as is: React and the framework toasts paint it as text. The rule: never dangerouslySetInnerHTML with something the team did not write.',
+                    showToast: 'Show it in a toast',
+                },
+                redirect: {
+                    title: 'Redirects only inside the app',
+                    description: 'safeInternalPath decides whether an address in ?next= belongs to the app; if not, it goes home. The sign-in screen already uses it.',
+                    candidate: 'What came in ?next=',
+                    result: 'Is it followed?',
+                    allowed: 'Yes: it is from the app',
+                    blocked: 'No: it goes home',
+                },
+                session: {
+                    title: 'The session in a cookie JavaScript cannot read',
+                    description: 'No tokens in localStorage: an HttpOnly cookie cannot be read even by a malicious script. Against fake requests from another site (CSRF), the Laravel Sanctum double cookie with the csrf option of createApiClient.',
+                },
+                links: {
+                    title: 'Links to other sites',
+                    description: 'With target="_blank", always rel="noopener noreferrer": the other tab cannot change this one. To read more:',
+                    csp: 'Content Security Policy (MDN)',
+                    owasp: 'How to avoid XSS (OWASP)',
                 },
             },
             api: {

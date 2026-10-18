@@ -117,6 +117,11 @@ export {API_ERROR_STATUS, ApiError} from '@/api/ApiError.js';
 export {API_RESPONSE_PARSE, apiUrlOf, createApiClient} from '@/api/createApiClient.js';
 export {isStaleChunkError, recoverFromStaleChunk} from '@/api/staleChunks.js';
 
+// ─── seguridad de la cuenta: códigos de recuperación, sesiones abiertas y bitácora (los formularios van en /forms) ──
+export {ACCOUNT_EVENT_KIND, default as ActivityLog} from '@/security/ActivityLog.jsx';
+export {default as RecoveryCodesDialog} from '@/security/RecoveryCodesDialog.jsx';
+export {default as SessionsCard} from '@/security/SessionsCard.jsx';
+
 // ─── instalar la app (PWA): la invitación, los pasos por equipo y la entrada del menú de la cuenta ──
 export {INSTALL_VARIANT, detectPlatform, parseIOSMajor, resolveInstallVariant} from '@/pwa/installInstructions.js';
 export {useInstallPrompt} from '@/pwa/useInstallPrompt.js';

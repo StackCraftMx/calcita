@@ -4,6 +4,7 @@ import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CloudSyncOutlinedIcon from '@mui/icons-material/CloudSyncOutlined';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import SmartButtonOutlinedIcon from '@mui/icons-material/SmartButtonOutlined';
@@ -40,6 +41,7 @@ export function buildMenuItem() {
             {to: CATALOG_PATHS.timeline, labelKey: 'catalog:nav.timeline', Icon: TimelineOutlinedIcon},
             {to: CATALOG_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
             {to: CATALOG_PATHS.api, labelKey: 'catalog:nav.api', Icon: CloudSyncOutlinedIcon},
+            {to: CATALOG_PATHS.security, labelKey: 'catalog:nav.security', Icon: GppGoodOutlinedIcon},
         ],
     };
 }

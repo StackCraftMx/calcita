@@ -1,7 +1,7 @@
 // «Mi perfil», como el de las plantillas de tablero de MUI: ProfileHeader (portada, avatar, nombre y perfil) y tres
 // pestañas:
 //   - Sus datos: el nombre y el teléfono (formik); al guardar, la barra y el menú de la cuenta ya dicen el nombre nuevo;
-//   - Seguridad: ChangePasswordForm del framework (con su lista de reglas palomeada);
+//   - Seguridad: la contraseña, la verificación en dos pasos, las sesiones abiertas y la bitácora (SecuritySection.jsx);
 //   - Preferencias: AppearanceSettings del framework (los mismos ajustes del engrane del teléfono).
 // La pestaña abierta va en la URL (?tab=): se puede compartir o recargar sin perderla.
 //
@@ -13,10 +13,11 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import {AppearanceSettings, ProfileHeader, SectionCard, TextInput, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {ChangePasswordForm, Form, FormProblemAlert, FormTextField, Formik, SubmitButton, Yup, applyServerProblem} from '@stackcraftmx/calcita/forms';
+import {Form, FormProblemAlert, FormTextField, Formik, SubmitButton, Yup, applyServerProblem} from '@stackcraftmx/calcita/forms';
 
 import {useSession} from '@/core';
-import {changePassword, updateMyAccount} from '@/modules/profile/profileApi.js';
+import {updateMyAccount} from '@/modules/profile/profileApi.js';
+import {SecuritySection} from '@/modules/profile/SecuritySection.jsx';
 
 /** Las pestañas, en el orden en que se pintan. */
 const PROFILE_TABS = Object.freeze({account: 'account', security: 'security', preferences: 'preferences'});
@@ -60,19 +61,6 @@ const AccountSection = () => {
                     </Stack>
                 </Form>
             </Formik>
-        </SectionCard>
-    );
-};
-
-/** Seguridad: cambiar la contraseña. */
-const SecuritySection = () => {
-    const {t} = useToolkitTranslation('profile');
-    return (
-        <SectionCard title={t('security.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('security.text')}</Typography>
-            <Stack sx={{maxWidth: FORM_MAX_WIDTH}}>
-                <ChangePasswordForm onSubmit={changePassword} />
-            </Stack>
         </SectionCard>
     );
 };
