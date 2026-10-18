@@ -33,6 +33,7 @@ export {DOWNLOAD_STATUS, DownloadManager, cancelDownload, clearFinishedDownloads
 
 // ─── el tema (opcional): el estilo de Stackcraft, con claro / oscuro y vidrio líquido ─
 export {THEME_LOOK, createToolkitTheme} from '@/theme/createToolkitTheme.js';
+export {isAndroidDevice} from '@/theme/androidDevice.js';
 export {MINIMAL_BACKGROUND} from '@/theme/components/minimalComponents.js';
 export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 export {toolkitComponents} from '@/theme/toolkitComponents.js';

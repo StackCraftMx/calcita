@@ -11,12 +11,12 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import {useColorScheme} from '@mui/material/styles';
+import AutomaticModeIcon from '@mui/icons-material/BrightnessAutoOutlined';
 import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 
 import {LANGUAGES} from '@/ui/navigation/LanguageToggle.jsx';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
-import {resolvedColorModeOf} from '@/ui/navigation/colorMode.js';
 
 /**
  * Un ajuste: su nombre y sus opciones a la vista. Es público: el proyecto agrega los suyos al menú de la cuenta con la
@@ -59,7 +59,7 @@ export function SettingSection({label, value, options, onChange}) {
 export default function AppearanceSettings({showFontSize = true, showLanguage = true, showColorScheme = true}) {
     const {t, language, changeLanguage} = useToolkitTranslation('layout');
     const {level, setLevel, levels} = useFontSize();
-    const {mode, systemMode, setMode} = useColorScheme();
+    const {mode, setMode} = useColorScheme();
 
     const sections = [
         showFontSize && (
@@ -70,12 +70,16 @@ export default function AppearanceSettings({showFontSize = true, showLanguage = 
             <SettingSection key="language" label={t('settings.language')} value={language} onChange={changeLanguage}
                             options={LANGUAGES.map((languageCode) => ({value: languageCode, label: t(`languageName.${languageCode}`)}))} />
         ),
-        // antes de montar no se sabe el modo (el servidor no lo conoce): la sección sale ya montada
+        // antes de montar no se sabe el modo (el servidor no lo conoce): la sección sale ya montada.
+        // Tres opciones: «Automático» (system de MUI) sigue lo que diga el equipo y es lo de omisión. Es la ÚNICA salida
+        // para volver a seguirlo: el botón de la barra (ColorSchemeToggle) fija claro u oscuro para siempre. La guía de
+        // Apple pide seguir el ajuste del equipo; el botón de la barra se queda con dos estados para no sumar una decisión.
         showColorScheme && mode && (
-            <SettingSection key="colorScheme" label={t('settings.colorScheme')} value={resolvedColorModeOf(mode, systemMode)} onChange={setMode}
+            <SettingSection key="colorScheme" label={t('settings.colorScheme')} value={mode} onChange={setMode}
                             options={[
                                 {value: 'light', label: t('settings.light'), icon: <LightModeIcon fontSize="small" />},
                                 {value: 'dark', label: t('settings.dark'), icon: <DarkModeIcon fontSize="small" />},
+                                {value: 'system', label: t('settings.system'), icon: <AutomaticModeIcon fontSize="small" />},
                             ]} />
         ),
     ].filter(Boolean);

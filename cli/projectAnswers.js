@@ -23,7 +23,7 @@ export const QUESTIONS = Object.freeze([
     {key: 'menuPosition', text: '¿Dónde va el menú?', options: [['side', 'A un lado (se encoge a íconos)'], ['top', 'Arriba, en la barra']]},
     {
         key: 'style', text: 'Estilo',
-        options: [['glass', 'Vidrio líquido en lo que flota (menús, barra, avisos)'], ['plain', 'Sin vidrio'], ['minimal', 'Minimalista: plano, sin bordes ni sombras']],
+        options: [['glass', 'Vidrio líquido en lo que flota (menús, barra, avisos); en Android, minimalista'], ['plain', 'Sin vidrio'], ['minimal', 'Minimalista: plano, sin bordes ni sombras']],
     },
     {key: 'colorModes', text: 'Modos de color', options: [['lightAndDark', 'Claro y oscuro (con su botón)'], ['lightOnly', 'Solo claro']]},
     {key: 'colors', text: 'Colores', options: [['stackcraft', 'Los de Stackcraft (naranja)'], ['mui', 'Los de MUI (azul)'], ['custom', 'Uno propio']]},

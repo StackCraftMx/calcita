@@ -275,6 +275,7 @@ export default Object.freeze({
             "expand": "Abrir el menú lateral",
             "collapse": "Encoger el menú lateral",
             "more": "Más",
+            "showTabs": "Ver las pestañas",
             "scrollDown": "Ver más del menú",
             "scrollUp": "Ver lo de arriba del menú"
         },
@@ -287,7 +288,8 @@ export default Object.freeze({
             "language": "Idioma",
             "colorScheme": "Claro u oscuro",
             "light": "Claro",
-            "dark": "Oscuro"
+            "dark": "Oscuro",
+            "system": "Automático"
         },
         "fontSize": {
             "label": "Tamaño de letra",

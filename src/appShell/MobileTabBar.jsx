@@ -9,6 +9,9 @@
 //     pendiente, del servidor); un badge de texto («Nuevo») no va en la pestaña, se queda en el menú: Apple los reserva para
 //     lo que pide atención.
 //   - Acostado (pantalla bajita), la barra va compacta: ícono y nombre lado a lado, para dejarle el alto al contenido.
+//   - Al leer hacia abajo se encoge (como iOS 26): queda una cápsula chica con la pestaña donde está la persona, y la cuenta
+//     más chica; al subir un poco, o al tocar la cápsula, regresa completa (cuándo: tabBarScroll.js). Se mueve solo con
+//     opacidad y escala, lo que el navegador anima sin volver a acomodar la página: en un teléfono barato no se traba.
 // Solo se ve en el teléfono (PHONE_MEDIA_QUERY); en escritorio no ocupa nada.
 //
 // Genérico del paquete: function (regla de la casa).
@@ -26,6 +29,7 @@ import {
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
 import SubmenuActionsMenu, {SUBMENU_PLACEMENT} from '@/appShell/SubmenuActionsMenu.jsx';
+import {useTabBarMinimized} from '@/appShell/useTabBarMinimized.js';
 import {menuBadgeOf, mobileTabsOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {accentTextStylesOf, glassStylesOf} from '@/theme/glassSurface.js';
@@ -49,6 +53,29 @@ const FLOATING_EDGE = Object.freeze({
 });
 // la pestaña elegida: un tinte del acento (en claro una gota blanca sobre la cápsula blanca no se distinguía)
 const ACTIVE_TINT_PERCENT = Object.freeze({light: 14, dark: 24});
+// encogida: lo alto de la cápsula chica (px) y a qué tamaño se va lo que desaparece
+const MINIMIZED_PIXELS = Object.freeze({portrait: 48, landscape: 40});
+const HIDDEN_SCALE = 0.6;
+
+/**
+ * Lo que aparece o desaparece al encoger la barra: solo opacidad y escala. visibility espera a que termine la animación
+ * para esconderlo, y así lo que ya no se ve tampoco se puede tocar.
+ *
+ * @param {object} theme
+ * @param {boolean} isShown
+ * @param {string} transformOrigin hacia dónde se encoge ('left bottom')
+ * @returns {object}
+ */
+function appearStylesOf(theme, isShown, transformOrigin) {
+    const duration = theme.transitions.duration.short;
+    return {
+        transformOrigin,
+        opacity: isShown ? 1 : 0,
+        transform: isShown ? 'none' : `scale(${HIDDEN_SCALE})`,
+        visibility: isShown ? 'visible' : 'hidden',
+        transition: `${theme.transitions.create(['opacity', 'transform'], {duration})}, visibility 0s linear ${isShown ? 0 : duration}ms`,
+    };
+}
 
 /**
  * La superficie de la barra y del círculo de la cuenta: vidrio más opaco, su línea fina y su sombra (la sombra va en una
@@ -130,16 +157,21 @@ function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPo
  * @param {Record<string, number>} [props.menuBadges] los conteos del servidor por badgeKey
  * @param {import('react').ReactNode} [props.account] la cuenta (o el engrane), en su círculo junto a la barra
  * @param {import('react').ReactNode} [props.moreFooter] lo que va al final de la hoja de «Más» (la tarjeta del menú lateral)
+ * @param {boolean} [props.minimizeOnScroll] se encoge al leer hacia abajo; por omisión sí
  */
-export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter}) {
+export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true}) {
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {tabs, more} = mobileTabsOf(menuItems);
     const [submenu, setSubmenu] = useState({anchorElement: null, menuItem: null});
     const [isMoreOpen, setIsMoreOpen] = useState(false);
+    const {isMinimized, expand} = useTabBarMinimized(minimizeOnScroll);
     const closeSubmenu = () => setSubmenu({anchorElement: null, menuItem: null});
     const isInside = (menuItem) => menuItem === activeItem || (menuItem.children ?? []).includes(activeItem);
     const moreHasActive = more.some(isInside);
+    // la cápsula chica enseña dónde está la persona: su pestaña, «Más» si está en algo de ahí, o la primera
+    const activeTab = tabs.find(isInside);
+    const MinimizedIcon = (!activeTab && moreHasActive ? MoreHorizRoundedIcon : (activeTab ?? tabs[0])?.Icon) ?? MoreHorizRoundedIcon;
     // «Más» suma los conteos de lo que guarda (solo conteos: los de texto no van en la pestaña)
     const moreCount = more.reduce((total, menuItem) => {
         const badge = menuBadgeOf(menuItem, menuBadges);
@@ -161,7 +193,9 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                      height: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait,
                      [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                  })}>
-                <Box sx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375})}>
+                <Box inert={isMinimized}
+                     sx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
+                                      ...appearStylesOf(theme, !isMinimized, 'left bottom')})}>
                     {tabs.map((menuItem) => {
                         const hasChildren = (menuItem.children ?? []).length > 0;
                         return (
@@ -176,11 +210,29 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                                    onClick={() => setIsMoreOpen(true)} />
                     )}
                 </Box>
+                {/* encogida: la cápsula chica en la esquina, con la pestaña de ahorita; tocarla regresa la barra completa */}
+                <ButtonBase inert={!isMinimized} onClick={expand} aria-label={t('drawer.showTabs')} aria-expanded={false}
+                            sx={(theme) => mergeStyles({
+                                ...glassSurfaceSx(theme), position: 'absolute', left: 0, bottom: 0,
+                                width: MINIMIZED_PIXELS.portrait, height: MINIMIZED_PIXELS.portrait,
+                                [PHONE_LANDSCAPE_MEDIA_QUERY]: {width: MINIMIZED_PIXELS.landscape, height: MINIMIZED_PIXELS.landscape},
+                                ...appearStylesOf(theme, isMinimized, 'left bottom'),
+                            }, accentTextStylesOf(theme))}>
+                    <MinimizedIcon sx={{fontSize: TAB_ICON_SIZE}} />
+                </ButtonBase>
                 {account && (
                     <Box sx={(theme) => ({
                         ...glassSurfaceSx(theme), flexShrink: 0, minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait, px: 0.5, display: 'flex', alignItems: 'center',
                         justifyContent: 'center', [PHONE_LANDSCAPE_MEDIA_QUERY]: {minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                         '& .MuiButtonBase-root': {color: 'inherit'},
+                        // encogida, la cuenta se queda pero del alto de la cápsula chica, pegada a su esquina
+                        transformOrigin: 'right bottom',
+                        transform: isMinimized ? `scale(${MINIMIZED_PIXELS.portrait / MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait})` : 'none',
+                        transition: theme.transitions.create('transform', {duration: theme.transitions.duration.short}),
+                        ...(isMinimized && {[PHONE_LANDSCAPE_MEDIA_QUERY]: {
+                            minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape,
+                            transform: `scale(${MINIMIZED_PIXELS.landscape / MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape})`,
+                        }}),
                     })}>
                         {account}
                     </Box>

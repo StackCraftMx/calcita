@@ -1,6 +1,7 @@
 // Interruptor de modo claro / oscuro.
 //
-// Dos estados visibles, no tres: el primer clic fija una preferencia explícita que ya se recuerda. Recordar lo hace MUI:
+// Dos estados visibles, no tres: el primer clic fija una preferencia explícita que ya se recuerda; para volver a seguir
+// al equipo está «Automático» en Apariencia (AppearanceSettings, en el menú de la cuenta). Recordar lo hace MUI:
 // setMode escribe en localStorage (con las llaves que el proyecto puso en su ThemeProvider) y un script
 // en el HTML la puede leer antes del primer pintado.
 //

@@ -275,6 +275,7 @@ export default Object.freeze({
             "expand": "Expand the side menu",
             "collapse": "Collapse the side menu",
             "more": "More",
+            "showTabs": "Show the tabs",
             "scrollDown": "See more of the menu",
             "scrollUp": "See the top of the menu"
         },
@@ -287,7 +288,8 @@ export default Object.freeze({
             "language": "Language",
             "colorScheme": "Light or dark",
             "light": "Light",
-            "dark": "Dark"
+            "dark": "Dark",
+            "system": "Automatic"
         },
         "fontSize": {
             "label": "Text size",
