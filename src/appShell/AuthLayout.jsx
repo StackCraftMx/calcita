@@ -9,6 +9,9 @@
 // Con el vidrio del tema (createToolkitTheme({glass: true})), el lienzo lleva sus manchas de color y la tarjeta es de
 // vidrio; sin vidrio, una tarjeta con borde sobre el lienzo.
 //
+// También pinta el aviso de versión nueva (cápsula flotante), como el marco: quien abre la app sin sesión (o la deja abierta
+// en esta pantalla) también debe enterarse; antes solo salía en las pantallas con sesión.
+//
 // Lo renderiza la app: arrow (regla de la casa).
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import Box from '@mui/material/Box';
@@ -17,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import ColorSchemeToggle from '@/ui/navigation/ColorSchemeToggle.jsx';
@@ -53,6 +57,7 @@ export const AuthLayout = ({logo, brandName, title, description, children, foote
             (theme) => (isGlassTheme(theme) ? ambientBackgroundOf(theme) : {})]}>
             <DocumentTitle title={title} />
             <GlassLensFilter />
+            <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />
             <Stack direction="row" spacing={1} sx={{justifyContent: 'flex-end', p: 2, pt: 'max(16px, env(safe-area-inset-top))'}}>
                 {showLanguageToggle && <LanguageToggle />}
                 {showColorSchemeToggle && <ColorSchemeToggle />}
