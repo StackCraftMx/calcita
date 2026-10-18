@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.20.0] - 2026-10-18
+
+### Agregado
+
+- Claro u oscuro tiene «Automático» en el menú de la cuenta: sigue lo que diga el equipo (es lo de omisión) y es la forma
+  de volver a seguirlo después de picar el botón de la barra, que sigue con dos estados.
+- En el teléfono con vidrio, la barra de pestañas se encoge al leer hacia abajo (queda una cápsula chica con la pestaña de
+  ahorita y la cuenta más chica) y regresa al subir o al tocarla, como en iOS 26. Con «reducir movimiento» no se mueve.
+  `AppLayout` acepta `minimizeTabBarOnScroll={false}` para dejarla fija.
+- `isAndroidDevice()`: si la app se abrió en Android, para arrancar ahí con el estilo minimalista (el vidrio es el estilo
+  de Apple y el desenfoque pesa en los teléfonos baratos). Los proyectos nuevos con vidrio (`calcita new`) y los ejemplos
+  ya lo usan; en los ejemplos, el estilo que elige la persona gana y se guarda solo cuando lo elige.
+
 ## [0.19.0] - 2026-10-18
 
 ### Agregado
@@ -188,6 +201,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.20.0]: https://github.com/StackCraftMx/calcita/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/StackCraftMx/calcita/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/StackCraftMx/calcita/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/StackCraftMx/calcita/compare/v0.16.0...v0.17.0
