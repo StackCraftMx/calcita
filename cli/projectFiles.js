@@ -11,6 +11,8 @@ const BASE_DEPENDENCIES = Object.freeze([
     'sonner', 'xstate',
 ]);
 const HOOK_FORM_DEPENDENCIES = Object.freeze(['@hookform/resolvers', 'react-hook-form']);
+// la cuenta: las llaves de acceso (las pide @stackcraftmx/calcita/account) y el QR de la demostración
+const ACCOUNT_DEPENDENCIES = Object.freeze(['@simplewebauthn/browser', 'qrcode']);
 const DEV_DEPENDENCIES = Object.freeze(['@vitejs/plugin-react', 'vite']);
 
 /** Un objeto con sus llaves en orden alfabético (como los escribe npm). */
@@ -28,6 +30,7 @@ export function packageJsonOf({packageName, answers, calcitaPackage}) {
     const dependencyNames = [
         ...BASE_DEPENDENCIES,
         ...(flags.hookForm ? HOOK_FORM_DEPENDENCIES : []),
+        ...(flags.auth ? ACCOUNT_DEPENDENCIES : []),
         ...(flags.i18next ? ['i18next'] : []),
     ];
     const packageJson = {

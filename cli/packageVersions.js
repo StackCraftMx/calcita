@@ -4,9 +4,10 @@
 // Funciones de node, sin React: function (regla de la casa). Pruebas en packageVersions.test.js.
 import {readFile} from 'node:fs/promises';
 
-// i18next no lo usa el paquete (su adaptador recibe la instancia del proyecto), así que no está en sus devDependencies.
-// Versión con más de dos semanas publicada al escogerla: pnpm espera un día antes de instalar una recién salida
-const VERSIONS_NOT_IN_PACKAGE = Object.freeze({i18next: '26.4.2'});
+// Lo que el paquete no usa, así que no está en sus devDependencies: i18next (su adaptador recibe la instancia del proyecto;
+// versión con más de dos semanas publicada al escogerla, pnpm espera un día antes de instalar una recién salida) y qrcode
+// (el QR de la cuenta de demostración; la misma versión que usan los ejemplos)
+const VERSIONS_NOT_IN_PACKAGE = Object.freeze({i18next: '26.4.2', qrcode: '1.5.4'});
 
 /**
  * El package.json de Calcita (el del CLI que corre). OJO: por ruta de archivo y no con import: el CLI se publica tal cual,

@@ -1,28 +1,35 @@
-// La entrada del catálogo en el menú de la app (composeMenu del framework la descubre sola), con una hija por grupo de
-// piezas: así cada componente se revisa por separado, en claro y en oscuro, con y sin vidrio.
+// Las entradas del catálogo en el menú de la app (composeMenu del framework las descubre solas): «Componentes» (los de MUI
+// con el estilo de Calcita) y «Hecho en Calcita» (las piezas propias del framework), con una hija por grupo: así cada pieza
+// se revisa por separado, en claro y en oscuro, con y sin vidrio. Cada página trae su código en JS y TS para copiar.
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CloudSyncOutlinedIcon from '@mui/icons-material/CloudSyncOutlined';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
+import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import SmartButtonOutlinedIcon from '@mui/icons-material/SmartButtonOutlined';
 import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined';
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import TranslateOutlinedIcon from '@mui/icons-material/TranslateOutlined';
+import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined';
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined';
 
-import {CATALOG_PATHS} from '@/modules/catalog/catalogPaths.js';
+import {BUILT_IN_PATHS, CATALOG_PATHS} from '@/modules/catalog/catalogPaths.js';
 
 export const order = 65;
 
 // sin access: lo ve cualquiera con sesión
 
-export function buildMenuItem() {
-    return {
+export function buildMenuItems() {
+    return [{
         to: CATALOG_PATHS.buttons,
         labelKey: 'catalog:menu.label',
         descriptionKey: 'catalog:menu.description',
@@ -39,9 +46,22 @@ export function buildMenuItem() {
             {to: CATALOG_PATHS.surfaces, labelKey: 'catalog:nav.surfaces', Icon: ViewQuiltOutlinedIcon},
             {to: CATALOG_PATHS.charts, labelKey: 'catalog:nav.charts', Icon: BarChartOutlinedIcon},
             {to: CATALOG_PATHS.timeline, labelKey: 'catalog:nav.timeline', Icon: TimelineOutlinedIcon},
-            {to: CATALOG_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
-            {to: CATALOG_PATHS.api, labelKey: 'catalog:nav.api', Icon: CloudSyncOutlinedIcon},
-            {to: CATALOG_PATHS.security, labelKey: 'catalog:nav.security', Icon: GppGoodOutlinedIcon},
         ],
-    };
+    }, {
+        to: BUILT_IN_PATHS.account,
+        labelKey: 'catalog:builtIn.menu.label',
+        descriptionKey: 'catalog:builtIn.menu.description',
+        sectionKey: 'shell:sections.interface',
+        Icon: HandymanOutlinedIcon,
+        children: [
+            {to: BUILT_IN_PATHS.account, labelKey: 'catalog:nav.account', Icon: AccountCircleOutlinedIcon},
+            {to: BUILT_IN_PATHS.api, labelKey: 'catalog:nav.api', Icon: CloudSyncOutlinedIcon},
+            {to: BUILT_IN_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
+            {to: BUILT_IN_PATHS.security, labelKey: 'catalog:nav.security', Icon: GppGoodOutlinedIcon},
+            {to: BUILT_IN_PATHS.maps, labelKey: 'catalog:nav.maps', Icon: MapOutlinedIcon},
+            {to: BUILT_IN_PATHS.calendar, labelKey: 'catalog:nav.calendar', Icon: CalendarMonthOutlinedIcon},
+            {to: BUILT_IN_PATHS.kanban, labelKey: 'catalog:nav.kanban', Icon: ViewKanbanOutlinedIcon},
+            {to: BUILT_IN_PATHS.inbox, labelKey: 'catalog:nav.inbox', Icon: MailOutlineIcon},
+        ],
+    }];
 }

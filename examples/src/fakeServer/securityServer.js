@@ -2,7 +2,7 @@
 // y códigos de recuperación), el segundo paso al entrar, las sesiones abiertas y la bitácora.
 //
 // Funciona de verdad con su teléfono: la clave de la app autenticadora es real (sale en un QR que su app puede escanear) y
-// el código de 6 dígitos se revisa con el mismo cálculo que usa un servidor (totp.js). Las llaves de acceso también le
+// el código de 6 dígitos se revisa con el mismo cálculo que usa un servidor (el de @stackcraftmx/calcita/account-demo). Las llaves de acceso también le
 // hablan al navegador de verdad (Touch ID, Face ID, Windows Hello); lo que este servidor NO hace es revisar la firma de la
 // llave, que un servidor real revisa con su librería (py_webauthn, @simplewebauthn/server, web-auth/webauthn-lib).
 //
@@ -17,7 +17,8 @@ import {fakeUsers} from '@/fakeServer/fakeAccounts.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
 import {rememberSession, signedInUserIdOf} from '@/fakeServer/sessionCookie.js';
-import {isValidTotpCode, newTotpSecret, otpauthUrlOf, totpCodeAt} from '@/fakeServer/totp.js';
+// los códigos de la app autenticadora: el mismo cálculo del conector de demostración del paquete
+import {isValidTotpCode, newTotpSecret, otpauthUrlOf, totpCodeAt} from '@stackcraftmx/calcita/account-demo';
 
 const HTTP_STATUS = Object.freeze({unauthorized: 401, locked: 423, unprocessable: 422});
 // quién emite la cuenta en la app autenticadora (lo que se ve arriba del código)

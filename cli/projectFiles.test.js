@@ -12,6 +12,8 @@ test('el package.json pide solo lo elegido, con las versiones del paquete', asyn
     assert.equal(withFormik.dependencies['@mui/material'], calcitaPackage.devDependencies['@mui/material']);
     assert.equal(withFormik.dependencies['react-hook-form'], undefined);
     assert.equal(withFormik.dependencies.i18next, undefined);
+    assert.ok(withFormik.dependencies['@simplewebauthn/browser'], 'con las pantallas de entrar van las llaves de acceso');
+    assert.equal(withFormik.dependencies.qrcode, '1.5.4');
 
     const answers = {...defaultAnswersOf('mi-tienda'), forms: 'react-hook-form', texts: 'i18next'};
     const withHookForm = JSON.parse(packageJsonOf({packageName: 'mi-tienda', answers, calcitaPackage}));

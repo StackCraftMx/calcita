@@ -1,0 +1,96 @@
+// La seguridad de la cuenta, completa: cambiar la contraseña (ChangePasswordForm), la verificación en dos pasos
+// (TwoStepVerificationCard: llaves de acceso, app autenticadora y códigos de recuperación), las sesiones abiertas
+// (SessionsCard) y la bitácora (ActivityLog). Todo lo del servidor sale del conector de la cuenta.
+//
+// Las llaves de acceso se crean aquí con el navegador (createPasskey) y la respuesta va al servidor (savePasskey). La
+// bitácora se vuelve a pedir después de cada cambio: así se ve aparecer lo que se acaba de hacer.
+//
+// Genérico del paquete: function (regla de la casa).
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import Alert from '@mui/material/Alert';
+import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
+import {useAccount} from '@/account/AccountProvider.jsx';
+import DemoTotpCodeButton from '@/account/DemoTotpCodeButton.jsx';
+import ChangePasswordForm from '@/forms/auth/ChangePasswordForm.jsx';
+import TwoStepVerificationCard from '@/forms/security/TwoStepVerificationCard.jsx';
+import ActivityLog from '@/security/ActivityLog.jsx';
+import {createPasskey, passkeysSupported} from '@/security/passkeys.js';
+import SessionsCard from '@/security/SessionsCard.jsx';
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import SectionCard from '@/ui/layout/SectionCard.jsx';
+
+// lo ancho del formulario de la contraseña: un renglón cómodo
+const FORM_MAX_WIDTH = 520;
+const LOADING_HEIGHT_PIXELS = 220;
+
+/**
+ * @param {object} props
+ * @param {boolean} [props.showPasswordChange] por omisión sí
+ */
+export default function AccountSecuritySection({showPasswordChange = true}) {
+    const {t} = useToolkitTranslation('account');
+    const {connector, session} = useAccount();
+    const [security, setSecurity] = useState(null);
+    const [sessions, setSessions] = useState(null);
+    const [events, setEvents] = useState(null);
+    const [loadError, setLoadError] = useState(null);
+    const isDemo = typeof connector.demoTotpCode === 'function';
+
+    const refreshActivity = useCallback(() => connector.listActivity().then(setEvents).catch((error) => setLoadError(error.message)), [connector]);
+    const refreshSessions = useCallback(() => connector.listSessions().then(setSessions).catch((error) => setLoadError(error.message)), [connector]);
+
+    useEffect(() => {
+        connector.loadSecurity().then(setSecurity).catch((error) => setLoadError(error.message));
+        refreshSessions();
+        refreshActivity();
+    }, [connector, refreshActivity, refreshSessions]);
+
+    // lo que hace la tarjeta de dos pasos en cada caso, con el conector
+    const actions = useMemo(() => ({
+        addPasskey: async (name) => connector.savePasskey({name, credential: await createPasskey(await connector.passkeyRegistrationOptions())}),
+        removePasskey: (passkey, password) => connector.removePasskey({passkeyId: passkey.id, password}),
+        startTotp: async () => ({
+            ...await connector.startTotp(),
+            // en la demostración, el atajo del código abajo del campo
+            extra: isDemo ? <DemoTotpCodeButton loadCode={connector.demoTotpCode} /> : undefined,
+        }),
+        confirmTotp: (code) => connector.confirmTotp(code),
+        disableTotp: (password) => connector.disableTotp(password),
+        regenerateRecoveryCodes: (password) => connector.regenerateRecoveryCodes(password),
+    }), [connector, isDemo]);
+
+    const changeSecurity = (nextSecurity) => {
+        setSecurity(nextSecurity);
+        refreshActivity();
+    };
+
+    return (
+        <Stack spacing={3}>
+            {loadError && <Alert severity="error">{loadError}</Alert>}
+            {showPasswordChange && (
+                <SectionCard title={t('profile.password.title')}>
+                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('profile.password.text')}</Typography>
+                    <Stack sx={{maxWidth: FORM_MAX_WIDTH}}>
+                        <ChangePasswordForm onSubmit={async (values) => {
+                            await connector.changePassword(values);
+                            refreshActivity();
+                        }} />
+                    </Stack>
+                </SectionCard>
+            )}
+            {security
+                ? <TwoStepVerificationCard security={security} onSecurityChange={changeSecurity} actions={actions}
+                                           canUsePasskeys={passkeysSupported()} account={session?.user.email} />
+                : <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
+            {isDemo && <Alert severity="info">{t('demo.securityNote')}</Alert>}
+            <SessionsCard sessions={sessions} onCloseOthers={connector.closeOtherSessions} onClosed={() => {
+                refreshSessions();
+                refreshActivity();
+            }} />
+            <ActivityLog events={events} />
+        </Stack>
+    );
+}

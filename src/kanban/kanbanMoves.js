@@ -7,9 +7,10 @@
 /**
  * Las tarjetas de una columna, en su orden.
  *
- * @param {Array<{id: string, columnId: string}>} cards
+ * @template {{id: string, columnId: string}} Card las tarjetas del proyecto, con lo que traigan (título, etiquetas…)
+ * @param {Card[]} cards
  * @param {string} columnId
- * @returns {Array<{id: string, columnId: string}>}
+ * @returns {Card[]}
  */
 export function cardsOfColumn(cards, columnId) {
     return cards.filter((card) => card.columnId === columnId);
@@ -18,9 +19,10 @@ export function cardsOfColumn(cards, columnId) {
 /**
  * Las tarjetas con una movida: la tarjeta queda en toColumnId, en la posición toIndex de esa columna.
  *
- * @param {Array<{id: string, columnId: string}>} cards
+ * @template {{id: string, columnId: string}} Card las tarjetas del proyecto, con lo que traigan (título, etiquetas…)
+ * @param {Card[]} cards
  * @param {{cardId: string, toColumnId: string, toIndex: number}} move
- * @returns {Array<{id: string, columnId: string}>} un arreglo nuevo (el de entrada no se toca)
+ * @returns {Card[]} un arreglo nuevo (el de entrada no se toca), con las mismas tarjetas
  */
 export function moveCard(cards, {cardId, toColumnId, toIndex}) {
     const card = cards.find((candidate) => candidate.id === cardId);

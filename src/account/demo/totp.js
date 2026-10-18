@@ -1,6 +1,6 @@
 // Los códigos de 6 dígitos de una app autenticadora (TOTP, RFC 6238): los mismos que calcula Google Authenticator con la
-// clave que se escaneó. En un proyecto real esto lo hace el servidor (pyotp, otplib, spomky-labs/otphp); aquí lo hace el
-// servidor de mentira para que el ejemplo funcione con su app de verdad.
+// clave que se escaneó. En un proyecto real esto lo hace el servidor (pyotp, otplib, spomky-labs/otphp); aquí lo usa el
+// conector de demostración (y el servidor de mentira de los ejemplos) para que la verificación funcione con la app de verdad.
 //
 // El código sale de la clave y de la hora: HMAC-SHA1 de los «pasos» de 30 segundos desde 1970, recortado a 6 dígitos.
 // Al revisar se acepta el paso de antes y el de después: el reloj del teléfono puede ir unos segundos desfasado.

@@ -26,7 +26,9 @@ import {
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {Money} from '@stackcraftmx/calcita/money';
 
-import {APP_PATHS, ORDER_STATUS, orderDetailPathOf, useSession} from '@/core';
+import {useAccount} from '@stackcraftmx/calcita/account';
+
+import {APP_PATHS, ORDER_STATUS, orderDetailPathOf} from '@/core';
 import {getDashboard} from '@/modules/dashboard/dashboardApi.js';
 
 // la tendencia se escribe con un decimal: «+12.4 %»
@@ -104,7 +106,7 @@ const RecentOrders = ({orders, currency}) => {
 
 export const DashboardPage = () => {
     const {t} = useToolkitTranslation('dashboard');
-    const {session} = useSession();
+    const {session} = useAccount();
     const [dashboard, setDashboard] = useState(null);
     const [loadError, setLoadError] = useState(null);
 

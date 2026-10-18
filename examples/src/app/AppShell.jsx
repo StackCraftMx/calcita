@@ -17,11 +17,12 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import SwitchAccountOutlinedIcon from '@mui/icons-material/SwitchAccountOutlined';
 import {AppLayout, InstallAppSetting, composeMenu, useAccessChecker, useToolkitTranslation, useMenuBadges} from '@stackcraftmx/calcita';
+import {useAccount} from '@stackcraftmx/calcita/account';
 import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
 
 import {GlassModeSetting} from '@/app/GlassModeSetting.jsx';
 import {fetchMenuBadges} from '@/app/menuBadgesApi.js';
-import {APP_PATHS, useSession} from '@/core';
+import {APP_PATHS} from '@/core';
 
 // cada módulo declara su entrada en su menu.js (orden, permiso, sección, texto e ícono)
 const MENU_MODULES = import.meta.glob('@/modules/*/menu.js', {eager: true});
@@ -42,7 +43,7 @@ const SidebarCard = () => {
 
 export const AppShell = () => {
     const {t} = useToolkitTranslation('shell');
-    const {session, signOut} = useSession();
+    const {session, signOut} = useAccount();
     const {pathname, search} = useLocation();
     const navigate = useNavigate();
     const canAccess = useAccessChecker();

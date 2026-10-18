@@ -22,8 +22,8 @@ import Typography from '@mui/material/Typography';
 import {
     PageHeading, PermissionMatrix, SectionCard, composePermissionGroups, toastProblem, toastSuccess, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
+import {useAccount} from '@stackcraftmx/calcita/account';
 
-import {useSession} from '@/core';
 import {listProfiles, saveProfileAbilities} from '@/modules/profiles/profilesApi.js';
 
 // los permisos que declara cada módulo junto a su entrada del menú
@@ -63,7 +63,7 @@ const ProfileList = ({profiles, selectedKey, ownProfileKey, onSelect}) => {
 
 export const ProfilesPage = () => {
     const {t} = useToolkitTranslation('profiles');
-    const {session, refreshSession} = useSession();
+    const {session, refreshSession} = useAccount();
     const [profiles, setProfiles] = useState(null);
     const [loadError, setLoadError] = useState(null);
     const [selectedKey, setSelectedKey] = useState(null);

@@ -637,5 +637,65 @@ export default Object.freeze({
         "back": "Regresar",
         "unreadCount_one": "{{count}} sin leer",
         "unreadCount_other": "{{count}} sin leer"
+    },
+    "account": {
+        "reset": {
+            "title": "Elegir una contraseña nueva",
+            "subtitle": "Llegó aquí desde el enlace del correo. Elija la contraseña con la que va a entrar.",
+            "done": "Ya puede entrar con su contraseña nueva.",
+            "goToSignIn": "Ir a iniciar sesión",
+            "missingToken": "Este enlace no sirve: le falta su clave. Pida uno nuevo desde «¿Olvidó su contraseña?».",
+            "askAgain": "Pedir otro enlace"
+        },
+        "profile": {
+            "tabs": {
+                "label": "Partes de su perfil",
+                "data": "Sus datos",
+                "security": "Seguridad",
+                "preferences": "Preferencias"
+            },
+            "data": {
+                "title": "Sus datos",
+                "text": "Así le ven las demás personas en la app.",
+                "name": "Nombre",
+                "email": "Correo",
+                "emailHelp": "Es el correo con el que entra; para cambiarlo, pídalo a quien administra la app.",
+                "phone": "Teléfono (opcional)",
+                "phoneInvalid": "Escriba solo dígitos (de 7 a 15), con + al inicio si es de otro país.",
+                "save": "Guardar",
+                "saved": "Se guardaron sus datos."
+            },
+            "password": {
+                "title": "Contraseña",
+                "text": "Use una contraseña que no use en otros sitios. Al cambiarla, la próxima vez entra con la nueva."
+            },
+            "preferences": {
+                "title": "Apariencia",
+                "text": "Cómo se ve la app para usted: el tamaño de letra, el idioma y claro u oscuro se recuerdan en este navegador."
+            }
+        },
+        "demo": {
+            "totpCode": "Usar el código de ejemplo",
+            "totpCodeHelp": "Solo en la demostración: llena el código que enseñaría su app ahorita, por si no la tiene a la mano.",
+            "securityNote": "Servidor de demostración: la verificación funciona con su teléfono de verdad (escanee el QR o cree una llave con su huella), pero vive en la memoria de la pestaña: al recargar se apaga. Salga y vuelva a entrar para ver el segundo paso.",
+            "server": {
+                "wrongCredentialsTitle": "No pudo entrar",
+                "wrongCredentials": "En la demostración se entra con {{email}} y cualquier contraseña.",
+                "noSessionTitle": "Su sesión terminó",
+                "noSession": "Vuelva a entrar.",
+                "validationTitle": "Revise los datos",
+                "validationDetail": "Hay campos por corregir.",
+                "passwordRequired": "Escriba su contraseña para confirmar.",
+                "nameRequired": "Escriba su nombre.",
+                "wrongCodeTitle": "El código no coincide",
+                "wrongCode": "Revise que sea el código que enseña su app ahorita.",
+                "expiredTitle": "Se acabó el tiempo",
+                "expired": "Pasaron más de 5 minutos: vuelva a escribir su contraseña.",
+                "lockedTitle": "Demasiados intentos",
+                "locked": "Por seguridad hay que empezar de nuevo: vuelva a escribir su contraseña.",
+                "defaultPasskeyName": "Llave {{number}}",
+                "profileSaved": "Se guardaron sus datos."
+            }
+        }
     }
 });

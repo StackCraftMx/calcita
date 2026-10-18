@@ -5,6 +5,7 @@ export const APP_PATHS = Object.freeze({
 //#if auth
     signIn: '/sign-in',
     forgotPassword: '/forgot-password',
+    resetPassword: '/reset-password',
     profile: '/profile',
 //#endif
 });

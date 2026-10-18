@@ -104,6 +104,8 @@ try {
         ['other-app/src/app/i18n.js', true], ['other-app/src/modules/auth', false], ['other-app/public/manifest.webmanifest', false],
         ['recommended-app/public/manifest.webmanifest', true], ['recommended-app/src/modules/auth/SignInPage.jsx', true],
         ['recommended-app/.gitignore', true], ['other-app/src/modules/purchaseOrders/components/OrderTotals.jsx', true],
+        ['recommended-app/src/core/accountConnector.js', true], ['other-app/src/core/accountConnector.js', false],
+        ['recommended-app/src/modules/auth/ResetPasswordPage.jsx', true],
     ];
     for (const [path, shouldExist] of checks) {
         if (existsSync(join(workFolder, path)) !== shouldExist) {

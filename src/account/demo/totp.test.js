@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {base32Of, bytesOfBase32, isValidTotpCode, otpauthUrlOf, totpCodeAt} from '@/fakeServer/totp.js';
+import {base32Of, bytesOfBase32, isValidTotpCode, otpauthUrlOf, totpCodeAt} from '@/account/demo/totp.js';
 
 // la clave de los ejemplos del RFC: «12345678901234567890» en ASCII
 const RFC_SECRET = base32Of(new TextEncoder().encode('12345678901234567890'));

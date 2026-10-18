@@ -1,5 +1,5 @@
 // La raíz de la app: el ÚNICO lugar donde se conecta el framework. ToolkitProvider recibe el idioma, los textos de los
-// módulos, la zona, la moneda, el router y la regla de permisos de la sesión (SessionProvider); NuqsAdapter guarda en la
+// módulos, la zona, la moneda, el router y la regla de permisos de la sesión (AccountProvider, con el conector de la cuenta); NuqsAdapter guarda en la
 // URL el estado de las tablas. Los avisos (Toaster), el panel de descargas y la invitación a instalar la app
 // (InstallPromptBanner) se montan aquí UNA vez, para las pantallas con sesión y para las de entrar.
 //
@@ -13,11 +13,12 @@ import {useEffect, useState} from 'react';
 import {Outlet} from 'react-router';
 import {NuqsAdapter} from 'nuqs/adapters/react-router/v7';
 import {DownloadManager, InstallPromptBanner, Toaster, ToolkitProvider} from '@stackcraftmx/calcita';
+import {AccountProvider} from '@stackcraftmx/calcita/account';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 
 import {APP_BUILD_ID, APP_LANGUAGES, APP_NAME, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE} from '@/app/appSettings.js';
+import {accountConnector} from '@/app/accountConnector.js';
 import {APP_TEXTS} from '@/app/appTexts.js';
-import {SessionProvider} from '@/app/SessionProvider.jsx';
 
 export const AppProviders = () => {
     const [language, setLanguage] = useState(APP_LANGUAGES.spanish);
@@ -28,7 +29,7 @@ export const AppProviders = () => {
     }, [language]);
 
     return (
-        <SessionProvider language={language}>
+        <AccountProvider connector={accountConnector} refreshKey={language}>
             {(canAccess) => (
                 <ToolkitProvider language={language} onLanguageChange={setLanguage} texts={APP_TEXTS} timeZone={PRODUCT_TIME_ZONE}
                                  currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation} buildId={APP_BUILD_ID}
@@ -41,6 +42,6 @@ export const AppProviders = () => {
                     <InstallPromptBanner />
                 </ToolkitProvider>
             )}
-        </SessionProvider>
+        </AccountProvider>
     );
 };

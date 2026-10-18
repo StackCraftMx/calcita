@@ -24,6 +24,8 @@ import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
+import {AccountProvider, ProfileScreen, ResetPasswordScreen, SignInScreen} from '@stackcraftmx/calcita/account';
+import {createDemoAccountConnector} from '@stackcraftmx/calcita/account-demo';
 // MapView (/maps) no entra: Leaflet usa window al cargarse; en el servidor se carga aparte (en Next, con ssr: false)
 
 const ORDER_STATUS = Object.freeze({pending: dictionaryEntryOf('pending', 'orderStatus.pending', 'warning')});
@@ -40,6 +42,10 @@ const INBOX_MESSAGE = {
     receivedAt: '2026-10-17T15:00:00Z', isUnread: true, isStarred: false, hasAttachments: false, to: ['ana@ejemplo.com'],
     body: 'Texto con <b>etiquetas</b>', attachments: [],
 };
+// la cuenta con el conector de demostración y la sesión ya conocida (en el servidor no corre la primera carga)
+const DEMO_CONNECTOR = createDemoAccountConnector({delayMilliseconds: 0, labels: ['Administración']});
+const DEMO_SESSION = {user: {id: 'u1', name: 'Ana Martínez Ruiz', email: 'ana@ejemplo.com'}, roles: [], abilities: [], labels: ['Administración']};
+const withAccount = (session, screen) => h(AccountProvider, {connector: DEMO_CONNECTOR, initialSession: session}, () => screen);
 const PROJECT_TEXTS = {es: {dictionaries: {orderStatus: {pending: {label: 'Pendiente', tooltip: 'Esperando pago'}}}}};
 
 // cada caso: su nombre, el componente y un texto que debe salir en lo pintado
@@ -139,6 +145,9 @@ const CASES = [
         folders: [{id: 'inbox', label: 'Recibidos', unreadCount: 2}], selectedFolderId: 'inbox', onSelectFolder: () => {},
         list: 'la lista', detail: null, isDetailOpen: false, onCloseDetail: () => {},
     }), 'Recibidos'],
+    ['SignInScreen sin sesión', withAccount(null, h(SignInScreen, {forgotPasswordPath: '/forgot-password'})), '¿Olvidó su contraseña?'],
+    ['ResetPasswordScreen sin clave en la dirección', withAccount(null, h(ResetPasswordScreen, {signInPath: '/sign-in'})), 'Este enlace no sirve'],
+    ['ProfileScreen con sesión', withAccount(DEMO_SESSION, h(ProfileScreen)), 'Sus datos'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 

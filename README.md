@@ -144,6 +144,8 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
 | `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
+| `@stackcraftmx/calcita/account` | la cuenta completa: `SignInScreen` (con el segundo paso), `ForgotPasswordScreen`, `ResetPasswordScreen`, `ProfileScreen`, `AccountSecuritySection`, `AccountProvider` y `createRestAccountConnector` | `@simplewebauthn/browser` 14 |
+| `@stackcraftmx/calcita/account-demo` | `createDemoAccountConnector`: la cuenta en el navegador, sin backend (y los códigos TOTP) | — |
 | `@stackcraftmx/calcita/maps` | `MapView`: mapa con marcadores del color del tema, el elegido con su globo, se acomoda solo; en oscuro, mosaicos oscuros | `leaflet`, `react-leaflet` 5 |
 | `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
 | `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope y tarjetas que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
@@ -261,8 +263,84 @@ Si se publica otra versión con la pestaña abierta, la pantalla que no se habí
 `withChunkRecovery` (de `/react-router`) recarga una vez y `RouteErrorScreen` dice «Hay una versión nueva» con su botón;
 sin router de datos, `recoverFromStaleChunk` en el `.catch()` del import y `StaleBuildBoundary` alrededor de las pantallas.
 
-## Seguridad de la cuenta
+## La cuenta completa: conectar su backend
 
+Entrar (con el segundo paso), «¿Olvidó su contraseña?», elegir una contraseña nueva, Mi perfil (sus datos, seguridad y
+preferencias) y la seguridad de la cuenta (llaves de acceso, app autenticadora, códigos de recuperación, sesiones abiertas y
+bitácora) vienen hechos en `@stackcraftmx/calcita/account`. El proyecto **solo escribe el conector**: las llamadas a su
+backend. Pide `@simplewebauthn/browser` (las llaves de acceso).
+
+```jsx
+import {AccountProvider, ProfileScreen, SignInScreen, createRestAccountConnector} from '@stackcraftmx/calcita/account';
+
+// 1. el conector: si el backend sigue el contrato de abajo, es una línea
+const accountConnector = createRestAccountConnector(apiClient);
+
+// 2. el proveedor, por fuera de ToolkitProvider (le pasa la regla de permisos de quien está dentro)
+<AccountProvider connector={accountConnector}>
+    {(canAccess) => <ToolkitProvider canAccess={canAccess} …>…</ToolkitProvider>}
+</AccountProvider>
+
+// 3. las pantallas, en sus rutas
+{path: '/sign-in', element: <SignInScreen forgotPasswordPath="/forgot-password" logo={<AppLogo />} />}
+{path: '/forgot-password', element: <ForgotPasswordScreen signInPath="/sign-in" />}
+{path: '/reset-password', element: <ResetPasswordScreen signInPath="/sign-in" />}   // el enlace del correo: ?token=…
+{path: '/profile', element: <ProfileScreen />}
+```
+
+`useAccount()` da `{session, refreshSession, signOut}` para la barra y las pantallas propias.
+
+**Sin backend todavía:** `createDemoAccountConnector()` de `@stackcraftmx/calcita/account-demo` (todo en el navegador,
+con la verificación en dos pasos funcionando con su teléfono de verdad). Con `toQrImageUrl` sale el QR de la app; el
+proyecto que arma `calcita new` usa la demostración mientras no tenga `VITE_API_URL` y el REST en cuanto la tiene (la
+demostración ni siquiera viaja en lo construido).
+
+**Si el backend es distinto:** se cambia la ruta en `paths` o solo la función que no coincida; TypeScript (o el editor,
+con el JSDoc) avisa si una función no regresa lo que piden las pantallas (`AccountConnector`).
+
+```js
+const accountConnector = {
+    ...createRestAccountConnector(apiClient, {paths: {session: '/me'}}),
+    signIn: async ({email, password, remember}) => {
+        const response = await apiClient.post('/login', {username: email, password, remember});
+        return {secondStep: response.mfa_required ? {methods: ['totp']} : null};
+    },
+};
+```
+
+El contrato REST (`ACCOUNT_REST_PATHS`; llaves en snake_case, errores RFC 9457 con `errors` por campo):
+
+| Petición | Manda | Responde |
+|---|---|---|
+| `GET /auth/session` | — | `{user: {id, name, email, subtitle, phone}, roles, abilities, labels}`; 401 si nadie está dentro |
+| `POST /auth/sign-in` | `{email, password, remember}` | `{second_step: {methods: ['passkey', 'totp', 'recovery_code']} \| null}` |
+| `POST /auth/second-step` | `{method: 'totp' \| 'recovery_code', code}` | 204; 401 con `remaining_attempts`, 423 `account_locked` |
+| `GET /auth/second-step/passkey-options` | — | las opciones de WebAuthn para firmar |
+| `POST /auth/second-step/passkey` | `{credential}` | 204 |
+| `POST /auth/sign-out` | — | 204 |
+| `POST /auth/forgot-password` | `{email}` | 204, exista o no el correo |
+| `POST /auth/reset-password` | `{token, new_password}` | 204 |
+| `PUT /account` | `{name, phone}` | `{message?}` |
+| `PUT /account/password` | `{current_password, new_password}` | 204 |
+| `GET /account/security` | — | `{is_enabled, enabled_at, passkeys: [{id, name, created_at, last_used_at}], totp: {is_enabled, enabled_at}, recovery_codes_remaining}` |
+| `POST /account/security/totp` | — | `{secret, qr_image_url}` |
+| `POST /account/security/totp/confirm` | `{code}` | `{security, recovery_codes?}` |
+| `DELETE /account/security/totp` | `{password}` | `{security}` |
+| `GET /account/security/passkeys/registration-options` | — | las opciones de WebAuthn para crear |
+| `POST /account/security/passkeys` | `{name, credential}` | `{security, recovery_codes?}` |
+| `DELETE /account/security/passkeys/{id}` | `{password}` | `{security}` |
+| `POST /account/security/recovery-codes` | `{password}` | `{security, recovery_codes}` |
+| `GET /account/sessions` | — | `[{id, browser, platform, is_mobile, started_at, network, is_current}]` |
+| `POST /account/sessions/close-others` | — | `{closed}` |
+| `GET /account/activity` | — | `[{id, kind, occurred_at, device, network}]` |
+
+Las opciones y la firma de WebAuthn viajan tal cual: las arma y las revisa la librería del servidor (py_webauthn,
+@simplewebauthn/server, web-auth/webauthn-lib). Lo que quita protección pide la contraseña; `recovery_codes` se enseña una
+sola vez. `kind` de la bitácora es uno de `ACCOUNT_EVENT_KIND`.
+
+## Seguridad de la cuenta (las piezas sueltas)
+
+Las mismas piezas de la cuenta completa, para armar pantallas propias:
 - En `/forms`, `TwoStepVerificationCard`: llaves de acceso, app autenticadora y códigos de recuperación. Lo que quita
   protección pide la contraseña. El proyecto conecta las acciones con su API; la tarjeta no sabe del servidor.
 - En `/forms`, `SecondStepForm`: el segundo paso al entrar (llave, código de la app o de recuperación), con los intentos
