@@ -1,6 +1,7 @@
 // Un proyecto en TypeScript que usa el paquete (JavaScript con sus tipos generados del JSDoc). Solo se compila:
 //   npx tsc -p testing/typescriptConsumer/tsconfig.json
 import {dictionaryEntryOf, formatCurrency, labelOf, lookup, problemTitle, reportPublishedBuild, toolkitTextsEs} from '@stackcraftmx/calcita';
+import {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf, usePublishedBuildWatch} from '@stackcraftmx/calcita';
 import {VALUE_FORMAT, reportSheetOf} from '@stackcraftmx/calcita/excel';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
@@ -47,6 +48,11 @@ const sheet = reportSheetOf({
 const headerLength: number = sheet.header.length;
 const cancelText: string = toolkitTextsEs.common.actions.cancel;
 reportPublishedBuild('build-b', 'build-a');
+// la app se entera sola de otra versión: recarga si estuvo fuera 15 minutos, si no el aviso
+const watchAction: string = buildWatchActionOf({runningBuildId: 'a', publishedBuildId: 'b', hiddenMilliseconds: 0, reloadAfterHiddenMilliseconds: null});
+const isNotice: boolean = watchAction === BUILD_WATCH_ACTION.notice;
+const fileBuildId: string | null = publishedBuildIdOf({buildId: 'b'});
+const watchBuilds = (): void => usePublishedBuildWatch({url: '/version.json', checkEveryMinutes: 10, reloadAfterHiddenMinutes: null});
 const attachmentsServer = createPondServer({url: '/api/adjuntos', headers: {Authorization: 'Bearer prueba'}});
 const installment: Money = Money.fromString('10.00', {currency: 'MXN'}).dividedBy(3, {rounding: MONEY_ROUNDING.halfEven});
 const installmentText: string = installment.format();
@@ -149,5 +155,5 @@ const applyCaught = (caught: unknown) => applyServerProblem(caught, {setFieldErr
 // @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
 const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
 
-export {screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+export {watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

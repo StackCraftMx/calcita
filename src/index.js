@@ -118,6 +118,8 @@ export {currentHistoryIndex, forgetPageName, pageNameAt, rememberPageName, useNa
 export {periodRangeIsValid, rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
 export {createLogger, setLogLevel} from '@/observability/logger.js';
 export {isNewBuildPublished, reportPublishedBuild, useNewBuildPublished} from '@/observability/publishedBuild.js';
+export {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf} from '@/observability/buildWatch.js';
+export {usePublishedBuildWatch} from '@/observability/usePublishedBuildWatch.js';
 
 // ─── la petición de la casa: el cliente del servidor, sus errores y la recarga por una versión publicada ──
 export {API_ERROR_STATUS, ApiError} from '@/api/ApiError.js';

@@ -123,6 +123,30 @@ Con `AppLayout` no hace falta el paso 3: el marco ya lo pone. Con vidrio no es f
 de la barra (`variant="floating"`): en escritorio, centrada debajo de la barra de arriba; en el teléfono, encima de la
 barra de abajo, como el reproductor chico que Apple pone encima de las pestañas.
 
+Sin API que anuncie la versión, o con la app anclada al inicio del iPhone (al abrirla, el iPhone no vuelve a pedir la
+página: retoma la que tenía en memoria, aunque haya pasado un día), `usePublishedBuildWatch` se entera sola. El build deja
+un archivo con su versión y la app lo vuelve a leer cada vez que regresa del segundo plano y cada tanto. Si estuvo fuera
+15 minutos o más, se recarga sola con lo nuevo; si solo salió un momento (a copiar un código del SMS), sale el aviso con su
+botón, para no borrar lo que llevaba escrito.
+
+```js
+// vite.config.js: la versión va dentro de la app y en dist/version.json
+const BUILD_ID = process.env.VITE_BUILD_ID || new Date().toISOString();
+export default defineConfig({
+    plugins: [react(), {
+        name: 'build-version', apply: 'build',
+        generateBundle() { this.emitFile({type: 'asset', fileName: 'version.json', source: JSON.stringify({buildId: BUILD_ID})}); },
+    }],
+    define: {'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID)},
+});
+
+// en la raíz de la app, una vez (en desarrollo no hay archivo: sin url no hace nada)
+usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null});
+// opciones: checkEveryMinutes (5), reloadAfterHiddenMinutes (15; null = nunca recarga sola), onReload
+```
+
+El servidor no debe guardar `version.json` (con `Cache-Control: no-cache`, como el `index.html`).
+
 ## Qué trae cada puerta
 
 Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
