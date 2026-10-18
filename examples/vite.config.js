@@ -32,6 +32,21 @@ const extraAllowedHosts = (process.env.EXAMPLES_ALLOWED_HOSTS ?? '').split(',').
 // El código de los ejemplos del catálogo para su «Ver código»: import('…/Demo.tsx?demo-source') da {ts, js}
 // (tooling/demoSource.js). Va con un id propio (\0…) para que ningún otro plugin lo trate como componente.
 const DEMO_SOURCE_QUERY = '?demo-source';
+
+// La versión de esta compilación: va dentro de la app (import.meta.env.VITE_BUILD_ID → ToolkitProvider buildId) y en
+// version.json, que la app publicada vuelve a leer al abrirla para saber si ya hay otra (usePublishedBuildWatch). Se puede
+// fijar desde afuera (VITE_BUILD_ID=… al construir, p. ej. el commit); si no, la hora en que se construyó
+const BUILD_ID = process.env.VITE_BUILD_ID || new Date().toISOString();
+
+function buildVersionPlugin() {
+    return {
+        name: 'calcita-build-version',
+        apply: 'build',
+        generateBundle() {
+            this.emitFile({type: 'asset', fileName: 'version.json', source: JSON.stringify({buildId: BUILD_ID})});
+        },
+    };
+}
 const DEMO_SOURCE_PREFIX = '\0demo-source:';
 
 function demoSourcePlugin() {
@@ -65,7 +80,8 @@ function demoSourcePlugin() {
 }
 
 export default defineConfig({
-    plugins: [react(), demoSourcePlugin()],
+    plugins: [react(), demoSourcePlugin(), buildVersionPlugin()],
+    define: {'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID)},
     resolve: {
         alias: {'@': fileURLToPath(new URL('./src', import.meta.url))},
         dedupe: SINGLE_COPY_PACKAGES,
