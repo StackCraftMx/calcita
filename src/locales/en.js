@@ -677,6 +677,7 @@ export default Object.freeze({
         "demo": {
             "totpCode": "Use the sample code",
             "totpCodeHelp": "Demo only: fills in the code your app would show right now, in case you do not have it at hand.",
+            "passkeyNote": "In the demo the passkey is really saved in your keychain (iCloud, Google or your password manager), but this page forgets it when you reload. When you are done trying it, delete it from your keychain too.",
             "securityNote": "Demo server: verification works with your real phone (scan the QR or create a passkey with your fingerprint), but it lives in this tab’s memory: reloading turns it off. Sign out and back in to see the second step.",
             "server": {
                 "wrongCredentialsTitle": "You could not sign in",
