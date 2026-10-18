@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.19.0] - 2026-10-18
+
+### Agregado
+
+- `TwoStepVerificationCard` acepta `passkeyNotice`: un aviso en el diálogo de crear la llave, antes de que el navegador
+  la guarde. La cuenta de demostración lo usa para avisar que la llave queda de verdad en el llavero de la persona
+  (iCloud, Google o su gestor) mientras la página la olvida al recargar.
+
+### Corregido
+
+- `formatFileSize` escribe «74 bytes» y «1 byte» (decía «74 byte»: la forma corta de Intl no pone plural).
+- Los comentarios de las descargas ya no hablan de axios: describen la petición de la casa (`createApiClient`).
+
 ## [0.18.0] - 2026-10-17
 
 ### Agregado
@@ -175,6 +188,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.19.0]: https://github.com/StackCraftMx/calcita/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/StackCraftMx/calcita/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/StackCraftMx/calcita/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/StackCraftMx/calcita/compare/v0.15.0...v0.16.0
