@@ -12,8 +12,8 @@
 // el ÚNICO lugar que avisa: avance, lista y error con su texto del API (RFC 9457). Sin aviso aparte, para no avisar dos
 // veces lo mismo.
 //
-// Una sola lista para toda la app (un actor de módulo, como el cliente axios): la llenan varias pantallas y la lee un
-// solo panel montado en la raíz de la aplicación.
+// Una sola lista para toda la app (un actor de módulo, como el cliente de createApiClient): la llenan varias pantallas y
+// la lee un solo panel montado en la raíz de la aplicación.
 //
 // Funciones puras del paquete, no renderizan: function (regla de la casa). No conoce el API: el archivo lo pide la
 // `request` que le pasan.
@@ -49,7 +49,8 @@ export async function startDownload({label, format, request, onCompleted}) {
     try {
         const {blob, fileName} = await request({
             signal: abortController.signal,
-            // axios avisa cada pedazo que llega; total viene vacío cuando el servidor arma el archivo al vuelo
+            // la petición avisa cada pedazo que llega; total viene en null cuando el servidor arma el archivo al vuelo (sin
+            // Content-Length) y el panel enseña lo que lleva en vez del porcentaje
             onDownloadProgress: (progressEvent) => downloadsActor.send({
                 type: 'PROGRESSED', id: downloadId, loadedBytes: progressEvent.loaded, totalBytes: progressEvent.total,
             }),
@@ -58,7 +59,8 @@ export async function startDownload({label, format, request, onCompleted}) {
         downloadsActor.send({type: 'COMPLETED', id: downloadId, fileName});
         onCompleted?.(fileName);
     } catch (error) {
-        // OJO: cancelar también llega aquí como error; se distingue por la señal, no por el tipo de error de axios
+        // OJO: cancelar también llega aquí como error (el AbortError del navegador); se distingue por la señal, no por el
+        // tipo de error, porque cada `request` del proyecto puede tronar con el suyo
         if (abortController.signal.aborted) {
             downloadsActor.send({type: 'CANCELED', id: downloadId});
         } else {

@@ -83,7 +83,10 @@ export default function AccountSecuritySection({showPasswordChange = true}) {
             )}
             {security
                 ? <TwoStepVerificationCard security={security} onSecurityChange={changeSecurity} actions={actions}
-                                           canUsePasskeys={passkeysSupported()} account={session?.user.email} />
+                                           canUsePasskeys={passkeysSupported()} account={session?.user.email}
+                                           // en la demostración la llave es de verdad pero el servidor se olvida al recargar:
+                                           // se avisa antes de crearla para que nadie se quede con una llave huérfana
+                                           passkeyNotice={isDemo ? t('demo.passkeyNote') : undefined} />
                 : <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
             {isDemo && <Alert severity="info">{t('demo.securityNote')}</Alert>}
             <SessionsCard sessions={sessions} onCloseOthers={connector.closeOtherSessions} onClosed={() => {

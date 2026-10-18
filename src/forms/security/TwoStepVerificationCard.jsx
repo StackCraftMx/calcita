@@ -163,8 +163,8 @@ function TotpDialog({setup, onConfirm, onClose}) {
     );
 }
 
-/** Nombrar y crear una llave nueva (el navegador pide la huella, el rostro o el PIN). */
-function PasskeyDialog({open, onAdd, onClose}) {
+/** Nombrar y crear una llave nueva (el navegador pide la huella, el rostro o el PIN); notice va arriba del nombre. */
+function PasskeyDialog({open, onAdd, onClose, notice}) {
     const {t} = useToolkitTranslation('security');
     const nameSchema = Yup.object({name: Yup.string().trim().max(PASSKEY_NAME_MAX_LENGTH)});
 
@@ -184,6 +184,7 @@ function PasskeyDialog({open, onAdd, onClose}) {
                         <DialogContent>
                             <Stack spacing={2}>
                                 <DialogContentText>{t('twoStep.passkeyDialogText')}</DialogContentText>
+                                {notice && <Alert severity="info">{notice}</Alert>}
                                 <FormProblemAlert />
                                 <FormTextField name="name" label={t('twoStep.passkeyName')} placeholder={t('twoStep.passkeyNamePlaceholder')} autoFocus
                                                slotProps={{htmlInput: {maxLength: PASSKEY_NAME_MAX_LENGTH}}} />
@@ -235,8 +236,10 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  * @param {(password: string) => Promise<{security: object, recoveryCodes: string[]}>} props.actions.regenerateRecoveryCodes
  * @param {boolean} [props.canUsePasskeys] passkeysSupported() de /passkeys; sin él no se ofrece agregar llaves
  * @param {string} [props.account] la cuenta (el correo), para el archivo de los códigos
+ * @param {import('react').ReactNode} [props.passkeyNotice] un aviso en el diálogo de crear la llave, antes de que el
+ *     navegador la guarde (p. ej. el de la demostración: la llave queda de verdad en el llavero de la persona)
  */
-export default function TwoStepVerificationCard({security, onSecurityChange, actions, canUsePasskeys = false, account}) {
+export default function TwoStepVerificationCard({security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice}) {
     const {t} = useToolkitTranslation('security');
     // qué diálogo está abierto: uno a la vez
     const [dialog, setDialog] = useState(null);
@@ -324,7 +327,7 @@ export default function TwoStepVerificationCard({security, onSecurityChange, act
                 )}
             </Stack>
 
-            <PasskeyDialog open={dialog?.kind === 'passkey'} onClose={close}
+            <PasskeyDialog open={dialog?.kind === 'passkey'} onClose={close} notice={passkeyNotice}
                            onAdd={async (name) => apply(await actions.addPasskey(name), t('twoStep.passkeyAdded'))} />
             <TotpDialog setup={totpSetup} onClose={() => setTotpSetup(null)}
                         onConfirm={async (code) => {

@@ -677,6 +677,7 @@ export default Object.freeze({
         "demo": {
             "totpCode": "Usar el código de ejemplo",
             "totpCodeHelp": "Solo en la demostración: llena el código que enseñaría su app ahorita, por si no la tiene a la mano.",
+            "passkeyNote": "En la demostración la llave se guarda de verdad en su llavero (iCloud, Google o su gestor de contraseñas), pero esta página la olvida al recargar. Cuando termine de probar, bórrela también de su llavero.",
             "securityNote": "Servidor de demostración: la verificación funciona con su teléfono de verdad (escanee el QR o cree una llave con su huella), pero vive en la memoria de la pestaña: al recargar se apaga. Salga y vuelva a entrar para ver el segundo paso.",
             "server": {
                 "wrongCredentialsTitle": "No pudo entrar",
