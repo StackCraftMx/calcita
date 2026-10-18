@@ -133,7 +133,8 @@ export function createRestAccountConnector(apiClient, {paths = {}} = {}) {
         resetPassword: async ({token, newPassword}) => {
             await apiClient.post(path.resetPassword, {token, new_password: newPassword});
         },
-        updateProfile: async ({name, phone}) => (await apiClient.put(path.profile, {name, phone})) ?? {},
+        // todo lo del formulario viaja: name, phone y los campos propios de ProfileScreen (extraFields) con sus nombres
+        updateProfile: async (profile) => (await apiClient.put(path.profile, profile)) ?? {},
         changePassword: async ({currentPassword, newPassword}) => {
             await apiClient.put(path.password, {current_password: currentPassword, new_password: newPassword});
         },
