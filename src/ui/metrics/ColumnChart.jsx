@@ -62,7 +62,7 @@ function valueAxisWidthOf(highestValue, formatValue) {
  * @param {string} props.emptyLabel
  * @param {number} [props.height]
  * @param {'primary'|'success'|'warning'|'error'|'info'} [props.tone]
- * @param {(item: object) => void} [props.onSelect]
+ * @param {(item: any) => void} [props.onSelect] recibe el renglón de data que se picó
  * @param {(value: number) => string} [props.formatValue] cómo se escribe un valor (en el eje, en la tabla y en el
  *     tooltip)
  * @param {{value: number, label: string}} [props.referenceLine] línea de referencia con su rótulo ya traducido («Meta:

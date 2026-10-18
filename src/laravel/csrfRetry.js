@@ -17,9 +17,9 @@ export const CSRF_TOKEN_MISMATCH_STATUS = 419;
  *
  * @param {object} dependencies
  * @param {() => Promise<unknown>} dependencies.refreshCsrfToken GET auth/csrf-token (deja la cookie nueva)
- * @param {(config: object) => Promise<object>} dependencies.repeatRequest vuelve a mandar la petición con el mismo
+ * @param {(config: any) => Promise<any>} dependencies.repeatRequest vuelve a mandar la petición con el mismo
  *     cliente
- * @param {(config: object) => void} [dependencies.onRetry] para el log (sin datos personales)
+ * @param {(config: any) => void} [dependencies.onRetry] para el log (sin datos personales)
  * @returns {(error: {config?: object, response?: {status: number}}) => Promise<object|null>} la respuesta de la repetición, o null si no aplica
  */
 export function createCsrfRetryHandler({refreshCsrfToken, repeatRequest, onRetry}) {

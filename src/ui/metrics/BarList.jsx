@@ -40,7 +40,7 @@ function ValueLabel({x, y, width, height, value}) {
 /**
  * @param {object} props
  * @param {Array<{key: string, label: string, value: number, detail?: string, tooltip?: string}>} props.items
- * @param {(item: object) => void} [props.onSelect]
+ * @param {(item: any) => void} [props.onSelect] recibe el renglón de items que se picó
  * @param {string} props.emptyLabel ya traducido
  * @param {'primary'|'success'|'warning'|'error'|'info'} [props.tone]
  */

@@ -39,7 +39,7 @@ export function allowOnlyUnrestricted(access) {
  * @param {object} [options]
  * @param {string[]} [options.abilities] los permisos de la sesión (p. ej. los `abilities` que manda el backend)
  * @param {string[]} [options.roles] los roles de la sesión
- * @param {Record<string, (context: object) => boolean>} [options.policies] las políticas con nombre (ABAC)
+ * @param {Record<string, (context: any) => boolean>} [options.policies] las políticas con nombre (ABAC); reciben el context
  * @param {object} [options.context] lo que reciben las políticas y los check (la persona, su organización…)
  * @returns {(access: object|undefined|null) => boolean}
  */

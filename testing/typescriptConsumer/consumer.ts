@@ -19,7 +19,11 @@ import {nextNavigation} from '@stackcraftmx/calcita/next';
 import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/calcita/maps';
 import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard, isOverLimit, moveCard} from '@stackcraftmx/calcita/kanban';
-import {InboxLayout, MessageList, MessageView} from '@stackcraftmx/calcita';
+import {InboxLayout, MessageList, MessageView, createAccessChecker, useConfirmAction} from '@stackcraftmx/calcita';
+import {facetColumn, textColumn} from '@stackcraftmx/calcita/table';
+import {createElement} from 'react';
+import {FormNumberField, FormSelectField, SubmitButton, applyServerProblem} from '@stackcraftmx/calcita/forms';
+import {FormTextField as HookTextField} from '@stackcraftmx/calcita/react-hook-form';
 import {AccountProvider, ProfileScreen, SignInScreen, createRestAccountConnector, missingConnectorFunctionsOf} from '@stackcraftmx/calcita/account';
 import type {AccountConnector, AccountSession} from '@stackcraftmx/calcita/account';
 import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/account-demo';
@@ -102,8 +106,32 @@ const noSession: Promise<AccountSession | null> = demoConnector.loadSession();
 const missingNames: string[] = missingConnectorFunctionsOf(accountConnector);
 const demoCode: Promise<string> = totpCodeAt('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
 const accountParts = [AccountProvider, ProfileScreen, SignInScreen];
+
+// las funciones del proyecto con SUS tipos: el paquete no debe pedir `object` donde el proyecto tiene su forma
+interface Order {
+    id: number;
+    status: string;
+}
+const checker = createAccessChecker({policies: {canCancel: (context: {order: Order}) => context.order.status === 'paid'}, context: {}});
+const cancelAction = () => useConfirmAction({
+    run: async ({subject}: {subject: Order}) => ({message: `cancelado ${subject.id}`}),
+    onDone: (response: {message: string}) => response.message,
+});
+const typedColumns = [
+    textColumn({field: 'number', label: 'Folio', width: 120, valueFormatter: (value: string) => value.toUpperCase()}),
+    facetColumn({field: 'status', label: 'Estado', flex: 1, renderOption: (value: string) => value}),
+];
+// los campos de formulario aceptan lo de su campo de la casa (y TextInput lo de TextField de MUI)
+const formFields = [
+    createElement(FormNumberField, {name: 'creditLimit', label: 'Límite', prefix: '$', decimals: 2}),
+    createElement(FormSelectField, {name: 'type', label: 'Tipo', options: [{value: 'retail', label: 'Menudeo'}]}),
+    createElement(HookTextField, {name: 'notes', label: 'Notas', multiline: true, minRows: 3, autoComplete: 'off'}),
+    createElement(SubmitButton, {sx: {alignSelf: 'flex-start'}, fullWidth: true, children: 'Guardar'}),
+];
+// el error de un catch llega como unknown
+const applyCaught = (caught: unknown) => applyServerProblem(caught, {setFieldError: () => {}, setStatus: () => {}, values: {}});
 // @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
 const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
 
-export {noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+export {formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

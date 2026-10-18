@@ -19,12 +19,13 @@ import {confirmActionMachine} from '@/feedback/confirmActionMachine.js';
 
 /**
  * @param {object} options
- * @param {(input: {subject: object, details: object|null}) => Promise<unknown>} options.run
- * @param {(output: unknown, subject: object) => void} [options.onDone]
+ * @param {(input: {subject: any, details: any}) => Promise<unknown>|void} options.run lo que se hace al confirmar (subject: lo que
+ *     se le pasó a open)
+ * @param {(output: any, subject: any) => void} [options.onDone] output: lo que regresó run
  * @returns {{
  *   subject: object|null, isOpen: boolean, isRunning: boolean, error: Error|null,
- *   open: (subject: object) => void, confirm: (details?: object) => void, cancel: () => void,
- *   dialogProps: {open: boolean, isPending: boolean, errorMessage: string|null, onConfirm: Function, onClose: Function},
+ *   open: (subject: any) => void, confirm: (details?: any) => void, cancel: () => void,
+ *   dialogProps: {open: boolean, isPending: boolean, errorMessage: string|null, onConfirm: (details?: object) => void, onClose: () => void},
  * }}
  */
 export function useConfirmAction({run, onDone}) {

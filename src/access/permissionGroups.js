@@ -20,7 +20,7 @@ const LAST_ORDER = 1000;
  * Los grupos de permisos que declaran los módulos en su menu.js (`export const permissions`), uno por módulo y en el orden
  * del menú, con el nombre de su entrada del menú como título del grupo.
  *
- * @param {Record<string, object>|object[]} menuModules lo que regresa import.meta.glob(..., {eager: true}) o una lista
+ * @param {Record<string, any>|any[]} menuModules lo que regresa import.meta.glob(..., {eager: true}) o una lista
  * @param {(key: string, values?: object) => string} t el traductor (para las llaves labelKey y descriptionKey)
  * @returns {Array<{key: string, label: string, permissions: Array<{key: string, label: string, description?: string}>}>}
  */

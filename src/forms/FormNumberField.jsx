@@ -6,9 +6,7 @@ import NumberInput from '@/inputs/NumberInput.jsx';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
- * @param {object} props las de NumberInput (decimals, prefix, suffix, allowNegative…), sin value / onChange / onBlur / error
- * @param {string} props.name el campo del formulario
- * @param {string} props.label ya traducido
+ * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/NumberInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de NumberInput (decimals, prefix, suffix, allowNegative…), sin value / onChange / onBlur / error
  */
 export default function FormNumberField({name, ...numberInputProps}) {
     const fieldProps = useFormikField(name);

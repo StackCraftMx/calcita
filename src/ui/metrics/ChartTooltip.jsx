@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 
 /**
- * @param {{active?: boolean, payload?: Array<{payload: object}>, render: (item: object) => import('react').ReactNode}} props
+ * @param {{active?: boolean, payload?: Array<{payload: any}>, render: (item: any) => import('react').ReactNode}} props
  */
 // el vidrio del cuadrito, casi opaco (el material «grueso»): es para leer una cifra encima de la gráfica; con el vidrio de
 // los controles (60 %) se veía la barra de atrás a través del texto (lo reportaron)

@@ -12,6 +12,10 @@ import CircularProgress from '@mui/material/CircularProgress';
  * @param {boolean} [props.disabled]
  * @param {boolean} [props.isPending] cuando el envío lo lleva una máquina de estados y no el handleSubmit
  * @param {object} [props.control] el de useForm, si la pantalla no usa FormProvider
+ * @param {object} [props.sx] (y lo demás del Button de MUI: size, fullWidth, startIcon…)
+ * @param {'small'|'medium'|'large'} [props.size]
+ * @param {boolean} [props.fullWidth]
+ * @param {import('react').ReactNode} [props.startIcon]
  */
 export default function SubmitButton({children, disabled, isPending, control, ...buttonProps}) {
     const formContext = useFormContext();

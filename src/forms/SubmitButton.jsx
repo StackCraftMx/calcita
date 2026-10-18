@@ -13,7 +13,8 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 /**
- * @param {{children: import('react').ReactNode, disabled?: boolean, isPending?: boolean}} props
+ * @param {{children: import('react').ReactNode, disabled?: boolean, isPending?: boolean} & Omit<import('@mui/material/Button').ButtonProps, 'type'|'children'>} props
+ *     lo demás va al Button de MUI (sx, size, fullWidth…)
  */
 export default function SubmitButton({children, disabled, isPending, ...buttonProps}) {
     const {isSubmitting} = useFormikContext();

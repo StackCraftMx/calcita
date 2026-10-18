@@ -75,7 +75,8 @@ function glassSettingsOf(glass) {
 
 /**
  * @param {object} [options]
- * @param {{light?: object, dark?: object}} [options.colorSchemes] los colores de cada modo; por omisión los de Stackcraft
+ * @param {{light?: object|boolean, dark?: object|boolean}} [options.colorSchemes] los colores de cada modo; por omisión los de
+ *     Stackcraft; true: los de MUI tal cual
  * @param {'class'|'data'|'media'|string} [options.colorSchemeSelector] cómo se elige el modo; por omisión 'class'
  * @param {string} [options.fontFamily] por omisión la letra del sistema
  * @param {boolean|{opacity?: number, surfaces?: boolean}} [options.glass] vidrio líquido en lo que flota y en los

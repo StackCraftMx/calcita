@@ -39,7 +39,7 @@ const HOME_PATH = '/';
 /**
  * Las entradas del menú que le tocan a esta sesión, ordenadas.
  *
- * @param {Record<string, object>|object[]} menuModules lo que regresa import.meta.glob(..., {eager: true}) o una lista
+ * @param {Record<string, any>|any[]} menuModules lo que regresa import.meta.glob(..., {eager: true}) o una lista
  * @param {object} [options]
  * @param {(access: object|undefined) => boolean} [options.canAccess] la regla de permisos del proyecto; sin ella, todos
  * @param {object} [options.context] lo que reciben buildMenuItem(s): la sesión, la configuración…

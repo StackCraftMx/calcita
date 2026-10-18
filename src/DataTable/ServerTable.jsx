@@ -208,7 +208,8 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
 
 /**
  * @param {object} props
- * @param {(params: object, signal: AbortSignal) => Promise<{rows: Array, total: number, facets?: object, capped?: boolean}>} props.fetchPage
+ * @param {(params: {filters: Record<string, any>, sortOrders: Array<{column: string, direction: 'asc'|'desc'}>, page: number, pageSize: number}, signal: AbortSignal) => Promise<{rows: any[], total: number, facets?: Record<string, Array<{value: any, total: number}>>, capped?: boolean}>} props.fetchPage
+ *     page cuenta desde 0; toServerTableParams lo convierte a la query del API
  * @param {string} props.queryKey cambia cuando cambia el CONJUNTO (no los filtros): dispara recarga
  * @param {boolean} [props.enabled] false mientras la sección está oculta: una tabla que nadie ve no consulta
  * @param {Array<object>} props.columns textColumn / facetColumn / detailColumn o columnas del DataGrid
@@ -223,7 +224,7 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {(total: number) => string} [props.countLabel] "12 pedidos"; por defecto "12 registros"
  * @param {number[]} [props.pageSizeOptions]
  * @param {number} [props.defaultPageSize]
- * @param {(row: object) => string|number} [props.getRowId]
+ * @param {(row: any) => string|number} [props.getRowId]
  * @param {string} [props.prefix] estado en la URL con este prefijo (nuqs); sin él, en memoria
  * @param {unknown} [props.refreshToken] cambia para volver a consultar la misma página (después de una acción)
  * @param {(summary: {total: number, capped: boolean}) => import('react').ReactNode} [props.footer]
@@ -234,13 +235,13 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {import('react').ReactNode} [props.beforeQuickFilters] arriba de los accesos rápidos (p. ej. las pestañas de producto)
  * @param {Array<object>} [props.columnGroupingModel] bandas que agrupan columnas bajo un nombre, arriba de sus
  *     encabezados (columnGroupingModel del DataGrid). Con ellas el encabezado mide un renglón más
- * @param {(params: object) => string} [props.getRowClassName]
- * @param {(row: object) => boolean} [props.isRowVisible] cuáles renglones de la página se pintan; los demás se esconden
+ * @param {(params: any) => string} [props.getRowClassName]
+ * @param {(row: any) => boolean} [props.isRowVisible] cuáles renglones de la página se pintan; los demás se esconden
  *     SIN volver a consultar (p. ej. plegar un grupo de renglones). Sin ella se pintan todos. OJO: va con useCallback;
  *     una función nueva en cada pintada haría filtrar la página cada vez
  * @param {boolean} [props.striped] renglones alternos (cebra) con el color de hover del tema; al pasar el cursor se usa
  *     el de «seleccionado» para que el renglón bajo el cursor se siga distinguiendo
- * @param {(params: object) => number|'auto'|null} [props.getRowHeight]
+ * @param {(params: any) => number|'auto'|null} [props.getRowHeight]
  * @param {boolean} [props.hideFooterWhenAllRowsFit] esconde el pie (el paginador) mientras todo lo que hay cabe en la
  *     página; si un día no cabe, el pie vuelve solo. Para tablas que casi nunca pasan de una página
  * @param {object} [props.gridSx] estilos extra del DataGrid (clases de renglón)
