@@ -1,0 +1,13 @@
+// Revisa que el TypeScript de los ejemplos del catálogo compile: es el que se copia con «Ver código». No genera nada.
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "target": "ES2022",
+        "jsx": "react-jsx",
+        "skipLibCheck": true
+    },
+    "include": ["src/modules/catalog/demos/**/*.tsx", "src/modules/catalog/demos/**/*.ts"]
+}

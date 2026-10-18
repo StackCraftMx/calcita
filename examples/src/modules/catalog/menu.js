@@ -8,6 +8,7 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import SmartButtonOutlinedIcon from '@mui/icons-material/SmartButtonOutlined';
 import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined';
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
+import TranslateOutlinedIcon from '@mui/icons-material/TranslateOutlined';
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined';
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined';
@@ -36,6 +37,7 @@ export function buildMenuItem() {
             {to: CATALOG_PATHS.surfaces, labelKey: 'catalog:nav.surfaces', Icon: ViewQuiltOutlinedIcon},
             {to: CATALOG_PATHS.charts, labelKey: 'catalog:nav.charts', Icon: BarChartOutlinedIcon},
             {to: CATALOG_PATHS.timeline, labelKey: 'catalog:nav.timeline', Icon: TimelineOutlinedIcon},
+            {to: CATALOG_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
         ],
     };
 }

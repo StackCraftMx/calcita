@@ -13,4 +13,5 @@ export const routes = [
     {path: CATALOG_PATHS.surfaces, lazy: async () => ({Component: (await import('@/modules/catalog/SurfacesPage.jsx')).SurfacesPage})},
     {path: CATALOG_PATHS.charts, lazy: async () => ({Component: (await import('@/modules/catalog/ChartsPage.jsx')).ChartsPage})},
     {path: CATALOG_PATHS.timeline, lazy: async () => ({Component: (await import('@/modules/catalog/TimelinePage.jsx')).TimelinePage})},
+    {path: CATALOG_PATHS.translations, lazy: async () => ({Component: (await import('@/modules/catalog/TranslationsPage.jsx')).TranslationsPage})},
 ];

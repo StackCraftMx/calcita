@@ -44,6 +44,7 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {string|{key: string, values?: object}} [props.error] el error a enseñar (undefined = sin error)
  * @param {string} [props.type] 'password' agrega el ojo
  * @param {string} [props.helperText] ayuda fija; el error la reemplaza
+ * @param {string} [props.placeholder] ya traducido; el ejemplo de qué escribir (se va al escribir)
  * @param {import('react').ReactNode} [props.startAdornment]
  * @param {import('react').ReactNode} [props.endAdornment] adorno al final (en contraseñas manda el ojo)
  * @param {boolean} [props.uppercase] normaliza a mayúsculas mientras se escribe
