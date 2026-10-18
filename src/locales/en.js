@@ -637,5 +637,65 @@ export default Object.freeze({
         "back": "Back",
         "unreadCount_one": "{{count}} unread",
         "unreadCount_other": "{{count}} unread"
+    },
+    "account": {
+        "reset": {
+            "title": "Choose a new password",
+            "subtitle": "You came here from the link in the email. Choose the password you will sign in with.",
+            "done": "You can now sign in with your new password.",
+            "goToSignIn": "Go to sign in",
+            "missingToken": "This link does not work: its key is missing. Ask for a new one from “Forgot your password?”.",
+            "askAgain": "Ask for another link"
+        },
+        "profile": {
+            "tabs": {
+                "label": "Parts of your profile",
+                "data": "Your details",
+                "security": "Security",
+                "preferences": "Preferences"
+            },
+            "data": {
+                "title": "Your details",
+                "text": "This is how other people see you in the app.",
+                "name": "Name",
+                "email": "Email",
+                "emailHelp": "It is the email you sign in with; to change it, ask whoever manages the app.",
+                "phone": "Phone (optional)",
+                "phoneInvalid": "Enter digits only (7 to 15), with + at the start if it is from another country.",
+                "save": "Save",
+                "saved": "Your details were saved."
+            },
+            "password": {
+                "title": "Password",
+                "text": "Use a password you do not use on other sites. After changing it, you sign in with the new one next time."
+            },
+            "preferences": {
+                "title": "Appearance",
+                "text": "How the app looks for you: text size, language and light or dark are remembered in this browser."
+            }
+        },
+        "demo": {
+            "totpCode": "Use the sample code",
+            "totpCodeHelp": "Demo only: fills in the code your app would show right now, in case you do not have it at hand.",
+            "securityNote": "Demo server: verification works with your real phone (scan the QR or create a passkey with your fingerprint), but it lives in this tab’s memory: reloading turns it off. Sign out and back in to see the second step.",
+            "server": {
+                "wrongCredentialsTitle": "You could not sign in",
+                "wrongCredentials": "In the demo you sign in with {{email}} and any password.",
+                "noSessionTitle": "Your session ended",
+                "noSession": "Sign in again.",
+                "validationTitle": "Check the data",
+                "validationDetail": "Some fields need to be fixed.",
+                "passwordRequired": "Enter your password to confirm.",
+                "nameRequired": "Enter your name.",
+                "wrongCodeTitle": "The code does not match",
+                "wrongCode": "Check that it is the code your app shows right now.",
+                "expiredTitle": "Time is up",
+                "expired": "More than 5 minutes went by: enter your password again.",
+                "lockedTitle": "Too many attempts",
+                "locked": "For security you need to start again: enter your password again.",
+                "defaultPasskeyName": "Passkey {{number}}",
+                "profileSaved": "Your details were saved."
+            }
+        }
     }
 });

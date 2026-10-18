@@ -1,50 +1,29 @@
-// Iniciar sesión: AuthLayout y SignInForm del framework, con sus textos (namespace auth de Calcita). La pantalla solo dice qué hacer con los datos (signIn) y a dónde ir
-// después: a la pantalla que se quería abrir (readRedirectParam, que no sigue una dirección de afuera) o al inicio.
+// Iniciar sesión: SignInScreen de Calcita (la contraseña y, si la cuenta tiene verificación en dos pasos, el segundo paso).
+// Lo del servidor sale del conector de la cuenta (core/accountConnector.js).
 //
-// Abajo, mientras la app use el servidor de mentira, «Entrar con la cuenta de ejemplo»: entra sin escribir nada. Bórrelo al
-// conectar el backend de verdad.
+// Mientras la app use la demostración, abajo sale «Entrar con la cuenta de ejemplo»: entra sin escribir nada. Con el
+// backend de verdad (VITE_API_URL) ya no sale.
 //
 // Lo renderiza la app: arrow (regla de la casa).
-import {useState} from 'react';
-import {Navigate, useLocation} from 'react-router';
 import Button from '@mui/material/Button';
-import {AuthLayout, readRedirectParam, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {SignInForm} from '@stackcraftmx/calcita/forms';
+import {useToolkitTranslation} from '@stackcraftmx/calcita';
+import {SignInScreen} from '@stackcraftmx/calcita/account';
 
-import {APP_PATHS, AppLogo, useSession} from '@/core';
-import {signIn, signInAsDemo} from '@/modules/auth/authApi.js';
+import {APP_PATHS, AppLogo, DEMO_USER, USES_DEMO_ACCOUNT} from '@/core';
 
-export const SignInPage = () => {
-    const {t} = useToolkitTranslation('auth');
-    const {t: tScreens} = useToolkitTranslation('authScreens');
-    const {session, refreshSession} = useSession();
-    const {search} = useLocation();
-    const [isEnteringDemo, setIsEnteringDemo] = useState(false);
-    const nextPath = readRedirectParam(search) ?? APP_PATHS.home;
+// la demostración no revisa contraseñas: cualquiera sirve para la persona de ejemplo
+const DEMO_PASSWORD = 'demo';
 
-    // entró: al leer la sesión otra vez, esta pantalla se cambia sola por la siguiente (abajo)
-    const enter = async (values) => {
-        await signIn(values);
-        await refreshSession();
-    };
-    const enterAsDemo = async () => {
-        setIsEnteringDemo(true);
-        await signInAsDemo();
-        await refreshSession();
-    };
-
-    // ya tiene sesión: directo a donde iba
-    if (session) {
-        return <Navigate to={nextPath} replace />;
-    }
-
-    return (
-        <AuthLayout logo={<AppLogo />} title={t('signIn.title')} description={t('signIn.subtitle')}
-//#if !darkMode
-                    showColorSchemeToggle={false}
-//#endif
-                    footer={<Button variant="outlined" fullWidth onClick={enterAsDemo} disabled={isEnteringDemo}>{tScreens('demo')}</Button>}>
-            <SignInForm onSubmit={enter} forgotPasswordPath={APP_PATHS.forgotPassword} />
-        </AuthLayout>
-    );
+/** El botón de la demostración: entra por el mismo camino del formulario (y el mismo segundo paso). */
+const DemoSignInButton = ({signIn}) => {
+    const {t} = useToolkitTranslation('authScreens');
+    return <Button variant="outlined" fullWidth onClick={() => signIn({email: DEMO_USER.email, password: DEMO_PASSWORD})}>{t('demo')}</Button>;
 };
+
+export const SignInPage = () => (
+    <SignInScreen logo={<AppLogo />} forgotPasswordPath={APP_PATHS.forgotPassword}
+//#if !darkMode
+                  showColorSchemeToggle={false}
+//#endif
+                  footer={USES_DEMO_ACCOUNT ? ({signIn}) => <DemoSignInButton signIn={signIn} /> : undefined} />
+);

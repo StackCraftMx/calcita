@@ -111,6 +111,14 @@
             "types": "./dist/types/passkeys.d.ts",
             "import": "./dist/passkeys.js"
         },
+        "./account": {
+            "types": "./dist/types/account.d.ts",
+            "import": "./dist/account.js"
+        },
+        "./account-demo": {
+            "types": "./dist/types/account-demo.d.ts",
+            "import": "./dist/account-demo.js"
+        },
         "./maps": {
             "types": "./dist/types/maps.d.ts",
             "import": "./dist/maps.js"

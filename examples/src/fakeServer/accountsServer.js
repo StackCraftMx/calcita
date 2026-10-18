@@ -89,20 +89,10 @@ export async function signIn({email, password}) {
 export function demoPeopleOf() {
     return fakeUsers.map((user) => ({
         userId: user.id,
+        email: user.email,
         name: user.name,
         profileName: inServerLanguage(fakeProfiles.find((profile) => profile.key === user.profileKey).names),
     }));
-}
-
-/**
- * El atajo de los ejemplos: entrar como una de las personas sin escribir contraseña.
- *
- * @param {string} userId
- * @returns {Promise<{secondStep: {methods: string[]}}|null>} con verificación en dos pasos, también se pide el segundo paso
- */
-export async function signInAs(userId) {
-    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
-    return startSecondStepIfNeeded(userId);
 }
 
 /** Salir (POST auth/sign-out). */

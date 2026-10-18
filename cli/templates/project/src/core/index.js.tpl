@@ -4,5 +4,5 @@ export {APP_PATHS} from '@/core/appPaths.js';
 export {AppLogo} from '@/core/AppLogo.jsx';
 export {apiClient} from '@/core/apiClient.js';
 //#if auth
-export {SessionContext, useSession} from '@/core/session.js';
+export {DEMO_USER, USES_DEMO_ACCOUNT, accountConnector} from '@/core/accountConnector.js';
 //#endif

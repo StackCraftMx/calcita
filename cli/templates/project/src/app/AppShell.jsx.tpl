@@ -29,10 +29,13 @@ import {
     withRedirect,
 //#endif
 } from '@stackcraftmx/calcita';
+//#if auth
+import {useAccount} from '@stackcraftmx/calcita/account';
+//#endif
 import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
 
 //#if auth
-import {APP_PATHS, AppLogo, useSession} from '@/core';
+import {APP_PATHS, AppLogo} from '@/core';
 //#endif
 //#if !auth
 import {AppLogo} from '@/core';
@@ -47,7 +50,7 @@ export const AppShell = () => {
     const isNavigating = useIsNavigating();
     const menuItems = useMemo(() => composeMenu(MENU_MODULES, {canAccess}), [canAccess]);
 //#if auth
-    const {session, signOut} = useSession();
+    const {session, signOut} = useAccount();
     const {pathname, search} = useLocation();
     const navigate = useNavigate();
     const [isSigningOut, setIsSigningOut] = useState(false);

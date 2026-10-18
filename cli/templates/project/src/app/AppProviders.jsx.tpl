@@ -1,5 +1,10 @@
 // La raíz de la app: el ÚNICO lugar donde se conecta el framework. ToolkitProvider recibe el idioma, los textos, la zona, la
 // moneda y el router; los avisos (Toaster) se montan aquí una vez, para todas las pantallas.
+//#if auth
+//
+// AccountProvider carga la sesión con el conector de la cuenta (core/accountConnector.js) y le pasa a ToolkitProvider la regla
+// de permisos de quien está dentro.
+//#endif
 //
 // Va como elemento de la ruta raíz y no afuera del router porque usa sus hooks (useNavigate, useLocation).
 //
@@ -13,6 +18,9 @@ import {
     Toaster,
     ToolkitProvider,
 } from '@stackcraftmx/calcita';
+//#if auth
+import {AccountProvider} from '@stackcraftmx/calcita/account';
+//#endif
 //#if i18next
 import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
 //#endif
@@ -26,7 +34,7 @@ import {APP_TEXTS} from '@/app/appTexts.js';
 import {i18n} from '@/app/i18n.js';
 //#endif
 //#if auth
-import {SessionProvider} from '@/app/SessionProvider.jsx';
+import {accountConnector} from '@/core';
 //#endif
 //#if i18next
 
@@ -52,7 +60,7 @@ export const AppProviders = () => {
 
 //#if auth
     return (
-        <SessionProvider>
+        <AccountProvider connector={accountConnector}>
             {(canAccess) => (
                 <ToolkitProvider language={language}
 //#if !i18next
@@ -70,7 +78,7 @@ export const AppProviders = () => {
 //#endif
                 </ToolkitProvider>
             )}
-        </SessionProvider>
+        </AccountProvider>
     );
 //#endif
 //#if !auth

@@ -1,5 +1,7 @@
-// Las direcciones del catálogo de componentes: una página por grupo de piezas.
+// Las direcciones del catálogo: «Componentes» (los de MUI con el estilo de Calcita) y «Hecho en Calcita» (las piezas
+// propias del framework). Una página por grupo.
 const CATALOG_ROOT = '/components';
+const BUILT_IN_ROOT = '/built-in';
 
 export const CATALOG_PATHS = Object.freeze({
     buttons: `${CATALOG_ROOT}/buttons`,
@@ -12,7 +14,15 @@ export const CATALOG_PATHS = Object.freeze({
     surfaces: `${CATALOG_ROOT}/surfaces`,
     charts: `${CATALOG_ROOT}/charts`,
     timeline: `${CATALOG_ROOT}/timeline`,
-    translations: `${CATALOG_ROOT}/translations`,
-    api: `${CATALOG_ROOT}/api`,
-    security: `${CATALOG_ROOT}/security`,
+});
+
+export const BUILT_IN_PATHS = Object.freeze({
+    account: `${BUILT_IN_ROOT}/account`,
+    api: `${BUILT_IN_ROOT}/api`,
+    translations: `${BUILT_IN_ROOT}/translations`,
+    security: `${BUILT_IN_ROOT}/web-security`,
+    maps: `${BUILT_IN_ROOT}/maps`,
+    calendar: `${BUILT_IN_ROOT}/calendar`,
+    kanban: `${BUILT_IN_ROOT}/kanban`,
+    inbox: `${BUILT_IN_ROOT}/inbox`,
 });

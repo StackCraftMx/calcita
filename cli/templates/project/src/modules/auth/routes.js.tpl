@@ -7,4 +7,5 @@ export const routes = [];
 export const publicRoutes = [
     {path: APP_PATHS.signIn, lazy: async () => ({Component: (await import('@/modules/auth/SignInPage.jsx')).SignInPage})},
     {path: APP_PATHS.forgotPassword, lazy: async () => ({Component: (await import('@/modules/auth/ForgotPasswordPage.jsx')).ForgotPasswordPage})},
+    {path: APP_PATHS.resetPassword, lazy: async () => ({Component: (await import('@/modules/auth/ResetPasswordPage.jsx')).ResetPasswordPage})},
 ];

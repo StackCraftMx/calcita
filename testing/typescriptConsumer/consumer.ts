@@ -20,6 +20,9 @@ import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/cal
 import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard, isOverLimit, moveCard} from '@stackcraftmx/calcita/kanban';
 import {InboxLayout, MessageList, MessageView} from '@stackcraftmx/calcita';
+import {AccountProvider, ProfileScreen, SignInScreen, createRestAccountConnector, missingConnectorFunctionsOf} from '@stackcraftmx/calcita/account';
+import type {AccountConnector, AccountSession} from '@stackcraftmx/calcita/account';
+import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/account-demo';
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
@@ -89,5 +92,18 @@ const movedCards = moveCard([{id: 'c1', columnId: 'todo'}], {cardId: 'c1', toCol
 const columnFull: boolean = isOverLimit({limit: 3}, 4);
 const workspaceParts = [MapView, EventCalendar, KanbanBoard, InboxLayout, MessageList, MessageView];
 
-export {tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+// la cuenta: el conector REST con una función cambiada, y el de demostración
+const accountConnector: AccountConnector = {
+    ...createRestAccountConnector(api),
+    signIn: async () => ({secondStep: {methods: ['totp']}}),
+};
+const demoConnector: AccountConnector = createDemoAccountConnector({toQrImageUrl: async (url: string) => url});
+const noSession: Promise<AccountSession | null> = demoConnector.loadSession();
+const missingNames: string[] = missingConnectorFunctionsOf(accountConnector);
+const demoCode: Promise<string> = totpCodeAt('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
+const accountParts = [AccountProvider, ProfileScreen, SignInScreen];
+// @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
+const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
+
+export {noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

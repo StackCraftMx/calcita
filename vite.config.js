@@ -24,6 +24,8 @@ const ENTRIES = Object.freeze({
     'date-pickers': 'src/date-pickers.js',
     next: 'src/next.js',
     passkeys: 'src/passkeys.js',
+    account: 'src/account.js',
+    'account-demo': 'src/account-demo.js',
     maps: 'src/maps.js',
     calendar: 'src/calendar.js',
     kanban: 'src/kanban.js',

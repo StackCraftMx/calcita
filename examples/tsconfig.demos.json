@@ -1,4 +1,5 @@
 // Revisa que el TypeScript de los ejemplos del catálogo compile: es el que se copia con «Ver código». No genera nada.
+// vite/client: los ejemplos leen import.meta.env (la dirección del API), como un proyecto de Vite.
 {
     "compilerOptions": {
         "strict": true,
@@ -7,7 +8,8 @@
         "moduleResolution": "Bundler",
         "target": "ES2022",
         "jsx": "react-jsx",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["vite/client"]
     },
     "include": ["src/modules/catalog/demos/**/*.tsx", "src/modules/catalog/demos/**/*.ts"]
 }

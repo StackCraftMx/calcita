@@ -23,9 +23,7 @@ const FILES_ONLY_WITH = Object.freeze({
     'public/manifest.webmanifest.tpl': 'pwa',
     'public/icons/': 'pwa',
     'src/app/i18n.js.tpl': 'i18next',
-    'src/app/SessionProvider.jsx.tpl': 'auth',
-    'src/core/session.js.tpl': 'auth',
-    'src/fakeServer/accountsServer.js.tpl': 'auth',
+    'src/core/accountConnector.js.tpl': 'auth',
     'src/modules/auth/': 'auth',
     'src/modules/profile/': 'auth',
 });

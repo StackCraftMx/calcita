@@ -21,6 +21,11 @@ export const catalogTexts = {
                 translations: 'Traducciones',
                 api: 'Servidor (API)',
                 security: 'Seguridad (XSS)',
+                account: 'Cuenta y seguridad',
+                maps: 'Mapa',
+                calendar: 'Calendario',
+                kanban: 'Tablero kanban',
+                inbox: 'Bandeja',
             },
             frameworkTitle: 'Del framework',
             code: {
@@ -672,6 +677,53 @@ export const catalogTexts = {
                     owasp: 'Cómo evitar XSS (OWASP)',
                 },
             },
+            builtIn: {
+                menu: {
+                    label: 'Hecho en Calcita',
+                    description: 'Las piezas propias del framework: la cuenta, el servidor, las traducciones, el mapa, el calendario, el tablero y la bandeja.',
+                },
+            },
+            account: {
+                title: 'Cuenta y seguridad',
+                description: 'Entrar con su segundo paso, «¿Olvidó su contraseña?», elegir una contraseña nueva, Mi perfil y su seguridad (llaves de acceso, app autenticadora, códigos de recuperación, sesiones y bitácora) vienen hechos. El proyecto solo escribe el conector: las llamadas a su backend.',
+                live: {title: 'Verlo funcionando en estos ejemplos', profile: 'Mi perfil', security: 'Mi perfil → Seguridad'},
+                rest: {
+                    title: 'Con un backend que sigue el contrato',
+                    description: 'Si el backend responde como el contrato REST de Calcita (rutas y llaves en el README), el conector es una línea. El proveedor va por fuera de ToolkitProvider y cada pantalla en su ruta.',
+                },
+                custom: {
+                    title: 'Con un backend distinto',
+                    description: 'Se cambia la ruta que se llama distinto y solo la función cuya respuesta tiene otra forma; TypeScript avisa si no regresa lo que piden las pantallas.',
+                },
+                demo: {
+                    title: 'Sin backend todavía',
+                    description: 'La cuenta de demostración vive en el navegador y la verificación en dos pasos funciona con su teléfono. Con la dirección del API se usa el backend, y la demostración ni siquiera viaja en lo construido.',
+                },
+                session: {
+                    title: 'La sesión en una pantalla propia',
+                    description: 'useAccount da quién está dentro, cómo volver a leer la sesión (después de guardar sus datos) y cómo salir.',
+                },
+            },
+            maps: {
+                title: 'Mapa',
+                description: 'MapView, con Leaflet y los mosaicos de OpenStreetMap: alfileres del color del tema y mosaicos oscuros en modo oscuro. Pide leaflet y react-leaflet.',
+                demo: {title: 'Sucursales', description: 'Pique un alfiler: el mapa vuela a él y abre su globo. Al cambiar los alfileres, el mapa se acomoda para que se vean todos.'},
+            },
+            calendar: {
+                title: 'Calendario',
+                description: 'EventCalendar, con FullCalendar: mes, semana, día y lista, con la barra de Calcita y el color de cada cita. Pide @fullcalendar.',
+                demo: {title: 'Entregas', description: 'Elija días para agregar una entrega y arrástrela para cambiarla. Los domingos no hay entregas: si la suelta en domingo, regresa sola.'},
+            },
+            kanban: {
+                title: 'Tablero kanban',
+                description: 'KanbanBoard, con @hello-pangea/dnd: columnas con tope de trabajo en curso y tarjetas que se mueven con el ratón, el dedo o el teclado.',
+                demo: {title: 'Tareas', description: 'Arrastre una tarjeta, o enfóquela con Tab y use espacio, flechas y espacio. «En proceso» tiene tope de 2: al pasarlo, su contador se pinta de ámbar.'},
+            },
+            inbox: {
+                title: 'Bandeja',
+                description: 'InboxLayout, MessageList y MessageView: carpetas con cuántos sin leer, la lista y la lectura; en el teléfono, una columna a la vez.',
+                demo: {title: 'Recibidos', description: 'Abra un mensaje para leerlo. El texto se pinta como texto: un HTML que llegue del servidor no se ejecuta.'},
+            },
             api: {
                 title: 'Servidor (API)',
                 description: 'La petición de la casa: un cliente por proyecto (createApiClient) que manda el idioma en cada petición, entiende los errores del servidor (RFC 9457) y los entrega como ApiError con el mensaje ya traducido. Sin librerías: usa fetch del navegador.',
@@ -800,6 +852,11 @@ export const catalogTexts = {
                 translations: 'Translations',
                 api: 'Server (API)',
                 security: 'Security (XSS)',
+                account: 'Account and security',
+                maps: 'Map',
+                calendar: 'Calendar',
+                kanban: 'Kanban board',
+                inbox: 'Inbox',
             },
             frameworkTitle: 'From the framework',
             code: {
@@ -1450,6 +1507,53 @@ export const catalogTexts = {
                     csp: 'Content Security Policy (MDN)',
                     owasp: 'How to avoid XSS (OWASP)',
                 },
+            },
+            builtIn: {
+                menu: {
+                    label: 'Built into Calcita',
+                    description: 'The framework’s own pieces: the account, the server, translations, the map, the calendar, the board and the inbox.',
+                },
+            },
+            account: {
+                title: 'Account and security',
+                description: 'Sign in with its second step, “Forgot your password?”, choosing a new password, My profile and its security (passkeys, authenticator app, recovery codes, sessions and activity) come ready. The project only writes the connector: the calls to its backend.',
+                live: {title: 'See it working in these examples', profile: 'My profile', security: 'My profile → Security'},
+                rest: {
+                    title: 'With a backend that follows the contract',
+                    description: 'If the backend answers like the Calcita REST contract (routes and keys in the README), the connector is one line. The provider goes outside ToolkitProvider and each screen in its route.',
+                },
+                custom: {
+                    title: 'With a different backend',
+                    description: 'Change the route that has another name and only the function whose answer has another shape; TypeScript warns if it does not return what the screens need.',
+                },
+                demo: {
+                    title: 'No backend yet',
+                    description: 'The demo account lives in the browser and two-step verification works with your phone. With the API address the backend is used, and the demo does not even ship in the build.',
+                },
+                session: {
+                    title: 'The session in your own screen',
+                    description: 'useAccount gives who is signed in, how to read the session again (after saving their details) and how to sign out.',
+                },
+            },
+            maps: {
+                title: 'Map',
+                description: 'MapView, with Leaflet and OpenStreetMap tiles: pins in the theme colors and dark tiles in dark mode. It needs leaflet and react-leaflet.',
+                demo: {title: 'Branches', description: 'Click a pin: the map flies to it and opens its popup. When the pins change, the map fits so all of them show.'},
+            },
+            calendar: {
+                title: 'Calendar',
+                description: 'EventCalendar, with FullCalendar: month, week, day and list, with the Calcita toolbar and the color of each event. It needs @fullcalendar.',
+                demo: {title: 'Deliveries', description: 'Choose days to add a delivery and drag it to change it. There are no deliveries on Sundays: if you drop it on a Sunday, it goes back on its own.'},
+            },
+            kanban: {
+                title: 'Kanban board',
+                description: 'KanbanBoard, with @hello-pangea/dnd: columns with a work-in-progress limit and cards that move with the mouse, a finger or the keyboard.',
+                demo: {title: 'Tasks', description: 'Drag a card, or focus it with Tab and use space, arrows and space. “In progress” has a limit of 2: when you go over it, its counter turns amber.'},
+            },
+            inbox: {
+                title: 'Inbox',
+                description: 'InboxLayout, MessageList and MessageView: folders with their unread count, the list and the reading pane; on a phone, one column at a time.',
+                demo: {title: 'Inbox', description: 'Open a message to read it. The text is painted as text: HTML coming from the server does not run.'},
             },
             api: {
                 title: 'Server (API)',

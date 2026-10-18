@@ -1,23 +1,14 @@
-// «¿Olvidó su contraseña?»: pide el correo y avisa que revise su bandeja (ForgotPasswordForm del framework, con
-// sus textos: namespace auth de Calcita).
+// «¿Olvidó su contraseña?»: ForgotPasswordScreen de Calcita; lo del servidor sale del conector de la cuenta.
 //
 // Lo renderiza la app: arrow (regla de la casa).
-import {AuthLayout, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {ForgotPasswordForm} from '@stackcraftmx/calcita/forms';
+import {ForgotPasswordScreen} from '@stackcraftmx/calcita/account';
 
 import {APP_PATHS, AppLogo} from '@/core';
-import {requestPasswordReset} from '@/modules/auth/authApi.js';
 
-export const ForgotPasswordPage = () => {
-    const {t} = useToolkitTranslation('auth');
-
-    return (
-        <AuthLayout logo={<AppLogo />} title={t('forgotPassword.title')} description={t('forgotPassword.subtitle')}
+export const ForgotPasswordPage = () => (
+    <ForgotPasswordScreen logo={<AppLogo />} signInPath={APP_PATHS.signIn}
 //#if !darkMode
-                    showColorSchemeToggle={false}
+                          showColorSchemeToggle={false}
 //#endif
-        >
-            <ForgotPasswordForm onSubmit={requestPasswordReset} signInPath={APP_PATHS.signIn} />
-        </AuthLayout>
-    );
-};
+    />
+);

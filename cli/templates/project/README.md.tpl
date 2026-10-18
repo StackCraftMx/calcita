@@ -10,7 +10,17 @@ pnpm dev
 ```
 
 //#if auth
-Para entrar: «Entrar con la cuenta de ejemplo» (el servidor de mentira no pide contraseña).
+Para entrar: «Entrar con la cuenta de ejemplo» (la cuenta de demostración no pide contraseña).
+
+## Conectar la cuenta a su backend
+
+Entrar (con su segundo paso), «¿Olvidó su contraseña?», elegir una contraseña nueva, Mi perfil y su seguridad ya vienen
+hechos en Calcita. Lo único de la app es `src/core/accountConnector.js`:
+
+- Sin `VITE_API_URL` trabaja con la cuenta de demostración, en este navegador.
+- Con la dirección del API en `.env.local` (`VITE_API_URL=https://api.mi-tienda.com`) usa el backend de verdad. Si el
+  backend sigue el contrato REST de Calcita (README de Calcita, «La cuenta completa: conectar su backend»), no hay nada más que
+  hacer; si alguna ruta o respuesta es distinta, se cambia solo esa función en `accountConnector.js`.
 
 //#endif
 ## Cómo está armado

@@ -1,0 +1,36 @@
+// El atajo de la DEMOSTRACIÓN para la app autenticadora: llena el campo «code» del formulario con el código que enseñaría
+// la app ahorita. Para quien prueba sin la app en su teléfono (y para las pruebas automáticas, que no escanean QR). Solo
+// sale cuando el conector trae demoTotpCode: con un backend de verdad no existe (el código solo lo conoce la app).
+//
+// Va dentro del formulario de formik (abajo del segundo paso o en el diálogo de activar la app).
+//
+// Genérico del paquete: function (regla de la casa).
+import {useFormikContext} from 'formik';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
+
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+
+/**
+ * @param {{loadCode: () => Promise<string|null>}} props
+ */
+export default function DemoTotpCodeButton({loadCode}) {
+    const {t} = useToolkitTranslation('account');
+    const {setFieldValue} = useFormikContext();
+
+    const fillCode = async () => {
+        const code = await loadCode();
+        if (code) {
+            setFieldValue('code', code);
+        }
+    };
+
+    return (
+        <Stack spacing={0.5} sx={{alignItems: 'center'}}>
+            <Button size="small" startIcon={<ScienceOutlinedIcon />} onClick={fillCode}>{t('demo.totpCode')}</Button>
+            <Typography variant="caption" color="text.secondary" sx={{textAlign: 'center'}}>{t('demo.totpCodeHelp')}</Typography>
+        </Stack>
+    );
+}
