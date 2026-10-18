@@ -40,6 +40,20 @@ export default Object.freeze({
             "descending": "descending order",
             "clear": "Remove sorting"
         },
+        "selection": {
+            "count_one": "{{total}} selected",
+            "count_other": "{{total}} selected",
+            "allMatching": "All {{total}} matching are selected",
+            "allMatchingCapped": "All matching are selected",
+            "pageSelected_one": "The only row on this page is selected.",
+            "pageSelected_other": "The {{count}} on this page are selected.",
+            "selectAllMatching": "Select all {{total}} matching",
+            "selectAllMatchingCapped": "Select all matching",
+            "onlyThisPage": "Select only this page",
+            "clear": "Clear selection",
+            "summaryLabel": "The selection",
+            "actionsLabel": "Actions for the selected"
+        },
         "goToPage": {
             "page": "Page",
             "of_one": "of {{total}}",
@@ -112,6 +126,11 @@ export default Object.freeze({
             "colorLowContrast": "With that color the text would be hard to read on white. {{suggestion}} is the same hue, darker.",
             "colorUseSuggestion": "Use {{color}}"
         },
+        "selection": {
+            "clear": "Clear selection",
+            "actionsLabel": "Actions for the selected",
+            "summaryLabel": "The selection"
+        },
         "wizard": {
             "next": "Next",
             "back": "Back",
@@ -124,7 +143,9 @@ export default Object.freeze({
             "switchTo": {
                 "es": "Switch to Spanish",
                 "en": "Switch to English"
-            }
+            },
+            "switchToNamed": "Switch to {{name}}",
+            "choose": "Language: {{name}}. Choose another"
         },
         "colorScheme": {
             "label": "Light or dark",
@@ -261,6 +282,7 @@ export default Object.freeze({
         },
         "charts": {
             "viewAsTable": "View as table",
+            "legend": "What each series is",
             "viewAsChart": "View as chart",
             "less": "Less",
             "more": "More",
