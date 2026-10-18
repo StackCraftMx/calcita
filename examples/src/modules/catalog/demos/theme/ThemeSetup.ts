@@ -2,7 +2,7 @@
 // en lo que flota (según la guía de Apple) o el estilo minimalista. Cada proyecto pone sus colores: de cada uno basta el
 // «main» (MUI saca la versión clara, la oscura y el color de la letra encima). El configurador de tema de estos ejemplos
 // arma este archivo con vista previa.
-import {THEME_LOOK, createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette} from '@stackcraftmx/calcita';
+import {THEME_LOOK, createToolkitTheme, isAndroidDevice, stackcraftDarkPalette, stackcraftLightPalette} from '@stackcraftmx/calcita';
 
 const PRIMARY_COLOR = '#2563EB';
 
@@ -18,6 +18,10 @@ export const glassTheme = createToolkitTheme({
 
 // plano y tonal: sin bordes ni sombras; las superficies se separan por su tono
 export const minimalTheme = createToolkitTheme({look: THEME_LOOK.minimal});
+
+// vidrio en todos lados menos en Android, donde arranca el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno)
+// y el desenfoque pesa en los teléfonos baratos. Con Next, desde el servidor: isAndroidDevice({userAgent})
+export const appTheme = isAndroidDevice() ? minimalTheme : glassTheme;
 
 // los colores de MUI tal cual, solo claro, con un ajuste propio de un componente (se suma a los de Calcita)
 export const muiColorsTheme = createToolkitTheme({

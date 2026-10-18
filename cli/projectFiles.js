@@ -55,9 +55,11 @@ export function packageJsonOf({packageName, answers, calcitaPackage}) {
 export function appThemeFileOf(answers) {
     const flags = templateFlagsOf(answers);
     const usesStackcraftPalettes = answers.colors !== 'mui';
+    // con vidrio también el minimalista: en Android arranca así
     const imports = [
-        ...(answers.style === 'minimal' ? ['THEME_LOOK'] : []),
+        ...(answers.style === 'minimal' || answers.style === 'glass' ? ['THEME_LOOK'] : []),
         'createToolkitTheme',
+        ...(answers.style === 'glass' ? ['isAndroidDevice'] : []),
         ...(usesStackcraftPalettes && flags.darkMode ? ['stackcraftDarkPalette'] : []),
         ...(usesStackcraftPalettes ? ['stackcraftLightPalette'] : []),
     ];
@@ -80,10 +82,19 @@ export function appThemeFileOf(answers) {
     }
     lines.push(...colorSchemesLinesOf(answers.colors, flags.darkMode), '');
 
-    lines.push('export const appTheme = createToolkitTheme({', '    colorSchemes,');
     if (answers.style === 'glass') {
-        lines.push('    // vidrio líquido en lo que flota (barra, menús, avisos) y en los controles; el contenido, sólido (guía de Apple)', '    glass: true,');
+        lines.push(
+            '// vidrio líquido en lo que flota (barra, menús, avisos) y en los controles; el contenido, sólido (guía de Apple).',
+            '// En Android, el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa en los teléfonos',
+            '// baratos',
+            'export const appTheme = isAndroidDevice()',
+            '    ? createToolkitTheme({colorSchemes, look: THEME_LOOK.minimal})',
+            '    : createToolkitTheme({colorSchemes, glass: true});',
+            '',
+        );
+        return lines.join('\n');
     }
+    lines.push('export const appTheme = createToolkitTheme({', '    colorSchemes,');
     if (answers.style === 'minimal') {
         lines.push('    // plano y tonal: sin bordes ni sombras, las superficies se separan por su tono', '    look: THEME_LOOK.minimal,');
     }

@@ -23,9 +23,12 @@ test('el package.json pide solo lo elegido, con las versiones del paquete', asyn
 });
 
 test('el tema importa solo lo que usa', () => {
+    // con vidrio, en Android arranca minimalista
     const glass = appThemeFileOf(defaultAnswersOf('tienda'));
-    assert.match(glass, /import \{createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette\}/);
-    assert.match(glass, /glass: true/);
+    assert.match(glass, /import \{THEME_LOOK, createToolkitTheme, isAndroidDevice, stackcraftDarkPalette, stackcraftLightPalette\}/);
+    assert.match(glass, /export const appTheme = isAndroidDevice\(\)/);
+    assert.match(glass, /createToolkitTheme\(\{colorSchemes, look: THEME_LOOK.minimal\}\)/);
+    assert.match(glass, /createToolkitTheme\(\{colorSchemes, glass: true\}\)/);
 
     const muiLightMinimal = appThemeFileOf({...defaultAnswersOf('tienda'), colors: 'mui', colorModes: 'lightOnly', style: 'minimal'});
     assert.match(muiLightMinimal, /import \{THEME_LOOK, createToolkitTheme\}/);
