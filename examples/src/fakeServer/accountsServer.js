@@ -10,45 +10,13 @@
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
 import {ApiError} from '@/fakeServer/ApiError.js';
-import {ABILITIES, DEFAULT_SIGNED_IN_USER_ID, fakeProfiles, fakeUsers} from '@/fakeServer/fakeAccounts.js';
+import {ABILITIES, fakeProfiles, fakeUsers} from '@/fakeServer/fakeAccounts.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {inServerLanguage, serverTextOf} from '@/fakeServer/serverMessages.js';
+import {recordAccountEvent, startSecondStepIfNeeded} from '@/fakeServer/securityServer.js';
+import {SIGNED_OUT, rememberSession, signedInUserIdOf} from '@/fakeServer/sessionCookie.js';
 
 const HTTP_STATUS = Object.freeze({unauthorized: 401, conflict: 409, unprocessable: 422});
-// la «cookie» de la sesión: el id de quien está dentro, o SIGNED_OUT
-const SESSION_STORAGE_KEY = 'calcita-examples:session';
-const SIGNED_OUT = 'signed-out';
-// el teléfono: 10 dígitos, como en el alta de clientes
-const PHONE_PATTERN = /^\d{10}$/;
-
-/**
- * Quién está dentro según la «cookie» (sin almacenamiento, el de omisión).
- *
- * @returns {string|null} el id, o null si salió
- */
-function signedInUserIdOf() {
-    try {
-        const storedValue = window.localStorage.getItem(SESSION_STORAGE_KEY);
-        if (storedValue === SIGNED_OUT) {
-            return null;
-        }
-        return fakeUsers.some((user) => user.id === storedValue) ? storedValue : DEFAULT_SIGNED_IN_USER_ID;
-    } catch {
-        return DEFAULT_SIGNED_IN_USER_ID;
-    }
-}
-
-/**
- * @param {string} value el id de quien entra, o SIGNED_OUT
- */
-function rememberSession(value) {
-    try {
-        window.localStorage.setItem(SESSION_STORAGE_KEY, value);
-    } catch {
-        // almacenamiento bloqueado: la sesión dura lo que la pestaña
-    }
-}
-
 /**
  * Un perfil como lo manda el API: su nombre en el idioma activo y cuántas personas lo tienen.
  *
@@ -92,13 +60,16 @@ export async function getSession() {
  * Entrar con correo y contraseña (POST auth/sign-in).
  *
  * @param {{email: string, password: string}} credentials
- * @returns {Promise<void>}
+ * @returns {Promise<{secondStep: {methods: string[]}}|null>} con verificación en dos pasos, los métodos del segundo paso
  */
 export async function signIn({email, password}) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
     const user = fakeUsers.find((candidate) => candidate.email.toLowerCase() === email.trim().toLowerCase());
     // el mismo mensaje si el correo no existe o la contraseña no es: decir cuál falló le confirma a cualquiera qué correos sí
     if (!user || !password) {
+        if (user) {
+            recordAccountEvent(user.id, 'signInFailed');
+        }
         throw new ApiError({
             status: HTTP_STATUS.unauthorized,
             problem: {
@@ -107,7 +78,7 @@ export async function signIn({email, password}) {
             },
         });
     }
-    rememberSession(user.id);
+    return startSecondStepIfNeeded(user.id);
 }
 
 /**
@@ -127,16 +98,20 @@ export function demoPeopleOf() {
  * El atajo de los ejemplos: entrar como una de las personas sin escribir contraseña.
  *
  * @param {string} userId
- * @returns {Promise<void>}
+ * @returns {Promise<{secondStep: {methods: string[]}}|null>} con verificación en dos pasos, también se pide el segundo paso
  */
 export async function signInAs(userId) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
-    rememberSession(userId);
+    return startSecondStepIfNeeded(userId);
 }
 
 /** Salir (POST auth/sign-out). */
 export async function signOut() {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
+    const userId = signedInUserIdOf();
+    if (userId) {
+        recordAccountEvent(userId, 'signedOut');
+    }
     rememberSession(SIGNED_OUT);
 }
 
@@ -165,6 +140,7 @@ export async function resetPassword() {
  */
 export async function changePassword() {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
+    recordAccountEvent(signedInUserIdOf(), 'passwordChanged');
 }
 
 /**

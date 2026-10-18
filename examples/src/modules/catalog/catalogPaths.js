@@ -14,4 +14,5 @@ export const CATALOG_PATHS = Object.freeze({
     timeline: `${CATALOG_ROOT}/timeline`,
     translations: `${CATALOG_ROOT}/translations`,
     api: `${CATALOG_ROOT}/api`,
+    security: `${CATALOG_ROOT}/security`,
 });

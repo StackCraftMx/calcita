@@ -1,6 +1,11 @@
-// Los textos de lo que vive en core: los del diccionario de estados de un pedido (namespace dictionaries).
+// Los textos de lo que vive en core: los del diccionario de estados de un pedido (namespace dictionaries) y los del atajo de
+// los ejemplos para la app autenticadora (namespace demo).
 export const coreTexts = {
     es: {
+        demo: {
+            totpCode: 'Usar el código de ejemplo',
+            totpCodeHelp: 'Solo en los ejemplos: llena el código que enseñaría su app ahorita, por si no la tiene a la mano.',
+        },
         dictionaries: {
             orderStatus: {
                 pending: {label: 'Pendiente de pago', shortLabel: 'Pendiente', tooltip: 'El cliente todavía no paga.'},
@@ -12,6 +17,10 @@ export const coreTexts = {
         },
     },
     en: {
+        demo: {
+            totpCode: 'Use the sample code',
+            totpCodeHelp: 'Examples only: fills in the code your app would show right now, in case you do not have it at hand.',
+        },
         dictionaries: {
             orderStatus: {
                 pending: {label: 'Awaiting payment', shortLabel: 'Pending', tooltip: 'The customer has not paid yet.'},

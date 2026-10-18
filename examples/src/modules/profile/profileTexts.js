@@ -21,6 +21,7 @@ export const profileTexts = {
             security: {
                 title: 'Contraseña',
                 text: 'Use una contraseña que no use en otros sitios. Al cambiarla, la próxima vez entra con la nueva.',
+                demoNote: 'En los ejemplos la verificación funciona con su teléfono de verdad: escanee el QR con su app o cree una llave de acceso con su huella. Salga y vuelva a entrar para ver el segundo paso. Vive en la memoria de la pestaña: al recargar se apaga.',
             },
             preferences: {
                 title: 'Apariencia',
@@ -49,6 +50,7 @@ export const profileTexts = {
             security: {
                 title: 'Password',
                 text: 'Use a password you do not use on other sites. After changing it, sign in with the new one next time.',
+                demoNote: 'In the examples, verification works with your real phone: scan the QR with your app or create a passkey with your fingerprint. Sign out and sign in again to see the second step. It lives in the tab memory: reloading turns it off.',
             },
             preferences: {
                 title: 'Appearance',

@@ -8,6 +8,10 @@ import {ServerTable} from '@stackcraftmx/calcita/table';
 import {FormTextField} from '@stackcraftmx/calcita/forms';
 import {createCsrfRetryHandler} from '@stackcraftmx/calcita/laravel';
 import {MONEY_ROUNDING, Money} from '@stackcraftmx/calcita/money';
+import {ApiError, createApiClient, isStaleChunkError, recoverFromStaleChunk, ActivityLog, RecoveryCodesDialog, SessionsCard} from '@stackcraftmx/calcita';
+import {RouteErrorScreen, withChunkRecovery} from '@stackcraftmx/calcita/react-router';
+import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/calcita/passkeys';
+import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
 import {FormTextField as HookFormTextField, SERVER_PROBLEM_ROOT, applyServerProblem as applyToHookForm} from '@stackcraftmx/calcita/react-hook-form';
 import {CALENDAR_DATE_FORMAT, DateInput, FormDateField} from '@stackcraftmx/calcita/date-pickers';
@@ -60,5 +64,18 @@ const menuItems = composeMenu([{order: 1, buildMenuItem: () => ({to: '/', label:
 const crumbs: object[] = menuBreadcrumbsOf(menuItems, '/');
 const topMenu: string = MENU_POSITION.top;
 
-export {toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+// la petición de la casa: cada método acepta lo de la petición como opcional y truena con ApiError
+const api = createApiClient({baseUrl: '/api/v1', csrf: {refreshPath: '/auth/csrf-token'}});
+const ordersRequest: Promise<unknown> = api.get('/orders', {params: {page: 1}});
+const savedRequest: Promise<unknown> = api.post('/orders', {customerId: 7});
+const downloadRequest: Promise<{blob: Blob, fileName: string}> = api.download('/orders/export', {onDownloadProgress: ({loaded}) => loaded});
+const apiError = new ApiError({status: 422, problem: {detail: 'Revise los datos'}});
+const isValidation: boolean = apiError.isValidation;
+const staleChunk: boolean = isStaleChunkError(new Error('x'));
+const lazyRoutes = withChunkRecovery([{path: '/', lazy: async () => ({Component: () => null})}]);
+const passkeyParts = [createPasskey, signWithPasskey, passkeysSupported, recoverFromStaleChunk];
+const securityParts = [ActivityLog, RecoveryCodesDialog, SessionsCard, SecondStepForm, TwoStepVerificationCard, RouteErrorScreen];
+const cleanCode: string = normalizeTotpCode('123 456');
+
+export {ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
