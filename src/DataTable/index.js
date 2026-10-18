@@ -4,7 +4,7 @@ export {default as AuditTrailTable} from '@/DataTable/AuditTrailTable.jsx';
 export {default as EmptyState} from '@/DataTable/EmptyState.jsx';
 export {default as FilterChips} from '@/DataTable/FilterChips.jsx';
 export {default as GoToPage} from '@/DataTable/GoToPage.jsx';
-export {default as ServerTable} from '@/DataTable/ServerTable.jsx';
+export {SELECTION_PHONE_LAYOUT, default as ServerTable} from '@/DataTable/ServerTable.jsx';
 export {buildChipConfig} from '@/DataTable/buildChipConfig.js';
 export {detailColumn, facetColumn, textColumn} from '@/DataTable/columns.jsx';
 export {TableFilterContext, useTableFilter} from '@/DataTable/filterContext.js';

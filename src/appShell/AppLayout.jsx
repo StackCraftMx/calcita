@@ -68,7 +68,7 @@ import MobileTabBar from '@/appShell/MobileTabBar.jsx';
 import {PageTitleProvider, usePageTitle} from '@/appShell/pageTitle.jsx';
 import {
     APP_BAR_HEIGHT_PIXELS, DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, GLASS_PANEL_GAP_PIXELS, MAIN_CONTENT_ID,
-    MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_MEDIA_QUERY, drawerTransitionOf,
+    FLOATING_BOTTOM_SPACE_CSS_VARIABLE, MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_MEDIA_QUERY, drawerTransitionOf,
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
 import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
@@ -364,7 +364,7 @@ const AppLayoutFrame = ({
                          ...(usesTabBar && {
                              [PHONE_MEDIA_QUERY]: {
                                  pt: `calc(${theme.spacing(3)} + env(safe-area-inset-top))`,
-                                 pb: `calc(${MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + GLASS_PANEL_GAP_PIXELS * 2}px + env(safe-area-inset-bottom) + ${theme.spacing(3)})`,
+                                 pb: `calc(${MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + GLASS_PANEL_GAP_PIXELS * 2}px + env(safe-area-inset-bottom) + ${theme.spacing(3)} + var(${FLOATING_BOTTOM_SPACE_CSS_VARIABLE}, 0px))`,
                              },
                          }),
                      })}>
