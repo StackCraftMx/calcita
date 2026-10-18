@@ -186,6 +186,14 @@ const theme = createToolkitTheme({glass: {surfaces: true}});          // tambié
 equipos modestos) y la guía de Apple pide el contenido sin vidrio. Va bien en una portada o una demostración, no en
 pantallas de trabajo.
 
+En Android conviene arrancar con el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa
+en los teléfonos baratos. `isAndroidDevice()` lo dice; con Next, desde el servidor, se le pasa la identificación del
+navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para elegir un estilo, no para seguridad.
+
+```js
+const theme = isAndroidDevice() ? createToolkitTheme({look: THEME_LOOK.minimal}) : createToolkitTheme({glass: true});
+```
+
 Para lo que el proyecto quiera hacer flotar (los botones encima de un mapa, una barra de acciones): `GlassPanel`, que es
 de vidrio si el tema lo trae y una tarjeta con sombra si no. Para algo propio: `sx={(theme) => glassStylesOf(theme)}` e
 `isGlassTheme(theme)`. Cada ajuste vive en su archivo (`src/theme/components/MuiButton.js`…).
@@ -196,7 +204,12 @@ de vidrio si el tema lo trae y una tarjeta con sombra si no. Para algo propio: `
 el menú lateral por secciones, que la ☰ encoge a solo íconos (y lo recuerda). La barra trae el título de la página
 cuando el grande sale de la vista, el tamaño de letra, el idioma, claro u oscuro y la cuenta (Mi perfil, lo que agregue
 el proyecto y Salir). Con `menuPosition="top"` el menú va dentro de la barra. En el teléfono, la hamburguesa abre el menú
-en un cajón y los ajustes se juntan detrás de un engrane.
+en un cajón y los ajustes se juntan detrás de un engrane. Con vidrio, en el teléfono las secciones van en una barra de
+pestañas abajo que se encoge al leer hacia abajo y regresa al subir, como en iOS 26 (`minimizeTabBarOnScroll={false}` la
+deja fija).
+
+Claro u oscuro tiene tres opciones en el menú de la cuenta: Claro, Oscuro y Automático, que sigue lo que diga el equipo y
+es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la forma de volver a seguir al equipo.
 
 El menú no se escribe en una lista central: cada módulo trae su `menu.js` y `composeMenu` los junta, los ordena y deja
 solo los que la sesión puede ver (también dentro de los submenús).
