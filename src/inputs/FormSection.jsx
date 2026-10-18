@@ -81,9 +81,10 @@ function rowControlSxOf(theme) {
  * @param {object} props
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {string} [props.htmlFor] el id del campo que nombra la etiqueta
+ * @param {string} [props.labelId] el id de la etiqueta (para un campo que la nombra con aria-labelledby)
  * @param {import('react').ReactNode} props.children
  */
-export function FormRow({label, htmlFor, children}) {
+export function FormRow({label, htmlFor, labelId, children}) {
     return (
         <Box className={FORM_ROW_CLASS}
              sx={(theme) => {
@@ -101,7 +102,7 @@ export function FormRow({label, htmlFor, children}) {
                      ...rowControlSxOf(theme),
                  };
              }}>
-            <Typography component="label" htmlFor={htmlFor} variant="body1"
+            <Typography component="label" id={labelId} htmlFor={htmlFor} variant="body1"
                         sx={{flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels, pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary'}}>
                 {label}
             </Typography>

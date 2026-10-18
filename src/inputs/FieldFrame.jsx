@@ -14,19 +14,21 @@ import {useIsInsideFormSection} from '@/inputs/formLayoutContext.js';
 /**
  * @param {object} props
  * @param {string} props.inputId el id del campo (la etiqueta lo nombra para el lector de pantalla)
+ * @param {string} [props.labelId] el id de la etiqueta, para un campo que no es un <input> (la lista desplegable de MUI es un
+ *     div: `for` no la une con su etiqueta y el campo la nombra con aria-labelledby)
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {import('react').ReactNode} props.children el campo
  */
-export default function FieldFrame({inputId, label, children}) {
+export default function FieldFrame({inputId, labelId, label, children}) {
     const isRow = useIsInsideFormSection();
 
     if (isRow) {
-        return <FormRow label={label} htmlFor={inputId}>{children}</FormRow>;
+        return <FormRow label={label} htmlFor={inputId} labelId={labelId}>{children}</FormRow>;
     }
 
     return (
         <Stack spacing={0.75}>
-            <Typography component="label" htmlFor={inputId} variant="overline" color="text.secondary">{label}</Typography>
+            <Typography component="label" id={labelId} htmlFor={inputId} variant="overline" color="text.secondary">{label}</Typography>
             {children}
         </Stack>
     );
