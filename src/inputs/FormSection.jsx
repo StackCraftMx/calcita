@@ -20,8 +20,10 @@
 //     el mensaje debajo del campo;
 //   - una línea fina entre renglones, que empieza donde empieza el texto.
 //
-// OJO: los campos van DIRECTO dentro de la FormSection (sin Grid ni Stack en medio): la línea entre renglones se dibuja
-// entre hermanos.
+// Los campos pueden ir directo o dentro de lo que el proyecto necesite (un Grid de dos columnas, un Stack, un componente
+// suyo): cada renglón dibuja su propia línea ARRIBA y la tarjeta sube su contenido un píxel y lo recorta, así la línea del
+// primero queda escondida. OJO: antes la línea se dibujaba entre dos hermanos seguidos y con un Grid en medio desaparecían
+// todas (lo señalaron en una revisión: obligaba a «la forma Calcita»).
 //
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
@@ -32,7 +34,7 @@ import Typography from '@mui/material/Typography';
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
 import {GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 
-/** La clase de cada renglón: la sección dibuja la línea entre dos renglones seguidos. */
+/** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
 
 // el renglón: alto mínimo para el dedo, su aire arriba y abajo, y lo ancho de la columna de las etiquetas
@@ -117,7 +119,7 @@ export function FormRow({label, htmlFor, labelId, children}) {
  * @param {object} props
  * @param {string} [props.title] ya traducido; va arriba de la tarjeta
  * @param {import('react').ReactNode} [props.footer] la explicación, abajo de la tarjeta
- * @param {import('react').ReactNode} props.children los campos, directo (ver el OJO de arriba)
+ * @param {import('react').ReactNode} props.children los campos, directo o dentro de un Grid, un Stack o un componente propio
  */
 export default function FormSection({title, footer, children}) {
     const titleId = useId();
@@ -133,13 +135,14 @@ export default function FormSection({title, footer, children}) {
                        sx={(theme) => ({
                            borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
                            overflow: 'hidden',
-                           // la línea entre dos renglones seguidos, desde donde empieza el texto
-                           [`& > .${FORM_ROW_CLASS} + .${FORM_ROW_CLASS}::before`]: {
+                           // la línea de arriba de cada renglón, desde donde empieza el texto (la del primero la recorta la tarjeta)
+                           [`& .${FORM_ROW_CLASS}::before`]: {
                                content: '""', position: 'absolute', top: 0, right: 0, left: theme.spacing(2), height: '1px',
                                backgroundColor: (theme.vars ?? theme).palette.divider,
                            },
                        })}>
-                    {children}
+                    {/* un píxel arriba: la línea de los renglones de hasta arriba queda fuera de la tarjeta (overflow hidden) */}
+                    <Box sx={{mt: '-1px'}}>{children}</Box>
                 </Paper>
                 {footer && (
                     <Typography variant="caption" component="p" color="text.secondary" sx={{px: 2, mt: 0.75}}>{footer}</Typography>
