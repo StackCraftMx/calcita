@@ -602,5 +602,40 @@ export default Object.freeze({
                 "sessionsClosed": "Cerró la sesión en los demás equipos"
             }
         }
+    },
+    "calendar": {
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "today": "Hoy",
+        "view": "Vista del calendario",
+        "views": {
+            "month": "Mes",
+            "week": "Semana",
+            "day": "Día",
+            "list": "Lista"
+        }
+    },
+    "kanban": {
+        "instructions": "Para mover una tarjeta con el teclado: espacio para levantarla, flechas para moverla y espacio para soltarla. Escape la deja donde estaba.",
+        "lifted": "Levantó «{{title}}», en {{column}}, posición {{position}}.",
+        "moving": "Va a {{column}}, posición {{position}}.",
+        "dropped": "Soltó «{{title}}» en {{column}}, posición {{position}}.",
+        "cancelled": "«{{title}}» se quedó donde estaba.",
+        "overLimit": "Pasó el tope de {{limit}} tarjetas.",
+        "empty": "Sin tarjetas. Arrastre una aquí."
+    },
+    "inbox": {
+        "listLabel": "Mensajes",
+        "folders": "Carpetas",
+        "empty": "No hay mensajes aquí.",
+        "noMessageSelected": "Elija un mensaje para leerlo.",
+        "star": "Destacar",
+        "unstar": "Quitar de destacados",
+        "unread": "Sin leer",
+        "attachments": "Archivos adjuntos",
+        "to": "Para: {{to}}",
+        "back": "Regresar",
+        "unreadCount_one": "{{count}} sin leer",
+        "unreadCount_other": "{{count}} sin leer"
     }
 });

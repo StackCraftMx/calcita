@@ -16,6 +16,10 @@ import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/
 import {FormTextField as HookFormTextField, SERVER_PROBLEM_ROOT, applyServerProblem as applyToHookForm} from '@stackcraftmx/calcita/react-hook-form';
 import {CALENDAR_DATE_FORMAT, DateInput, FormDateField} from '@stackcraftmx/calcita/date-pickers';
 import {nextNavigation} from '@stackcraftmx/calcita/next';
+import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/calcita/maps';
+import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
+import {KanbanBoard, isOverLimit, moveCard} from '@stackcraftmx/calcita/kanban';
+import {InboxLayout, MessageList, MessageView} from '@stackcraftmx/calcita';
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
@@ -77,5 +81,13 @@ const passkeyParts = [createPasskey, signWithPasskey, passkeysSupported, recover
 const securityParts = [ActivityLog, RecoveryCodesDialog, SessionsCard, SecondStepForm, TwoStepVerificationCard, RouteErrorScreen];
 const cleanCode: string = normalizeTotpCode('123 456');
 
-export {ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+// mapa, calendario, kanban y bandeja
+const tilesUrl: string = OPEN_STREET_MAP_TILES.url;
+const markerBounds = boundsOfMarkers([{position: [20.67, -103.35]}]);
+const monthView: string = CALENDAR_VIEW.month;
+const movedCards = moveCard([{id: 'c1', columnId: 'todo'}], {cardId: 'c1', toColumnId: 'doing', toIndex: 0});
+const columnFull: boolean = isOverLimit({limit: 3}, 4);
+const workspaceParts = [MapView, EventCalendar, KanbanBoard, InboxLayout, MessageList, MessageView];
+
+export {tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -13,7 +13,7 @@ import {
     AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
-    ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary,
+    ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView,
 } from '@stackcraftmx/calcita';
 import {ServerTable, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -22,6 +22,9 @@ import {
 } from '@stackcraftmx/calcita/forms';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
+import {EventCalendar} from '@stackcraftmx/calcita/calendar';
+import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
+// MapView (/maps) no entra: Leaflet usa window al cargarse; en el servidor se carga aparte (en Next, con ssr: false)
 
 const ORDER_STATUS = Object.freeze({pending: dictionaryEntryOf('pending', 'orderStatus.pending', 'warning')});
 // un menú con secciones y un submenú, como lo regresa composeMenu
@@ -32,6 +35,11 @@ const MENU_ITEMS = [
 ];
 const TOOLKIT_THEME_WITH_GLASS = createToolkitTheme({glass: true});
 const TOOLKIT_THEME_WITH_GLASS_SURFACES = createToolkitTheme({glass: {opacity: 0.7, surfaces: true}});
+const INBOX_MESSAGE = {
+    id: 'm1', from: {name: 'Luis Herrera', email: 'luis@ejemplo.com'}, subject: 'Entrega del lunes', preview: 'Hola',
+    receivedAt: '2026-10-17T15:00:00Z', isUnread: true, isStarred: false, hasAttachments: false, to: ['ana@ejemplo.com'],
+    body: 'Texto con <b>etiquetas</b>', attachments: [],
+};
 const PROJECT_TEXTS = {es: {dictionaries: {orderStatus: {pending: {label: 'Pendiente', tooltip: 'Esperando pago'}}}}};
 
 // cada caso: su nombre, el componente y un texto que debe salir en lo pintado
@@ -118,6 +126,19 @@ const CASES = [
     }), 'Le quedan 2 códigos sin usar.'],
     ['SecondStepForm con app y recuperación', h(SecondStepForm, {methods: ['totp', 'recoveryCode'], onSubmitCode: async () => {}, onCancel: () => {}}),
         'Código de su app autenticadora'],
+    ['KanbanBoard con tope', h(KanbanBoard, {
+        columns: [{id: 'todo', title: 'Por hacer'}, {id: 'doing', title: 'En proceso', limit: 1}],
+        cards: [{id: 'c1', columnId: 'doing', title: 'Cerrar el mes'}, {id: 'c2', columnId: 'doing', title: 'Capacitar'}],
+        onMove: () => {}, ariaLabel: 'Tablero',
+    }), '2 / 1'],
+    ['EventCalendar', h(EventCalendar, {events: [], ariaLabel: 'Calendario'}), 'Calendario'],
+    ['MessageList', h(MessageList, {messages: [INBOX_MESSAGE], onSelect: () => {}}), 'Entrega del lunes'],
+    // el texto del mensaje se pinta como texto: las etiquetas salen escapadas
+    ['MessageView con HTML en el texto', h(MessageView, {message: INBOX_MESSAGE}), '&lt;b&gt;etiquetas&lt;/b&gt;'],
+    ['InboxLayout', h(InboxLayout, {
+        folders: [{id: 'inbox', label: 'Recibidos', unreadCount: 2}], selectedFolderId: 'inbox', onSelectFolder: () => {},
+        list: 'la lista', detail: null, isDetailOpen: false, onCloseDetail: () => {},
+    }), 'Recibidos'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 

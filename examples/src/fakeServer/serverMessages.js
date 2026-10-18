@@ -22,6 +22,25 @@ const SERVER_TEXTS = Object.freeze({
             expired: 'Pasaron más de 5 minutos. Vuelva a escribir su contraseña.',
             defaultPasskeyName: 'Llave de acceso {{number}}',
         },
+        calendar: {
+            sundayTitle: 'Los domingos no hay entregas',
+            sunday: 'La tienda no entrega en domingo. Elija otro día.',
+            customerRequired: 'Escriba el nombre del cliente.',
+            created: 'Se agendó la cita de {{customer}}.',
+            deleted: 'Se borró la cita.',
+            notFoundTitle: 'La cita ya no existe',
+            notFound: 'Alguien la borró. Recargue el calendario.',
+        },
+        tasks: {
+            fullTitle: 'La columna está llena',
+            full: '«{{column}}» tiene un tope de {{limit}} tareas en curso. Termine una antes de empezar otra.',
+        },
+        mail: {
+            deleted: 'Se borró el mensaje.',
+            sent: 'Se mandó el mensaje a {{to}}.',
+            toInvalid: 'Escriba un correo válido.',
+            subjectRequired: 'Escriba el asunto.',
+        },
         accounts: {
             store: 'Tienda de ejemplo',
             signInFailedTitle: 'No pudimos iniciar su sesión',
@@ -99,6 +118,25 @@ const SERVER_TEXTS = Object.freeze({
             expiredTitle: 'Too much time went by',
             expired: 'More than 5 minutes went by. Type your password again.',
             defaultPasskeyName: 'Passkey {{number}}',
+        },
+        calendar: {
+            sundayTitle: 'No deliveries on Sundays',
+            sunday: 'The store does not deliver on Sunday. Choose another day.',
+            customerRequired: 'Enter the customer name.',
+            created: 'The appointment for {{customer}} was scheduled.',
+            deleted: 'The appointment was deleted.',
+            notFoundTitle: 'The appointment no longer exists',
+            notFound: 'Someone deleted it. Reload the calendar.',
+        },
+        tasks: {
+            fullTitle: 'The column is full',
+            full: '“{{column}}” has a limit of {{limit}} tasks in progress. Finish one before starting another.',
+        },
+        mail: {
+            deleted: 'The message was deleted.',
+            sent: 'The message was sent to {{to}}.',
+            toInvalid: 'Enter a valid email.',
+            subjectRequired: 'Enter the subject.',
         },
         accounts: {
             store: 'Sample store',

@@ -105,6 +105,18 @@
         "./passkeys": {
             "types": "./dist/types/passkeys.d.ts",
             "import": "./dist/passkeys.js"
+        },
+        "./maps": {
+            "types": "./dist/types/maps.d.ts",
+            "import": "./dist/maps.js"
+        },
+        "./calendar": {
+            "types": "./dist/types/calendar.d.ts",
+            "import": "./dist/calendar.js"
+        },
+        "./kanban": {
+            "types": "./dist/types/kanban.d.ts",
+            "import": "./dist/kanban.js"
         }
     },
     "scripts": {
@@ -126,6 +138,13 @@
     "peerDependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
+        "@fullcalendar/core": "^6.1.0",
+        "@fullcalendar/daygrid": "^6.1.0",
+        "@fullcalendar/interaction": "^6.1.0",
+        "@fullcalendar/list": "^6.1.0",
+        "@fullcalendar/react": "^6.1.0",
+        "@fullcalendar/timegrid": "^6.1.0",
+        "@hello-pangea/dnd": "^18.0.0",
         "@hookform/resolvers": "^5.0.0",
         "@mui/icons-material": "^7.0.0",
         "@mui/lab": ">=7.0.0-beta.0",
@@ -138,18 +157,41 @@
         "filepond": "^4.32.0",
         "filepond-plugin-file-validate-size": "^2.2.8",
         "filepond-plugin-file-validate-type": "^1.2.9",
+        "leaflet": "^1.9.0",
         "next": ">=15.0.0",
         "nuqs": "^2.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-filepond": "^7.1.2",
         "react-hook-form": "^7.50.0",
+        "react-leaflet": "^5.0.0",
         "react-router": "^7.0.0",
         "recharts": "^3.0.0",
         "sonner": "^2.0.0",
         "xstate": "^5.0.0"
     },
     "peerDependenciesMeta": {
+        "@fullcalendar/core": {
+            "optional": true
+        },
+        "@fullcalendar/daygrid": {
+            "optional": true
+        },
+        "@fullcalendar/interaction": {
+            "optional": true
+        },
+        "@fullcalendar/list": {
+            "optional": true
+        },
+        "@fullcalendar/react": {
+            "optional": true
+        },
+        "@fullcalendar/timegrid": {
+            "optional": true
+        },
+        "@hello-pangea/dnd": {
+            "optional": true
+        },
         "@hookform/resolvers": {
             "optional": true
         },
@@ -177,6 +219,9 @@
         "filepond-plugin-file-validate-type": {
             "optional": true
         },
+        "leaflet": {
+            "optional": true
+        },
         "next": {
             "optional": true
         },
@@ -189,6 +234,9 @@
         "react-hook-form": {
             "optional": true
         },
+        "react-leaflet": {
+            "optional": true
+        },
         "react-router": {
             "optional": true
         },
@@ -199,6 +247,13 @@
     "devDependencies": {
         "@emotion/react": "11.14.0",
         "@emotion/styled": "11.14.1",
+        "@fullcalendar/core": "6.1.21",
+        "@fullcalendar/daygrid": "6.1.21",
+        "@fullcalendar/interaction": "6.1.21",
+        "@fullcalendar/list": "6.1.21",
+        "@fullcalendar/react": "6.1.21",
+        "@fullcalendar/timegrid": "6.1.21",
+        "@hello-pangea/dnd": "18.0.1",
         "@hookform/resolvers": "5.9.1",
         "@mui/icons-material": "7.3.11",
         "@mui/lab": "7.0.1-beta.25",
@@ -206,6 +261,7 @@
         "@mui/x-data-grid": "8.29.3",
         "@mui/x-date-pickers": "8.29.4",
         "@simplewebauthn/browser": "14.0.0",
+        "@types/leaflet": "1.9.22",
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",
         "@vitejs/plugin-react": "5.2.0",
@@ -216,12 +272,14 @@
         "filepond": "4.32.12",
         "filepond-plugin-file-validate-size": "2.2.8",
         "filepond-plugin-file-validate-type": "1.2.9",
+        "leaflet": "1.9.4",
         "next": "16.4.2",
         "nuqs": "2.10.1",
         "react": "19.3.0",
         "react-dom": "19.3.0",
         "react-filepond": "7.1.3",
         "react-hook-form": "7.90.0",
+        "react-leaflet": "5.0.0",
         "react-router": "7.18.3",
         "recharts": "3.10.1",
         "sonner": "2.0.8",
