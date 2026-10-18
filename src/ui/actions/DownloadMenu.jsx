@@ -1,6 +1,9 @@
 // "Descargar ▾" con los formatos de un reporte: PDF para leer o archivar, Excel o CSV para trabajar.
 //
 // Un solo botón y no tres: en la barra de una pantalla tres botones de descarga compiten con la acción principal.
+// Se acomoda a donde quedó, como BarActionButton: en una cápsula de la barra (las `actions` de PageHeading con cápsulas)
+// es solo el ícono con su nombre en el tooltip, como las demás acciones; antes salía la píldora «Descargar ▾» dentro de
+// la cápsula y se veía una cápsula dentro de otra. En el «⋯» del teléfono es un renglón que abre los formatos.
 // Quien llama pasa QUÉ descargar por formato (download(format, transferOptions) → {blob, fileName}, la forma de
 // un cliente HTTP que descarga). La descarga va al panel de descargas (startDownload, downloads): el diálogo se cierra al
 // confirmar y el avance, el aviso de "descargado" y el error se ven allá, mientras la persona sigue trabajando.
@@ -25,6 +28,7 @@ import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 
+import {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
 import {startDownload} from '@/downloads/downloadQueue.js';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
@@ -64,7 +68,15 @@ export default function DownloadMenu({
     icon: ButtonIcon = FileDownloadOutlinedIcon,
 }) {
     const {t} = useToolkitTranslation('common');
+    // de dónde sale el menú de formatos: del botón, o (desde el «⋯» del teléfono, que se cierra) de donde estaba el renglón
     const [anchorElement, setAnchorElement] = useState(null);
+    const [anchorPosition, setAnchorPosition] = useState(null);
+    const placement = useBarActionsPlacement();
+    const closeMoreMenu = useCloseBarActionsMenu();
+    const closeFormats = () => {
+        setAnchorElement(null);
+        setAnchorPosition(null);
+    };
 
     // no se espera a que termine: la descarga sigue en el panel y el diálogo de confirmación se cierra de inmediato
     const runDownload = (format) => {
@@ -79,7 +91,7 @@ export default function DownloadMenu({
     const confirmedDownload = useConfirmAction({run: ({subject}) => runDownload(subject.format)});
 
     const chooseFormat = (format) => {
-        setAnchorElement(null);
+        closeFormats();
         if (onChooseFormat) {
             onChooseFormat(format);
             return;
@@ -95,11 +107,35 @@ export default function DownloadMenu({
 
     const buttonLabel = label ?? t('actions.download');
     const openMenu = (event) => setAnchorElement(event.currentTarget);
+    // desde el «⋯»: se cierra ese menú y los formatos salen donde estaba el renglón
+    const openFromMoreMenu = (event) => {
+        const {bottom, right} = event.currentTarget.getBoundingClientRect();
+        closeMoreMenu();
+        setAnchorPosition({top: bottom, left: right});
+    };
+    const isFormatsOpen = Boolean(anchorElement || anchorPosition);
     const confirmationTexts = confirmedDownload.subject ? confirmation?.(confirmedDownload.subject.format) : null;
 
     return (
         <>
-            {variant === 'icon' ? (
+            {placement === BAR_ACTIONS_PLACEMENT.menu && (
+                <MenuItem disabled={disabled} aria-haspopup="menu" onClick={openFromMoreMenu}>
+                    <ListItemIcon><ButtonIcon /></ListItemIcon>
+                    <ListItemText>{buttonLabel}</ListItemText>
+                </MenuItem>
+            )}
+            {placement === BAR_ACTIONS_PLACEMENT.capsule && (
+                // en la cápsula, del tamaño y color de las demás acciones (BarActionButton)
+                <Tooltip title={buttonLabel} describeChild>
+                    <span>
+                        <IconButton color="primary" aria-label={buttonLabel} aria-haspopup="menu" aria-expanded={isFormatsOpen}
+                                    disabled={disabled} onClick={openMenu}>
+                            <ButtonIcon />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            )}
+            {placement === BAR_ACTIONS_PLACEMENT.inline && (variant === 'icon' ? (
                 // describeChild: el nombre accesible ya lo trae el botón; sin esto el Tooltip le pone el mismo aria-label al
                 // span y un lector de pantalla (o una prueba) encuentra dos "botones" con el mismo nombre
                 <Tooltip title={ariaLabel ?? buttonLabel} describeChild>
@@ -116,8 +152,9 @@ export default function DownloadMenu({
                         sx={{flexShrink: 0}} disabled={disabled} aria-haspopup="menu" onClick={openMenu}>
                     {buttonLabel}
                 </Button>
-            )}
-            <Menu anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={() => setAnchorElement(null)}
+            ))}
+            <Menu open={isFormatsOpen} onClose={closeFormats}
+                  anchorReference={anchorPosition ? 'anchorPosition' : 'anchorEl'} anchorEl={anchorElement} anchorPosition={anchorPosition ?? undefined}
                   anchorOrigin={{vertical: 'bottom', horizontal: 'right'}} transformOrigin={{vertical: 'top', horizontal: 'right'}}>
                 {formats.map((format) => {
                     const Icon = ICON_BY_FORMAT[format] ?? FileDownloadOutlinedIcon;
