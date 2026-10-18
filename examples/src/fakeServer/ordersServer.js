@@ -12,7 +12,7 @@ import {ApiError} from '@/fakeServer/ApiError.js';
 import {ORDER_STATUSES, STORE_CURRENCY, fakeOrders, orderEventsOf} from '@/fakeServer/fakeOrders.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
-import {containsText, serverPageOf} from '@/fakeServer/serverPage.js';
+import {containsText, rowsMatchingFilters, serverPageOf} from '@/fakeServer/serverPage.js';
 import {storeDateOf} from '@/fakeServer/storeCalendar.js';
 
 const HTTP_STATUS = Object.freeze({notFound: 404, conflict: 409});
@@ -175,6 +175,84 @@ export async function cancelOrder(orderId, reason) {
     order.cancel_reason = reason;
 
     return {message: serverTextOf('orders.canceled', {number: order.number})};
+}
+
+/**
+ * Los pedidos de una acción en grupo: los elegidos (ids) o, con «todos los que coinciden», los que cumplen los filtros de la
+ * tabla. Así lo recibiría el endpoint: {ids} o {filters}, nunca la página que se veía.
+ *
+ * @param {{ids: Array<number|string>, filters: Record<string, unknown>, isAllMatching: boolean}} selection
+ * @returns {object[]}
+ */
+function ordersOfSelection({ids, filters, isAllMatching}) {
+    if (isAllMatching) {
+        return rowsMatchingFilters(fakeOrders, filters, ORDER_FILTER_RULES);
+    }
+    const chosenIds = new Set(ids.map(Number));
+    return fakeOrders.filter((order) => chosenIds.has(order.id));
+}
+
+/**
+ * POST /orders/cancel: cancela en grupo. Cancela los que todavía no salen del almacén; los que ya salieron (o ya estaban
+ * cancelados) se quedan como estaban y la respuesta dice cuántos: con muchos elegidos, uno que no se puede no detiene a los
+ * demás. Si ninguno se puede, 409 (sale dentro del diálogo).
+ *
+ * @param {{ids: Array<number|string>, filters: Record<string, unknown>, isAllMatching: boolean}} selection
+ * @param {string} reason el motivo que escribió la persona
+ * @returns {Promise<{message: string, canceled: number, skipped: number}>}
+ */
+export async function cancelOrders(selection, reason) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS * 2);
+    const orders = ordersOfSelection(selection);
+    const cancelable = orders.filter((order) => order.status !== ORDER_STATUSES.canceled && !STATUSES_THAT_CANNOT_CANCEL.includes(order.status));
+
+    if (cancelable.length === 0) {
+        throw new ApiError({
+            status: HTTP_STATUS.conflict,
+            problem: {
+                status: HTTP_STATUS.conflict, code: 'orders_cannot_be_canceled',
+                title: serverTextOf('orders.cannotCancelTitle'), detail: serverTextOf('orders.noneCancelable'),
+            },
+        });
+    }
+
+    const canceledAt = new Date().toISOString();
+    for (const order of cancelable) {
+        order.status = ORDER_STATUSES.canceled;
+        order.canceled_at = canceledAt;
+        order.canceled_by = {id: 'sample-user', name: serverTextOf('orders.sampleUser')};
+        order.cancel_reason = reason;
+    }
+    const skipped = orders.length - cancelable.length;
+    const canceledText = serverTextOf(cancelable.length === 1 ? 'orders.bulkCanceledOne' : 'orders.bulkCanceledOther', {count: cancelable.length});
+    const skippedText = skipped > 0 ? serverTextOf(skipped === 1 ? 'orders.bulkSkippedOne' : 'orders.bulkSkippedOther', {count: skipped}) : '';
+
+    return {message: [canceledText, skippedText].filter(Boolean).join(' '), canceled: cancelable.length, skipped};
+}
+
+/**
+ * POST /orders/payment-reminders: manda el recordatorio de pago a los clientes de los pedidos elegidos que siguen sin pagar
+ * (un correo por cliente aunque tenga varios). Si ninguno espera pago, 409.
+ *
+ * @param {{ids: Array<number|string>, filters: Record<string, unknown>, isAllMatching: boolean}} selection
+ * @returns {Promise<{message: string}>}
+ */
+export async function sendPaymentRemindersTo(selection) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS * 2);
+    const pendingOrders = ordersOfSelection(selection).filter((order) => order.status === STATUS_THAT_NEEDS_REMINDER);
+
+    if (pendingOrders.length === 0) {
+        throw new ApiError({
+            status: HTTP_STATUS.conflict,
+            problem: {
+                status: HTTP_STATUS.conflict, code: 'orders_not_waiting_payment',
+                title: serverTextOf('orders.nobodyToRemindTitle'), detail: serverTextOf('orders.noneWaitingPayment'),
+            },
+        });
+    }
+    const count = new Set(pendingOrders.map((order) => order.customer_email)).size;
+
+    return {message: serverTextOf(count === 1 ? 'orders.remindersSentOne' : 'orders.remindersSentOther', {count})};
 }
 
 /**

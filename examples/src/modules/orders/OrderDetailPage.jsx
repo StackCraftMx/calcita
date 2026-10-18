@@ -26,13 +26,10 @@ import {Money} from '@stackcraftmx/calcita/money';
 
 import {APP_PATHS, ORDER_STATUS} from '@/core';
 import {DeliveryTimeline} from '@/modules/orders/DeliveryTimeline.jsx';
-import {CANCELABLE_ORDER_STATUSES, ORDER_EVENT, PAYMENT_METHOD} from '@/modules/orders/orderDictionaries.js';
+import {CANCELABLE_ORDER_STATUSES, CANCEL_REASON_MAX_LENGTH, ORDER_EVENT, PAYMENT_METHOD} from '@/modules/orders/orderDictionaries.js';
 import {cancelOrder, getOrderHistoryPage} from '@/modules/orders/ordersApi.js';
 import {ORDERS_LIST_KEY} from '@/modules/orders/ordersPaths.js';
 import {ORDER_DETAIL_STATUS, useOrderDetail} from '@/modules/orders/useOrderDetail.js';
-
-// el motivo es corto: va en el historial
-const CANCEL_REASON_MAX_LENGTH = 200;
 
 export const OrderDetailPage = () => {
     const {orderId} = useParams();

@@ -8,7 +8,7 @@
 // el archivo, se adelantaría a buildYupLocale y saldría con los mensajes en inglés de yup.
 import {Yup} from '@stackcraftmx/calcita/forms';
 
-import {CUSTOMER_TYPE} from '@/modules/customers/customerDictionaries.js';
+import {CUSTOMER_TYPE, DELIVERY_DAY} from '@/modules/customers/customerDictionaries.js';
 
 const NAME_MAX_LENGTH = 80;
 const PHONE_DIGITS = /^\d{10}$/;
@@ -19,6 +19,8 @@ const PHONE_DIGITS = /^\d{10}$/;
  */
 export const NEW_CUSTOMER_INITIAL_VALUES = Object.freeze({
     name: '', email: '', phone: '', customer_type: '', credit_limit: '', state: '', customer_since: '',
+    // varias opciones: listas (al menos un día; los estados, opcionales)
+    delivery_days: [], delivery_states: [],
 });
 
 /**
@@ -44,5 +46,7 @@ export function buildNewCustomerSchema() {
         credit_limit: Yup.string().required(),
         state: Yup.string().required(),
         customer_since: Yup.string(),
+        delivery_days: Yup.array().of(Yup.string().oneOf(Object.keys(DELIVERY_DAY))).min(1),
+        delivery_states: Yup.array().of(Yup.string()),
     });
 }

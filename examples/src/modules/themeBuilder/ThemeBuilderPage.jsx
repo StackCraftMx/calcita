@@ -24,7 +24,7 @@ import {ThemeProvider} from '@mui/material/styles';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import {
-    ColorInput, CopyButton, FormRow, FormSection, MetricCard, PageHeading, SegmentedControl, THEME_LOOK, TREND_DIRECTION, TextInput,
+    BarActionButton, ColorInput, CopyButton, FormRow, FormSection, MetricCard, PageHeading, SegmentedControl, THEME_LOOK, TREND_DIRECTION, TextInput,
     createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 
@@ -122,7 +122,8 @@ export const ThemeBuilderPage = () => {
     return (
         <Stack spacing={3}>
             <PageHeading title={t('page.title')} description={t('page.subtitle')}
-                         actions={<Button variant="outlined" startIcon={<RestartAltRoundedIcon />} onClick={resetThemeChoices}>{t('look.reset')}</Button>} />
+                         // en la barra: ícono con su nombre (BarActionButton), del color del texto como pide la guía de Apple
+                         actions={<BarActionButton label={t('look.reset')} icon={<RestartAltRoundedIcon />} onClick={resetThemeChoices} />} />
 
             <Stack direction={{xs: 'column', md: 'row'}} spacing={3} sx={{alignItems: 'flex-start'}}>
                 <Stack spacing={3} sx={{width: {xs: '100%', md: CONTROLS_WIDTH_PIXELS}, flexShrink: 0}}>

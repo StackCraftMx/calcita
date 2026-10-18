@@ -19,7 +19,7 @@ import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 import {
-    InboxLayout, MessageList, MessageView, PageHeading, TextInput, toastProblem, toastSuccess, useToolkitTranslation,
+    BarActionButton, InboxLayout, MessageList, MessageView, PageHeading, TextInput, toastProblem, toastSuccess, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 
 import {ComposeDialog} from '@/modules/mail/ComposeDialog.jsx';
@@ -101,7 +101,8 @@ export const MailPage = () => {
     return (
         <Stack spacing={3}>
             <PageHeading title={t('page.title')} description={t('page.description')}
-                         actions={<Button variant="contained" startIcon={<EditOutlinedIcon />} onClick={() => setDraft({to: '', subject: ''})}>{t('actions.compose')}</Button>} />
+                         // en la barra: ícono con su nombre (BarActionButton), del color del texto como pide la guía de Apple
+                         actions={<BarActionButton label={t('actions.compose')} icon={<EditOutlinedIcon />} onClick={() => setDraft({to: '', subject: ''})} />} />
             <InboxLayout folders={folders} selectedFolderId={folder} onSelectFolder={chooseFolder}
                          toolbar={<TextInput label={t('search')} type="search" value={search} onChange={setSearch} helperText="" />}
                          list={<MessageList messages={list.messages} selectedId={selectedId} onSelect={open}

@@ -5,6 +5,8 @@
 //   - ColumnChart por mes con su línea de meta y SegmentedControl para elegir qué se cuenta; el importe se grafica en
 //     centavos enteros y se escribe con Money (formatValue), así ni la gráfica pasa el dinero por decimales;
 //   - PeriodRangeSelector para el rango de meses;
+//   - LineChart con tres series (recibidos, entregados y cancelados), cada una con su color y su trazo; al picar un mes
+//     lleva a la tabla de pedidos con ese mes filtrado (onSelect);
 //   - BarList por producto: cada barra lleva a sus pedidos en la tabla;
 //   - CalendarHeatmap con los pedidos de cada día. Toda gráfica trae su «Ver como tabla».
 //
@@ -21,10 +23,10 @@ import {
     CalendarHeatmap, MetricCard, PageHeading, PeriodRangeSelector, SectionCard, SegmentedControl, formatDate, formatMonthName,
     formatNumber, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
-import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
+import {BarList, ColumnChart, LineChart} from '@stackcraftmx/calcita/charts';
 import {Money} from '@stackcraftmx/calcita/money';
 
-import {ORDER_STATUS, ordersListFilteredBy} from '@/core';
+import {ORDER_STATUS, ordersListFilteredBy, ordersListFilteredWith} from '@/core';
 import {getOrderMetrics} from '@/modules/metrics/metricsApi.js';
 
 /** Qué cuentan las columnas por mes. */
@@ -53,6 +55,19 @@ const STATUS_CARDS = Object.freeze([
 function monthLabelOf(month) {
     const [year, monthNumber] = month.split('-').map(Number);
     return formatMonthName(year, monthNumber, {style: 'short', capitalize: true});
+}
+
+/**
+ * El rango de días de un mes del servidor, como lo filtra la tabla de pedidos ('2026-03' → del 1 al 31 de marzo).
+ *
+ * @param {string} month
+ * @returns {{created_from: string, created_to: string}}
+ */
+function monthFiltersOf(month) {
+    const [year, monthNumber] = month.split('-').map(Number);
+    // el día 0 del mes siguiente es el último de este mes
+    const lastDay = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
+    return {created_from: `${month}-01`, created_to: `${month}-${String(lastDay).padStart(2, '0')}`};
 }
 
 export const MetricsPage = () => {
@@ -110,6 +125,16 @@ export const MetricsPage = () => {
             tooltip: t(isAmount ? 'monthly.amountTooltip' : 'monthly.ordersTooltip', {month: monthLabelOf(figures.month), value: valueText}),
         };
     });
+
+    // un renglón por mes con las tres series de la gráfica de líneas
+    const flowRows = monthsInRange.map((figures) => ({
+        key: figures.month, label: monthLabelOf(figures.month), received: figures.received, delivered: figures.delivered, canceled: figures.canceled,
+    }));
+    const flowSeries = [
+        {key: 'received', label: t('flow.received')},
+        {key: 'delivered', label: t('flow.delivered'), tone: 'success'},
+        {key: 'canceled', label: t('flow.canceled'), tone: 'error'},
+    ];
 
     const productBars = metrics.products.map((product) => {
         const amountText = moneyOf(product.sold_amount).format();
@@ -173,6 +198,12 @@ export const MetricsPage = () => {
                             value: MONTHLY_ORDERS_GOAL, label: t('monthly.goal', {value: formatNumber(MONTHLY_ORDERS_GOAL)}),
                         }}
                     />
+                </SectionCard>
+
+                <SectionCard title={t('flow.title')}>
+                    <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>{t('flow.hint')}</Typography>
+                    <LineChart data={flowRows} series={flowSeries} periodLabel={t('monthly.period')} ariaLabel={t('flow.ariaLabel')}
+                               emptyLabel={t('monthly.empty')} onSelect={(row) => navigate(ordersListFilteredWith(monthFiltersOf(row.key)))} />
                 </SectionCard>
 
                 <SectionCard title={t('products.title')}>

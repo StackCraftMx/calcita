@@ -63,10 +63,13 @@ function creditLimitErrorOf(customer) {
     return null;
 }
 
+// los días en que la tienda entrega (las llaves que manda la pantalla)
+const DELIVERY_DAYS = Object.freeze(['mon', 'tue', 'wed', 'thu', 'fri', 'sat']);
+
 /**
  * Los errores de cada campo, como los manda Laravel en un 422: {campo: ['mensaje']}.
  *
- * @param {{name: string, email: string, phone: string, customer_type: string}} customer
+ * @param {{name: string, email: string, phone: string, customer_type: string, delivery_days?: string[], delivery_states?: string[]}} customer
  * @returns {Record<string, string[]>}
  */
 function fieldErrorsOf(customer) {
@@ -91,6 +94,15 @@ function fieldErrorsOf(customer) {
     }
     if (!STATE_CODES.has(customer.state)) {
         errors.state = [serverTextOf('customers.stateInvalid')];
+    }
+    // los días de entrega: al menos uno y de la semana de la tienda (lunes a sábado)
+    if (!Array.isArray(customer.delivery_days) || customer.delivery_days.length === 0
+        || customer.delivery_days.some((day) => !DELIVERY_DAYS.includes(day))) {
+        errors.delivery_days = [serverTextOf('customers.deliveryDaysInvalid')];
+    }
+    // los estados de entrega son opcionales, pero los que vengan tienen que existir
+    if ((customer.delivery_states ?? []).some((code) => !STATE_CODES.has(code))) {
+        errors.delivery_states = [serverTextOf('customers.stateInvalid')];
     }
     // «cliente desde» es una fecha de calendario: se compara como texto AAAA-MM-DD contra el día de hoy de la tienda
     if (customer.customer_since && customer.customer_since > storeDateOf(new Date().toISOString())) {

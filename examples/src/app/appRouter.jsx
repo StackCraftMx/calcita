@@ -13,7 +13,7 @@ import {RouteErrorScreen, withAccess, withChunkRecovery} from '@stackcraftmx/cal
 
 import {AppProviders} from '@/app/AppProviders.jsx';
 import {AppShell} from '@/app/AppShell.jsx';
-import {APP_PATHS} from '@/core';
+import {APP_PATHS, ROUTER_BASENAME} from '@/core';
 
 const ROUTE_MODULES = import.meta.glob('@/modules/*/routes.js', {eager: true});
 const MENU_MODULES = import.meta.glob('@/modules/*/menu.js', {eager: true});
@@ -47,4 +47,6 @@ export const appRouter = createBrowserRouter([
             },
         ]),
     },
-]);
+// detrás de un proxy con prefijo (ASSET_URL=/demo) las rutas viven bajo /demo: el router lo quita al leer la dirección y lo
+// pone en cada liga; las pantallas siguen escribiendo sus rutas desde la raíz (APP_PATHS)
+], {basename: ROUTER_BASENAME});

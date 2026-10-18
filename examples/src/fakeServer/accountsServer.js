@@ -49,7 +49,11 @@ export async function getSession() {
     const profile = fakeProfiles.find((candidate) => candidate.key === user.profileKey);
     const position = inServerLanguage(user.positions);
     return {
-        user: {id: user.id, name: user.name, email: user.email, phone: user.phone, subtitle: `${position} · ${serverTextOf('accounts.store')}`},
+        // department: un campo propio del proyecto; viaja en la sesión y ProfileScreen lo edita con extraFields
+        user: {
+            id: user.id, name: user.name, email: user.email, phone: user.phone, department: user.department,
+            subtitle: `${position} · ${serverTextOf('accounts.store')}`,
+        },
         profile: {key: profile.key, name: inServerLanguage(profile.names)},
         abilities: [...profile.abilities],
         roles: [profile.key],
@@ -133,13 +137,16 @@ export async function changePassword() {
     recordAccountEvent(signedInUserIdOf(), 'passwordChanged');
 }
 
+// las áreas que acepta el servidor (el campo propio de «Sus datos»)
+const DEPARTMENTS = Object.freeze(['sales', 'warehouse', 'administration']);
+
 /**
- * Guardar los datos propios (PUT account): el nombre y el teléfono.
+ * Guardar los datos propios (PUT account): el nombre, el teléfono y el área (el campo propio del proyecto).
  *
- * @param {{name: string, phone: string}} account
+ * @param {{name: string, phone: string, department?: string}} account
  * @returns {Promise<{message: string}>}
  */
-export async function updateMyAccount({name, phone}) {
+export async function updateMyAccount({name, phone, department}) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
     // los errores de cada campo, como los manda el backend: {campo: [mensajes]}
     const errors = {};
@@ -148,6 +155,9 @@ export async function updateMyAccount({name, phone}) {
     }
     if (phone && !PHONE_PATTERN.test(phone)) {
         errors.phone = [serverTextOf('accounts.phoneInvalid')];
+    }
+    if (department !== undefined && !DEPARTMENTS.includes(department)) {
+        errors.department = [serverTextOf('accounts.departmentInvalid')];
     }
     if (Object.keys(errors).length > 0) {
         throw new ApiError({
@@ -158,7 +168,34 @@ export async function updateMyAccount({name, phone}) {
     const user = fakeUsers.find((candidate) => candidate.id === signedInUserIdOf());
     user.name = name.trim();
     user.phone = phone ?? '';
+    if (department !== undefined) {
+        user.department = department;
+    }
     return {message: serverTextOf('accounts.accountSaved')};
+}
+
+/**
+ * Los avisos que recibe quien está dentro (GET account/notifications): la pestaña propia «Notificaciones» de Mi perfil.
+ *
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<{newOrders: boolean, weeklySummary: boolean}>}
+ */
+export async function getMyNotifications(signal) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS, signal);
+    const user = fakeUsers.find((candidate) => candidate.id === signedInUserIdOf());
+    return {...user.notifications};
+}
+
+/**
+ * Guardar los avisos (PUT account/notifications).
+ *
+ * @param {{newOrders: boolean, weeklySummary: boolean}} notifications
+ * @returns {Promise<void>}
+ */
+export async function updateMyNotifications(notifications) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
+    const user = fakeUsers.find((candidate) => candidate.id === signedInUserIdOf());
+    user.notifications = {newOrders: Boolean(notifications.newOrders), weeklySummary: Boolean(notifications.weeklySummary)};
 }
 
 /**

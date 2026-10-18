@@ -23,5 +23,8 @@ export const ORDER_EVENT = Object.freeze({
     canceled: dictionaryEntryOf('canceled', 'orderEvent.canceled', 'error'),
 });
 
+/** Lo más largo que se guarda del motivo de una cancelación: es corto porque va en el historial del pedido. */
+export const CANCEL_REASON_MAX_LENGTH = 200;
+
 /** Los estados en que un pedido todavía se puede cancelar: no ha salido del almacén. El servidor lo vuelve a revisar. */
 export const CANCELABLE_ORDER_STATUSES = Object.freeze([ORDER_STATUS.pending.value, ORDER_STATUS.paid.value]);

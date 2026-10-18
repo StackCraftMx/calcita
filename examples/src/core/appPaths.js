@@ -39,7 +39,18 @@ export const ORDERS_TABLE_PREFIX = 'orders';
  * @returns {string}
  */
 export function ordersListFilteredBy(field, value) {
-    const query = new URLSearchParams({[`${ORDERS_TABLE_PREFIX}_${field}`]: value});
+    return ordersListFilteredWith({[field]: value});
+}
+
+/**
+ * La dirección de la tabla de pedidos con varios filtros puestos (un rango de fechas: created_from y created_to). Las llaves
+ * llevan el prefijo de la tabla, como las lee su URL.
+ *
+ * @param {Record<string, string>} filters campo → valor
+ * @returns {string}
+ */
+export function ordersListFilteredWith(filters) {
+    const query = new URLSearchParams(Object.entries(filters).map(([field, value]) => [`${ORDERS_TABLE_PREFIX}_${field}`, value]));
     return `${APP_PATHS.orders}?${query}`;
 }
 

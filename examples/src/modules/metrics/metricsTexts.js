@@ -39,6 +39,14 @@ export const metricsTexts = {
                 ordersTooltip: '{{month}}: {{value}} pedidos',
                 amountTooltip: '{{month}}: {{value}} vendidos',
             },
+            flow: {
+                title: 'Recibidos, entregados y cancelados',
+                hint: 'Cómo se mueven los pedidos cada mes. Clic en un mes para ver sus pedidos en la tabla.',
+                received: 'Recibidos',
+                delivered: 'Entregados',
+                canceled: 'Cancelados',
+                ariaLabel: 'Pedidos recibidos, entregados y cancelados por mes',
+            },
             products: {
                 title: 'Pedidos por producto',
                 hint: 'Clic en una barra para ver sus pedidos en la tabla.',
@@ -95,6 +103,14 @@ export const metricsTexts = {
                 goal: 'Goal: {{value}} orders per month',
                 ordersTooltip: '{{month}}: {{value}} orders',
                 amountTooltip: '{{month}}: {{value}} sold',
+            },
+            flow: {
+                title: 'Received, delivered and canceled',
+                hint: 'How orders move each month. Click a month to see its orders in the table.',
+                received: 'Received',
+                delivered: 'Delivered',
+                canceled: 'Canceled',
+                ariaLabel: 'Orders received, delivered and canceled per month',
             },
             products: {
                 title: 'Orders per product',
