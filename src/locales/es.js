@@ -269,6 +269,9 @@ export default Object.freeze({
     },
     "layout": {
         "skipToContent": "Saltar al contenido",
+        "barActions": {
+            "more": "Más acciones"
+        },
         "drawer": {
             "open": "Abrir el menú",
             "ariaLabel": "Menú principal",

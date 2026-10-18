@@ -47,6 +47,11 @@ export {
 // ─── el marco de la app, el menú compuesto y los permisos (RBAC / ABAC del proyecto) ─
 export {AppLayout, MENU_POSITION} from '@/appShell/AppLayout.jsx';
 export {AuthLayout} from '@/appShell/AuthLayout.jsx';
+export {default as BarActions} from '@/appShell/BarActions.jsx';
+export {default as BarActionButton} from '@/appShell/BarActionButton.jsx';
+export {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
+export {BAR_CAPSULE_HEIGHT_PIXELS, default as BarCapsule} from '@/appShell/BarCapsule.jsx';
+export {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 export {SettingSection, default as AppearanceSettings} from '@/appShell/AppearanceSettings.jsx';
 export {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
 export {DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, MAIN_CONTENT_ID} from '@/appShell/shellSizes.js';
