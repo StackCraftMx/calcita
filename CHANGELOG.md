@@ -4,6 +4,22 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.17.0] - 2026-10-17
+
+### Agregado
+
+- La cuenta completa en `@stackcraftmx/calcita/account`: entrar con su segundo paso, «¿Olvidó su contraseña?», elegir una
+  contraseña nueva, Mi perfil y su seguridad. El proyecto solo escribe el conector (las llamadas a su backend):
+  `createRestAccountConnector` si el backend sigue el contrato REST, o `createDemoAccountConnector`
+  (`/account-demo`) para arrancar sin backend.
+- `calcita new` arma la cuenta con su conector: la demostración sin `VITE_API_URL` y el backend REST con ella.
+- En los ejemplos, la sección «Hecho en Calcita»: la cuenta, el servidor, las traducciones, la seguridad web, el mapa, el
+  calendario, el tablero y la bandeja, cada uno con su código en JavaScript y TypeScript.
+
+### Corregido
+
+- Tipos: `moveCard` y `cardsOfColumn` conservan la forma de las tarjetas del proyecto.
+
 ## [0.16.0] - 2026-10-17
 
 ### Agregado
@@ -136,6 +152,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.17.0]: https://github.com/StackCraftMx/calcita/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/StackCraftMx/calcita/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/StackCraftMx/calcita/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/StackCraftMx/calcita/compare/v0.13.0...v0.14.0
