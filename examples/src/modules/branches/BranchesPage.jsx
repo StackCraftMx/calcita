@@ -1,5 +1,8 @@
 // Sucursales: la lista y el mapa (MapView de /maps) juntos. Elegir una sucursal en la lista vuela a su alfiler y abre su
 // globo; picar un alfiler la marca en la lista. Arriba, el filtro por estado (abiertas, en remodelación, cerradas).
+// «Agregar sucursal» abre el formulario en una ventana (NewBranchDialog); al guardar, la nueva sale en la lista y el mapa
+// vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra como ícono con su tooltip
+// (BarActionButton); en el teléfono flota arriba a la derecha.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useState} from 'react';
@@ -11,10 +14,12 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
-import {PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation} from '@stackcraftmx/calcita';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import {BarActionButton, PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {MapView} from '@stackcraftmx/calcita/maps';
 
 import {BRANCH_STATUS, loadBranches} from '@/modules/branches/branchesApi.js';
+import {NewBranchDialog} from '@/modules/branches/NewBranchDialog.jsx';
 
 // «todas» en el filtro: sin estado
 const ALL = 'all';
@@ -26,6 +31,11 @@ export const BranchesPage = () => {
     const [branches, setBranches] = useState(null);
     const [selectedId, setSelectedId] = useState(null);
     const [error, setError] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
+    // cada vez que se abre el formulario, otra key: arranca en blanco
+    const [addingRound, setAddingRound] = useState(0);
+    // cambia después de guardar: vuelve a pedir la lista
+    const [reloadToken, setReloadToken] = useState(0);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -34,13 +44,26 @@ export const BranchesPage = () => {
             .then(setBranches)
             .catch((caught) => caught.name !== 'AbortError' && setError(caught.message));
         return () => controller.abort();
-    }, [status]);
+    }, [status, reloadToken]);
+
+    const openNewBranch = () => {
+        setAddingRound((round) => round + 1);
+        setIsAdding(true);
+    };
+    // la nueva puede no entrar en el filtro de ahorita: se ven todas, se vuelve a pedir la lista y el mapa vuela a ella
+    const showNewBranch = (branch) => {
+        setIsAdding(false);
+        setStatus(ALL);
+        setReloadToken((token) => token + 1);
+        setSelectedId(branch.id);
+    };
 
     const statusOptions = [ALL, ...Object.values(BRANCH_STATUS)].map((value) => ({value, label: t(`status.${value}`)}));
 
     return (
         <Stack spacing={3}>
-            <PageHeading title={t('page.title')} description={t('page.description')} />
+            <PageHeading title={t('page.title')} description={t('page.description')}
+                         actions={<BarActionButton label={t('add.button')} icon={<AddRoundedIcon />} onClick={openNewBranch} />} />
             <SegmentedControl ariaLabel={t('status.label')} value={status} onChange={setStatus} options={statusOptions} />
             {error && <Alert severity="error">{error}</Alert>}
             <Grid container spacing={2}>
@@ -65,6 +88,7 @@ export const BranchesPage = () => {
                              }))} />
                 </Grid>
             </Grid>
+            <NewBranchDialog key={addingRound} open={isAdding} onClose={() => setIsAdding(false)} onCreated={showNewBranch} />
         </Stack>
     );
 };
