@@ -5,6 +5,7 @@
 //   const theme = createToolkitTheme({glass: true});                     // con vidrio líquido en lo que flota
 //   const theme = createToolkitTheme({glass: {opacity: 0.7}});           // con vidrio más transparente (por omisión 0.8)
 //   const theme = createToolkitTheme({glass: {surfaces: true}});         // también las tarjetas del contenido (con advertencia)
+//   const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});  // la barra de arriba en franja (por omisión, cápsulas)
 //   const theme = createToolkitTheme({colorSchemes: {light: {palette: {primary: {main: '#0B5FFF'}}}, dark: {...}}});
 //
 // Lo que trae, con su porqué:
@@ -47,6 +48,14 @@ const SHADOW_LEVELS = 25;
 export const THEME_LOOK = Object.freeze({standard: 'standard', minimal: 'minimal'});
 
 /**
+ * La barra de arriba, con vidrio y con el minimalista: por omisión como las ventanas de macOS Tahoe, sin franja (el nombre
+ * y los botones en cápsulas por grupo; lo eligió el autor al verlas), o la franja de lado a lado. Con vidrio las cápsulas
+ * son de vidrio y el contenido pasa por debajo desenfocado; con el minimalista son bloques del tono de las tarjetas sobre
+ * el color del fondo (AppLayout). El estilo de Stackcraft sin vidrio se queda con su barra de siempre.
+ */
+export const TOP_BAR = Object.freeze({band: 'band', capsules: 'capsules'});
+
+/**
  * Lo que pidió el proyecto del vidrio, ya revisado: false (sin vidrio) o {opacity, surfaces}.
  *
  * @param {boolean|{opacity?: number, surfaces?: boolean}} glass
@@ -84,6 +93,8 @@ function glassSettingsOf(glass) {
  *     {surfaces: true} también las tarjetas del contenido (por omisión sólidas, como pide la guía; avisa en consola)
  * @param {'standard'|'minimal'} [options.look] el estilo (THEME_LOOK): el de Stackcraft (por omisión) o el minimalista,
  *     plano y tonal (sin bordes ni sombras: las superficies se separan por su tono; sin vidrio aunque se pida)
+ * @param {'capsules'|'band'} [options.bar] la barra de arriba con vidrio o con el minimalista (TOP_BAR): por omisión en
+ *     cápsulas; 'band' la franja de lado a lado
  * @param {object} [options.components] ajustes propios de componentes (se suman; en el mismo estilo ganan los del proyecto)
  * @param {object} [options.overrides] cualquier otra cosa de createTheme (breakpoints, spacing…)
  * @returns {object} el tema de MUI
@@ -94,9 +105,14 @@ export function createToolkitTheme({
     fontFamily = SYSTEM_FONT_FAMILY,
     glass = false,
     look = THEME_LOOK.standard,
+    bar = TOP_BAR.capsules,
     components = {},
     overrides = {},
 } = {}) {
+    // un nombre mal escrito dejaría la franja sin avisar: mejor que truene al armar el tema
+    if (!Object.values(TOP_BAR).includes(bar)) {
+        throw new RangeError(`createToolkitTheme: bar es '${TOP_BAR.capsules}' o '${TOP_BAR.band}' (llegó ${bar}).`);
+    }
     const isMinimal = look === THEME_LOOK.minimal;
     // el minimalista es sólido: sin vidrio aunque se pida
     const glassSettings = isMinimal ? null : glassSettingsOf(glass);
@@ -145,7 +161,7 @@ export function createToolkitTheme({
         components: mergeComponents(frameworkComponents, components),
         // sin sombras en el minimalista: lo plano es la idea
         ...(isMinimal && {shadows: Array(SHADOW_LEVELS).fill('none')}),
-        toolkit: {glass: glassSettings, look},
+        toolkit: {glass: glassSettings, look, bar},
         ...overrides,
     });
     return responsiveFontSizes(baseTheme);

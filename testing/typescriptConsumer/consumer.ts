@@ -30,7 +30,7 @@ import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/acco
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
-    withPermissionGroup,
+    withPermissionGroup, TOP_BAR, isAndroidDevice,
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
@@ -61,6 +61,10 @@ const serverProblemRoot: string = SERVER_PROBLEM_ROOT;
 const emailSchema = Yup.string().email();
 const toolkitTheme = createToolkitTheme({glass: true});
 const surfacesTheme = createToolkitTheme({glass: {opacity: 0.7, surfaces: true}});
+const capsulesTheme = createToolkitTheme({look: 'minimal', bar: TOP_BAR.band});
+const startsMinimal: boolean = isAndroidDevice({userAgent: 'Mozilla/5.0 (Linux; Android 14)'});
+// @ts-expect-error la barra es 'capsules' o 'band', no otro texto
+createToolkitTheme({bar: 'capsulas'});
 const hasGlass: boolean = isGlassTheme(surfacesTheme);
 const floatingStyles: object = glassStylesOf(surfacesTheme);
 const contentStyles: object = materialStylesOf(surfacesTheme);
@@ -133,5 +137,5 @@ const applyCaught = (caught: unknown) => applyServerProblem(caught, {setFieldErr
 // @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
 const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
 
-export {formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+export {capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -29,7 +29,7 @@ import {
 } from '@stackcraftmx/calcita';
 
 import {GLASS_MODES, STACKCRAFT_COLORS, THEME_COLOR_KEYS, paletteWithColors, useAppThemeChoice} from '@/core';
-import {THEME_GLASS, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
+import {THEME_BAR, THEME_GLASS, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
 
 const PREVIEW_MODES = Object.freeze({light: 'light', dark: 'dark'});
 const CODE_LANGUAGES = Object.freeze({js: 'js', ts: 'ts'});
@@ -91,6 +91,9 @@ export const ThemeBuilderPage = () => {
     // lo que se elige aquí es lo de TODA la app (AppThemeProvider): cambia mientras se elige y se recuerda en el navegador
     const {glassMode, setGlassMode, themeChoices, setThemeChoices, resetThemeChoices} = useAppThemeChoice();
     const {colors, cornerRadius} = themeChoices;
+    // la barra de arriba con vidrio o minimalista: en cápsulas o la franja (se ve en toda la app)
+    const bar = themeChoices.bar ?? THEME_BAR.capsules;
+    const setBar = (nextBar) => setThemeChoices((current) => ({...current, bar: nextBar}));
     const isMinimal = glassMode === GLASS_MODES.minimal;
     const look = isMinimal ? THEME_LOOK.minimal : THEME_LOOK.standard;
     // el vidrio del código exportado: el de la app (con el minimalista no aplica; se exporta look)
@@ -111,9 +114,10 @@ export const ThemeBuilderPage = () => {
         }}},
         glass: glassOptionOf(glass),
         look,
+        bar,
         overrides: {cssVariables: false, defaultColorScheme: previewMode, shape: {borderRadius: cornerRadius}},
-    }), [colors, glass, look, cornerRadius, previewMode, isDarkPreview]);
-    const code = themeCodeOf({colors, glass, cornerRadius, look}, codeLanguage === CODE_LANGUAGES.ts);
+    }), [colors, glass, bar, look, cornerRadius, previewMode, isDarkPreview]);
+    const code = themeCodeOf({colors, glass, cornerRadius, look, bar}, codeLanguage === CODE_LANGUAGES.ts);
 
     return (
         <Stack spacing={3}>
@@ -142,6 +146,15 @@ export const ThemeBuilderPage = () => {
                                                   {value: THEME_GLASS.surfaces, label: t('look.glassSurfaces')},
                                               ]} />
                         </FormRow>
+                        )}
+                        {(isMinimal || glass !== THEME_GLASS.off) && (
+                            <FormRow label={t('look.bar')}>
+                                <SegmentedControl ariaLabel={t('look.bar')} value={bar} onChange={setBar}
+                                                  options={[
+                                                      {value: THEME_BAR.band, label: t('look.barBand')},
+                                                      {value: THEME_BAR.capsules, label: t('look.barCapsules')},
+                                                  ]} />
+                            </FormRow>
                         )}
                         {/* las tarjetas de vidrio se permiten, pero con su advertencia (también sale en la consola del proyecto) */}
                         {!isMinimal && glass === THEME_GLASS.surfaces && <Alert severity="warning">{t('look.glassSurfacesWarning')}</Alert>}

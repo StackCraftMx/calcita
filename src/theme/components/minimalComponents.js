@@ -64,6 +64,21 @@ function selectedTintOf(theme) {
     return {backgroundColor: tintOf(theme), ...accentTextStylesOf(theme)};
 }
 
+// lo que flota sobre el contenido en el minimalista (la barra de pestañas del teléfono, el aviso de versión nueva): el gris
+// 5 de Apple, un escalón más oscuro que las tarjetas. Del color de las tarjetas «se perdía» sobre ellas (lo dijo el autor
+// de la primera barra de abajo del minimalista); así se distingue sin borde ni sombra, sobre tarjetas y sobre el fondo
+const FLOATING_TONE = Object.freeze({light: '#E5E5EA', dark: '#2C2C2E'});
+
+/**
+ * La superficie de lo que flota en el minimalista, sólida, en claro y en oscuro.
+ *
+ * @param {object} theme
+ * @returns {object}
+ */
+export function minimalFloatingStylesOf(theme) {
+    return {backgroundColor: FLOATING_TONE.light, ...theme.applyStyles('dark', {backgroundColor: FLOATING_TONE.dark})};
+}
+
 /**
  * @returns {object} el `components` del tema de MUI para el estilo minimalista
  */

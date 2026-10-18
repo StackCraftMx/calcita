@@ -593,3 +593,32 @@ export function ambientBackgroundOf(theme) {
         }),
     };
 }
+
+// la orilla de arriba con la barra en cápsulas: cuánto tinte del lienzo lleva y cuánto desenfoca (px)
+const SCROLL_EDGE_TINT_PERCENT = 55;
+const SCROLL_EDGE_BLUR_PIXELS = 12;
+
+/**
+ * La orilla de arriba cuando la barra va en cápsulas (TOP_BAR.capsules con vidrio, como las ventanas de macOS Tahoe; Apple le
+ * llama «scroll edge effect»): lo que pasa por debajo se desenfoca y se desvanece hacia el contenido, para que el título
+ * y las cápsulas se lean sobre cualquier cosa. Con «Reducir transparencia» o sin backdrop-filter, el color del lienzo.
+ *
+ * @param {object} theme
+ * @returns {object}
+ */
+export function scrollEdgeStylesOf(theme) {
+    const palette = paletteOf(theme);
+    const tintOf = (canvas) => `color-mix(in srgb, ${canvas} ${SCROLL_EDGE_TINT_PERCENT}%, transparent)`;
+    const blur = `blur(${SCROLL_EDGE_BLUR_PIXELS}px)`;
+    // de arriba (cubre) hacia abajo (se desvanece): sin raya donde termina
+    const fade = 'linear-gradient(to bottom, black 45%, transparent)';
+    return {
+        backgroundColor: tintOf(palette.background.default),
+        ...theme.applyStyles('dark', {backgroundColor: tintOf(DARK_CANVAS.base)}),
+        backdropFilter: blur,
+        WebkitBackdropFilter: blur,
+        maskImage: fade,
+        WebkitMaskImage: fade,
+        ...solidFallbackOf({backgroundColor: palette.background.default, backdropFilter: 'none', WebkitBackdropFilter: 'none'}),
+    };
+}

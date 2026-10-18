@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {STACKCRAFT_COLORS, changedColorsOf, paletteWithColors} from '@/core/themeColors.js';
-import {THEME_GLASS, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
+import {THEME_BAR, THEME_GLASS, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
 
 const CHOICES = {colors: {primary: '#ff6b1a', error: '#b91c1c'}, glass: THEME_GLASS.surfaces, cornerRadius: 12};
 
@@ -21,6 +21,14 @@ test('el vidrio que se exporta: apagado, en lo que flota o también en las tarje
     assert.equal(glassOptionOf(THEME_GLASS.off), false);
     assert.equal(glassOptionOf(THEME_GLASS.floating), true);
     assert.deepEqual(glassOptionOf(THEME_GLASS.surfaces), {surfaces: true});
+});
+
+test('la barra: las cápsulas son lo de omisión y no se escriben; la franja sí, con vidrio o con el minimalista', () => {
+    assert.doesNotMatch(themeCodeOf({...CHOICES, bar: THEME_BAR.capsules}), /bar:/);
+    assert.match(themeCodeOf({...CHOICES, bar: THEME_BAR.band}), /^ {4}bar: 'band',$/m);
+    assert.match(themeCodeOf({...CHOICES, look: 'minimal', bar: THEME_BAR.band}), /^ {4}bar: 'band',$/m);
+    // sin vidrio y sin minimalista no aplica
+    assert.doesNotMatch(themeCodeOf({...CHOICES, glass: THEME_GLASS.off, bar: THEME_BAR.band}), /bar:/);
 });
 
 test('con el estilo minimalista el código lleva look y no vidrio', () => {

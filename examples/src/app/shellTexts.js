@@ -20,6 +20,7 @@ export const shellTexts = {
                 // en el menú de la cuenta: tres botones en un renglón, nombres cortos
                 short: {off: 'Sin vidrio', floating: 'Vidrio', minimal: 'Mínimo'},
                 surfacesWarning: 'Vidrio también en las tarjetas: pesa más en equipos modestos y Apple pide el contenido sin vidrio.',
+                bar: {label: 'Barra de arriba', capsules: 'Cápsulas', band: 'Franja'},
             },
             footer: {
                 title: 'Ejemplos sin backend',
@@ -48,6 +49,7 @@ export const shellTexts = {
                 surfaces: 'On cards too',
                 short: {off: 'No glass', floating: 'Glass', minimal: 'Minimal'},
                 surfacesWarning: 'Glass on cards too: heavier on modest devices, and Apple keeps content without glass.',
+                bar: {label: 'Top bar', capsules: 'Capsules', band: 'Band'},
             },
             footer: {
                 title: 'Examples without a backend',
