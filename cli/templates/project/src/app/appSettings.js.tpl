@@ -9,5 +9,17 @@ export const PRODUCT_TIME_ZONE = 'America/Mexico_City';
 /** La moneda de los montos (ISO 4217). */
 export const PRODUCT_CURRENCY = 'MXN';
 
+/**
+ * La versión del front que corre en esta pestaña: la pone el build (VITE_BUILD_ID, de vite.config.js, la misma que escribe
+ * en version.json). En desarrollo no hay build: queda vacía y no se compara nada.
+ */
+export const APP_BUILD_ID = import.meta.env.VITE_BUILD_ID ?? '';
+
+/**
+ * Dónde está el archivo con la versión publicada: la app lo vuelve a leer al abrirla y cada tanto (usePublishedBuildWatch).
+ * Solo en lo construido. OJO: el servidor no debe guardarlo (Cache-Control: no-cache, como el index.html).
+ */
+export const BUILD_VERSION_URL = import.meta.env.PROD ? '/version.json' : null;
+
 /** Los idiomas que ofrece la app; el primero es el de arranque. */
 export const APP_LANGUAGES = Object.freeze({spanish: 'es', english: 'en'});

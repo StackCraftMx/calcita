@@ -141,7 +141,7 @@ export default defineConfig({
 });
 
 // en la raíz de la app, una vez (en desarrollo no hay archivo: sin url no hace nada)
-usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null});
+usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, buildId: import.meta.env.VITE_BUILD_ID});
 // opciones: checkEveryMinutes (5), reloadAfterHiddenMinutes (15; null = nunca recarga sola), onReload
 ```
 
