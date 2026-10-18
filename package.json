@@ -43,8 +43,13 @@
     },
     "sideEffects": false,
     "files": [
-        "dist"
+        "dist",
+        "cli",
+        "!cli/**/*.test.js"
     ],
+    "bin": {
+        "calcita": "./cli/calcita.js"
+    },
     "exports": {
         ".": {
             "types": "./dist/types/index.d.ts",
@@ -123,8 +128,8 @@
         "prepublishOnly": "pnpm run check",
         "build": "vite build && pnpm run types",
         "types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json && node scripts/stripStyleImportsFromTypes.js",
-        "test": "node --import ./testing/registerAliasHooks.js --test \"src/**/*.test.js\"",
-        "check": "pnpm test && pnpm run build && node testing/smokeRender.js && tsc -p testing/typescriptConsumer/tsconfig.json && pnpm --filter @stackcraftmx/calcita-examples run check",
+        "test": "node --import ./testing/registerAliasHooks.js --test \"src/**/*.test.js\" \"cli/**/*.test.js\"",
+        "check": "pnpm test && pnpm run build && node testing/smokeRender.js && node testing/cliProjects.js && tsc -p testing/typescriptConsumer/tsconfig.json && pnpm --filter @stackcraftmx/calcita-examples run check",
         "examples": "pnpm run build && pnpm --filter @stackcraftmx/calcita-examples run dev",
         "tunnel:start": "bash scripts/tunnel.sh start",
         "tunnel:stop": "bash scripts/tunnel.sh stop",

@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        },
+        "jsx": "react-jsx",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "target": "ES2022"
+    },
+    "include": [
+        "src"
+    ]
+}

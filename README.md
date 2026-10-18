@@ -9,7 +9,41 @@ y el tema con vidrio líquido, interpretado componente por componente según la 
 
 JavaScript con sus tipos generados: se usa igual desde un proyecto en TypeScript.
 
-## Arrancar un proyecto
+## Arrancar un proyecto con el CLI
+
+```bash
+pnpm dlx @stackcraftmx/calcita new mi-tienda     # o: npx @stackcraftmx/calcita new mi-tienda
+cd mi-tienda
+pnpm install
+pnpm dev
+```
+
+Pregunta cómo lo quiere (Enter acepta lo recomendado): el menú a un lado o arriba; vidrio, sin vidrio o minimalista; claro
+y oscuro o solo claro; los colores de Stackcraft, los de MUI o uno propio; formik o react-hook-form; los textos de Calcita o
+i18next; las pantallas de entrar, «¿Olvidó su contraseña?» y Mi perfil; y si se puede instalar como app (PWA). Con `--yes`
+no pregunta, y cada respuesta también va como opción (`--forms=react-hook-form`, `--menu-position=top`…;
+`calcita --help` las dice todas).
+
+Sale un proyecto de Vite con la forma de los ejemplos: `src/app` (el único lugar donde se conecta el framework),
+`src/core` (lo que comparten los módulos), `src/fakeServer` (el servidor de mentira, con la forma del API de verdad) y
+`src/modules/<módulo>`, cada uno con su menú, sus rutas, sus pantallas, su API y sus textos en español e inglés, que se
+descubren solos. Trae un módulo de ejemplo (Contactos: lista, formulario, errores del servidor en su campo) y
+`src/core/apiClient.js` listo para cambiar el servidor de mentira por el de verdad.
+
+Para crecerlo, dentro del proyecto:
+
+```bash
+pnpm exec calcita make:module purchase-orders --label-es "Órdenes de compra" --label-en "Purchase orders"
+pnpm exec calcita make:page purchase-orders OrderDetail        # la pantalla y su ruta en routes.js del módulo
+pnpm exec calcita make:form purchase-orders SupplierForm       # con la librería del proyecto (calcita.json)
+pnpm exec calcita make:component StatusBadge                   # en src/core, y en su puerta
+pnpm exec calcita make:component OrderTotals --module purchase-orders
+```
+
+El CLI nunca pisa un archivo que ya existe. Sus plantillas son los archivos tal cual (`cli/templates`), con
+`//#if pwa` … `//#endif` en lo que depende de una respuesta.
+
+## Arrancar en un proyecto que ya existe
 
 ```bash
 pnpm add @stackcraftmx/calcita @mui/material @mui/icons-material @emotion/react @emotion/styled xstate @xstate/react sonner
@@ -395,7 +429,7 @@ nvm use
 pnpm install
 pnpm test        # pruebas sin navegador (node --test)
 pnpm run build   # dist/ con un archivo por módulo y sus tipos en dist/types
-pnpm run check   # pruebas, build, cada componente pintado con el tema por omisión de MUI, un proyecto en TypeScript y los ejemplos
+pnpm run check   # pruebas, build, cada componente pintado con el tema por omisión de MUI, el CLI, un proyecto en TypeScript y los ejemplos
 pnpm run examples  # construye el paquete y abre los ejemplos sin backend en http://localhost:5173
 ```
 
