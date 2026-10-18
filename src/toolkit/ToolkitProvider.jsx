@@ -12,11 +12,14 @@ import {allowOnlyUnrestricted} from '@/access/accessRules.js';
 import {browserNavigation} from '@/toolkit/browserNavigation.js';
 import {ToolkitContext} from '@/toolkit/toolkitContext.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
-import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, browserTimeZone, configureToolkit} from '@/toolkit/toolkitSettings.js';
+import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, configureToolkit} from '@/toolkit/toolkitSettings.js';
 
 /**
  * @param {object} props
- * @param {string} [props.language] idioma activo: es o en (por omisión es)
+ * @param {string} [props.language] idioma activo, uno de `languages` (por omisión es)
+ * @param {Array<{code: string, label: string, locale?: string}>} [props.languages] los idiomas que ofrece la app: su código,
+ *     su nombre en su propio idioma («Português») y su locale de Intl ('pt-BR'). Por omisión español e inglés
+ *     (DEFAULT_LANGUAGES). Sus traducciones van en `texts`
  * @param {(language: string) => void} [props.onLanguageChange] lo llama LanguageToggle; el proyecto cambia su idioma
  * @param {object} [props.texts] textos propios por idioma, con la forma de locales/ ({es: {table: {...}}})
  * @param {(namespace: string, key: string, values?: object) => string|undefined} [props.translate] traductor del
@@ -33,11 +36,12 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, browserTimeZone, configureToolkit} f
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language = DEFAULT_LANGUAGE, onLanguageChange, texts, translate, timeZone, currency = DEFAULT_CURRENCY, appName = '',
+    language = DEFAULT_LANGUAGE, languages = DEFAULT_LANGUAGES, onLanguageChange, texts, translate, timeZone, currency = DEFAULT_CURRENCY, appName = '',
     navigation = browserNavigation, buildId = '', canAccess = allowOnlyUnrestricted, children,
 }) => {
     const settings = useMemo(() => ({
         language,
+        languages,
         onLanguageChange: onLanguageChange ?? null,
         texts: texts ?? {},
         translate: translate ?? null,
@@ -47,13 +51,13 @@ export const ToolkitProvider = ({
         navigation,
         buildId,
         canAccess,
-    }), [language, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess]);
+    }), [language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess]);
 
     // OJO: se configura durante el render (no en un efecto) para que los formatos y avisos que se llaman en este mismo
     // render ya vean el idioma y la zona nuevos
     configureToolkit({
         language: settings.language, texts: settings.texts, translate: settings.translate, timeZone: settings.timeZone, currency, appName,
-        buildId,
+        buildId, languages,
     });
 
     // el tamaño de letra que la persona guardó: se aplica aquí, que siempre está montado. Antes lo aplicaba su botón en la
