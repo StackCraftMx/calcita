@@ -68,32 +68,83 @@ function showToast(type, message, options) {
     return showFunction(toToastContent(message), mergeOptions(options));
 }
 
+/**
+ * Aviso de que algo salió bien.
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; con saltos de línea, un renglón cada uno; por omisión «Listo» (common:toast.done)
+ * @param {import('sonner').ExternalToast} [options] las de sonner (duración, acción…), encima de TOAST_DEFAULT_OPTIONS
+ * @returns {string|number} el id del aviso (para cerrarlo con dismissToast)
+ */
 export function toastSuccess(message, options) {
     return showToast('success', message ?? translateToolkit('common', 'toast.done'), options);
 }
 
+/**
+ * Aviso de error.
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; con saltos de línea, un renglón cada uno; por omisión el error genérico (common:toast.error)
+ * @param {import('sonner').ExternalToast} [options] las de sonner (duración, acción…), encima de TOAST_DEFAULT_OPTIONS
+ * @returns {string|number} el id del aviso (para cerrarlo con dismissToast)
+ */
 export function toastError(message, options) {
     return showToast('error', message ?? translateToolkit('common', 'toast.error'), options);
 }
 
+/**
+ * Aviso de advertencia.
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; con saltos de línea, un renglón cada uno; por omisión la advertencia genérica (common:toast.warning)
+ * @param {import('sonner').ExternalToast} [options] las de sonner (duración, acción…), encima de TOAST_DEFAULT_OPTIONS
+ * @returns {string|number} el id del aviso (para cerrarlo con dismissToast)
+ */
 export function toastWarn(message, options) {
     return showToast('warning', message ?? translateToolkit('common', 'toast.warning'), options);
 }
 
+/**
+ * Aviso informativo.
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; con saltos de línea, un renglón cada uno; por omisión el aviso genérico (common:toast.info)
+ * @param {import('sonner').ExternalToast} [options] las de sonner (duración, acción…), encima de TOAST_DEFAULT_OPTIONS
+ * @returns {string|number} el id del aviso (para cerrarlo con dismissToast)
+ */
 export function toastInfo(message, options) {
     return showToast('info', message ?? translateToolkit('common', 'toast.info'), options);
 }
 
+/**
+ * Aviso sin tipo (sin ícono ni color).
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; con saltos de línea, un renglón cada uno
+ * @param {import('sonner').ExternalToast} [options] las de sonner (duración, acción…), encima de TOAST_DEFAULT_OPTIONS
+ * @returns {string|number} el id del aviso (para cerrarlo con dismissToast)
+ */
 export function toastDefault(message, options) {
     return showToast('default', message ?? '', options);
 }
 
-/** Aviso que NO se cierra solo. Regresa el id para cerrarlo al terminar. */
+/**
+ * Aviso que NO se cierra solo. Regresa el id para cerrarlo al terminar.
+ *
+ * @param {import('react').ReactNode} [message] ya traducido; por omisión «Trabajando…» (common:toast.working)
+ * @param {import('sonner').ExternalToast} [options]
+ * @returns {string|number} el id del aviso (para dismissToast)
+ */
 export function toastLoading(message, options) {
     return toast.loading(toToastContent(message ?? translateToolkit('common', 'toast.working')), {...mergeOptions(options), duration: Infinity});
 }
 
-/** Envuelve una promesa: cargando → listo | error, solo. */
+/**
+ * Envuelve una promesa: cargando → listo | error, solo.
+ *
+ * @template T
+ * @param {Promise<T>} promise
+ * @param {object} messages ya traducidos
+ * @param {import('react').ReactNode} messages.loading
+ * @param {import('react').ReactNode | ((data: T) => import('react').ReactNode)} messages.success
+ * @param {import('react').ReactNode | ((failure: unknown) => import('react').ReactNode)} messages.error
+ * @param {import('sonner').ExternalToast} [options]
+ */
 export function toastPromise(promise, {loading, success, error}, options) {
     return toast.promise(promise, {
         loading: toToastContent(loading),
@@ -103,6 +154,11 @@ export function toastPromise(promise, {loading, success, error}, options) {
     });
 }
 
+/**
+ * Cierra un aviso (el id que regresan las funciones de arriba); sin id, todos.
+ *
+ * @param {string|number} [toastId]
+ */
 export function dismissToast(toastId) {
     return toast.dismiss(toastId);
 }

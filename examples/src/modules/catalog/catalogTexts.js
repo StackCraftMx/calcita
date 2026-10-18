@@ -18,8 +18,17 @@ export const catalogTexts = {
                 surfaces: 'Superficies y texto',
                 charts: 'Gráficas',
                 timeline: 'Línea de tiempo',
+                translations: 'Traducciones',
             },
             frameworkTitle: 'Del framework',
+            code: {
+                show: 'Ver código',
+                hide: 'Ocultar código',
+                language: 'Lenguaje del código',
+                languages: {js: 'JavaScript', ts: 'TypeScript'},
+                copy: 'Copiar el código',
+                label: 'Código del ejemplo',
+            },
             colors: {
                 default: 'Neutro',
                 primary: 'Principal',
@@ -634,11 +643,44 @@ export const catalogTexts = {
                     failed: 'No se pudo entregar',
                 },
             },
+            translations: {
+                title: 'Traducciones',
+                description: 'De dónde salen los textos y cómo se traduce lo de su proyecto. Calcita trae su propio traductor: no necesita i18next, pero escribe igual que i18next (namespace:llave, {{variable}} y plurales con _one / _other), así que un proyecto con i18next se conecta en una línea.',
+                order: {
+                    title: 'Quién gana',
+                    description: 'Cada texto se busca en este orden: el traductor del proyecto (translate, por ejemplo i18next), luego los textos del proyecto (texts) en su idioma, luego los del paquete en ese idioma y al final los del paquete en español. Una llave que no existe en ningún lado sale tal cual, para que se note qué falta.',
+                },
+                calls: {
+                    title: 'Cómo se pide un texto',
+                    description: 'useToolkitTranslation(namespace) da t. Cambie el idioma en el menú de su cuenta y vea cambiar la columna de la derecha.',
+                    code: 'Lo que se escribe',
+                    result: 'Lo que sale',
+                    empty: '(vacío)',
+                    sample: {
+                        greeting: 'Hola, {{name}}',
+                        pending_one: '{{count}} pedido pendiente',
+                        pending_other: '{{count}} pedidos pendientes',
+                    },
+                },
+                texts: {
+                    title: 'Los textos de su proyecto',
+                    description: 'Un objeto por idioma con un namespace por módulo. Con la misma forma se cambia un texto del paquete: aquí, «Cancelar» pasa a decir «Regresar».',
+                },
+                provider: {
+                    title: 'Conectarlos',
+                    description: 'ToolkitProvider recibe el idioma, quién lo cambia y los textos. Es el único lugar donde se conecta; lo que no es componente (los avisos, los errores del servidor) usa lo mismo sin hacer nada.',
+                },
+                i18next: {
+                    title: 'Con i18next',
+                    description: 'Si su proyecto ya usa i18next, se conecta con translateWithI18next(i18n) y sus textos se quedan donde están. Va solo en JavaScript: los ejemplos no instalan i18next y no se puede revisar en TypeScript.',
+                },
+            },
             charts: {
                 title: 'Gráficas',
                 description: 'Las del framework, con las reglas de Apple para gráficas: los datos al frente, rejilla y ejes tenues, un título que dice qué se aprende, y una vista de tabla para quien no ve la gráfica.',
                 empty: 'No hay datos en este periodo.',
                 metrics: {
+                    title: 'Tarjetas de cifras',
                     orders: 'Pedidos de septiembre',
                     canceled: 'Cancelados',
                     average: 'Ticket promedio',
@@ -690,8 +732,17 @@ export const catalogTexts = {
                 surfaces: 'Surfaces and text',
                 charts: 'Charts',
                 timeline: 'Timeline',
+                translations: 'Translations',
             },
             frameworkTitle: 'From the framework',
+            code: {
+                show: 'Show code',
+                hide: 'Hide code',
+                language: 'Code language',
+                languages: {js: 'JavaScript', ts: 'TypeScript'},
+                copy: 'Copy the code',
+                label: 'Example code',
+            },
             colors: {
                 default: 'Neutral',
                 primary: 'Primary',
@@ -1306,11 +1357,44 @@ export const catalogTexts = {
                     failed: 'Could not be delivered',
                 },
             },
+            translations: {
+                title: 'Translations',
+                description: 'Where the texts come from and how to translate your project. Calcita has its own translator: it does not need i18next, but it writes like i18next (namespace:key, {{variable}} and plurals with _one / _other), so a project with i18next connects in one line.',
+                order: {
+                    title: 'Who wins',
+                    description: 'Each text is looked up in this order: the project translator (translate, for example i18next), then the project texts (texts) in its language, then the package texts in that language and finally the package texts in Spanish. A key that does not exist anywhere comes out as is, so you can see what is missing.',
+                },
+                calls: {
+                    title: 'How to ask for a text',
+                    description: 'useToolkitTranslation(namespace) gives you t. Change the language in your account menu and watch the right column change.',
+                    code: 'What you write',
+                    result: 'What you get',
+                    empty: '(empty)',
+                    sample: {
+                        greeting: 'Hi, {{name}}',
+                        pending_one: '{{count}} pending order',
+                        pending_other: '{{count}} pending orders',
+                    },
+                },
+                texts: {
+                    title: 'Your project texts',
+                    description: 'One object per language with one namespace per module. With the same shape you change a package text: here, “Cancel” becomes “Go back”.',
+                },
+                provider: {
+                    title: 'Connect them',
+                    description: 'ToolkitProvider receives the language, who changes it and the texts. It is the only place where you connect it; what is not a component (toasts, server errors) uses the same without doing anything.',
+                },
+                i18next: {
+                    title: 'With i18next',
+                    description: 'If your project already uses i18next, connect it with translateWithI18next(i18n) and your texts stay where they are. JavaScript only: the examples do not install i18next, so it cannot be checked in TypeScript.',
+                },
+            },
             charts: {
                 title: 'Charts',
                 description: 'The framework charts, with Apple’s chart rules: data in front, faint grid and axes, a title that says what you learn, and a table view for people who cannot see the chart.',
                 empty: 'There is no data for this period.',
                 metrics: {
+                    title: 'Metric cards',
                     orders: 'September orders',
                     canceled: 'Canceled',
                     average: 'Average ticket',
