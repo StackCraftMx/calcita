@@ -263,6 +263,16 @@ navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para
 const theme = isAndroidDevice() ? createToolkitTheme({look: THEME_LOOK.minimal}) : createToolkitTheme({glass: true});
 ```
 
+Los campos de captura (con vidrio, con el minimalista y dentro de `FormSection`) traen el gris de relleno de Apple. Para que
+se vean como los de su sistema: `fields`, por modo, con el relleno (`fill`), el relleno con el cursor encima (`hoverFill`),
+la orilla (`border`) y la orilla con el cursor encima (`hoverBorder`); y sus esquinas (`radius`). Lo que no se pase se queda
+como lo trae el estilo (`FIELD_TONES`). Van en la paleta de cada modo (`palette.field`): cambian solos con el modo y también
+se pueden escribir en `colorSchemes`.
+
+```js
+createToolkitTheme({glass: true, fields: {radius: 8, light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}});
+```
+
 El minimalista separa las superficies por su tono con los grises de Apple. Para pintarlo con los colores de la marca:
 `minimalTones`, por modo, con el fondo de la página (`default`), las tarjetas (`paper`), el relleno de campos, grupos y
 botones sin color (`fill`) y lo que flota, como la barra del teléfono (`floating`). Lo que no se pase se queda con el gris
