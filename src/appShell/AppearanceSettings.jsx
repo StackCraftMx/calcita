@@ -71,16 +71,30 @@ export function SettingSection({label, value, options, onChange}) {
  * @param {boolean} [props.showFontSize] por omisión sí
  * @param {boolean} [props.showLanguage] por omisión sí
  * @param {boolean} [props.showColorScheme] por omisión sí
+ * @param {(level: string) => void} [props.onFontSizeChange] la persona eligió otro tamaño de letra (para guardarlo en su
+ *     servidor; el idioma ya sale por onLanguageChange de ToolkitProvider)
+ * @param {(mode: 'light'|'dark'|'system') => void} [props.onColorSchemeChange] la persona eligió otro modo
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function AppearanceSettings({showFontSize = true, showLanguage = true, showColorScheme = true}) {
-    const {t, language, changeLanguage} = useToolkitTranslation('layout');
+export default function AppearanceSettings({
+    showFontSize = true, showLanguage = true, showColorScheme = true, onFontSizeChange, onColorSchemeChange, texts,
+}) {
+    const {t, language, changeLanguage} = useToolkitTranslation('layout', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const {level, setLevel, levels} = useFontSize();
     const {mode, setMode} = useColorScheme();
+    const chooseFontSize = (nextLevel) => {
+        setLevel(nextLevel);
+        onFontSizeChange?.(nextLevel);
+    };
+    const chooseColorScheme = (nextMode) => {
+        setMode(nextMode);
+        onColorSchemeChange?.(nextMode);
+    };
 
     const sections = [
         showFontSize && (
-            <SettingSection key="fontSize" label={t('fontSize.label')} value={level} onChange={setLevel}
+            <SettingSection key="fontSize" label={t('fontSize.label')} value={level} onChange={chooseFontSize}
                             options={levels.map((option) => ({value: option.key, label: t(option.labelKey)}))} />
         ),
         showLanguage && (
@@ -93,7 +107,7 @@ export default function AppearanceSettings({showFontSize = true, showLanguage = 
         // para volver a seguirlo: el botón de la barra (ColorSchemeToggle) fija claro u oscuro para siempre. La guía de
         // Apple pide seguir el ajuste del equipo; el botón de la barra se queda con dos estados para no sumar una decisión.
         showColorScheme && mode && (
-            <SettingSection key="colorScheme" label={t('settings.colorScheme')} value={mode} onChange={setMode}
+            <SettingSection key="colorScheme" label={t('settings.colorScheme')} value={mode} onChange={chooseColorScheme}
                             options={[
                                 {value: 'light', label: t('settings.light'), icon: <LightModeIcon fontSize="small" />},
                                 {value: 'dark', label: t('settings.dark'), icon: <DarkModeIcon fontSize="small" />},

@@ -208,8 +208,10 @@ function useFittingTabCount(capsule, minTabPixels) {
  * @param {import('react').ReactNode} [props.account] la cuenta (o el engrane), en su círculo junto a la barra
  * @param {import('react').ReactNode} [props.moreFooter] lo que va al final de la hoja de «Más» (la tarjeta del menú lateral)
  * @param {boolean} [props.minimizeOnScroll] se encoge al leer hacia abajo; por omisión sí
+ * @param {(keys: string[]|null) => void} [props.onPinnedTabsChange] la persona eligió sus pestañas (null: regresó a las de
+ *     omisión)
  */
-export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true}) {
+export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange}) {
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();
@@ -322,10 +324,12 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                     <TabBarEditor menuItems={menuItems} pinnedKeys={tabs.map(menuItemKeyOf)}
                                   onDone={(keys) => {
                                       setPinnedKeys(keys);
+                                      onPinnedTabsChange?.(keys);
                                       leaveEditor();
                                   }}
                                   onReset={() => {
                                       setPinnedKeys(null);
+                                      onPinnedTabsChange?.(null);
                                       leaveEditor();
                                   }} />
                 ) : (

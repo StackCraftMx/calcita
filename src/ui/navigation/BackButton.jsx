@@ -26,9 +26,10 @@ import {currentHistoryIndex, pageNameAt} from '@/navigationTrail.js';
  * @param {string} props.fallbackTo ruta de la lista sin filtros (último respaldo)
  * @param {string} [props.listKey] la misma llave que usa useRememberListUrl en la lista
  * @param {string} [props.label] ya traducido; se usa cuando la página anterior no anotó su nombre o no hay historial
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function BackButton({fallbackTo, listKey, label, ...buttonProps}) {
-    const {t} = useToolkitTranslation('common');
+export default function BackButton({fallbackTo, listKey, label, texts, ...buttonProps}) {
+    const {t} = useToolkitTranslation('common', texts);
     const {useNavigate} = useToolkitNavigation();
     const navigate = useNavigate();
 

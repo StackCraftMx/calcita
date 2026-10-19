@@ -38,9 +38,10 @@ const MIN_BREADCRUMBS = 2;
  * @param {Array<{label: string, to?: string}>|false} [props.breadcrumbs] por omisión, las del menú
  * @param {import('react').ReactNode} [props.actions] botones a la derecha (en el teléfono, abajo y a lo ancho)
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageHeading({title, description, breadcrumbs, actions, documentTitle}) {
-    const {t} = useToolkitTranslation('layout');
+export default function PageHeading({title, description, breadcrumbs, actions, documentTitle, texts}) {
+    const {t} = useToolkitTranslation('layout', texts);
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();
     const {menuItems} = useAppMenu();
