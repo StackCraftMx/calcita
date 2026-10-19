@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.26.0] - 2026-10-19
+
+Lo que salió al meter Calcita en un sistema que ya existía (una SPA con su propio core, su i18next, su router y su prefijo
+en runtime): cada trampa, arreglada.
+
+### Corregido
+
+- En modo oscuro, los ajustes de Calcita le ganaban al `sx` del proyecto (un monograma con el color de la marca salía
+  gris). Ahora lo que cambia de modo se escribe una vez con su variable (`--calcita-…`) y la regla de oscuro solo cambia la
+  variable (`lightDarkStylesOf`): el `sx` gana en claro y en oscuro. Comparado píxel por píxel: el catálogo se ve igual.
+
+### Agregado
+
+- `AppLayout wordmark`: un logo ancho (la marca con su nombre en una sola imagen) en lugar del logo cuadrado y el nombre.
+- Las ligas de la cuenta (`accountMenuItems`) también sin sesión, detrás del engrane, y con `href` a otro sistema.
+- El menú: entradas con `href` (liga a otro sistema) y con `icon` (un ícono ya pintado, por ejemplo de iconify);
+  `menuItemsWithIconsOf`.
+- `addLogSink`: salidas propias del registro (Sentry, Datadog, un endpoint), además de la consola.
+- `apiErrorOf(response)`: el mismo `ApiError` del cliente para una respuesta que no pasó por él (la subida con avance).
+- El paquete exporta su `package.json`.
+- README y catálogo: Calcita en su propio archivo si el proyecto usa `manualChunks` (si no, un círculo con MUI tumba la
+  app al abrir).
+
 ## [0.25.0] - 2026-10-18
 
 ### Agregado
@@ -363,6 +386,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.26.0]: https://github.com/StackCraftMx/calcita/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/StackCraftMx/calcita/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/StackCraftMx/calcita/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/StackCraftMx/calcita/compare/v0.22.0...v0.23.0
