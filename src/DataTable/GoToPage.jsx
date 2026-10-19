@@ -8,6 +8,9 @@
 //   2. filtra por PREFIJO primero (teclear 13 da 13, 130, 131...) y luego por "contiene";
 //   3. con una sola página no se pinta: sería un control que no lleva a ningún lado.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaGoToPage con defaultProps y
+// styleOverrides de sus partes: root, field.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,6 +19,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaGoToPage)
+const THEME_NAME = 'CalcitaGoToPage';
+const GoToRoot = piecePart(THEME_NAME, 'Root', Stack);
+const GoToField = piecePart(THEME_NAME, 'Field', Autocomplete);
 
 // tope del DOM, no de la navegación
 const RENDER_LIMIT = 100;
@@ -37,7 +46,9 @@ function filterPages(pageNumbers, {inputValue}) {
  * @param {(page: number) => void} props.onChange
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function GoToPage({page, pageCount, onChange, texts}) {
+export default function GoToPage(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaGoToPage.defaultProps) y encima lo que llega aquí
+    const {page, pageCount, onChange, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
 
@@ -50,9 +61,9 @@ export default function GoToPage({page, pageCount, onChange, texts}) {
     const pageNumbers = Array.from({length: pageCount}, (unused, position) => position + 1);
 
     return (
-        <Stack direction="row" spacing={0.75} sx={{alignItems: 'baseline'}}>
+        <GoToRoot direction="row" spacing={0.75} ownSx={{alignItems: 'baseline'}}>
             <Typography variant="body2" color="text.secondary" noWrap>{t('goToPage.page')}</Typography>
-            <Autocomplete
+            <GoToField
                 size="small"
                 disableClearable
                 openOnFocus
@@ -67,7 +78,7 @@ export default function GoToPage({page, pageCount, onChange, texts}) {
                         onChange(selectedPageNumber - 1);
                     }
                 }}
-                sx={{width: 78, '& .MuiAutocomplete-endAdornment': {right: 0}}}
+                ownSx={{width: 78, '& .MuiAutocomplete-endAdornment': {right: 0}}}
                 slotProps={{listbox: {sx: {maxHeight: 240}}}}
                 renderInput={(params) => (
                     <TextField {...params} variant="standard"
@@ -77,6 +88,6 @@ export default function GoToPage({page, pageCount, onChange, texts}) {
             <Typography variant="body2" color="text.secondary" noWrap>
                 {t('goToPage.of', {count: pageCount, total: formatNumber(pageCount)})}
             </Typography>
-        </Stack>
+        </GoToRoot>
     );
 }

@@ -7,6 +7,9 @@
 //
 // No sabe de quincenas ni de productos: recibe las opciones ya ordenadas y con sus textos traducidos.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaPeriodRangeSelector con defaultProps y
+// styleOverrides de sus partes: field, select, root.
+//
 // Genérico del paquete: function (regla de la casa).
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -16,6 +19,13 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 
 import {rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPeriodRangeSelector)
+const THEME_NAME = 'CalcitaPeriodRangeSelector';
+const PeriodField = piecePart(THEME_NAME, 'Field', FormControl);
+const PeriodSelectPart = piecePart(THEME_NAME, 'Select', Select);
+const PeriodRoot = piecePart(THEME_NAME, 'Root', Stack);
 
 // ancho de cada lista: cabe «septiembre 2026 · Q2» sin cortarse
 const SELECT_MINIMUM_WIDTH = 210;
@@ -32,10 +42,10 @@ const SELECT_MINIMUM_WIDTH = 210;
  */
 function PeriodSelect({id, label, value, options, onChange}) {
     return (
-        <FormControl size="small" sx={{minWidth: SELECT_MINIMUM_WIDTH, flex: '0 0 auto'}}>
+        <PeriodField size="small" ownSx={{minWidth: SELECT_MINIMUM_WIDTH, flex: '0 0 auto'}}>
             <InputLabel id={`${id}-label`}>{label}</InputLabel>
-            <Select labelId={`${id}-label`} label={label} value={value ?? ''} onChange={(event) => onChange(event.target.value)}
-                    sx={{bgcolor: 'background.paper'}}
+            <PeriodSelectPart labelId={`${id}-label`} label={label} value={value ?? ''} onChange={(event) => onChange(event.target.value)}
+                    ownSx={{bgcolor: 'background.paper'}}
                     renderValue={(selectedValue) => options.find((option) => option.value === selectedValue)?.label ?? ''}>
                 {options.map((option) => (
                     <MenuItem key={option.value} value={option.value} disabled={option.disabled}>
@@ -43,8 +53,8 @@ function PeriodSelect({id, label, value, options, onChange}) {
                         <ListItemText primary={option.label} secondary={option.disabled ? option.hint : undefined} />
                     </MenuItem>
                 ))}
-            </Select>
-        </FormControl>
+            </PeriodSelectPart>
+        </PeriodField>
     );
 }
 
@@ -59,15 +69,17 @@ function PeriodSelect({id, label, value, options, onChange}) {
  * @param {string} props.toLabel ya traducido
  * @param {(range: {from: string, to: string}) => void} props.onChange
  */
-export default function PeriodRangeSelector({id, options, from, to, fromLabel, toLabel, onChange}) {
+export default function PeriodRangeSelector(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaPeriodRangeSelector.defaultProps) y encima lo que llega aquí
+    const {id, options, from, to, fromLabel, toLabel, onChange} = usePieceProps(props, THEME_NAME);
     const endOptions = rangeEndOptionsOf(options, from);
 
     return (
-        <Stack direction="row" spacing={1.5} useFlexGap sx={{alignItems: 'center', flexWrap: 'wrap'}}>
+        <PeriodRoot direction="row" spacing={1.5} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
             <PeriodSelect id={`${id}-from`} label={fromLabel} value={from} options={options}
                           onChange={(nextFrom) => onChange({from: nextFrom, to: rangeEndAfterStartChange(options, nextFrom, to)})} />
             <PeriodSelect id={`${id}-to`} label={toLabel} value={to} options={endOptions}
                           onChange={(nextTo) => onChange({from, to: nextTo})} />
-        </Stack>
+        </PeriodRoot>
     );
 }

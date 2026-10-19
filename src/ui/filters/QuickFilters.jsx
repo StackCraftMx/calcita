@@ -7,6 +7,9 @@
 // El conteo de cada chip sale de las facetas del servidor, contadas sobre el conjunto COMPLETO y sin este filtro
 // puesto: al elegir una, las demás siguen diciendo cuántas tienen.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaQuickFilters con defaultProps y
+// styleOverrides de sus partes: root, caption, chip, chipLabel, chipCount.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useRef} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -16,6 +19,15 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaQuickFilters)
+const THEME_NAME = 'CalcitaQuickFilters';
+const QuickRoot = piecePart(THEME_NAME, 'Root', Box);
+const QuickCaption = piecePart(THEME_NAME, 'Caption', Typography);
+const QuickChip = piecePart(THEME_NAME, 'Chip', Chip);
+const QuickChipLabel = piecePart(THEME_NAME, 'ChipLabel', Box);
+const QuickChipCount = piecePart(THEME_NAME, 'ChipCount', Box);
 
 
 // qué tan marcado va el velo del contador del filtro elegido
@@ -58,7 +70,9 @@ function compactCount(count) {
  * @param {import('react').ReactNode} [props.extra] al final de la tira (p. ej. un rango de fechas)
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function QuickFilters({value, onChange, options = [], caption, ariaLabel, extra, texts}) {
+export default function QuickFilters(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaQuickFilters.defaultProps) y encima lo que llega aquí
+    const {value, onChange, options = [], caption, ariaLabel, extra, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('table', texts);
     const activeChip = useRef(null);
     const isFirstRender = useRef(true);
@@ -80,15 +94,15 @@ export default function QuickFilters({value, onChange, options = [], caption, ar
     }
 
     return (
-        <Box sx={{mb: 1}}>
+        <QuickRoot ownSx={{mb: 1}}>
             {caption && (
-                <Typography variant="caption" color="text.secondary" sx={{px: 0.25}}>{caption}</Typography>
+                <QuickCaption variant="caption" color="text.secondary" ownSx={{px: 0.25}}>{caption}</QuickCaption>
             )}
             <ScrollableRow role="tablist" aria-label={ariaLabel}>
                 {options.map((option) => {
                     const isActive = option.value === value;
                     return (
-                        <Chip
+                        <QuickChip
                             key={option.value || '__all__'}
                             ref={isActive ? activeChip : null}
                             role="tab"
@@ -100,28 +114,28 @@ export default function QuickFilters({value, onChange, options = [], caption, ar
                             variant={isActive ? 'filled' : 'outlined'}
                             color={isActive ? 'primary' : 'default'}
                             label={(
-                                <Box component="span" sx={{display: 'inline-flex', alignItems: 'center', gap: 0.75}}>
+                                <QuickChipLabel component="span" ownSx={{display: 'inline-flex', alignItems: 'center', gap: 0.75}}>
                                     <span>{option.label}</span>
                                     {option.count !== null && option.count !== undefined && (
-                                        <Box component="span"
+                                        <QuickChipCount component="span"
                                              aria-label={t('quickFilters.countAriaLabel', {count: option.count})}
                                              // velo del color del texto base (negro en claro, blanco en oscuro) y no rgba fijo
-                                             sx={(theme) => ({
+                                             ownSx={(theme) => ({
                                                  px: 0.75, borderRadius: '6px', fontSize: 11, fontWeight: 700, minWidth: 18,
                                                  textAlign: 'center', color: 'inherit',
                                                  bgcolor: isActive ? activeCountVeilOf(theme) : 'action.selected',
                                              })}>
                                             {compactCount(option.count)}
-                                        </Box>
+                                        </QuickChipCount>
                                     )}
-                                </Box>
+                                </QuickChipLabel>
                             )}
-                            sx={{flex: '0 0 auto', height: 32}}
+                            ownSx={{flex: '0 0 auto', height: 32}}
                         />
                     );
                 })}
                 {extra}
             </ScrollableRow>
-        </Box>
+        </QuickRoot>
     );
 }

@@ -19,6 +19,10 @@
 //
 // Con @mui/x-data-grid 8 (compatible con MUI 7).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaServerTable con defaultProps y
+// styleOverrides de sus partes: toolbar, summary, customHeader, count, countRow, selectionNotice, error, card, grid,
+// pagination.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useMachine} from '@xstate/react';
@@ -54,6 +58,20 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaServerTable)
+const THEME_NAME = 'CalcitaServerTable';
+const TableToolbar = piecePart(THEME_NAME, 'Toolbar', Stack);
+const TableSummary = piecePart(THEME_NAME, 'Summary', Box);
+const TableCustomHeader = piecePart(THEME_NAME, 'CustomHeader', Box);
+const TableCount = piecePart(THEME_NAME, 'Count', Stack);
+const TableCountRow = piecePart(THEME_NAME, 'CountRow', Stack);
+const TableSelectionNotice = piecePart(THEME_NAME, 'SelectionNotice', Alert);
+const TableError = piecePart(THEME_NAME, 'Error', Alert);
+const TableCard = piecePart(THEME_NAME, 'Card', Paper);
+const TableGrid = piecePart(THEME_NAME, 'Grid', DataGrid);
+const TablePagination = piecePart(THEME_NAME, 'Pagination', Stack);
 
 // OJO: los textos del DataGrid van como PROP (localeText) y no solo en el tema: el grid resuelve sus defaults en
 // inglés y le ganan a los defaultProps del tema
@@ -309,7 +327,9 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     (src/locales/es.js), ya en el idioma de la pantalla: {selection: {clear: 'Deseleccionar'}, empty: {filtered: '…'}}.
  *     También les llegan a sus filtros de columna, sus chips y su barra de elegidos
  */
-export default function ServerTable({
+export default function ServerTable(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaServerTable.defaultProps) y encima lo que llega aquí
+    const {
     fetchPage,
     queryKey,
     enabled = true,
@@ -354,7 +374,7 @@ export default function ServerTable({
     onLoadError,
     gridProps,
     texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t, language} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
     const theme = useTheme();
@@ -535,7 +555,7 @@ export default function ServerTable({
     return (
         <ComponentTexts namespace="table" texts={texts}>
         <TableFilterContext value={tableFilterValue}>
-            <Stack direction={{xs: 'column', md: 'row'}} spacing={2} sx={{mb: 1.5, alignItems: {md: 'center'}}}>
+            <TableToolbar direction={{xs: 'column', md: 'row'}} spacing={2} ownSx={{mb: 1.5, alignItems: {md: 'center'}}}>
                 {/* la búsqueda: aquí o arriba en la barra de la app (BarSearch: se encoge a la lupa sin usar) */}
                 {searchField && (
                     <BarSearch value={searchDraft} onChange={setSearchDraft} placeholder={searchText} inBar={searchInBar} collapsible={collapseSearchInBar} />
@@ -547,29 +567,29 @@ export default function ServerTable({
                                       phoneLayout={selectionPhoneLayout}
                                       texts={{selection: {clear: t('selection.clear'), actionsLabel: t('selection.actionsLabel'), summaryLabel: t('selection.summaryLabel')}}} />
                 )}
-                <Box sx={{
+                <TableSummary ownSx={{
                     flexGrow: 1, minWidth: 0, display: 'flex',
                     ...(hasSelection && {display: 'none', ...(floatsSelectionOnPhone && {[PHONE_MEDIA_QUERY]: {display: 'flex'}})}),
                 }}>
                 {header ? (
-                    <Box sx={{flexGrow: 1, minWidth: 0}}>
+                    <TableCustomHeader ownSx={{flexGrow: 1, minWidth: 0}}>
                         {header({countText: capped ? t('count.capped', {total: formattedTotal}) : countText, total, capped})}
-                    </Box>
+                    </TableCustomHeader>
                 ) : (
                     // NOTA: el extra va pegado al conteo y no empujado a la orilla (ml: 'auto'): en escritorio quedaba a todo
                     // el ancho de distancia y no se leía como parte de la misma tabla (caso del selector de año)
-                    <Stack direction="row" spacing={2} useFlexGap sx={{flexGrow: 1, alignItems: 'center', flexWrap: 'wrap'}}>
-                        <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                    <TableCount direction="row" spacing={2} useFlexGap ownSx={{flexGrow: 1, alignItems: 'center', flexWrap: 'wrap'}}>
+                        <TableCountRow direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                             <Typography variant="body2" color="text.secondary" role="status" aria-live="polite">
                                 {capped ? t('count.capped', {total: formattedTotal}) : countText}
                             </Typography>
                             {capped && <Tag label={t('count.cappedTag')} color="warning" tooltip={t('count.cappedTooltip')} />}
-                        </Stack>
+                        </TableCountRow>
                         {toolbarExtra}
-                    </Stack>
+                    </TableCount>
                 )}
-                </Box>
-            </Stack>
+                </TableSummary>
+            </TableToolbar>
 
             {beforeQuickFilters}
 
@@ -585,7 +605,7 @@ export default function ServerTable({
             {/* todos los que coinciden (lo elige la casilla de arriba): se puede volver a solo esta página; la página llena a
                 mano: se ofrece elegir todos */}
             {(offersAllMatching || (isSelectable && rowSelection.isAllMatching)) && (
-                <Alert severity="info" icon={false} sx={{mb: 1, alignItems: 'center'}}
+                <TableSelectionNotice severity="info" icon={false} ownSx={{mb: 1, alignItems: 'center'}}
                        action={rowSelection.isAllMatching ? (
                            <Button color="inherit" size="small"
                                    onClick={() => updateSelection({
@@ -601,24 +621,24 @@ export default function ServerTable({
                     {rowSelection.isAllMatching
                         ? (capped ? t('selection.allMatchingCapped') : t('selection.allMatching', {total: formattedTotal}))
                         : t('selection.pageSelected', {count: selectablePageIds.length})}
-                </Alert>
+                </TableSelectionNotice>
             )}
 
             {error && (
-                <Alert severity="error" role="alert" sx={{mb: 1}}
+                <TableError severity="error" role="alert" ownSx={{mb: 1}}
                        action={(
                            <Button color="inherit" size="small" onClick={() => sendToTable({type: 'FETCH', params: requestParams})}>
                                {t('common:actions.retry')}
                            </Button>
                        )}>
                     {error.message ?? t('error.generic')}
-                </Alert>
+                </TableError>
             )}
 
             {/* minWidth 0: dentro de un flex o grid el DataGrid no empuja la página; en el teléfono la tabla se desliza
                 de lado DENTRO de su tarjeta y la página no */}
-            <Paper variant="outlined" sx={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
-                <DataGrid
+            <TableCard variant="outlined" ownSx={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
+                <TableGrid
                     // primero lo de la pantalla (sus eventos); lo de abajo es lo que la tabla controla y le gana
                     {...gridProps}
                     rows={visibleRows}
@@ -674,16 +694,16 @@ export default function ServerTable({
                         // "51-75 de 1,234". Sin él, la paginación de siempre del DataGrid
                         ...(showGoToPage && {
                             pagination: () => (
-                                <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                                <TablePagination direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                                     <GoToPage page={page} pageCount={Math.ceil(total / pageSize) || 1} onChange={tableState.setPage} />
                                     <GridPagination />
-                                </Stack>
+                                </TablePagination>
                             ),
                         }),
                         noResultsOverlay: () => <EmptyState filtered label={emptyLabel} onClearFilters={tableState.clearAll} />,
                         noRowsOverlay: () => <EmptyState filtered={hasActiveFilters} label={emptyLabel} onClearFilters={tableState.clearAll} />,
                     }}
-                    sx={[{
+                    ownSx={[{
                         // IMPORTANTE: el alto va en la raíz del DataGrid y no en la caja de afuera: las variables
                         // --DataGrid-hasScrollX y --DataGrid-scrollbarSize solo existen en la raíz. Cuando las columnas no
                         // caben (historial a 390 px) la barra horizontal ocupa su alto dentro de la tabla y, sin sumarlo, los
@@ -699,7 +719,7 @@ export default function ServerTable({
                         ...gridSx,
                     }, (gridTheme) => (fixedColumn ? fixedColumnSxOf(gridTheme, fixedColumn, {withCheckboxColumn: isSelectable}) : {})]}
                 />
-            </Paper>
+            </TableCard>
 
             {footer?.({total, capped})}
         </TableFilterContext>

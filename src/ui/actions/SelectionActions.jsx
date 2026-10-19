@@ -18,6 +18,9 @@
 //
 // Cada acción puede regresar una promesa: mientras corre, las demás se apagan (nadie cancela dos veces lo mismo).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSelectionActions con defaultProps y
+// styleOverrides de sus partes: bar, count, clear, phoneCount, phoneActions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -40,6 +43,15 @@ import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSelectionActions)
+const THEME_NAME = 'CalcitaSelectionActions';
+const SelectionBar = piecePart(THEME_NAME, 'Bar', Stack);
+const SelectionCount = piecePart(THEME_NAME, 'Count', Typography);
+const SelectionClear = piecePart(THEME_NAME, 'Clear', Button);
+const SelectionPhoneCount = piecePart(THEME_NAME, 'PhoneCount', Typography);
+const SelectionPhoneActions = piecePart(THEME_NAME, 'PhoneActions', Box);
 
 /** Dónde van las acciones de lo elegido en el teléfono con barra de pestañas abajo: todo arriba o divididas (iOS). */
 export const SELECTION_PHONE_LAYOUT = Object.freeze({top: 'top', split: 'split'});
@@ -96,7 +108,9 @@ function bottomCapsuleSxOf(theme) {
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {selection: {clear, actionsLabel, summaryLabel}}
  * @param {object} [props.sx] estilos del renglón
  */
-export default function SelectionActions({countText, actions = [], onClear, phoneLayout = SELECTION_PHONE_LAYOUT.top, texts, sx}) {
+export default function SelectionActions(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSelectionActions.defaultProps) y encima lo que llega aquí
+    const {countText, actions = [], onClear, phoneLayout = SELECTION_PHONE_LAYOUT.top, texts, sx} = usePieceProps(props, THEME_NAME);
     const theme = useTheme();
     const {t} = useToolkitTranslation('common', texts);
     const [runningActionKey, setRunningActionKey] = useState(null);
@@ -123,20 +137,20 @@ export default function SelectionActions({countText, actions = [], onClear, phon
 
     // el renglón: escritorio siempre; en el teléfono, solo si ahí no flota
     const row = (
-        <Stack role="toolbar" aria-label={t('selection.actionsLabel')} direction="row" spacing={1} useFlexGap
-               sx={[{flexGrow: 1, alignItems: 'center', flexWrap: 'wrap', minHeight: 32},
+        <SelectionBar role="toolbar" aria-label={t('selection.actionsLabel')} direction="row" spacing={1} useFlexGap
+               ownSx={[{flexGrow: 1, alignItems: 'center', flexWrap: 'wrap', minHeight: 32},
                    floatsOnPhone && {[PHONE_MEDIA_QUERY]: {display: 'none'}}, ...extraSx]}>
-            <Typography variant="body2" sx={{fontWeight: 600, mr: 1}}>{countText}</Typography>
+            <SelectionCount variant="body2" ownSx={{fontWeight: 600, mr: 1}}>{countText}</SelectionCount>
             {actions.map((action) => (
                 <Button key={action.key} size="small" color={action.color ?? 'primary'} startIcon={action.icon}
                         disabled={isDisabledOf(action)} onClick={() => runAction(action)}>
                     {action.label}
                 </Button>
             ))}
-            <Button size="small" color="inherit" startIcon={<CloseRoundedIcon />} onClick={onClear} sx={{ml: 'auto'}}>
+            <SelectionClear size="small" color="inherit" startIcon={<CloseRoundedIcon />} onClick={onClear} ownSx={{ml: 'auto'}}>
                 {t('selection.clear')}
-            </Button>
-        </Stack>
+            </SelectionClear>
+        </SelectionBar>
     );
 
     if (!floatsOnPhone) {
@@ -152,9 +166,9 @@ export default function SelectionActions({countText, actions = [], onClear, phon
                 el nombre ya lo lleva la cápsula (dos grupos anidados con el mismo nombre se leen dos veces) */}
             <BarActions bare exclusive order={-2} sx={PHONE_ONLY_SX} inlineSx={PHONE_ONLY_SX}>
                 <BarCapsule aria-label={t('selection.summaryLabel')} sx={{pl: 2}}>
-                    <Typography variant="body2" role="status" aria-live="polite" sx={{fontWeight: 600, whiteSpace: 'nowrap', mr: 0.5}}>
+                    <SelectionPhoneCount variant="body2" role="status" aria-live="polite" ownSx={{fontWeight: 600, whiteSpace: 'nowrap', mr: 0.5}}>
                         {countText}
-                    </Typography>
+                    </SelectionPhoneCount>
                     {clearButton}
                 </BarCapsule>
             </BarActions>
@@ -169,7 +183,7 @@ export default function SelectionActions({countText, actions = [], onClear, phon
             {showsBottomCapsule && (
                 <>
                     <GlobalStyles styles={{':root': {[FLOATING_BOTTOM_SPACE_CSS_VARIABLE]: `${FLOATING_BOTTOM_SPACE_PIXELS}px`}}} />
-                    <Box role="toolbar" aria-label={t('selection.actionsLabel')} sx={[bottomCapsuleSxOf, PHONE_ONLY_SX]}>
+                    <SelectionPhoneActions role="toolbar" aria-label={t('selection.actionsLabel')} ownSx={[bottomCapsuleSxOf, PHONE_ONLY_SX]}>
                         {actions.map((action) => (action.icon ? (
                             <Tooltip key={action.key} title={action.label}>
                                 {/* el span deja ver el tooltip aunque el botón esté apagado */}
@@ -186,7 +200,7 @@ export default function SelectionActions({countText, actions = [], onClear, phon
                                 {action.label}
                             </Button>
                         )))}
-                    </Box>
+                    </SelectionPhoneActions>
                 </>
             )}
         </>
