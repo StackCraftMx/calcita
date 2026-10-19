@@ -28,9 +28,10 @@ import Tag from '@/ui/labels/Tag.jsx';
  * @param {(field: string, value: unknown) => void} props.onSetFilter
  * @param {() => void} props.onClearAll
  * @param {number} [props.quickActiveCount] accesos rápidos puestos que no tienen chip aquí
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function FilterChips({chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0}) {
-    const {t} = useToolkitTranslation('table');
+export default function FilterChips({chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts}) {
+    const {t} = useToolkitTranslation('table', texts);
     const chips = chipConfig
         .filter((chipDeclaration) => chipDeclaration.isActive(filters[chipDeclaration.key]))
         .flatMap((chipDeclaration) => chipDeclaration.chipsFor(filters[chipDeclaration.key], onSetFilter));

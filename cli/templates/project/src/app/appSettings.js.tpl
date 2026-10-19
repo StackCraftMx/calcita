@@ -1,4 +1,5 @@
 // Lo que la app le pasa a ToolkitProvider y que no cambia mientras corre.
+import {publicUrlOf} from '@/core';
 
 /** El nombre de la app: en la barra y en la pestaña, después del título de cada pantalla («Contactos | __APP_TITLE__»). */
 export const APP_NAME = '__APP_TITLE__';
@@ -17,9 +18,10 @@ export const APP_BUILD_ID = import.meta.env.VITE_BUILD_ID ?? '';
 
 /**
  * Dónde está el archivo con la versión publicada: la app lo vuelve a leer al abrirla y cada tanto (usePublishedBuildWatch).
- * Solo en lo construido. OJO: el servidor no debe guardarlo (Cache-Control: no-cache, como el index.html).
+ * Solo en lo construido, con el prefijo si la app vive detrás de un proxy. OJO: el servidor no debe guardarlo (Cache-Control:
+ * no-cache, como el index.html).
  */
-export const BUILD_VERSION_URL = import.meta.env.PROD ? '/version.json' : null;
+export const BUILD_VERSION_URL = import.meta.env.PROD ? publicUrlOf('version.json') : null;
 
 /** Los idiomas que ofrece la app; el primero es el de arranque. */
 export const APP_LANGUAGES = Object.freeze({spanish: 'es', english: 'en'});

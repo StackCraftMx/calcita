@@ -1,8 +1,8 @@
-// Pruebas de cómo se escriben los tamaños de archivo: pnpm test.
+// Pruebas de cómo se escriben números, fechas y tamaños de archivo: pnpm test.
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {formatFileSize} from '@/formatting.js';
+import {formatDate, formatFileSize, formattersOf} from '@/formatting.js';
 import {configureToolkit} from '@/toolkit/toolkitSettings.js';
 
 test('un archivo de menos de un kilobyte dice bytes, con su plural', () => {
@@ -24,4 +24,22 @@ test('de un kilobyte en adelante va abreviado y en base 1000, como el navegador'
 test('sin dato enseña la raya', () => {
     assert.equal(formatFileSize(null), '—');
     assert.equal(formatFileSize('no es número'), '—');
+});
+
+test('cada configuración escribe con la suya: dos proveedores (o dos islas) ya no se pisan el idioma ni la zona', () => {
+    // la de un proveedor en inglés con la zona de Los Ángeles y otro en español con la de México, al mismo tiempo
+    const english = formattersOf(() => ({language: 'en', timeZone: 'America/Los_Angeles', currency: 'USD'}));
+    const spanish = formattersOf(() => ({language: 'es', timeZone: 'America/Mexico_City', currency: 'MXN'}));
+
+    assert.equal(english.formatDate('2027-01-05T03:00:00Z'), 'Jan 4, 2027');
+    assert.equal(spanish.formatDate('2027-01-05T03:00:00Z'), '4 ene 2027');
+    assert.equal(english.formatCurrency(1234.5), '$1,234.50');
+    assert.equal(english.formatFileSize(74), '74 bytes');
+});
+
+test('los sueltos siguen la configuración vigente (la del proveedor de la raíz)', () => {
+    configureToolkit({language: 'en'});
+    assert.equal(formatDate('2027-01-05'), 'Jan 5, 2027');
+    configureToolkit({language: 'es'});
+    assert.equal(formatDate('2027-01-05'), '5 ene 2027');
 });

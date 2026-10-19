@@ -35,12 +35,13 @@ const SEPARATORS_ROOM = 6;
  * @param {number} [props.maxDigits] tope de dígitos (por omisión 17)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function NumberInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-    disabled = false, inputRef,
+    disabled = false, inputRef, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'number'}-${generatedId}`;
     const [isTyping, setIsTyping] = useState(false);

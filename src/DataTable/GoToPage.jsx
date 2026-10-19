@@ -15,7 +15,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 
 // tope del DOM, no de la navegación
 const RENDER_LIMIT = 100;
@@ -31,10 +31,15 @@ function filterPages(pageNumbers, {inputValue}) {
 }
 
 /**
- * @param {{page: number, pageCount: number, onChange: (page: number) => void}} props page cuenta desde 0
+ * @param {object} props
+ * @param {number} props.page cuenta desde 0
+ * @param {number} props.pageCount
+ * @param {(page: number) => void} props.onChange
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function GoToPage({page, pageCount, onChange}) {
-    const {t} = useToolkitTranslation('table');
+export default function GoToPage({page, pageCount, onChange, texts}) {
+    const {t} = useToolkitTranslation('table', texts);
+    const {formatNumber} = useFormatters();
 
     // guard clause: con una página no hay a dónde ir
     if (pageCount <= 1) {

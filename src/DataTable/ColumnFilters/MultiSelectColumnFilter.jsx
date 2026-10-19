@@ -16,7 +16,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 
 const SEARCHABLE_FROM_OPTIONS = 8;
 
@@ -29,6 +29,7 @@ const SEARCHABLE_FROM_OPTIONS = 8;
  */
 export default function MultiSelectColumnFilter({value = [], onChange, options = [], renderOption}) {
     const {t} = useToolkitTranslation('table');
+    const {formatNumber} = useFormatters();
     const [searchText, setSearchText] = useState('');
 
     const toggleOption = (optionValue) => onChange(value.includes(optionValue)

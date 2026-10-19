@@ -15,10 +15,14 @@ import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
 
 /**
- * @param {{filtered?: boolean, label?: string, onClearFilters?: () => void}} props label ya traducido
+ * @param {object} [props]
+ * @param {boolean} [props.filtered]
+ * @param {string} [props.label] ya traducido
+ * @param {() => void} [props.onClearFilters]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function EmptyState({filtered = false, label, onClearFilters}) {
-    const {t} = useToolkitTranslation('table');
+export default function EmptyState({filtered = false, label, onClearFilters, texts}) {
+    const {t} = useToolkitTranslation('table', texts);
     const Icon = filtered ? FilterListOffIcon : InboxOutlinedIcon;
 
     return (

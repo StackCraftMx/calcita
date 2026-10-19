@@ -15,9 +15,14 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
-export default function InstallAppSetting() {
-    const {t} = useToolkitTranslation('common');
+/**
+ * @param {object} [props]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ */
+export default function InstallAppSetting({texts} = {}) {
+    const {t} = useToolkitTranslation('common', texts);
     const {variant, promptInstall} = useInstallPrompt();
     const [stepsOpen, setStepsOpen] = useState(false);
 
@@ -34,11 +39,13 @@ export default function InstallAppSetting() {
     };
 
     return (
-        <Box sx={{px: 1, py: 0.5}}>
-            <Button fullWidth variant="outlined" startIcon={<InstallMobileRoundedIcon />} onClick={handleClick}>
-                {t('install.menuLabel')}
-            </Button>
-            <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={() => setStepsOpen(false)} />
-        </Box>
+        <ComponentTexts namespace="common" texts={texts}>
+            <Box sx={{px: 1, py: 0.5}}>
+                <Button fullWidth variant="outlined" startIcon={<InstallMobileRoundedIcon />} onClick={handleClick}>
+                    {t('install.menuLabel')}
+                </Button>
+                <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={() => setStepsOpen(false)} />
+            </Box>
+        </ComponentTexts>
     );
 }

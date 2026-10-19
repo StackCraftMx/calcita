@@ -41,9 +41,12 @@ function todayText() {
  * @param {string[]|null} props.codes los códigos recién generados; sin códigos el diálogo está cerrado
  * @param {string} [props.account] la cuenta (normalmente el correo), para el archivo
  * @param {() => void} props.onClose solo se llama después de «Ya los guardé»
+ * @param {(method: 'copy'|'download') => void} [props.onCodesSaved] la persona los copió o los descargó (para la bitácora de
+ *     seguridad)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function RecoveryCodesDialog({codes, account = '', onClose}) {
-    const {t} = useToolkitTranslation('security');
+export default function RecoveryCodesDialog({codes, account = '', onClose, onCodesSaved, texts}) {
+    const {t} = useToolkitTranslation('security', texts);
     const {appName} = useToolkitSettings();
     const [isSaved, setIsSaved] = useState(false);
     const isOpen = Boolean(codes?.length);
@@ -62,6 +65,7 @@ export default function RecoveryCodesDialog({codes, account = '', onClose}) {
             '',
         ];
         saveBlob(new Blob([lines.join('\n')], {type: 'text/plain;charset=utf-8'}), t('recoveryCodes.fileName', {date}));
+        onCodesSaved?.('download');
     };
 
     const close = () => {
@@ -83,7 +87,7 @@ export default function RecoveryCodesDialog({codes, account = '', onClose}) {
                         {(codes ?? []).map((code) => <li key={code}>{code}</li>)}
                     </Box>
                     <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
-                        <CopyButton value={(codes ?? []).join('\n')} label={t('recoveryCodes.copyAll')} />
+                        <CopyButton value={(codes ?? []).join('\n')} label={t('recoveryCodes.copyAll')} onCopied={() => onCodesSaved?.('copy')} />
                         <Button size="small" startIcon={<DownloadIcon />} onClick={download}>{t('recoveryCodes.download')}</Button>
                     </Stack>
                     <FormControlLabel control={<Checkbox checked={isSaved} onChange={(event) => setIsSaved(event.target.checked)} />}

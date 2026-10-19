@@ -40,14 +40,20 @@ const HEADER_SX = {
  * @param {string} props.expandedTitle lo que dice abierta («Ocultar el detalle de la validación»)
  * @param {string} [props.hint] plegada, qué hay adentro («Incluye resumen, motivos de rechazo y descargas.»)
  * @param {boolean} [props.defaultExpanded] si empieza abierta; por omisión empieza plegada
+ * @param {(isExpanded: boolean) => void} [props.onExpandedChange] la persona la abrió o la plegó (por ejemplo, para pedir lo de
+ *     adentro hasta que se abre)
  * @param {import('react').ReactNode} props.children
  */
-export default function CollapsibleSection({collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, children}) {
+export default function CollapsibleSection({collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children}) {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+    const changeExpanded = (nextIsExpanded) => {
+        setIsExpanded(nextIsExpanded);
+        onExpandedChange?.(nextIsExpanded);
+    };
 
     return (
         <Box sx={{minWidth: 0}}>
-            <Accordion expanded={isExpanded} onChange={(changeEvent, nextIsExpanded) => setIsExpanded(nextIsExpanded)}
+            <Accordion expanded={isExpanded} onChange={(changeEvent, nextIsExpanded) => changeExpanded(nextIsExpanded)}
                        disableGutters elevation={0} square sx={{bgcolor: 'transparent', '&::before': {display: 'none'}}}>
                 {/* NOTA: el acordeón ya envuelve este renglón en un encabezado (h3); los textos van como span para no anidar dos */}
                 <AccordionSummary expandIcon={<ExpandMoreIcon color="primary" />} sx={HEADER_SX}>

@@ -8,6 +8,9 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
+/** Cómo se ve una gráfica: dibujada o en su tabla (defaultView y onViewChange de BarList, ColumnChart, LineChart y CalendarHeatmap). */
+export const CHART_VIEW = Object.freeze({chart: 'chart', table: 'table'});
+
 /**
  * @param {{asTable: boolean, onToggle: () => void, texts?: object}} props texts: los textos que cambian, con la forma de
  *     `common` ({charts: {viewAsTable, viewAsChart}})

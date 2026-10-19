@@ -74,8 +74,8 @@ const MoreActionsMenu = ({label, children}) => {
 };
 
 /** La cápsula que flota en el teléfono: las que caben como ícono y, si sobran, el «⋯» con las demás. */
-const PhoneFloatingCapsule = ({phoneSlot, label, sx, children, ...rest}) => {
-    const {t} = useToolkitTranslation('layout');
+const PhoneFloatingCapsule = ({phoneSlot, label, sx, texts, children, ...rest}) => {
+    const {t} = useToolkitTranslation('layout', texts);
     const [capsuleElement, setCapsuleElement] = useState(null);
     const actions = Children.toArray(children);
     const visibleCount = useFittingActionCount(phoneSlot, capsuleElement, actions.length);
@@ -99,8 +99,9 @@ const PhoneFloatingCapsule = ({phoneSlot, label, sx, children, ...rest}) => {
  * @param {boolean} [props.bare] sin cápsula alrededor: lo de adentro ya es una (un buscador)
  * @param {boolean} [props.exclusive] en el teléfono, mientras se ve, es lo único del renglón flotante (con los demás grupos
  *     exclusivos): los otros se esconden, como el modo de edición del iPhone deja solo lo de lo elegido. Lo usa SelectionActions
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function BarActions({children, label, order, sx, inlineSx, bare = false, exclusive = false}) {
+export default function BarActions({children, label, order, sx, inlineSx, bare = false, exclusive = false, texts}) {
     const {slot, phoneSlot, usesCapsules} = useBarActionsSlot();
     const isDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
     // en escritorio, la barra; en el teléfono, el renglón flotante (solo existe con cápsulas)
@@ -129,7 +130,7 @@ export default function BarActions({children, label, order, sx, inlineSx, bare =
         return (
             <>
                 {hideOthers}
-                {createPortal(<PhoneFloatingCapsule phoneSlot={phoneSlot} label={label} sx={[orderSx, ...extraSx]} {...exclusiveProps}>{children}</PhoneFloatingCapsule>, target)}
+                {createPortal(<PhoneFloatingCapsule phoneSlot={phoneSlot} label={label} sx={[orderSx, ...extraSx]} texts={texts} {...exclusiveProps}>{children}</PhoneFloatingCapsule>, target)}
             </>
         );
     }

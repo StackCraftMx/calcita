@@ -49,6 +49,27 @@ abrirla y cada tanto: si ya hay otra, se recarga sola cuando estuvo fuera 15 min
 anclada al inicio del iPhone) y, si no, enseña el aviso «Versión nueva» con su botón. Para que funcione, el servidor no
 debe guardar `index.html` ni `version.json` (`Cache-Control: no-cache`); los archivos de `dist/assets/` sí, un año.
 
+## Detrás de un proxy con prefijo
+
+Para publicarla en una ruta y no en un subdominio (`miempresa.com/ventas/`), el prefijo se da una vez al construir:
+
+```bash
+ASSET_URL=/ventas pnpm build
+```
+
+Vite le pone el prefijo a sus archivos y a las rutas de `index.html`, el router lo quita al leer la dirección y las pantallas
+siguen escribiendo sus rutas desde la raíz (`/contacts`). Lo de `public/` se pide con `publicUrlOf('favicon.svg')`
+(`src/core/publicPaths.js`), nunca escrito desde la raíz. En el servidor, cada dirección bajo el prefijo que no sea un archivo
+regresa su `index.html`:
+
+```nginx
+location /ventas/ {
+    try_files $uri $uri/ /ventas/index.html;
+}
+```
+
+Con otro prefijo se vuelve a construir.
+
 ## Crecer la app con el CLI
 
 ```bash

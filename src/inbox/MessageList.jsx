@@ -27,6 +27,7 @@ import StarRoundedIcon from '@mui/icons-material/StarRounded';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
 import {inboxDateOf} from '@/inbox/inboxDates.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
@@ -54,6 +55,7 @@ export default function MessageList({
     messages, selectedId = null, onSelect, onToggleStar, selectedIds = [], onSelectionChange, messageActions, renderMessage, emptyText, texts,
 }) {
     const {t} = useToolkitTranslation('inbox', texts);
+    const formatters = useFormatters();
 
     if (messages.length === 0) {
         return <Typography variant="body2" color="text.secondary" sx={{p: 3, textAlign: 'center'}}>{emptyText ?? t('empty')}</Typography>;
@@ -118,7 +120,7 @@ export default function MessageList({
                                         </Typography>
                                         {message.hasAttachments && <AttachFileRoundedIcon fontSize="inherit" color="action" aria-label={t('attachments')} />}
                                         <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
-                                            {inboxDateOf(message.receivedAt)}
+                                            {inboxDateOf(message.receivedAt, new Date(), formatters)}
                                         </Typography>
                                     </Stack>
                                     <Typography variant="body2" noWrap sx={{fontWeight: weight}}>{message.subject}</Typography>

@@ -14,10 +14,12 @@ import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 /**
- * @param {{items: Array<{label: string, to?: string}>}} props textos ya traducidos
+ * @param {object} props
+ * @param {Array<{label: string, to?: string}>} props.items textos ya traducidos
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageBreadcrumbs({items}) {
-    const {t} = useToolkitTranslation('layout');
+export default function PageBreadcrumbs({items, texts}) {
+    const {t} = useToolkitTranslation('layout', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     if (items.length === 0) {
         return null;

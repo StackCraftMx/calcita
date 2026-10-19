@@ -21,12 +21,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ChartTooltip from '@/ui/metrics/ChartTooltip.jsx';
-import TableToggle from '@/ui/metrics/TableToggle.jsx';
+import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
-    AXIS_COLOR, AXIS_TEXT, ChartLegend, ChartTable, GRID_COLOR, ReferenceCaption, highestValueOf, resolvedSeriesOf, valueAxisWidthOf,
+    ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
 
 // la llave del valor cuando la gráfica es de una sola serie
@@ -51,16 +51,25 @@ const SINGLE_SERIES_KEY = 'value';
  *     10 %»)
  * @param {(row: any) => import('react').ReactNode} [props.renderTooltip] lo que dice el globo de un periodo; por omisión su
  *     nombre y el valor de cada serie
+ * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
+ * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
 export default function ColumnChart({
-    data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue = formatNumber,
-    referenceLine, renderTooltip, texts,
+    data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue: formatValueProp,
+    referenceLine, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
 }) {
     const {t} = useToolkitTranslation('common', texts);
-    const [asTable, setAsTable] = useState(false);
+    const {formatNumber} = useFormatters();
+    const formatValue = formatValueProp ?? formatNumber;
+    const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
+    const toggleView = () => {
+        setAsTable(!asTable);
+        onViewChange?.(asTable ? CHART_VIEW.chart : CHART_VIEW.table);
+    };
     const isSingleSeries = !series?.length;
-    const drawnSeries = resolvedSeriesOf(isSingleSeries ? [{key: SINGLE_SERIES_KEY, label: valueLabel, tone}] : series);
+    const colors = useChartColors();
+    const drawnSeries = resolvedSeriesOf(isSingleSeries ? [{key: SINGLE_SERIES_KEY, label: valueLabel, tone}] : series, colors.palette);
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!data.length) {
@@ -80,22 +89,22 @@ export default function ColumnChart({
 
     return (
         <Box>
-            <TableToggle asTable={asTable} onToggle={() => setAsTable((current) => !current)} texts={texts} />
+            <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
             {asTable ? (
                 <ChartTable data={data} series={drawnSeries} periodLabel={periodLabel} formatValue={formatValue} height={height} />
             ) : (
                 <Box role="img" aria-label={ariaLabel} sx={{height, color: `${tone}.main`}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={data} margin={{top: 8, right: 8, bottom: 0, left: -8}} barCategoryGap={4}>
-                            <CartesianGrid vertical={false} stroke={GRID_COLOR} />
-                            <XAxis dataKey="label" tick={AXIS_TEXT} tickLine={false} axisLine={{stroke: GRID_COLOR}}
+                            <CartesianGrid vertical={false} stroke={colors.grid} />
+                            <XAxis dataKey="label" tick={colors.axisText} tickLine={false} axisLine={{stroke: colors.grid}}
                                    interval="preserveStartEnd" minTickGap={12} />
-                            <YAxis allowDecimals={false} tick={AXIS_TEXT} tickLine={false} axisLine={false}
+                            <YAxis allowDecimals={false} tick={colors.axisText} tickLine={false} axisLine={false}
                                    width={valueAxisWidthOf(highestValue, formatValue)} tickFormatter={(value) => formatValue(value)} />
-                            <Tooltip cursor={{fill: 'var(--mui-palette-action-hover)'}} content={<ChartTooltip render={tooltipOf} />} />
+                            <Tooltip cursor={{fill: colors.hover}} content={<ChartTooltip render={tooltipOf} />} />
                             {referenceLine && (
                                 // extendDomain: si la referencia queda arriba de todas las columnas, el eje crece hasta ella
-                                <ReferenceLine y={referenceLine.value} ifOverflow="extendDomain" stroke={AXIS_COLOR} strokeDasharray="4 4" />
+                                <ReferenceLine y={referenceLine.value} ifOverflow="extendDomain" stroke={colors.axis} strokeDasharray="4 4" />
                             )}
                             {drawnSeries.map((item) => (
                                 // una serie: currentColor (el tono de la caja); varias: el color de cada una

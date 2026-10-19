@@ -56,12 +56,13 @@ function pickerValueOf(calendarDate) {
  * @param {'day'|'month'|'year'} [props.openTo] por dónde abre el calendario (year para un nacimiento)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function DateInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
-    openTo = 'day', disabled = false, inputRef,
+    openTo = 'day', disabled = false, inputRef, texts,
 }) {
-    const {t, language} = useToolkitTranslation('common');
+    const {t, language} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'date'}-${generatedId}`;
     const errorText = translateValidationMessage(t, error);

@@ -18,21 +18,23 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import ChartTooltip from '@/ui/metrics/ChartTooltip.jsx';
-import TableToggle from '@/ui/metrics/TableToggle.jsx';
+import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {BAR_MIN_POINT_SIZE, barLabelValueOf} from '@/ui/metrics/barListLabels.js';
+import {useChartColors} from '@/ui/metrics/chartParts.jsx';
 
 const ROW_HEIGHT_PIXELS = 36;
-const TEXT_COLOR = 'var(--mui-palette-text-primary)';
-const MUTED_COLOR = 'var(--mui-palette-text-secondary)';
 
-/** El valor en la punta: el número fuerte y el detalle ("de 8") tenue; value es {value, detail} de barLabelValueOf. */
-function ValueLabel({x, y, width, height, value}) {
+/**
+ * El valor en la punta: el número fuerte y el detalle ("de 8") tenue; value es {value, detail} de barLabelValueOf. colors y
+ * formatNumber: los de useChartColors y useFormatters (los da BarList: este pedazo lo pinta recharts por su cuenta).
+ */
+function ValueLabel({x, y, width, height, value, colors, formatNumber}) {
     return (
         <text x={x + width + 8} y={y + height / 2} dominantBaseline="central" fontSize={13}>
-            <tspan fill={TEXT_COLOR} fontWeight={600}>{formatNumber(value.value)}</tspan>
-            {value.detail && <tspan fill={MUTED_COLOR} fontSize={12}>{` ${value.detail}`}</tspan>}
+            <tspan fill={colors.text} fontWeight={600}>{formatNumber(value.value)}</tspan>
+            {value.detail && <tspan fill={colors.muted} fontSize={12}>{` ${value.detail}`}</tspan>}
         </text>
     );
 }
@@ -43,9 +45,18 @@ function ValueLabel({x, y, width, height, value}) {
  * @param {(item: any) => void} [props.onSelect] recibe el renglón de items que se picó
  * @param {string} props.emptyLabel ya traducido
  * @param {'primary'|'success'|'warning'|'error'|'info'} [props.tone]
+ * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
+ * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function BarList({items, onSelect, emptyLabel, tone = 'primary'}) {
-    const [asTable, setAsTable] = useState(false);
+export default function BarList({items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange}) {
+    const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
+    const toggleView = () => {
+        setAsTable(!asTable);
+        onViewChange?.(asTable ? CHART_VIEW.chart : CHART_VIEW.table);
+    };
+    const colors = useChartColors();
+    const {formatNumber} = useFormatters();
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!items.length) {
@@ -61,7 +72,7 @@ export default function BarList({items, onSelect, emptyLabel, tone = 'primary'})
 
     return (
         <Box>
-            <TableToggle asTable={asTable} onToggle={() => setAsTable((current) => !current)} />
+            <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
             {asTable ? (
                 <Table size="small">
                     <TableBody>
@@ -82,14 +93,14 @@ export default function BarList({items, onSelect, emptyLabel, tone = 'primary'})
                                 barra de 1 px con su «0 de 2» saldría a medio renglón; el tope mínimo de 1 lo deja en el origen */}
                             <XAxis type="number" hide domain={[0, (dataMax) => Math.max(dataMax, 1)]} />
                             <YAxis type="category" dataKey="label" width={labelWidth} tickLine={false} axisLine={false}
-                                   tick={{fill: TEXT_COLOR, fontSize: 13}} />
-                            <Tooltip cursor={{fill: 'var(--mui-palette-action-hover)'}}
+                                   tick={{fill: colors.text, fontSize: 13}} />
+                            <Tooltip cursor={{fill: colors.hover}}
                                      content={<ChartTooltip render={(item) => item.tooltip ?? `${item.label}: ${formatNumber(item.value)}`} />} />
                             <Bar dataKey="value" fill="currentColor" maxBarSize={16} radius={[0, 4, 4, 0]} isAnimationActive={false}
                                  minPointSize={BAR_MIN_POINT_SIZE} cursor={onSelect ? 'pointer' : 'default'}
                                  onClick={onSelect ? (entry) => onSelect(entry.payload) : undefined}>
                                 {/* OJO: SIN dataKey; con dataKey LabelList ignora valueAccessor y regresa el índice corrido */}
-                                <LabelList valueAccessor={barLabelValueOf} content={(labelProps) => <ValueLabel {...labelProps} />} />
+                                <LabelList valueAccessor={barLabelValueOf} content={(labelProps) => <ValueLabel {...labelProps} colors={colors} formatNumber={formatNumber} />} />
                             </Bar>
                         </BarChart>
                     </ResponsiveContainer>

@@ -16,7 +16,9 @@ const textFiles = readdirSync(MODULES_FOLDER, {withFileTypes: true})
     .filter((entry) => entry.isDirectory())
     .flatMap((folder) => readdirSync(`${MODULES_FOLDER}${folder.name}`)
         .filter((file) => file.endsWith('Texts.js'))
-        .map((file) => `${MODULES_FOLDER}${folder.name}/${file}`));
+        .map((file) => `${MODULES_FOLDER}${folder.name}/${file}`))
+    // los textos que bajan por partes (las páginas del catálogo) también
+    .concat([`${MODULES_FOLDER}catalog/pageTexts/catalogPageTexts.js`]);
 
 test('cada módulo trae sus textos', () => {
     assert.ok(textFiles.length > 5, `se encontraron ${textFiles.length} archivos de textos`);

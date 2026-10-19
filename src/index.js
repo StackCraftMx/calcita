@@ -2,7 +2,7 @@
 //
 // Lo que necesita otras librerías va en su propia puerta, para que un proyecto instale solo lo que usa:
 //   @stackcraftmx/calcita/table         la tabla de servidor (MUI X DataGrid, nuqs)
-//   @stackcraftmx/calcita/forms         campos, formulario por pasos y validación (formik y yup vienen con el paquete)
+//   @stackcraftmx/calcita/forms         campos, formulario por pasos y validación (pide formik y yup)
 //   @stackcraftmx/calcita/charts        gráficas de barras y columnas (recharts)
 //   @stackcraftmx/calcita/timeline      línea de tiempo por grupos (@mui/lab)
 //   @stackcraftmx/calcita/excel         el reporte en Excel y CSV (exceljs, que se le pasa al llamarlo)
@@ -21,7 +21,8 @@ export {useToolkitNavigation, useToolkitSettings} from '@/toolkit/toolkitContext
 export {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 export {default as ComponentTexts} from '@/toolkit/ComponentTexts.jsx';
 export {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, configureToolkit, toolkitSettings, translateToolkit} from '@/toolkit/toolkitSettings.js';
-export {browserNavigation} from '@/toolkit/browserNavigation.js';
+export {browserNavigation, createBrowserNavigation} from '@/toolkit/browserNavigation.js';
+export {createHashNavigation} from '@/toolkit/hashNavigation.js';
 export {default as toolkitTextsEs} from '@/locales/es.js';
 export {default as toolkitTextsEn} from '@/locales/en.js';
 
@@ -87,7 +88,7 @@ export {uploadWithProgress} from '@/upload/uploadWithProgress.js';
 
 // ─── pantalla: esqueleto, navegación, filtros, etiquetas, acciones y métricas ─
 export {
-    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
+    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, LANGUAGES,
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
@@ -114,8 +115,9 @@ export {dictionaryEntryOf, labelOf, lookup, shortLabelOf} from '@/dictionaries/d
 // ─── formatos, fechas, errores del servidor y utilidades ─────────────────────
 export {
     dayOfPlainDate, formatCurrency, formatDate, formatDateTime, formatFileSize, formatList, formatMonthName, formatMonthShortName, formatNumber,
-    formatPercent, formatTime, formatWeekdayShortName,
+    formatPercent, formatTime, formatWeekdayShortName, formattersOf,
 } from '@/formatting.js';
+export {useFormatters} from '@/toolkit/useFormatters.js';
 export {parseInstant, parsePlainDate} from '@/dates.js';
 export {fieldErrorsOf, problemMessage, problemTitle} from '@/problems.js';
 export {newIdentifier} from '@/identifiers.js';

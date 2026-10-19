@@ -62,9 +62,10 @@ function isOutOfAttempts(error) {
  * @param {(message: string|null) => void} props.onCancel regresa a escribir la contraseña (con el motivo, si lo hay)
  * @param {import('react').ReactNode} [props.footer] abajo del botón, dentro del formulario: puede llenar el código con
  *     useFormikContext (p. ej. el atajo de los ejemplos)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SecondStepForm({methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer}) {
-    const {t} = useToolkitTranslation('security');
+export default function SecondStepForm({methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts}) {
+    const {t} = useToolkitTranslation('security', texts);
     const hasApp = methods.includes(SECOND_STEP_METHOD.totp);
     const hasRecovery = methods.includes(SECOND_STEP_METHOD.recoveryCode);
     const hasPasskey = methods.includes(SECOND_STEP_METHOD.passkey) && canUsePasskeys && Boolean(onUsePasskey);

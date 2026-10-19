@@ -14,10 +14,13 @@ import FormatSizeIcon from '@mui/icons-material/FormatSize';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
 
 /**
- * @param {{size?: 'small'|'medium'}} props
+ * @param {object} [props]
+ * @param {'small'|'medium'} [props.size]
+ * @param {(level: string) => void} [props.onChange] la persona eligió otro tamaño (FONT_SIZE_LEVELS; para guardarlo en su servidor)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function FontSizeToggle({size = 'small'}) {
-    const {t} = useToolkitTranslation('layout');
+export default function FontSizeToggle({size = 'small', onChange, texts}) {
+    const {t} = useToolkitTranslation('layout', texts);
     const {level, setLevel, isMounted, levels} = useFontSize();
     const [anchorElement, setAnchorElement] = useState(null);
 
@@ -29,6 +32,7 @@ export default function FontSizeToggle({size = 'small'}) {
     const chooseLevel = (levelKey) => {
         setLevel(levelKey);
         setAnchorElement(null);
+        onChange?.(levelKey);
     };
 
     return (

@@ -21,6 +21,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 // lo que se separa de la barra de pestañas (px)
 const TAB_BAR_GAP_PIXELS = 8;
@@ -28,9 +29,14 @@ const TAB_BAR_GAP_PIXELS = 8;
 /**
  * @param {object} [props]
  * @param {string} [props.message] ya traducido; por omisión el del paquete con el nombre de la app (appName de ToolkitProvider)
+ * @param {(outcome: 'accepted'|'dismissed'|null) => void} [props.onInstallChoice] lo que contestó la persona al diálogo de
+ *     instalar del navegador (Chrome, Edge, Android)
+ * @param {() => void} [props.onShowSteps] abrió los pasos para instalar (iPhone, iPad, Firefox de Android)
+ * @param {() => void} [props.onDismiss] dijo «Ahora no» (o cerró los pasos): no se le vuelve a ofrecer en este navegador
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallPromptBanner({message}) {
-    const {t} = useToolkitTranslation('common');
+export default function InstallPromptBanner({message, onInstallChoice, onShowSteps, onDismiss, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const {variant, dismissed, promptInstall, dismiss} = useInstallPrompt();
     const [stepsOpen, setStepsOpen] = useState(false);
 
@@ -41,41 +47,48 @@ export default function InstallPromptBanner({message}) {
 
     const isNative = variant === INSTALL_VARIANT.native;
 
-    const handleAction = () => {
+    const handleAction = async () => {
         if (isNative) {
-            promptInstall();
+            onInstallChoice?.(await promptInstall());
         } else {
             setStepsOpen(true);
+            onShowSteps?.();
         }
+    };
+    const handleDismiss = () => {
+        dismiss();
+        onDismiss?.();
     };
 
     // si ya vio los pasos, no se le vuelven a ofrecer en cada visita
     const handleStepsClose = () => {
         setStepsOpen(false);
-        dismiss();
+        handleDismiss();
     };
 
     return (
-        <>
-            <Snackbar open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                      sx={(theme) => (usesMobileTabBar(theme)
-                          ? aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)
-                          : {mb: 'env(safe-area-inset-bottom)'})}>
-                <Alert severity="info" icon={<InstallMobileRoundedIcon />} sx={{width: '100%', alignItems: 'center'}}
-                       action={(
-                           <>
-                               <Button color="inherit" size="small" onClick={handleAction}>
-                                   {isNative ? t('install.action') : t('install.howTo')}
-                               </Button>
-                               <IconButton size="small" color="inherit" aria-label={t('install.dismiss')} onClick={dismiss}>
-                                   <CloseRoundedIcon fontSize="small" />
-                               </IconButton>
-                           </>
-                       )}>
-                    {message ?? t('install.banner')}
-                </Alert>
-            </Snackbar>
-            <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={handleStepsClose} />
-        </>
+        <ComponentTexts namespace="common" texts={texts}>
+            <>
+                <Snackbar open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                          sx={(theme) => (usesMobileTabBar(theme)
+                              ? aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)
+                              : {mb: 'env(safe-area-inset-bottom)'})}>
+                    <Alert severity="info" icon={<InstallMobileRoundedIcon />} sx={{width: '100%', alignItems: 'center'}}
+                           action={(
+                               <>
+                                   <Button color="inherit" size="small" onClick={handleAction}>
+                                       {isNative ? t('install.action') : t('install.howTo')}
+                                   </Button>
+                                   <IconButton size="small" color="inherit" aria-label={t('install.dismiss')} onClick={handleDismiss}>
+                                       <CloseRoundedIcon fontSize="small" />
+                                   </IconButton>
+                               </>
+                           )}>
+                        {message ?? t('install.banner')}
+                    </Alert>
+                </Snackbar>
+                <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={handleStepsClose} />
+            </>
+        </ComponentTexts>
     );
 }

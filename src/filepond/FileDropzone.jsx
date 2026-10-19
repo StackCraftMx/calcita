@@ -47,7 +47,7 @@ import 'filepond/dist/filepond.min.css';
 import ModalWaiting from '@/feedback/ModalWaiting.jsx';
 import {toastError} from '@/feedback/toast.jsx';
 import {accentTextStylesOf} from '@/theme/glassSurface.js';
-import {formatFileSize} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileValidateSize);
@@ -178,13 +178,15 @@ function pondThemeSxOf(theme) {
  * @param {import('react').ReactNode} [props.actions]
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.sx]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function FileDropzone({
     value = null, onChange, accept, maxSize, multiple = false, maxFiles, maxTotalSize, name, hint, buttonLabel, disabled = false,
     busy = false, busyModal = false, autoReject = true, validate = null, server = null, instantUpload = false, apiRef = null,
-    onProcessProgress, onReject, actions, children, sx,
+    onProcessProgress, onReject, actions, children, sx, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
+    const {formatFileSize} = useFormatters();
     const generatedId = useId();
     const pondName = name ?? `file-dropzone-${generatedId}`;
     // el candado: apagado o subiendo. Va también en cada allow* de FilePond, no solo en lo visual

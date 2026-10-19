@@ -21,10 +21,14 @@ import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
 
 /**
- * @param {{size?: 'small'|'medium', inverted?: boolean}} props inverted = icono blanco para fondos oscuros
+ * @param {object} [props]
+ * @param {'small'|'medium'} [props.size]
+ * @param {boolean} [props.inverted] ícono blanco para fondos oscuros
+ * @param {(mode: 'light'|'dark'|'system') => void} [props.onChange] la persona cambió el modo (para guardarlo en su servidor)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ColorSchemeToggle({size = 'small', inverted = false}) {
-    const {t} = useToolkitTranslation('common');
+export default function ColorSchemeToggle({size = 'small', inverted = false, onChange, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const {mode, systemMode, setMode} = useColorScheme();
 
     // antes de montar en el cliente mode viene undefined: reservamos el lugar para que la barra no brinque
@@ -41,7 +45,10 @@ export default function ColorSchemeToggle({size = 'small', inverted = false}) {
 
     return (
         <Tooltip title={label}>
-            <IconButton size={size} aria-label={label} onClick={() => setMode(nextMode)}
+            <IconButton size={size} aria-label={label} onClick={() => {
+                            setMode(nextMode);
+                            onChange?.(nextMode);
+                        }}
                         sx={{color: inverted ? 'common.white' : 'text.secondary'}}>
                 {nextMode === 'light' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
             </IconButton>

@@ -74,6 +74,7 @@ import SideMenu from '@/appShell/SideMenu.jsx';
 import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import TopMenu from '@/appShell/TopMenu.jsx';
 import {useDrawerCollapsed} from '@/appShell/useDrawerCollapsed.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import {activeMenuItemOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
@@ -176,13 +177,22 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions, accountSettings, menuBadges,
     sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    children,
+    onMenuCollapse, onMobileMenuChange, onMobileTabsChange, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();
     const {collapsed, toggle} = useDrawerCollapsed(defaultCollapsed);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpenState] = useState(false);
+    // cada cambio del menú también sale afuera (para medir, o para que el proyecto guarde la preferencia en su servidor)
+    const toggleCollapsed = () => {
+        toggle();
+        onMenuCollapse?.(!collapsed);
+    };
+    const setIsMobileMenuOpen = (isOpen) => {
+        setIsMobileMenuOpenState(isOpen);
+        onMobileMenuChange?.(isOpen);
+    };
     const appBarRef = useAppBarHeightPublisher();
     useNavigationTrail();
 
@@ -276,7 +286,7 @@ const AppLayoutFrame = ({
                                     sx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...((isGlass || usesBarCapsules) && {ml: 0})}}>
                             <MenuIcon />
                         </IconButton>
-                        {isSideMenu && <CollapseMenuButton collapsed={collapsed} onToggle={toggle} />}
+                        {isSideMenu && <CollapseMenuButton collapsed={collapsed} onToggle={toggleCollapsed} />}
                         <BarBrand logo={logo} brandName={brandName} brandCaption={brandCaption} homePath={homePath}
                                   sx={isSideMenu ? {display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}} : {display: 'flex'}} />
                     </BarGroup>
@@ -312,6 +322,7 @@ const AppLayoutFrame = ({
             {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
+                              onPinnedTabsChange={onMobileTabsChange}
                               account={(
                                   <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle}
                                                showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} user={user}
@@ -343,7 +354,7 @@ const AppLayoutFrame = ({
                         <SideMenu {...sideMenuProps} showBrand={false} collapsed={collapsed}
                                   railTop={isBarMerged ? (
                                       <>
-                                          <CollapseMenuButton collapsed={collapsed} onToggle={toggle} />
+                                          <CollapseMenuButton collapsed={collapsed} onToggle={toggleCollapsed} />
                                           {logo && <RailBrand logo={logo} brandName={brandName} homePath={homePath} />}
                                       </>
                                   ) : undefined}
@@ -427,27 +438,38 @@ const AppLayoutFrame = ({
  * @param {boolean} [props.minimizeTabBarOnScroll] en el teléfono con vidrio, la barra de pestañas se encoge al leer hacia
  *     abajo y regresa al subir (como iOS 26); por omisión sí
  * @param {number|string} [props.contentMaxWidth] por omisión 1400
+ * @param {(collapsed: boolean) => void} [props.onMenuCollapse] la persona encogió (true) o abrió (false) el menú lateral
+ * @param {(isOpen: boolean) => void} [props.onMobileMenuChange] se abrió o se cerró el menú del teléfono (el cajón)
+ * @param {(keys: string[]|null) => void} [props.onMobileTabsChange] la persona eligió sus pestañas del teléfono (las llaves
+ *     de menuItemKeyOf; null: regresó a las de omisión). Se recuerdan en el navegador; con esto el proyecto las puede guardar
+ *     en su servidor
+ * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete (para todo el marco)
  * @param {import('react').ReactNode} props.children el contenido
  */
 export const AppLayout = ({
     logo, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
-    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, children,
+    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, onMenuCollapse, onMobileMenuChange, onMobileTabsChange,
+    texts, children,
 }) => {
     const {appName} = useToolkitSettings();
     const appMenu = useMemo(() => ({menuItems}), [menuItems]);
+    // los textos del marco llegan a todas sus piezas (la cuenta, el menú, las pestañas del teléfono), cada una lee los suyos
     return (
-        <PageTitleProvider>
-            <AppMenuContext.Provider value={appMenu}>
-                <AppLayoutFrame logo={logo} brandName={brandName ?? appName} brandCaption={brandCaption} homePath={homePath} menuItems={menuItems} menuPosition={menuPosition}
-                                user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
-                                headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
-                                showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
-                                isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
-                                contentMaxWidth={contentMaxWidth}>
-                    {children}
-                </AppLayoutFrame>
-            </AppMenuContext.Provider>
-        </PageTitleProvider>
+        <ComponentTexts namespace="layout" texts={texts}>
+            <PageTitleProvider>
+                <AppMenuContext.Provider value={appMenu}>
+                    <AppLayoutFrame logo={logo} brandName={brandName ?? appName} brandCaption={brandCaption} homePath={homePath} menuItems={menuItems} menuPosition={menuPosition}
+                                    user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
+                                    headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
+                                    showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
+                                    isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
+                                    contentMaxWidth={contentMaxWidth} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
+                                    onMobileTabsChange={onMobileTabsChange}>
+                        {children}
+                    </AppLayoutFrame>
+                </AppMenuContext.Provider>
+            </PageTitleProvider>
+        </ComponentTexts>
     );
 };

@@ -6,8 +6,12 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function FullPageLoader() {
-    const {t} = useToolkitTranslation('common');
+/**
+ * @param {object} [props]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ */
+export default function FullPageLoader({texts} = {}) {
+    const {t} = useToolkitTranslation('common', texts);
 
     return (
         <Box role="status" aria-live="polite" sx={{display: 'grid', placeItems: 'center', minHeight: '100vh', bgcolor: 'background.default'}}>

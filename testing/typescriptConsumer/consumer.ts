@@ -36,6 +36,13 @@ import {
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
+// lo de la 0.25: sistemas que ya existen, el proveedor más cercano, eventos hacia afuera y textos propios
+import {
+    ActionsMenu, BarSearch, CHART_VIEW, CollapsibleSection, ColorSchemeToggle, ComponentTexts, ToolkitProvider, createBrowserNavigation,
+    createHashNavigation, formattersOf, useFormatters,
+} from '@stackcraftmx/calcita';
+import {LineChart} from '@stackcraftmx/calcita/charts';
+import {EventDetails, reminderOf} from '@stackcraftmx/calcita/calendar';
 
 const amount: string = formatCurrency(1234.5);
 const title: string = problemTitle(null, 503);
@@ -155,5 +162,32 @@ const applyCaught = (caught: unknown) => applyServerProblem(caught, {setFieldErr
 // @ts-expect-error una función del contrato con otra forma: signIn regresa {secondStep}
 const wrongConnector: AccountConnector = {...accountConnector, signIn: async () => 'adentro'};
 
-export {watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+// sin router: con # en la dirección o con prefijo; las dos con la forma de reactRouterNavigation
+const legacyNavigations = [createHashNavigation(), createBrowserNavigation({basePath: '/portal'})];
+const legacyIsland = createElement(ToolkitProvider, {language: 'en', navigation: legacyNavigations[0], children: 'isla'});
+// los formatos de una configuración propia y los del proveedor más cercano
+const englishDate: string = formattersOf(() => ({language: 'en', timeZone: 'UTC', currency: 'USD'})).formatDate('2026-10-17');
+const formattersHook = () => useFormatters().formatCurrency(10);
+// eventos hacia afuera con sus tipos
+const salesChart = createElement(LineChart, {
+    data: [], series: [{key: 'sales', label: 'Ventas'}], periodLabel: 'Mes', ariaLabel: 'Ventas', emptyLabel: 'Sin datos',
+    defaultView: CHART_VIEW.table, onViewChange: (view: 'chart'|'table') => view,
+});
+const layoutEvents = createElement(AppLayout, {
+    onMenuCollapse: (collapsed: boolean) => collapsed, onMobileTabsChange: (keys: string[]|null) => keys, texts: {drawer: {open: 'Abrir'}},
+    children: 'contenido',
+});
+const sectionToggle = createElement(CollapsibleSection, {collapsedTitle: 'Ver', expandedTitle: 'Ocultar', onExpandedChange: (isOpen: boolean) => isOpen, children: 'x'});
+// OJO: con todas sus props opcionales, createElement no deduce el tipo (lo toma por un elemento sin props): se revisan directo
+const schemeToggle: Parameters<typeof ColorSchemeToggle>[0] = {onChange: (mode) => mode, texts: {}};
+const barSearch = createElement(BarSearch, {value: '', onChange: (text: string) => text, placeholder: 'Buscar'});
+const rowMenu = createElement(ActionsMenu, {label: 'Acciones', actions: [{key: 'edit', label: 'Editar', onClick: () => {}}]});
+const eventDetails = createElement(EventDetails, {event: {title: 'Visita', start: '2026-10-20T16:00:00Z', reminderMinutes: 30}});
+const reminder = reminderOf(90);
+const ownTexts = createElement(ComponentTexts, {namespace: 'table', texts: {count: {records_other: '{{total}} pedidos'}}, children: 'x'});
+// @ts-expect-error la vista de una gráfica es 'chart' o 'table'
+const wrongView = createElement(LineChart, {data: [], series: [], periodLabel: '', ariaLabel: '', emptyLabel: '', defaultView: 'pie'});
+
+export {legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

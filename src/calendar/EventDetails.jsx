@@ -26,7 +26,7 @@ import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
 import {REMINDER_UNIT, isOpenableMeetingUrl, reminderOf} from '@/calendar/calendarEvents.js';
-import {formatDate, formatTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 
 /** Las respuestas de un invitado. */
@@ -59,6 +59,7 @@ function DetailRow({Icon, label, children}) {
  */
 export default function EventDetails({event, actions, titleId, texts}) {
     const {t} = useToolkitTranslation('calendar', texts);
+    const {formatDate, formatTime} = useFormatters();
     const isWholeDay = event.allDay || WHOLE_DAY_PATTERN.test(event.start);
     let when = formatDate(event.start);
     if (!isWholeDay) {

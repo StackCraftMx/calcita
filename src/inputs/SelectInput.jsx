@@ -33,11 +33,12 @@ import FieldFrame from '@/inputs/FieldFrame.jsx';
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.multiple] elegir varias opciones
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function SelectInput({
-    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false,
+    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'select'}-${generatedId}`;
     // OJO: la lista desplegable de MUI es un div y no un <input>: el `for` de la etiqueta no la une. Se nombra con su etiqueta

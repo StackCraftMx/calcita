@@ -21,7 +21,7 @@ import Typography from '@mui/material/Typography';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
-import {formatDateTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {inboxDateOf} from '@/inbox/inboxDates.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
@@ -30,6 +30,7 @@ const PREVIEW_LENGTH = 90;
 
 /** Quién manda, para quién, con copia a quién y cuándo. */
 function MessageHeader({entry, t}) {
+    const {formatDateTime} = useFormatters();
     return (
         <Stack direction="row" spacing={1.5} sx={{alignItems: 'center'}}>
             <Avatar>{initialsOf(entry.from.name)}</Avatar>
@@ -81,6 +82,7 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
  */
 export default function MessageView({message, actions, footer, onAttachmentClick, onExpand, renderBody, texts}) {
     const {t} = useToolkitTranslation('inbox', texts);
+    const formatters = useFormatters();
     // los mensajes anteriores que la persona abrió (empiezan encogidos), de qué conversación: al cambiar de mensaje se olvidan
     const [expanded, setExpanded] = useState({messageId: null, ids: []});
 
@@ -118,14 +120,14 @@ export default function MessageView({message, actions, footer, onAttachmentClick
                     <Divider sx={{mt: 2}} />
                 </Box>
             ) : (
-                <ButtonBase key={entry.id} onClick={() => expand(entry.id)} aria-label={t('expandMessage', {name: entry.from.name, date: inboxDateOf(entry.receivedAt)})}
+                <ButtonBase key={entry.id} onClick={() => expand(entry.id)} aria-label={t('expandMessage', {name: entry.from.name, date: inboxDateOf(entry.receivedAt, new Date(), formatters)})}
                             sx={{justifyContent: 'flex-start', textAlign: 'left', borderRadius: 2, p: 1, mx: -1, gap: 1.5, '&:hover': {bgcolor: 'action.hover'}}}>
                     <Avatar sx={{width: 32, height: 32, fontSize: 13}}>{initialsOf(entry.from.name)}</Avatar>
                     <Box sx={{minWidth: 0, flex: 1}}>
                         <Typography variant="body2" sx={{fontWeight: 600}} noWrap>{entry.from.name}</Typography>
                         <Typography variant="body2" color="text.secondary" noWrap>{entry.body.replace(/\s+/g, ' ').slice(0, PREVIEW_LENGTH)}</Typography>
                     </Box>
-                    <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt)}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt, new Date(), formatters)}</Typography>
                 </ButtonBase>
             )))}
             {message.thread?.length > 0 && <Divider />}

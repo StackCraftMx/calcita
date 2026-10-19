@@ -56,9 +56,10 @@ function compactCount(count) {
  * @param {import('react').ReactNode} [props.caption]
  * @param {string} [props.ariaLabel]
  * @param {import('react').ReactNode} [props.extra] al final de la tira (p. ej. un rango de fechas)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function QuickFilters({value, onChange, options = [], caption, ariaLabel, extra}) {
-    const {t} = useToolkitTranslation('table');
+export default function QuickFilters({value, onChange, options = [], caption, ariaLabel, extra, texts}) {
+    const {t} = useToolkitTranslation('table', texts);
     const activeChip = useRef(null);
     const isFirstRender = useRef(true);
 

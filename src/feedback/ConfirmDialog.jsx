@@ -34,12 +34,13 @@ import DialogTitle from '@mui/material/DialogTitle';
  * @param {() => void} props.onConfirm
  * @param {() => void} props.onClose
  * @param {import('react').ReactNode} [props.children]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function ConfirmDialog({
     open, title, description, confirmLabel, cancelLabel, tone = 'primary',
-    isPending = false, isConfirmDisabled = false, errorMessage = null, onConfirm, onClose, children,
+    isPending = false, isConfirmDisabled = false, errorMessage = null, onConfirm, onClose, children, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     // ids propios: una pantalla puede tener varios diálogos montados y los aria-* no deben apuntar al de otro
     const dialogId = useId();
 

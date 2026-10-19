@@ -23,9 +23,10 @@ const SCREEN_READER_ONLY_SX = {
  * @param {string} props.password lo que lleva escrito la persona
  * @param {object} [props.policy] las reglas; por omisión DEFAULT_PASSWORD_POLICY
  * @param {string} [props.id]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function PasswordChecklist({password, policy = DEFAULT_PASSWORD_POLICY, id}) {
-    const {t} = useToolkitTranslation('auth');
+export default function PasswordChecklist({password, policy = DEFAULT_PASSWORD_POLICY, id, texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     return (
         <Box id={id}>
             <Typography variant="caption" color="text.secondary" component="p" sx={{mb: 0.5}}>{t('passwordRules.title')}</Typography>

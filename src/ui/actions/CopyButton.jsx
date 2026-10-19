@@ -20,9 +20,10 @@ const COPIED_FEEDBACK_MILLISECONDS = 2000;
  * @param {string} [props.label] ya traducido; por omisión «Copiar»
  * @param {'small'|'medium'} [props.size]
  * @param {() => void} [props.onCopied]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CopyButton({value, label, size = 'small', onCopied}) {
-    const {t} = useToolkitTranslation('common');
+export default function CopyButton({value, label, size = 'small', onCopied, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const [isCopied, setIsCopied] = useState(false);
     const buttonLabel = label ?? t('form.copy');
 

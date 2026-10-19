@@ -84,9 +84,10 @@ function floatingSxOf(theme) {
  * @param {string} [props.reloadLabel] ya traducido; por omisión «Recargar»
  * @param {() => void} [props.onReload] por omisión recarga la página
  * @param {'ribbon'|'floating'} [props.variant] franja o cápsula flotante (NEW_BUILD_NOTICE_VARIANT); por omisión franja
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function NewBuildNotice({message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon}) {
-    const {t} = useToolkitTranslation('common');
+export default function NewBuildNotice({message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const isNewBuildPublished = useNewBuildPublished();
 
     // guard clause: la compilación de la pestaña sigue siendo la publicada; el aviso no ocupa lugar
