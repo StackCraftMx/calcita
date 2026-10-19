@@ -48,7 +48,7 @@ import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDou
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
-import {formatDate} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {DUE_STATUS, dueStatusOf, tagOf, todayIsoDateOf} from '@/kanban/kanbanCards.js';
 import {cardsOfColumn, isOverLimit} from '@/kanban/kanbanMoves.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -95,6 +95,7 @@ function CompleteButton({card, t, onComplete}) {
  * @param {{card: any, t: Function, today: string, onComplete?: (card: any, completed: boolean) => void}} props
  */
 function DefaultCard({card, t, today, onComplete}) {
+    const {formatDate} = useFormatters();
     // terminada, su fecha ya no apura: se pinta tenue, sin rojo ni ámbar
     const dueStatus = card.completed && card.dueDate ? DUE_STATUS.upcoming : dueStatusOf(card.dueDate, today);
     let dueText = '';

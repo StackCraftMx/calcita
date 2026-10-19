@@ -18,7 +18,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 
-import {formatDate} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 
 /**
  * @param {object} props
@@ -26,9 +26,11 @@ import {formatDate} from '@/formatting.js';
  * @param {string} [props.to] AAAA-MM-DD o '' si no hay
  * @param {(range: {from: string, to: string}) => void} props.onChange '' para quitar
  * @param {string} [props.label] ya traducido; por defecto "Personalizado"
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function DateRangeFilter({from = '', to = '', onChange, label}) {
-    const {t} = useToolkitTranslation('table');
+export default function DateRangeFilter({from = '', to = '', onChange, label, texts}) {
+    const {t} = useToolkitTranslation('table', texts);
+    const {formatDate} = useFormatters();
     const [anchorElement, setAnchorElement] = useState(null);
     const [draft, setDraft] = useState({from, to});
     const isActive = Boolean(from || to);

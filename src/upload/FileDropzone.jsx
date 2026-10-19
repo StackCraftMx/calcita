@@ -34,7 +34,7 @@ import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
 
 import ModalWaiting from '@/feedback/ModalWaiting.jsx';
 import {toastError} from '@/feedback/toast.jsx';
-import {formatFileSize} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, matchesAccept, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
 
 // el ícono según el tipo del archivo elegido, con el mismo color que el panel de descargas
@@ -61,12 +61,14 @@ const DEFAULT_FILE_APPEARANCE = {Icon: InsertDriveFileOutlinedIcon, color: 'acti
  * @param {import('react').ReactNode} [props.actions]
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.sx] ajustes del recuadro
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function FileDropzone({
     value = null, onChange, accept, maxSize, hint, buttonLabel, disabled = false, busy = false, busyModal = false, onReject, actions,
-    children, sx,
+    children, sx, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
+    const {formatFileSize} = useFormatters();
     const inputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const isLocked = disabled || busy;

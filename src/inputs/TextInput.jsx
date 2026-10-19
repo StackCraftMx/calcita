@@ -65,12 +65,13 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {string} [props.id]
  * @param {object} [props.slotProps]
  * @param {object} [props.sx]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function TextInput({
     name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
-    uppercase = false, normalizeOnBlur, inputRef, clearable = true, ...textFieldProps
+    uppercase = false, normalizeOnBlur, inputRef, clearable = true, texts, ...textFieldProps
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     const [isRevealed, setIsRevealed] = useState(false);
     const generatedId = useId();
     const inputId = textFieldProps.id ?? `${name ?? 'text'}-${generatedId}`;

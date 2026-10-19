@@ -43,12 +43,13 @@ function plainTextOf(text) {
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.multiple] elegir varias claves
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function CatalogInput({
     name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
-    multiple = false,
+    multiple = false, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'catalog'}-${generatedId}`;
     const errorText = translateValidationMessage(t, error);

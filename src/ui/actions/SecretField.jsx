@@ -27,12 +27,18 @@ const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
  * @param {string} props.label ya traducido
  * @param {string} [props.helperText] p. ej. «Guárdela: no se vuelve a enseñar»
  * @param {() => void} [props.onCopied]
+ * @param {(isRevealed: boolean) => void} [props.onRevealChange] se destapó o se tapó (para registrar quién vio el secreto)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function SecretField({value, label, helperText = ' ', onCopied}) {
-    const {t} = useToolkitTranslation('common');
+export default function SecretField({value, label, helperText = ' ', onCopied, onRevealChange, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `secret-${generatedId}`;
-    const [isRevealed, setIsRevealed] = useState(false);
+    const [isRevealed, setIsRevealedState] = useState(false);
+    const setIsRevealed = (nextIsRevealed) => {
+        setIsRevealedState(nextIsRevealed);
+        onRevealChange?.(nextIsRevealed);
+    };
     const [isCopied, setIsCopied] = useState(false);
     const revealLabel = isRevealed ? t('form.hidePassword') : t('form.showPassword');
 
@@ -63,7 +69,7 @@ export default function SecretField({value, label, helperText = ' ', onCopied}) 
                         endAdornment: (
                             <InputAdornment position="end">
                                 <Tooltip title={revealLabel}>
-                                    <IconButton size="small" aria-label={revealLabel} onClick={() => setIsRevealed((current) => !current)}>
+                                    <IconButton size="small" aria-label={revealLabel} onClick={() => setIsRevealed(!isRevealed)}>
                                         {isRevealed ? <VisibilityOffOutlinedIcon fontSize="small" /> : <VisibilityOutlinedIcon fontSize="small" />}
                                     </IconButton>
                                 </Tooltip>

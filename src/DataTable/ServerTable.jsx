@@ -50,7 +50,7 @@ import BarSearch from '@/appShell/BarSearch.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import SelectionActions, {SELECTION_PHONE_LAYOUT, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
@@ -356,6 +356,7 @@ export default function ServerTable({
     texts,
 }) {
     const {t, language} = useToolkitTranslation('table', texts);
+    const {formatNumber} = useFormatters();
     const theme = useTheme();
     const tableState = useTableState({prefix, filterDefaults, filterKinds, defaultPageSize});
     const {filters, sortOrders, page, pageSize} = tableState;

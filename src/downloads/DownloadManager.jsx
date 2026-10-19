@@ -39,8 +39,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {cancelDownload, clearFinishedDownloads, countActiveDownloads, downloadsActor} from '@/downloads/downloadQueue.js';
 import {UNKNOWN_FILE_TYPE, useFileTypes} from '@/downloads/fileTypes.js';
 import {DOWNLOAD_STATUS} from '@/downloads/downloadsMachine.js';
-import {formatFileSize} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 // cuánto se queda el panel después de que TODAS las descargas terminaron bien
 const AUTO_DISMISS_MILLISECONDS = 5000;
@@ -70,9 +71,10 @@ function fileTypeAppearanceOf(download, fileTypes) {
  *
  * @param {object} download
  * @param {Function} t traductor de common
+ * @param {(bytes: number) => string} formatFileSize el de useFormatters (el idioma del proveedor más cercano)
  * @returns {string}
  */
-function detailTextOf(download, t) {
+function detailTextOf(download, t, formatFileSize) {
     if (download.status === DOWNLOAD_STATUS.completed) {
         return formatFileSize(download.loadedBytes);
     }
@@ -155,6 +157,7 @@ function DownloadStatusIndicator({download, displayName}) {
  */
 function DownloadRow({download}) {
     const {t} = useToolkitTranslation('common');
+    const {formatFileSize} = useFormatters();
     const {Icon, color} = fileTypeAppearanceOf(download, useFileTypes());
     const displayName = download.fileName ?? download.label;
     const isFailed = download.status === DOWNLOAD_STATUS.failed;
@@ -169,7 +172,7 @@ function DownloadRow({download}) {
                 </Tooltip>
                 <Typography variant="caption" component="p" noWrap={!isFailed}
                             sx={{color: isFailed ? 'error.main' : 'text.secondary'}}>
-                    {detailTextOf(download, t)}
+                    {detailTextOf(download, t, formatFileSize)}
                 </Typography>
             </Box>
             <Box sx={{flexShrink: 0, display: 'flex', alignItems: 'center'}}>
@@ -179,8 +182,12 @@ function DownloadRow({download}) {
     );
 }
 
-export default function DownloadManager() {
-    const {t} = useToolkitTranslation('common');
+/**
+ * @param {object} [props]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ */
+export default function DownloadManager({texts} = {}) {
+    const {t} = useToolkitTranslation('common', texts);
     const downloads = useSelector(downloadsActor, (snapshot) => snapshot.context.downloads);
     const [isExpanded, setIsExpanded] = useState(true);
     const previousCountRef = useRef(downloads.length);
@@ -206,56 +213,58 @@ export default function DownloadManager() {
     }, [allSucceeded, downloads.length]);
 
     return (
-        <Slide direction="up" in={downloads.length > 0} mountOnEnter unmountOnExit>
-            <Paper
-                elevation={8}
-                role="region"
-                aria-label={t('downloads.title')}
-                sx={[{
-                    position: 'fixed',
-                    right: (theme) => theme.spacing(SCREEN_EDGE_SPACING),
-                    bottom: 0,
-                    width: (theme) => `min(${PANEL_WIDTH_PIXELS}px, calc(100vw - ${theme.spacing(SCREEN_EDGE_SPACING * 2)}))`,
-                    // pegado al borde de abajo como en Drive: solo se redondean las esquinas de arriba
-                    borderBottomLeftRadius: 0,
-                    borderBottomRightRadius: 0,
-                    overflow: 'hidden',
-                    zIndex: (theme) => theme.zIndex.snackbar,
-                }, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
-            >
-                <Stack direction="row" sx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
-                    <Typography variant="subtitle2" component="h2" noWrap sx={{flex: 1}} aria-live="polite">
-                        {summaryTextOf(downloads, t)}
-                    </Typography>
-                    <Tooltip title={isExpanded ? t('downloads.collapse') : t('downloads.expand')}>
-                        <IconButton size="small" aria-expanded={isExpanded}
-                                    aria-label={isExpanded ? t('downloads.collapse') : t('downloads.expand')}
-                                    onClick={() => setIsExpanded((wasExpanded) => !wasExpanded)}>
-                            {isExpanded ? <ExpandMoreIcon fontSize="small" /> : <ExpandLessIcon fontSize="small" />}
-                        </IconButton>
-                    </Tooltip>
-                    {/* cerrar a media descarga dejaría el archivo sin aviso de que terminó: la X sale cuando ya nada baja */}
-                    {activeCount === 0 && (
-                        <Tooltip title={t('downloads.close')}>
-                            <IconButton size="small" aria-label={t('downloads.close')} onClick={clearFinishedDownloads}>
-                                <CloseIcon fontSize="small" />
+        <ComponentTexts namespace="common" texts={texts}>
+            <Slide direction="up" in={downloads.length > 0} mountOnEnter unmountOnExit>
+                <Paper
+                    elevation={8}
+                    role="region"
+                    aria-label={t('downloads.title')}
+                    sx={[{
+                        position: 'fixed',
+                        right: (theme) => theme.spacing(SCREEN_EDGE_SPACING),
+                        bottom: 0,
+                        width: (theme) => `min(${PANEL_WIDTH_PIXELS}px, calc(100vw - ${theme.spacing(SCREEN_EDGE_SPACING * 2)}))`,
+                        // pegado al borde de abajo como en Drive: solo se redondean las esquinas de arriba
+                        borderBottomLeftRadius: 0,
+                        borderBottomRightRadius: 0,
+                        overflow: 'hidden',
+                        zIndex: (theme) => theme.zIndex.snackbar,
+                    }, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
+                >
+                    <Stack direction="row" sx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
+                        <Typography variant="subtitle2" component="h2" noWrap sx={{flex: 1}} aria-live="polite">
+                            {summaryTextOf(downloads, t)}
+                        </Typography>
+                        <Tooltip title={isExpanded ? t('downloads.collapse') : t('downloads.expand')}>
+                            <IconButton size="small" aria-expanded={isExpanded}
+                                        aria-label={isExpanded ? t('downloads.collapse') : t('downloads.expand')}
+                                        onClick={() => setIsExpanded((wasExpanded) => !wasExpanded)}>
+                                {isExpanded ? <ExpandMoreIcon fontSize="small" /> : <ExpandLessIcon fontSize="small" />}
                             </IconButton>
                         </Tooltip>
-                    )}
-                </Stack>
-                <Collapse in={isExpanded}>
-                    <Divider />
-                    {/* OJO: overflowY auto también prende el scroll horizontal ante 1 px de más; se apaga explícito */}
-                    <List dense disablePadding sx={{maxHeight: LIST_MAX_HEIGHT, overflowY: 'auto', overflowX: 'hidden'}}>
-                        {downloads.map((download, index) => (
-                            <Fragment key={download.id}>
-                                {index > 0 && <Divider component="li" />}
-                                <DownloadRow download={download} />
-                            </Fragment>
-                        ))}
-                    </List>
-                </Collapse>
-            </Paper>
-        </Slide>
+                        {/* cerrar a media descarga dejaría el archivo sin aviso de que terminó: la X sale cuando ya nada baja */}
+                        {activeCount === 0 && (
+                            <Tooltip title={t('downloads.close')}>
+                                <IconButton size="small" aria-label={t('downloads.close')} onClick={clearFinishedDownloads}>
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                    </Stack>
+                    <Collapse in={isExpanded}>
+                        <Divider />
+                        {/* OJO: overflowY auto también prende el scroll horizontal ante 1 px de más; se apaga explícito */}
+                        <List dense disablePadding sx={{maxHeight: LIST_MAX_HEIGHT, overflowY: 'auto', overflowX: 'hidden'}}>
+                            {downloads.map((download, index) => (
+                                <Fragment key={download.id}>
+                                    {index > 0 && <Divider component="li" />}
+                                    <DownloadRow download={download} />
+                                </Fragment>
+                            ))}
+                        </List>
+                    </Collapse>
+                </Paper>
+            </Slide>
+        </ComponentTexts>
     );
 }

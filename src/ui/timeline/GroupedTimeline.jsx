@@ -57,23 +57,27 @@ const ALTERNATE_TIMELINE = {m: 0, px: 0, py: 0.5};
  * @param {import('react').ReactNode} props.groups[].items[].title
  * @param {string} [props.groups[].items[].timestamp] fecha y hora ya formateadas
  * @param {import('react').ReactNode} [props.groups[].items[].details] lo que va abajo del título (chip de resultado, una liga...)
+ * @param {(groupKey: string, isExpanded: boolean) => void} [props.onGroupToggle] la persona abrió o plegó un grupo (por ejemplo,
+ *     para pedir sus eventos hasta que se abre)
  */
-export default function GroupedTimeline({groups}) {
+export default function GroupedTimeline({groups, onGroupToggle}) {
     const theme = useTheme();
     const isWide = useMediaQuery(theme.breakpoints.up('md'));
     // llaves de los grupos plegables que el usuario tiene abiertos; arrancan como dice defaultExpanded
     const [expandedKeys, setExpandedKeys] = useState(() => new Set(
         groups.filter((timelineGroup) => timelineGroup.defaultExpanded !== false).map((timelineGroup) => timelineGroup.key),
     ));
-    const toggleGroup = (groupKey) => setExpandedKeys((currentKeys) => {
-        const nextKeys = new Set(currentKeys);
-        if (nextKeys.has(groupKey)) {
-            nextKeys.delete(groupKey);
-        } else {
+    const toggleGroup = (groupKey) => {
+        const isOpening = !expandedKeys.has(groupKey);
+        const nextKeys = new Set(expandedKeys);
+        if (isOpening) {
             nextKeys.add(groupKey);
+        } else {
+            nextKeys.delete(groupKey);
         }
-        return nextKeys;
-    });
+        setExpandedKeys(nextKeys);
+        onGroupToggle?.(groupKey, isOpening);
+    };
 
     return (
         <Stack spacing={1.5}>

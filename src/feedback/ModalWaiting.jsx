@@ -14,10 +14,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 
 /**
- * @param {{open: boolean, title?: string, text?: string}} props textos ya traducidos; por defecto los de common:waiting
+ * @param {object} props
+ * @param {boolean} props.open
+ * @param {string} [props.title] ya traducido; por omisión common:waiting.title
+ * @param {string} [props.text] ya traducido; por omisión common:waiting.text
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ModalWaiting({open, title, text}) {
-    const {t} = useToolkitTranslation('common');
+export default function ModalWaiting({open, title, text, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
 
     return (
         <Dialog open={open} disableEscapeKeyDown aria-busy="true" sx={{zIndex: (theme) => theme.zIndex.tooltip + 10}}>

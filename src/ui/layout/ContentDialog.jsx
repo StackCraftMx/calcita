@@ -90,9 +90,10 @@ function SlideUp(props) {
  * @param {() => void} props.onClose
  * @param {string} props.title texto ya traducido
  * @param {import('react').ReactNode} props.children
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ContentDialog({open, onClose, title, children}) {
-    const {t} = useToolkitTranslation('common');
+export default function ContentDialog({open, onClose, title, children, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const titleId = useId();
 
     return (

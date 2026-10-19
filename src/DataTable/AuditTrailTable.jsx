@@ -16,7 +16,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ServerTable from '@/DataTable/ServerTable.jsx';
 import {FILTER_KINDS} from '@/DataTable/useTableState.js';
 import {labelOf, lookup} from '@/dictionaries/dictionaries.js';
-import {formatDateTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import StatusChip from '@/ui/labels/StatusChip.jsx';
 
 // OJO: constantes de módulo; objetos nuevos en cada render reinician el estado de la tabla
@@ -35,12 +35,14 @@ const AUDIT_FILTER_KINDS = {event: FILTER_KINDS.multiSelect};
  * @param {string} props.ariaLabel
  * @param {number} [props.maxGridHeight]
  * @param {unknown} [props.refreshToken] cambia para volver a consultar (después de una acción sobre el mismo renglón)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
 export default function AuditTrailTable({
     subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], ariaLabel, maxGridHeight = null, refreshToken,
-    eventSuffixOf = null,
+    eventSuffixOf = null, texts,
 }) {
-    const {t} = useToolkitTranslation(['table', 'dictionaries']);
+    const {t} = useToolkitTranslation(['table', 'dictionaries'], texts);
+    const {formatDateTime} = useFormatters();
 
     const columns = [
         {

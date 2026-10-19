@@ -20,6 +20,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import {groupStateOf, withPermission, withPermissionGroup} from '@/access/permissionGroups.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 /**
  * Un permiso: su casilla, su nombre y qué deja hacer.
@@ -80,12 +81,15 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
  * @param {string[]} props.value los permisos del perfil
  * @param {(value: string[]) => void} [props.onChange] sin ella, o con readOnly, solo se ven
  * @param {boolean} [props.readOnly] un perfil que no se puede cambiar (el de administración)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `access` en los textos del paquete
  */
-export default function PermissionMatrix({groups, value, onChange, readOnly = false}) {
+export default function PermissionMatrix({groups, value, onChange, readOnly = false, texts}) {
     const isReadOnly = readOnly || !onChange;
     return (
-        <Stack spacing={1.5}>
-            {groups.map((group) => <PermissionGroup key={group.key} group={group} value={value} onChange={onChange} isReadOnly={isReadOnly} />)}
-        </Stack>
+        <ComponentTexts namespace="access" texts={texts}>
+            <Stack spacing={1.5}>
+                {groups.map((group) => <PermissionGroup key={group.key} group={group} value={value} onChange={onChange} isReadOnly={isReadOnly} />)}
+            </Stack>
+        </ComponentTexts>
     );
 }

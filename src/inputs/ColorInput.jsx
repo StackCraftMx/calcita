@@ -40,11 +40,12 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
  * @param {boolean} [props.checkContrast] avisa si casi no se lee sobre blanco (por omisión sí)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function ColorInput({
-    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef,
+    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, texts,
 }) {
-    const {t} = useToolkitTranslation('common');
+    const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'color'}-${generatedId}`;
     const color = value ?? '';
