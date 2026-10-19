@@ -36,6 +36,7 @@ const PAGES_EXTENSIONS = [
 const LOGS_EXTENSIONS = [
     {id: 'logger', option: 'createLogger(namespace)', example: "createLogger('orders').warn('No se pudo cancelar', {orderId, status, requestId})"},
     {id: 'level', option: 'setLogLevel', example: "if (import.meta.env.DEV) setLogLevel('debug');"},
+    {id: 'sink', option: 'addLogSink(entry => …)', example: 'addLogSink((entry) => Sentry.logger[entry.level](entry.message, entry.context))'},
     {id: 'notice', option: '<NewBuildNotice />', example: '<NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />'},
     {id: 'buildId', option: 'ToolkitProvider buildId', example: 'buildId={import.meta.env.VITE_BUILD_ID}'},
     {id: 'reportBuild', option: 'reportPublishedBuild', example: "reportPublishedBuild(response.headers.get('X-Frontend-Build'))"},

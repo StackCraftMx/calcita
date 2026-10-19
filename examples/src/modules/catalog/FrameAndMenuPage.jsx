@@ -19,9 +19,11 @@ const loadBack = () => import('@/modules/catalog/demos/shell/BackToList.tsx?demo
 // (shell.<sección>.extend.<id>)
 const LAYOUT_EXTENSIONS = [
     {id: 'brand', option: 'logo · brandName · brandCaption', example: 'brandCaption="Panel de administración"'},
+    {id: 'wordmark', option: 'wordmark', example: 'wordmark={<img src={logoAncho} alt="" />}'},
     {id: 'menuPosition', option: 'menuPosition', example: 'menuPosition={MENU_POSITION.top}'},
     {id: 'headerActions', option: 'headerActions', example: 'headerActions={<HelpButton />}'},
     {id: 'accountMenuItems', option: 'accountMenuItems', example: "accountMenuItems={[{to: '/billing', label: 'Facturación', Icon: ReceiptIcon}]}"},
+    {id: 'accountMenuLinks', option: 'accountMenuItems · href · onClick', example: "{label: 'Regresar al sistema', href: LEGACY_URL}"},
     {id: 'accountSettings', option: 'accountSettings', example: 'accountSettings={<MySetting />}'},
     {id: 'sidebarFooter', option: 'sidebarFooter', example: 'sidebarFooter={<HelpCard />}'},
     {id: 'ribbons', option: 'ribbons', example: 'ribbons={<MaintenanceNotice />}'},
@@ -41,6 +43,8 @@ const MENU_EXTENSIONS = [
     {id: 'badgeKey', option: 'badgeKey', example: "badgeKey: 'orders'"},
     {id: 'badge', option: 'badge', example: "badge: 'Nuevo'"},
     {id: 'children', option: 'children', example: "children: [{to: '/orders/returns', label: 'Devoluciones'}]"},
+    {id: 'href', option: 'href', example: "{href: 'https://sistema-anterior/inicio', label: 'Sistema anterior'}"},
+    {id: 'icon', option: 'Icon · icon', example: 'icon: <Iconify icon="mdi:bank" />  // o Icon: AccountBalanceOutlinedIcon'},
     {id: 'mobileTab', option: 'mobileTab', example: 'mobileTab: true'},
 ];
 const CAPSULES_EXTENSIONS = [
