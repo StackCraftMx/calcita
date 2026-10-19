@@ -58,7 +58,7 @@ const LEGACY_EXTENSIONS = [
     {id: 'formatters', option: 'useFormatters()', example: 'const {formatCurrency, formatDate} = useFormatters();'},
     {id: 'ownTheme', option: 'su createTheme', example: "createTheme({cssVariables: {cssVarPrefix: 'portal'}})"},
     {id: 'events', option: 'onX de cada componente', example: "onSelect={(row) => window.parent.postMessage({row}, '*')}"},
-    {id: 'chunks', option: 'manualChunks', example: "if (id.includes('@stackcraftmx/calcita') && !id.includes('/filepond')) return 'calcita';"},
+    {id: 'chunks', option: 'manualChunks', example: 'mejor sin manualChunks: rutas perezosas y Vite reparte solo'},
     {id: 'ownSx', option: 'sx en claro y oscuro', example: "<Avatar sx={{bgcolor: 'primary.main'}}>  // gana en los dos modos"},
 ];
 const I18NEXT_EXTENSIONS = [

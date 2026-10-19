@@ -1110,6 +1110,7 @@ export const catalogPageTexts = {
                     extend: {
                         brand: 'Su logo, el nombre de la app y el renglón chico debajo.',
                         wordmark: 'Un logo ancho (la marca con su nombre en una sola imagen) en lugar del logo y el nombre: en la barra y arriba del menú del teléfono, a 24 px de alto. Con el menú encogido se queda el logo chico.',
+                        wordmarkPair: 'Una imagen para cada modo: el logo de color en claro y el blanco en oscuro. Se pintan las dos y el modo decide cuál se ve, sin parpadeo.',
                         menuPosition: 'El menú a un lado (se encoge a íconos) o arriba, dentro de la barra.',
                         headerActions: 'Botones suyos en la barra, en todas las pantallas (una ayuda, un buscador general).',
                         accountMenuItems: 'Renglones suyos en el menú de la cuenta (Facturación, Mis pedidos…).',
@@ -1550,7 +1551,7 @@ export const catalogPageTexts = {
                         formatters: 'Fechas, montos y números con el idioma y la zona del proveedor más cercano (los sueltos usan el de la raíz).',
                         ownTheme: 'Su tema de MUI tal cual: Calcita lee los colores del tema, con o sin variables CSS y con su prefijo.',
                         events: 'Lo que pasa adentro sale por los eventos (onSelect, onChange…): la página vieja se entera y decide.',
-                        chunks: 'Si su proyecto parte el código en archivos (manualChunks), Calcita va en el suyo: junto con lo demás de node_modules armaba un círculo con MUI y la app tronaba al abrir. Su FilePond se queda fuera para bajar solo donde se usa.',
+                        chunks: 'Mejor no partir el código a mano: con las pantallas cargadas al abrirse, Vite reparte solo y lo pesado (la tabla, FilePond, formik) baja solo donde se usa. Medido en un sistema real: 1,171 kB en cada pantalla con el reparto a mano y 971 kB sin él. Si aun así reparte, Calcita en su propio archivo y lo de algunas pantallas sin asignar (el README trae el código).',
                         ownSx: 'El sx de su proyecto gana sobre los ajustes de Calcita en claro y en oscuro (un monograma con el color de su marca se queda así en los dos modos).',
                     },
                 },
@@ -2758,6 +2759,7 @@ export const catalogPageTexts = {
                     extend: {
                         brand: 'Your logo, the app name and the small line below it.',
                         wordmark: 'A wide logo (the brand and its name in one image) instead of the logo and the name: in the bar and at the top of the phone menu, 24 px tall. With the collapsed menu the small logo stays.',
+                        wordmarkPair: 'One image per mode: the color logo in light and the white one in dark. Both are painted and the mode decides which shows, without flicker.',
                         menuPosition: 'The menu on the side (shrinks to icons) or on top, inside the bar.',
                         headerActions: 'Your own buttons in the bar, on every screen (help, a global search).',
                         accountMenuItems: 'Your own rows in the account menu (Billing, My orders…).',
@@ -3198,7 +3200,7 @@ export const catalogPageTexts = {
                         formatters: 'Dates, amounts and numbers in the language and time zone of the nearest provider (the loose ones use the root’s).',
                         ownTheme: 'Your MUI theme as it is: Calcita reads the theme colors, with or without CSS variables and with its prefix.',
                         events: 'What happens inside goes out through the events (onSelect, onChange…): the old page finds out and decides.',
-                        chunks: 'If your project splits the code into files (manualChunks), Calcita goes in its own: together with the rest of node_modules it made a circle with MUI and the app crashed on open. Its FilePond stays out so it only loads where it is used.',
+                        chunks: 'Better not to split code by hand: with screens loaded when opened, Vite splits on its own and heavy pieces (the table, FilePond, formik) load only where used. Measured on a real system: 1,171 kB on every screen with manual splitting and 971 kB without. If you still split, Calcita in its own file and what only some screens use left unassigned (the README has the code).',
                         ownSx: 'Your project sx wins over Calcita adjustments in light and in dark (a monogram with your brand color stays that way in both modes).',
                     },
                 },

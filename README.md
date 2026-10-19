@@ -404,7 +404,7 @@ valor de siempre de respaldo: sin ella se ve igual.
 | --- | --- | --- |
 | `--calcita-panel-radius` | las esquinas de lo que flota grande y las tarjetas grandes (menú lateral, diálogos, la sección de un formulario) | 20px (16px en el minimalista) |
 | `--calcita-menu-radius` | las esquinas de menús, listas desplegables, globos y avisos | 12px |
-| `--calcita-field-radius` | las esquinas de los campos de captura | 12px (10px en el minimalista) |
+| `--calcita-field-radius` | las esquinas de los campos de captura | 12px (10px en el minimalista; cápsula dentro de `FormSection`) |
 | `--calcita-glass-blur` | el desenfoque del vidrio | 20px |
 | `--calcita-glass-saturate` | cuánto aviva el vidrio los colores de atrás | 180% |
 
@@ -528,12 +528,18 @@ un `<div>` de la página vieja, con su propio `ToolkitProvider`.
   salen también sin sesión, detrás del engrane («Regresar al sistema»).
 - **Su `sx` gana:** lo que el proyecto pinte con `sx` les gana a los ajustes de Calcita en claro y en oscuro.
 - **Su registro:** `addLogSink` manda cada anotación también a su reporte (Sentry, Datadog, su endpoint).
-- **Si parte el código en archivos** (`manualChunks`): Calcita en el suyo. Junto con lo demás de `node_modules` arma un
-  círculo con MUI y la app truena al abrir («reading 'isValidElementType'»). Su FilePond se queda fuera para seguir bajando
-  solo donde se usa:
+- **Mejor no parta el código a mano** (`manualChunks`): con las pantallas cargadas al abrirse (rutas perezosas), Vite arma
+  solo los archivos que se comparten y lo pesado de una pantalla (la tabla de MUI X, FilePond, formik y yup) baja solo ahí.
+  Medido en un sistema real: con el reparto a mano bajaban 1,171 kB en cada pantalla; sin él, 971 kB, ya con su tabla y su
+  formulario nuevos. Asignar un paquete a un archivo fijo le gana a la carga perezosa y lo baja en todas las pantallas.
+  Si aun así reparte a mano, Calcita va en su propio archivo (junto con lo demás de `node_modules` arma un círculo con MUI y
+  la app truena al abrir: «reading 'isValidElementType'») y lo que solo usan algunas pantallas se queda sin asignar:
 
 ```js
-if (id.includes('@stackcraftmx/calcita') && !id.includes('/filepond')) return 'calcita';
+const LAZY_ONLY = ['filepond', '/@mui/x-', '/nuqs/', '/formik/', '/yup/', '/@stackcraftmx/calcita/dist/DataTable/',
+    '/@stackcraftmx/calcita/dist/table.js', '/@stackcraftmx/calcita/dist/forms'];
+if (LAZY_ONLY.some((part) => id.includes(part))) return undefined;   // que siga a la pantalla que lo usa
+if (id.includes('@stackcraftmx/calcita')) return 'calcita';
 ```
 
 ```jsx
