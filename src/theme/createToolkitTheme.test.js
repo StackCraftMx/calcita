@@ -9,7 +9,16 @@ test('sin vidrio el tema no lo anota y los componentes del framework pintan sól
     const theme = createToolkitTheme();
 
     assert.equal(isGlassTheme(theme), false);
-    assert.equal(theme.components.MuiDialog, undefined);
+    assert.equal(theme.components.MuiTooltip, undefined);
+});
+
+test('ninguna ventana lleva el contorno de foco del navegador alrededor (sin vidrio, con vidrio y minimalista)', () => {
+    [createToolkitTheme(), createToolkitTheme({glass: true}), createToolkitTheme({look: THEME_LOOK.minimal})].forEach((theme) => {
+        const paper = theme.components.MuiDialog.styleOverrides.paper;
+        const paperStyle = typeof paper === 'function' ? paper({theme, ownerState: {}}) : paper;
+
+        assert.equal(paperStyle.outline, 0);
+    });
 });
 
 test('con glass: true el tema lo anota con la opacidad de omisión y suma los ajustes de vidrio', () => {
@@ -56,7 +65,8 @@ test('un diálogo a pantalla completa se queda sólido: es para leer', () => {
     const theme = createToolkitTheme({glass: true});
     const fullScreenPaper = theme.components.MuiDialog.styleOverrides.paper({theme, ownerState: {fullScreen: true}});
 
-    assert.deepEqual(fullScreenPaper, {});
+    // sin nada del vidrio: solo el ajuste de todas las ventanas (sin contorno de foco)
+    assert.deepEqual(fullScreenPaper, {outline: 0});
 });
 
 test('las tarjetas del contenido se quedan sólidas salvo que el proyecto pida glass: {surfaces: true}', () => {

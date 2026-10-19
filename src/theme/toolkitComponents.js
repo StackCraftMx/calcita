@@ -11,6 +11,7 @@ import {MuiButton} from '@/theme/components/MuiButton.js';
 import {MuiButtonBase} from '@/theme/components/MuiButtonBase.js';
 import {MuiChip} from '@/theme/components/MuiChip.js';
 import {MuiDataGrid} from '@/theme/components/MuiDataGrid.js';
+import {MuiDialog} from '@/theme/components/MuiDialog.js';
 import {MuiDrawer} from '@/theme/components/MuiDrawer.js';
 import {MuiMenuItem} from '@/theme/components/MuiMenuItem.js';
 import {MuiTypography} from '@/theme/components/MuiTypography.js';
@@ -26,6 +27,7 @@ export function toolkitComponents() {
         ...MuiButtonBase(),
         ...MuiChip(),
         ...MuiDataGrid(),
+        ...MuiDialog(),
         ...MuiDrawer(),
         ...MuiMenuItem(),
         ...MuiTypography(),
