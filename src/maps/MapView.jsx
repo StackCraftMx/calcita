@@ -8,13 +8,17 @@
 // En oscuro los mosaicos se oscurecen con un filtro (OpenStreetMap solo los da claros). Los mosaicos públicos de
 // OpenStreetMap son para poco tráfico y piden su crédito: para mucho uso, un proveedor propio en tileLayer.
 //
+// Se extiende sin tocar el framework: cualquier contenido en el globo (renderPopup: un estado, un botón, una foto, «Cómo
+// llegar»), capas propias de react-leaflet adentro (children: zonas de entrega, un radio), el clic en el mapa (onMapClick:
+// agregar un punto) y lo demás de MapContainer de Leaflet (mapProps).
+//
 // OJO, Next.js: Leaflet usa window al cargarse; en Next se importa con next/dynamic y ssr: false.
 //
 // Genérico del paquete: function (regla de la casa).
 import 'leaflet/dist/leaflet.css';
 import {useEffect, useMemo, useRef} from 'react';
 import L from 'leaflet';
-import {MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
+import {MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from 'react-leaflet';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
@@ -73,16 +77,48 @@ function FlyToSelected({selectedMarker, markerRefs}) {
 }
 
 /**
+ * Avisa cada clic en el mapa (fuera de un marcador) con su posición.
+ *
+ * @param {{onMapClick: (position: [number, number]) => void}} props
+ */
+function MapClicks({onMapClick}) {
+    useMapEvents({click: (event) => onMapClick([event.latlng.lat, event.latlng.lng])});
+    return null;
+}
+
+/**
+ * Lo que dice el globo de un marcador cuando la pantalla no da el suyo: su título y su descripción.
+ *
+ * @param {{marker: {title: string, description?: string}}} props
+ */
+function DefaultPopupContent({marker}) {
+    return (
+        <>
+            <Typography variant="subtitle2" component="p">{marker.title}</Typography>
+            {marker.description && <Typography variant="body2" color="text.secondary" component="p" sx={{m: 0}}>{marker.description}</Typography>}
+        </>
+    );
+}
+
+/**
  * @param {object} props
- * @param {Array<{id: string, position: [number, number], title: string, description?: string, tone?: string}>} props.markers
+ * @param {Array<{id: string, position: [number, number], title: string, description?: string, tone?: string} & Record<string, any>>} props.markers
  *     tone: un color del tema (primary, success, warning, error, info…); por omisión primary
  * @param {string|null} [props.selectedId]
  * @param {(markerId: string) => void} [props.onSelect] al picar un marcador
  * @param {string} props.ariaLabel ya traducido: qué enseña el mapa
  * @param {number} [props.height] px
  * @param {{url: string, attribution: string}} [props.tileLayer] por omisión OpenStreetMap
+ * @param {(marker: any) => import('react').ReactNode} [props.renderPopup] lo que dice el globo de un marcador (recibe el
+ *     marcador tal cual, con sus campos propios); por omisión su título y su descripción
+ * @param {(position: [number, number]) => void} [props.onMapClick] al picar el mapa fuera de un marcador
+ * @param {import('react').ReactNode} [props.children] capas propias de react-leaflet (Circle, Polygon, GeoJSON…)
+ * @param {object} [props.mapProps] lo demás de MapContainer de react-leaflet (scrollWheelZoom, minZoom…)
  */
-export default function MapView({markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES}) {
+export default function MapView({
+    markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES, renderPopup, onMapClick,
+    children, mapProps,
+}) {
     const theme = useTheme();
     const palette = paletteOf(theme);
     const markerRefs = useRef(new Map());
@@ -109,8 +145,10 @@ export default function MapView({markers, selectedId = null, onSelect, ariaLabel
             // OpenStreetMap solo da mosaicos claros: en oscuro se invierten y se regresa el tono (el agua sigue azul)
             ...currentTheme.applyStyles('dark', {'& .leaflet-tile-pane': {filter: 'invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9)'}}),
         })}>
-            <MapContainer center={markers[0]?.position ?? DEFAULT_CENTER} zoom={DEFAULT_ZOOM} scrollWheelZoom={false}>
+            <MapContainer center={markers[0]?.position ?? DEFAULT_CENTER} zoom={DEFAULT_ZOOM} scrollWheelZoom={false} {...mapProps}>
                 <TileLayer url={tileLayer.url} attribution={tileLayer.attribution} />
+                {onMapClick && <MapClicks onMapClick={onMapClick} />}
+                {children}
                 <FitToMarkers bounds={bounds} />
                 <FlyToSelected selectedMarker={selectedMarker} markerRefs={markerRefs} />
                 {markers.map((marker) => (
@@ -119,8 +157,7 @@ export default function MapView({markers, selectedId = null, onSelect, ariaLabel
                             ref={(leafletMarker) => (leafletMarker ? markerRefs.current.set(marker.id, leafletMarker) : markerRefs.current.delete(marker.id))}
                             eventHandlers={{click: () => onSelect?.(marker.id)}}>
                         <Popup>
-                            <Typography variant="subtitle2" component="p">{marker.title}</Typography>
-                            {marker.description && <Typography variant="body2" color="text.secondary" component="p" sx={{m: 0}}>{marker.description}</Typography>}
+                            {renderPopup ? renderPopup(marker) : <DefaultPopupContent marker={marker} />}
                         </Popup>
                     </Marker>
                 ))}
