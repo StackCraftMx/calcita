@@ -4,6 +4,9 @@
 //
 // Va dentro del formulario de formik (abajo del segundo paso o en el diálogo de activar la app).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDemoTotpCode con defaultProps y
+// styleOverrides de sus partes: root, code.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useFormikContext} from 'formik';
 import Button from '@mui/material/Button';
@@ -12,11 +15,19 @@ import Typography from '@mui/material/Typography';
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDemoTotpCode)
+const THEME_NAME = 'CalcitaDemoTotpCode';
+const TotpRoot = piecePart(THEME_NAME, 'Root', Stack);
+const TotpCode = piecePart(THEME_NAME, 'Code', Typography);
 
 /**
  * @param {{loadCode: () => Promise<string|null>}} props
  */
-export default function DemoTotpCodeButton({loadCode}) {
+export default function DemoTotpCodeButton(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaDemoTotpCode.defaultProps) y encima lo que llega aquí
+    const {loadCode} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('account');
     const {setFieldValue} = useFormikContext();
 
@@ -28,9 +39,9 @@ export default function DemoTotpCodeButton({loadCode}) {
     };
 
     return (
-        <Stack spacing={0.5} sx={{alignItems: 'center'}}>
+        <TotpRoot spacing={0.5} ownSx={{alignItems: 'center'}}>
             <Button size="small" startIcon={<ScienceOutlinedIcon />} onClick={fillCode}>{t('demo.totpCode')}</Button>
-            <Typography variant="caption" color="text.secondary" sx={{textAlign: 'center'}}>{t('demo.totpCodeHelp')}</Typography>
-        </Stack>
+            <TotpCode variant="caption" color="text.secondary" ownSx={{textAlign: 'center'}}>{t('demo.totpCodeHelp')}</TotpCode>
+        </TotpRoot>
     );
 }

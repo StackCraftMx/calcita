@@ -5,6 +5,9 @@
 //
 // Los textos se cambian con `texts`, con la forma de `common` en los textos del paquete: {wizard: {next: 'Continuar'}}.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaWizardLayout con defaultProps y
+// styleOverrides de sus partes: stepper, phoneSteps, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
@@ -14,6 +17,13 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaWizardLayout)
+const THEME_NAME = 'CalcitaWizardLayout';
+const WizardStepper = piecePart(THEME_NAME, 'Stepper', Stepper);
+const WizardPhoneSteps = piecePart(THEME_NAME, 'PhoneSteps', Box);
+const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 /**
  * @param {object} props
@@ -32,9 +42,11 @@ import Typography from '@mui/material/Typography';
  * @param {import('react').ReactNode} [props.problemAlert] el aviso de errores del servidor, arriba de los botones del último paso
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function WizardLayout({
+export default function WizardLayout(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
+    const {
     steps, activeIndex, skippedKeys, isSubmitting = false, onBack, onNext, onSkip, submitButton, problemAlert, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const activeStep = steps[activeIndex];
     const isLastStep = activeIndex === steps.length - 1;
@@ -42,7 +54,7 @@ export default function WizardLayout({
     return (
         <Stack spacing={3}>
             {/* en el teléfono los nombres de los pasos no caben: se dice en qué paso va */}
-            <Stepper activeStep={activeIndex} alternativeLabel sx={{display: {xs: 'none', sm: 'flex'}}}>
+            <WizardStepper activeStep={activeIndex} alternativeLabel ownSx={{display: {xs: 'none', sm: 'flex'}}}>
                 {steps.map((step) => {
                     let caption;
                     if (skippedKeys.has(step.key)) {
@@ -58,17 +70,17 @@ export default function WizardLayout({
                         </Step>
                     );
                 })}
-            </Stepper>
-            <Box sx={{display: {xs: 'block', sm: 'none'}}}>
+            </WizardStepper>
+            <WizardPhoneSteps ownSx={{display: {xs: 'block', sm: 'none'}}}>
                 <Typography variant="overline" color="text.secondary">{t('wizard.stepOf', {current: activeIndex + 1, total: steps.length})}</Typography>
                 <Typography variant="h6">{activeStep.label}</Typography>
-            </Box>
+            </WizardPhoneSteps>
 
             <Box>{activeStep.content}</Box>
 
             {isLastStep && problemAlert}
 
-            <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} sx={{justifyContent: 'space-between'}}>
+            <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: 'space-between'}}>
                 <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting} onClick={onBack}>
                     {t('wizard.back')}
                 </Button>
@@ -80,7 +92,7 @@ export default function WizardLayout({
                         ? submitButton
                         : <Button variant="contained" size="large" onClick={onNext}>{t('wizard.next')}</Button>}
                 </Stack>
-            </Stack>
+            </WizardActions>
         </Stack>
     );
 }

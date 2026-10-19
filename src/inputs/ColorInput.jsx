@@ -5,6 +5,9 @@
 // Para lo que se imprime o se lee sobre blanco (el color de una marca en un comprobante). El color llega al formulario en
 // mayúsculas (#2B3A67); '' = sin color.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaColorInput con defaultProps y
+// styleOverrides de sus partes: swatch, nativeInput.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -18,6 +21,12 @@ import TextField from '@mui/material/TextField';
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColorInput)
+const THEME_NAME = 'CalcitaColorInput';
+const ColorSwatch = piecePart(THEME_NAME, 'Swatch', Box);
+const ColorNativeInput = piecePart(THEME_NAME, 'NativeInput', Box);
 
 // #RRGGBB
 const COLOR_LENGTH = 7;
@@ -42,9 +51,11 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ColorInput({
+export default function ColorInput(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaColorInput.defaultProps) y encima lo que llega aquí
+    const {
     name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'color'}-${generatedId}`;
@@ -79,8 +90,8 @@ export default function ColorInput({
                         input: {
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <Box component="label"
-                                         sx={(theme) => ({
+                                    <ColorSwatch component="label"
+                                         ownSx={(theme) => ({
                                              position: 'relative', display: 'block', flexShrink: 0, width: SWATCH_PIXELS, height: SWATCH_PIXELS,
                                              borderRadius: '50%', cursor: disabled ? 'default' : 'pointer',
                                              backgroundColor: isValidColor ? color : 'transparent',
@@ -88,10 +99,10 @@ export default function ColorInput({
                                              boxShadow: `inset 0 0 0 1px ${SWATCH_EDGE.light}`,
                                              ...theme.applyStyles('dark', {boxShadow: `inset 0 0 0 1px ${SWATCH_EDGE.dark}`}),
                                          })}>
-                                        <Box component="input" type="color" value={isValidColor ? color : NEUTRAL_COLOR} disabled={disabled}
+                                        <ColorNativeInput component="input" type="color" value={isValidColor ? color : NEUTRAL_COLOR} disabled={disabled}
                                              aria-label={t('form.pickColor')} onChange={(event) => choose(event.target.value)}
-                                             sx={{position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, border: 0, p: 0, cursor: 'inherit'}} />
-                                    </Box>
+                                             ownSx={{position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, border: 0, p: 0, cursor: 'inherit'}} />
+                                    </ColorSwatch>
                                 </InputAdornment>
                             ),
                         },

@@ -11,6 +11,9 @@
 //   <TwoStepVerificationCard security={security} onSecurityChange={setSecurity} account={session.email}
 //                            canUsePasskeys={passkeysSupported()} actions={securityActions} />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTwoStepVerification con defaultProps y
+// styleOverrides de sus partes: qr, secret, secretCode, header, headerTitle, headerText, menuIcon.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {Form, Formik} from 'formik';
@@ -52,6 +55,17 @@ import CopyButton from '@/ui/actions/CopyButton.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTwoStepVerification)
+const THEME_NAME = 'CalcitaTwoStepVerification';
+const TwoStepQr = piecePart(THEME_NAME, 'Qr', Box);
+const TwoStepSecret = piecePart(THEME_NAME, 'Secret', Stack);
+const TwoStepSecretCode = piecePart(THEME_NAME, 'SecretCode', Box);
+const TwoStepHeader = piecePart(THEME_NAME, 'Header', Stack);
+const TwoStepHeaderTitle = piecePart(THEME_NAME, 'HeaderTitle', Stack);
+const TwoStepHeaderText = piecePart(THEME_NAME, 'HeaderText', Box);
+const TwoStepMenuIcon = piecePart(THEME_NAME, 'MenuIcon', ListItemIcon);
 
 // los códigos que quedan desde donde se avisa en ámbar que ya son pocos
 const FEW_CODES_LEFT = 2;
@@ -138,14 +152,14 @@ function TotpDialog({setup, onConfirm, onClose}) {
                             <Stack spacing={2}>
                                 <Typography variant="body2">{t('twoStep.totpStep1')}</Typography>
                                 {setup?.qrImageUrl && (
-                                    <Box component="img" src={setup.qrImageUrl} alt={t('twoStep.totpQrAlt')}
-                                         sx={{width: QR_SIZE_PIXELS, height: QR_SIZE_PIXELS, alignSelf: 'center', borderRadius: 1, bgcolor: 'common.white'}} />
+                                    <TwoStepQr component="img" src={setup.qrImageUrl} alt={t('twoStep.totpQrAlt')}
+                                         ownSx={{width: QR_SIZE_PIXELS, height: QR_SIZE_PIXELS, alignSelf: 'center', borderRadius: 1, bgcolor: 'common.white'}} />
                                 )}
                                 <Typography variant="caption" color="text.secondary">{t('twoStep.totpCantScan')}</Typography>
-                                <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
-                                    <Box component="code" sx={{fontFamily: CODE_FONT, fontSize: 13, wordBreak: 'break-all'}}>{setup?.secret}</Box>
+                                <TwoStepSecret direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
+                                    <TwoStepSecretCode component="code" ownSx={{fontFamily: CODE_FONT, fontSize: 13, wordBreak: 'break-all'}}>{setup?.secret}</TwoStepSecretCode>
                                     <CopyButton value={setup?.secret ?? ''} />
-                                </Stack>
+                                </TwoStepSecret>
                                 <Typography variant="body2">{t('twoStep.totpStep2')}</Typography>
                                 <FormProblemAlert />
                                 <FormTextField name="code" label={t('twoStep.codeLabel')} autoComplete="one-time-code" clearable={false}
@@ -209,16 +223,16 @@ function PasskeyDialog({open, onAdd, onClose, notice}) {
  */
 function SettingRow({Icon, title, caption, captionColor = 'text.secondary', action}) {
     return (
-        <Stack direction="row" spacing={1} sx={{alignItems: 'center', justifyContent: 'space-between'}}>
-            <Stack direction="row" spacing={1.5} sx={{alignItems: 'center', minWidth: 0}}>
+        <TwoStepHeader direction="row" spacing={1} ownSx={{alignItems: 'center', justifyContent: 'space-between'}}>
+            <TwoStepHeaderTitle direction="row" spacing={1.5} ownSx={{alignItems: 'center', minWidth: 0}}>
                 <Icon color="action" />
-                <Box sx={{minWidth: 0}}>
+                <TwoStepHeaderText ownSx={{minWidth: 0}}>
                     <Typography variant="subtitle2">{title}</Typography>
                     {caption && <Typography variant="caption" color={captionColor} component="p">{caption}</Typography>}
-                </Box>
-            </Stack>
+                </TwoStepHeaderText>
+            </TwoStepHeaderTitle>
             {action}
-        </Stack>
+        </TwoStepHeader>
     );
 }
 
@@ -241,7 +255,9 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  *     navegador la guarde (p. ej. el de la demostración: la llave queda de verdad en el llavero de la persona)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function TwoStepVerificationCard({security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts}) {
+export default function TwoStepVerificationCard(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaTwoStepVerification.defaultProps) y encima lo que llega aquí
+    const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
     // qué diálogo está abierto: uno a la vez
@@ -302,7 +318,7 @@ export default function TwoStepVerificationCard({security, onSecurityChange, act
                                         </IconButton>
                                     </Tooltip>
                                 )}>
-                                    <ListItemIcon sx={{minWidth: 32}}><VpnKeyOutlinedIcon fontSize="small" /></ListItemIcon>
+                                    <TwoStepMenuIcon ownSx={{minWidth: 32}}><VpnKeyOutlinedIcon fontSize="small" /></TwoStepMenuIcon>
                                     <ListItemText primary={passkey.name}
                                                   secondary={passkey.lastUsedAt
                                                       ? t('twoStep.passkeyUsed', {date: formatDateTime(passkey.lastUsedAt)})

@@ -9,6 +9,9 @@
 // footer va abajo de la tarjeta. Si es una función, recibe signIn para entrar desde un botón propio (p. ej. «Entrar con la
 // cuenta de ejemplo»), con el mismo segundo paso; si falla, el motivo sale arriba del formulario.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSignInScreen con defaultProps y
+// styleOverrides de sus partes: alert.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useState} from 'react';
 import Alert from '@mui/material/Alert';
@@ -23,6 +26,11 @@ import {passkeysSupported, signWithPasskey} from '@/security/passkeys.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInScreen)
+const THEME_NAME = 'CalcitaSignInScreen';
+const SignInAlert = piecePart(THEME_NAME, 'Alert', Alert);
 
 /**
  * @param {object} props
@@ -35,7 +43,9 @@ import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInScreen({homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts}) {
+export default function SignInScreen(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSignInScreen.defaultProps) y encima lo que llega aquí
+    const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('auth', texts);
     const {connector, session, refreshSession} = useAccount();
     const {useNavigate, useLocation} = useToolkitNavigation();
@@ -108,7 +118,7 @@ export default function SignInScreen({homePath = '/', forgotPasswordPath, logo, 
             <AuthLayout logo={logo} brandName={brandName} title={t('signIn.title')} description={t('signIn.subtitle')}
                         showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}
                         footer={typeof footer === 'function' ? footer({signIn: signInFromFooter}) : footer}>
-                {notice && <Alert severity="warning" sx={{mb: 2}}>{notice}</Alert>}
+                {notice && <SignInAlert severity="warning" ownSx={{mb: 2}}>{notice}</SignInAlert>}
                 <SignInForm onSubmit={signIn} forgotPasswordPath={forgotPasswordPath} />
             </AuthLayout>
         </ComponentTexts>
