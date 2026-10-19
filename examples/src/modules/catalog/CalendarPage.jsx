@@ -19,6 +19,13 @@ const CALENDAR_EXTENSIONS = [
     {id: 'onEventChange', option: 'onEventChange', example: 'onEventChange={(change) => deliveriesApi.reschedule(change)}'},
     {id: 'height', option: 'height', example: 'height="auto"'},
     {id: 'ariaLabel', option: 'ariaLabel', example: 'ariaLabel="Entregas de octubre"'},
+    {id: 'onDatesChange', option: 'onDatesChange', example: 'onDatesChange={({start, end}) => deliveriesApi.list({from: start, to: end})}'},
+    {id: 'onViewChange', option: 'onViewChange', example: "onViewChange={(view) => localStorage.setItem('calendar-view', view)}"},
+    {id: 'renderEvent', option: 'renderEvent', example: 'renderEvent={(event) => <DeliveryChip delivery={event} />}'},
+    {id: 'fullCalendarProps', option: 'fullCalendarProps', example: "fullCalendarProps={{businessHours: {daysOfWeek: [1, 2, 3, 4, 5], startTime: '09:00', endTime: '18:00'}, hiddenDays: [0]}}"},
+    {id: 'texts', option: 'texts', example: "texts={{today: 'Hoy mero', details: {join: 'Entrar a la junta'}}}"},
+    {id: 'eventDetails', option: 'EventDetails event', example: "<EventDetails event={{title, start, end, location, meetingUrl, attendees: [{id, name, response: 'accepted'}], reminderMinutes: 15, description}} />"},
+    {id: 'eventDetailsActions', option: 'EventDetails actions · titleId', example: '<EventDetails event={event} titleId="detail-title" actions={<Button onClick={edit}>Editar</Button>} />'},
 ];
 
 export const CalendarPage = () => {

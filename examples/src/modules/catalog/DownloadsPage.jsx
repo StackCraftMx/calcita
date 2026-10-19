@@ -21,6 +21,8 @@ const PANEL_EXTENSIONS = [
     {id: 'format', option: 'format', example: "format: 'xlsx'"},
     {id: 'request', option: 'request', example: "request: (options) => api.download('/orders/export', options)"},
     {id: 'onCompleted', option: 'onCompleted', example: 'onCompleted: (fileName) => reloadTable()'},
+    {id: 'onFailed', option: 'onFailed · onCanceled', example: "onFailed: (error) => reportError(error), onCanceled: () => analytics.track('download_canceled')"},
+    {id: 'fileTypes', option: 'ToolkitProvider fileTypes', example: "fileTypes={{zip: {Icon: FolderZipOutlinedIcon, color: 'warning.main', label: 'ZIP', hint: 'Todas las facturas'}}}"},
     {id: 'errors', option: '(error del servidor)', example: "throw new ApiError({status: 503, problem: {detail: 'Todavía no se cierra el mes.'}})"},
 ];
 const SETUP_EXTENSIONS = [
