@@ -73,9 +73,12 @@ export const downloadsMachine = setup({}).createMachine({
         },
         COMPLETED: {
             actions: assign({
+                // con el tamaño del archivo ya guardado: un archivo armado en el navegador (CSV, JSON) no avisa avance y el
+                // panel decía «0 bytes» de un archivo con datos
                 downloads: ({context, event}) => updateActiveDownload(context.downloads, event.id, {
                     status: DOWNLOAD_STATUS.completed,
                     fileName: event.fileName,
+                    ...(typeof event.sizeBytes === 'number' && {loadedBytes: event.sizeBytes, totalBytes: event.sizeBytes}),
                 }),
             }),
         },

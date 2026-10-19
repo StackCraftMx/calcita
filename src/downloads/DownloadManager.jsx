@@ -35,23 +35,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
-import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 
 import {cancelDownload, clearFinishedDownloads, countActiveDownloads, downloadsActor} from '@/downloads/downloadQueue.js';
+import {UNKNOWN_FILE_TYPE, useFileTypes} from '@/downloads/fileTypes.js';
 import {DOWNLOAD_STATUS} from '@/downloads/downloadsMachine.js';
 import {formatFileSize} from '@/formatting.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
-
-// ícono y color del tipo de archivo (el color sale de la paleta del tema, claro y oscuro)
-const FILE_TYPE_APPEARANCE = {
-    xlsx: {Icon: TableViewOutlinedIcon, color: 'success.main'},
-    csv: {Icon: TextSnippetOutlinedIcon, color: 'info.main'},
-    pdf: {Icon: PictureAsPdfOutlinedIcon, color: 'error.main'},
-};
-const DEFAULT_FILE_TYPE_APPEARANCE = {Icon: InsertDriveFileOutlinedIcon, color: 'text.secondary'};
 
 // cuánto se queda el panel después de que TODAS las descargas terminaron bien
 const AUTO_DISMISS_MILLISECONDS = 5000;
@@ -63,14 +52,17 @@ const LIST_MAX_HEIGHT = '40vh';
 const PROGRESS_RING_PIXELS = 22;
 
 /**
- * Tipo de archivo de una descarga: el que dijo quien la arrancó o, al terminar, la extensión del nombre.
+ * Tipo de archivo de una descarga: el que dijo quien la arrancó o, al terminar, la extensión del nombre. Los tipos son los de
+ * la casa y los del proyecto (ToolkitProvider fileTypes).
  *
  * @param {object} download renglón de la lista (downloadsMachine)
+ * @param {Record<string, {Icon: import('react').ElementType, color?: string}>} fileTypes
  * @returns {{Icon: import('react').ElementType, color: string}}
  */
-function fileTypeAppearanceOf(download) {
+function fileTypeAppearanceOf(download, fileTypes) {
     const extension = download.fileName?.split('.').pop()?.toLowerCase();
-    return FILE_TYPE_APPEARANCE[download.format ?? extension] ?? DEFAULT_FILE_TYPE_APPEARANCE;
+    const fileType = fileTypes[download.format ?? extension];
+    return fileType ? {Icon: fileType.Icon ?? UNKNOWN_FILE_TYPE.Icon, color: fileType.color ?? UNKNOWN_FILE_TYPE.color} : UNKNOWN_FILE_TYPE;
 }
 
 /**
@@ -163,7 +155,7 @@ function DownloadStatusIndicator({download, displayName}) {
  */
 function DownloadRow({download}) {
     const {t} = useToolkitTranslation('common');
-    const {Icon, color} = fileTypeAppearanceOf(download);
+    const {Icon, color} = fileTypeAppearanceOf(download, useFileTypes());
     const displayName = download.fileName ?? download.label;
     const isFailed = download.status === DOWNLOAD_STATUS.failed;
 
