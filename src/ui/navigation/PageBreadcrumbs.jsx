@@ -3,6 +3,9 @@
 // rápidos (ScrollableRow: sin barra de desplazamiento, la orilla donde hay más se desvanece y se arrastra con el mouse).
 // Antes deslizaba la lista de MUI y salía la barra gris del navegador debajo de las migas.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaPageBreadcrumbs con defaultProps y
+// styleOverrides de sus partes: root, link, current.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
@@ -12,13 +15,22 @@ import Typography from '@mui/material/Typography';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageBreadcrumbs)
+const THEME_NAME = 'CalcitaPageBreadcrumbs';
+const BreadcrumbsRoot = piecePart(THEME_NAME, 'Root', Breadcrumbs);
+const BreadcrumbsLink = piecePart(THEME_NAME, 'Link', Link);
+const BreadcrumbsCurrent = piecePart(THEME_NAME, 'Current', Typography);
 
 /**
  * @param {object} props
  * @param {Array<{label: string, to?: string}>} props.items textos ya traducidos
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageBreadcrumbs({items, texts}) {
+export default function PageBreadcrumbs(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaPageBreadcrumbs.defaultProps) y encima lo que llega aquí
+    const {items, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     if (items.length === 0) {
@@ -26,26 +38,26 @@ export default function PageBreadcrumbs({items, texts}) {
     }
     return (
         <ScrollableRow py={0}>
-            <Breadcrumbs aria-label={t('breadcrumbs')} separator={<NavigateNextIcon fontSize="small" />}
-                         sx={{...textSizeOf(13), color: 'text.secondary', flex: '0 0 auto', '& .MuiBreadcrumbs-ol': {flexWrap: 'nowrap'},
+            <BreadcrumbsRoot aria-label={t('breadcrumbs')} separator={<NavigateNextIcon fontSize="small" />}
+                         ownSx={{...textSizeOf(13), color: 'text.secondary', flex: '0 0 auto', '& .MuiBreadcrumbs-ol': {flexWrap: 'nowrap'},
                               '& .MuiBreadcrumbs-li': {flex: '0 0 auto'}}}>
                 {items.map((item, index) => {
                     const isLast = index === items.length - 1;
                     if (!isLast && item.to) {
                         return (
-                            <Link key={`${item.to}-${index}`} component={RouterLink} to={item.to} underline="hover" color="inherit" sx={{fontSize: 'inherit'}}>
+                            <BreadcrumbsLink key={`${item.to}-${index}`} component={RouterLink} to={item.to} underline="hover" color="inherit" ownSx={{fontSize: 'inherit'}}>
                                 {item.label}
-                            </Link>
+                            </BreadcrumbsLink>
                         );
                     }
                     return (
-                        <Typography key={`${item.label}-${index}`} component="span" aria-current={isLast ? 'page' : undefined}
-                                    sx={{fontSize: 'inherit', fontWeight: isLast ? 500 : 400, color: isLast ? 'text.primary' : 'text.secondary'}}>
+                        <BreadcrumbsCurrent key={`${item.label}-${index}`} component="span" aria-current={isLast ? 'page' : undefined}
+                                    ownSx={{fontSize: 'inherit', fontWeight: isLast ? 500 : 400, color: isLast ? 'text.primary' : 'text.secondary'}}>
                             {item.label}
-                        </Typography>
+                        </BreadcrumbsCurrent>
                     );
                 })}
-            </Breadcrumbs>
+            </BreadcrumbsRoot>
         </ScrollableRow>
     );
 }

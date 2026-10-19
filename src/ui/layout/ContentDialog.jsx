@@ -14,6 +14,9 @@
 //
 // Solo abre una vista: se cierra con la X, con Escape o con un clic afuera, sin confirmación.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaContentDialog con defaultProps y
+// styleOverrides de sus partes: header, title, closeButton, body.
+//
 // Genérico del paquete: function (regla de la casa). No sabe de negocio: el título y el contenido llegan ya traducidos.
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -25,6 +28,14 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaContentDialog)
+const THEME_NAME = 'CalcitaContentDialog';
+const DialogHeader = piecePart(THEME_NAME, 'Header', Box);
+const DialogTitle = piecePart(THEME_NAME, 'Title', Typography);
+const DialogCloseButton = piecePart(THEME_NAME, 'CloseButton', IconButton);
+const DialogBody = piecePart(THEME_NAME, 'Body', Box);
 
 // la hoja: lo ancho máximo en escritorio (un texto de 16 px se lee cómodo y cabe una tabla), su separación de las orillas y
 // la de su encabezado
@@ -92,27 +103,29 @@ function SlideUp(props) {
  * @param {import('react').ReactNode} props.children
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ContentDialog({open, onClose, title, children, texts}) {
+export default function ContentDialog(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaContentDialog.defaultProps) y encima lo que llega aquí
+    const {open, onClose, title, children, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const titleId = useId();
 
     return (
         <Dialog open={open} onClose={onClose} aria-labelledby={titleId} fullScreen
                 slots={{transition: SlideUp}} slotProps={{paper: {sx: sheetSxOf}}}>
-            <Box sx={{
+            <DialogHeader ownSx={{
                 display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, minHeight: 60, pl: {xs: 2.5, md: 4}, pr: {xs: 1.5, md: 2}, py: 1,
                 borderBottom: 1, borderColor: 'divider',
             }}>
-                <Typography id={titleId} variant="h6" component="h2" sx={{flex: 1, minWidth: 0}}>{title}</Typography>
+                <DialogTitle id={titleId} variant="h6" component="h2" ownSx={{flex: 1, minWidth: 0}}>{title}</DialogTitle>
                 {/* la X de Apple: en un círculo gris tenue, no suelta */}
-                <IconButton onClick={onClose} aria-label={t('actions.close')} size="small"
-                            sx={{bgcolor: 'action.hover', '&:hover': {bgcolor: 'action.selected'}}}>
+                <DialogCloseButton onClick={onClose} aria-label={t('actions.close')} size="small"
+                            ownSx={{bgcolor: 'action.hover', '&:hover': {bgcolor: 'action.selected'}}}>
                     <CloseIcon fontSize="small" />
-                </IconButton>
-            </Box>
-            <Box sx={{flex: 1, minHeight: 0, overflow: 'auto', px: {xs: 2.5, md: 4}, py: {xs: 2, md: 3}}}>
+                </DialogCloseButton>
+            </DialogHeader>
+            <DialogBody ownSx={{flex: 1, minHeight: 0, overflow: 'auto', px: {xs: 2.5, md: 4}, py: {xs: 2, md: 3}}}>
                 {children}
-            </Box>
+            </DialogBody>
         </Dialog>
     );
 }

@@ -9,6 +9,9 @@
 // Accept-Language de las peticiones y volver a pedir los datos del servidor, que traen textos traducidos. Las traducciones de
 // un idioma que agregue el proyecto van en `texts` de ToolkitProvider: el paquete solo trae español e inglés.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaLanguageToggle con defaultProps y
+// styleOverrides de sus partes: button.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Button from '@mui/material/Button';
@@ -18,6 +21,11 @@ import MenuItem from '@mui/material/MenuItem';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLanguageToggle)
+const THEME_NAME = 'CalcitaLanguageToggle';
+const LanguageButton = piecePart(THEME_NAME, 'Button', Button);
 
 /** Los idiomas que traen los textos del paquete. */
 export const LANGUAGES = Object.freeze(DEFAULT_LANGUAGES.map((entry) => entry.code));
@@ -28,7 +36,9 @@ export const LANGUAGES = Object.freeze(DEFAULT_LANGUAGES.map((entry) => entry.co
  * @param {(language: string) => void} [props.onChange] además de avisar a ToolkitProvider, cada que se elige un idioma
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {language: {switchToNamed, choose}}
  */
-export default function LanguageToggle({inverted = false, onChange, texts}) {
+export default function LanguageToggle(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaLanguageToggle.defaultProps) y encima lo que llega aquí
+    const {inverted = false, onChange, texts} = usePieceProps(props, THEME_NAME);
     const {t, language, changeLanguage} = useToolkitTranslation('common', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const [menuAnchor, setMenuAnchor] = useState(null);
@@ -47,19 +57,19 @@ export default function LanguageToggle({inverted = false, onChange, texts}) {
         // el aviso de siempre para español e inglés; para otro idioma, con su nombre
         const ariaLabel = t(`language.switchTo.${next.code}`, {defaultValue: t('language.switchToNamed', {name: next.label})});
         return (
-            <Button size="small" variant="text" onClick={() => choose(next.code)} lang={next.code} aria-label={ariaLabel} sx={buttonSx}>
+            <LanguageButton size="small" variant="text" onClick={() => choose(next.code)} lang={next.code} aria-label={ariaLabel} ownSx={buttonSx}>
                 {next.code.toUpperCase()}
-            </Button>
+            </LanguageButton>
         );
     }
 
     // con tres o más: el de ahora y un menú con todos
     return (
         <>
-            <Button size="small" variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)} aria-haspopup="menu"
-                    aria-expanded={Boolean(menuAnchor)} aria-label={t('language.choose', {name: current.label})} sx={buttonSx}>
+            <LanguageButton size="small" variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)} aria-haspopup="menu"
+                    aria-expanded={Boolean(menuAnchor)} aria-label={t('language.choose', {name: current.label})} ownSx={buttonSx}>
                 {current.code.toUpperCase()}
-            </Button>
+            </LanguageButton>
             <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
                 {languages.map((entry) => (
                     <MenuItem key={entry.code} lang={entry.code} selected={entry.code === current.code} onClick={() => choose(entry.code)}>

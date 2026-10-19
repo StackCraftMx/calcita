@@ -8,6 +8,9 @@
 // OJO: el número y el detalle de la punta salen del renglón de la barra (barListLabels.js), nunca de items[index]: Recharts
 // descarta las barras de ancho 0 y renumera las etiquetas, y el detalle se corría al renglón de arriba.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarList con defaultProps y
+// styleOverrides de sus partes: row, chart.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -23,6 +26,12 @@ import ChartTooltip from '@/ui/metrics/ChartTooltip.jsx';
 import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {BAR_MIN_POINT_SIZE, barLabelValueOf} from '@/ui/metrics/barListLabels.js';
 import {useChartColors} from '@/ui/metrics/chartParts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarList)
+const THEME_NAME = 'CalcitaBarList';
+const BarListRow = piecePart(THEME_NAME, 'Row', TableRow);
+const BarListChart = piecePart(THEME_NAME, 'Chart', Box);
 
 const ROW_HEIGHT_PIXELS = 36;
 
@@ -49,7 +58,9 @@ function ValueLabel({x, y, width, height, value, colors, formatNumber}) {
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function BarList({items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange}) {
+export default function BarList(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaBarList.defaultProps) y encima lo que llega aquí
+    const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange} = usePieceProps(props, THEME_NAME);
     const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
     const toggleView = () => {
         setAsTable(!asTable);
@@ -77,16 +88,16 @@ export default function BarList({items, onSelect, emptyLabel, tone = 'primary', 
                 <Table size="small">
                     <TableBody>
                         {items.map((item) => (
-                            <TableRow key={item.key} hover={Boolean(onSelect)} onClick={onSelect ? () => onSelect(item) : undefined}
-                                      sx={{cursor: onSelect ? 'pointer' : 'default'}}>
+                            <BarListRow key={item.key} hover={Boolean(onSelect)} onClick={onSelect ? () => onSelect(item) : undefined}
+                                      ownSx={{cursor: onSelect ? 'pointer' : 'default'}}>
                                 <TableCell>{item.label}</TableCell>
                                 <TableCell align="right">{formatNumber(item.value)} {item.detail}</TableCell>
-                            </TableRow>
+                            </BarListRow>
                         ))}
                     </TableBody>
                 </Table>
             ) : (
-                <Box sx={{height: items.length * ROW_HEIGHT_PIXELS, color: `${tone}.main`}}>
+                <BarListChart ownSx={{height: items.length * ROW_HEIGHT_PIXELS, color: `${tone}.main`}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={items} layout="vertical" margin={{top: 0, bottom: 0, left: 0, right: 16 + longestValue * 7}}>
                             {/* OJO: con todo en 0 el dominio [0, 0] manda el 0 a la MITAD del eje (escala degenerada de d3) y la
@@ -104,7 +115,7 @@ export default function BarList({items, onSelect, emptyLabel, tone = 'primary', 
                             </Bar>
                         </BarChart>
                     </ResponsiveContainer>
-                </Box>
+                </BarListChart>
             )}
         </Box>
     );

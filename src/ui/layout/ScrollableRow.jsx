@@ -12,9 +12,17 @@
 // OJO: el umbral de 5 px separa el arrastre del clic; mover más cancela el clic que venía detrás, para no borrar un
 // filtro cuando lo que se quería era desplazar la tira.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaScrollableRow con defaultProps y
+// styleOverrides.root (el sx de la pantalla sigue ganando a todo).
+//
 // Genérico del paquete: function (regla de la casa).
 import {Children, useEffect, useRef, useState} from 'react';
 import Box from '@mui/material/Box';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaScrollableRow)
+const THEME_NAME = 'CalcitaScrollableRow';
+const RowRoot = piecePart(THEME_NAME, 'Root', Box);
 
 /** El mixin sin arrastre, para cuando no se puede envolver el elemento. */
 export const scrollableRow = {
@@ -40,9 +48,11 @@ const DRAG_THRESHOLD_PIXELS = 5;
  * @param {boolean} [props.fadeEdges]
  * @param {import('react').Ref<HTMLElement>} [props.ref]
  */
-export default function ScrollableRow({
-    children, gap = 1, py = 0.5, sx, enableDragScroll = true, enableWheelToX = true, fadeEdges = true, ref, ...boxProps
-}) {
+export default function ScrollableRow(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaScrollableRow.defaultProps) y encima lo que llega aquí
+    const {
+        children, gap = 1, py = 0.5, sx, enableDragScroll = true, enableWheelToX = true, fadeEdges = true, ref, ...boxProps
+    } = usePieceProps(props, THEME_NAME);
     const rowElement = useRef(null);
     // por dónde sigue habiendo contenido: decide de qué lado va el desvanecido
     const [edges, setEdges] = useState({overflow: false, start: false, end: false});
@@ -176,18 +186,18 @@ export default function ScrollableRow({
         : undefined;
 
     return (
-        <Box ref={assignRef}
-             sx={{
+        <RowRoot ref={assignRef}
+             ownSx={{
                  ...scrollableRow,
                  gap,
                  py,
                  cursor: isDragEnabled ? 'grab' : 'auto',
                  userSelect: isDragEnabled ? 'none' : 'auto',
                  ...(fadeMask && {maskImage: fadeMask, WebkitMaskImage: fadeMask}),
-                 ...sx,
              }}
+             sx={sx}
              {...boxProps}>
             {children}
-        </Box>
+        </RowRoot>
     );
 }

@@ -11,6 +11,9 @@
 // Cuál usar: PageHeading en las pantallas de trabajo (listas, formularios, tableros); PageHeader (centrado) en una
 // portada; DetailHeader en el detalle de un registro (título con sus insignias de estatus).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaPageHeading con defaultProps y
+// styleOverrides de sus partes: root, breadcrumbs, titleRow, title, actions, description.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useRef} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -27,6 +30,16 @@ import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import {menuBreadcrumbsOf} from '@/navigation/appMenu.js';
 import PageBreadcrumbs from '@/ui/navigation/PageBreadcrumbs.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageHeading)
+const THEME_NAME = 'CalcitaPageHeading';
+const HeadingRoot = piecePart(THEME_NAME, 'Root', Box);
+const HeadingBreadcrumbs = piecePart(THEME_NAME, 'Breadcrumbs', Box);
+const HeadingTitleRow = piecePart(THEME_NAME, 'TitleRow', Stack);
+const HeadingTitle = piecePart(THEME_NAME, 'Title', Typography);
+const HeadingActions = piecePart(THEME_NAME, 'Actions', Box);
+const HeadingDescription = piecePart(THEME_NAME, 'Description', Typography);
 
 // con una sola miga (estar en el inicio) no se pintan: no dicen nada
 const MIN_BREADCRUMBS = 2;
@@ -40,7 +53,9 @@ const MIN_BREADCRUMBS = 2;
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageHeading({title, description, breadcrumbs, actions, documentTitle, texts}) {
+export default function PageHeading(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaPageHeading.defaultProps) y encima lo que llega aquí
+    const {title, description, breadcrumbs, actions, documentTitle, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout', texts);
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();
@@ -59,18 +74,18 @@ export default function PageHeading({title, description, breadcrumbs, actions, d
         : breadcrumbs ?? menuBreadcrumbsOf(menuItems, pathname).map((menuItem) => ({label: menuItemLabelOf(menuItem, t), to: menuItem.to}));
 
     return (
-        <Box component="header" sx={{mb: 3}}>
+        <HeadingRoot component="header" ownSx={{mb: 3}}>
             <DocumentTitle title={documentTitle ?? title} />
-            {crumbs.length >= MIN_BREADCRUMBS && <Box sx={{mb: 1}}><PageBreadcrumbs items={crumbs} /></Box>}
-            <Stack direction={isActionsCapsule ? 'row' : {xs: 'column', sm: 'row'}} spacing={{xs: 1.5, sm: 2}}
-                   sx={{alignItems: isActionsCapsule ? 'flex-start' : {xs: 'stretch', sm: 'flex-start'}, justifyContent: 'space-between'}}>
-                <Typography ref={titleRef} variant="h4" component="h1" sx={{minWidth: 0}}>{title}</Typography>
+            {crumbs.length >= MIN_BREADCRUMBS && <HeadingBreadcrumbs ownSx={{mb: 1}}><PageBreadcrumbs items={crumbs} /></HeadingBreadcrumbs>}
+            <HeadingTitleRow direction={isActionsCapsule ? 'row' : {xs: 'column', sm: 'row'}} spacing={{xs: 1.5, sm: 2}}
+                   ownSx={{alignItems: isActionsCapsule ? 'flex-start' : {xs: 'stretch', sm: 'flex-start'}, justifyContent: 'space-between'}}>
+                <HeadingTitle ref={titleRef} variant="h4" component="h1" ownSx={{minWidth: 0}}>{title}</HeadingTitle>
                 {isActionsCapsule && <BarActions label={title} inlineSx={{flexShrink: 0}}>{actions}</BarActions>}
-                {actions && !usesCapsules && <Box sx={inlineActionsSx}>{actions}</Box>}
-            </Stack>
+                {actions && !usesCapsules && <HeadingActions ownSx={inlineActionsSx}>{actions}</HeadingActions>}
+            </HeadingTitleRow>
             {description && (
-                <Typography variant="body1" color="text.secondary" component="div" sx={{mt: 0.75, maxWidth: 760}}>{description}</Typography>
+                <HeadingDescription variant="body1" color="text.secondary" component="div" ownSx={{mt: 0.75, maxWidth: 760}}>{description}</HeadingDescription>
             )}
-        </Box>
+        </HeadingRoot>
     );
 }
