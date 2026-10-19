@@ -32,6 +32,7 @@ import {stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftP
 import {trackingOf} from '@/theme/appleTracking.js';
 import {toolkitComponents} from '@/theme/toolkitComponents.js';
 import {minimalComponents, minimalTonesOf} from '@/theme/components/minimalComponents.js';
+import {FIELD_TONES} from '@/theme/glassSurface.js';
 import {createLogger} from '@/observability/logger.js';
 
 const log = createLogger('theme');
@@ -101,6 +102,12 @@ function glassSettingsOf(glass) {
  *     teléfono y lo que flota). Lo que no se pase se queda con los grises de Apple (MINIMAL_TONES). OJO: con el minimalista
  *     el fondo de la página sale de aquí y no de la paleta (sin minimalTones, los grises de Apple aunque la paleta traiga
  *     su background)
+ * @param {{radius?: number, light?: {fill?: string, hoverFill?: string, border?: string, hoverBorder?: string}, dark?: {fill?: string, hoverFill?: string, border?: string, hoverBorder?: string}}} [options.fields]
+ *     cómo se ven los campos de captura (con vidrio, con el minimalista y dentro de FormSection), por modo: fill (el
+ *     relleno), hoverFill (con el cursor encima), border y hoverBorder (la orilla); y radius (las esquinas, en px). Lo que no
+ *     se pase se queda como el estilo lo trae (FIELD_TONES: el gris de Apple; con el minimalista, su relleno). Van en la
+ *     paleta de cada modo (palette.field), así que también se pueden escribir en colorSchemes y cambian solos con el modo.
+ *     Ejemplo, campos blancos con borde en claro: {light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}
  * @param {object} [options.components] ajustes propios de componentes (se suman; en el mismo estilo ganan los del proyecto)
  * @param {object} [options.overrides] cualquier otra cosa de createTheme (breakpoints, spacing…)
  * @returns {object} el tema de MUI
@@ -113,6 +120,7 @@ export function createToolkitTheme({
     look = THEME_LOOK.standard,
     bar = TOP_BAR.capsules,
     minimalTones = {},
+    fields = {},
     components = {},
     overrides = {},
 } = {}) {
@@ -129,12 +137,22 @@ export function createToolkitTheme({
     // el minimalista separa las superficies por su tono: el fondo de la página y la tarjeta un escalón arriba (los grises de
     // Apple o los tonos de la marca que pasó el proyecto)
     const tones = isMinimal ? minimalTonesOf(minimalTones) : null;
-    const schemes = isMinimal
-        ? Object.fromEntries(Object.entries(colorSchemes).map(([mode, scheme]) => [mode, {
-            ...scheme,
-            palette: {...scheme.palette, background: tones[mode] ? {default: tones[mode].default, paper: tones[mode].paper} : scheme.palette?.background},
-        }]))
-        : colorSchemes;
+    // los campos de cada modo: lo del estilo (el gris de Apple o, con el minimalista, su relleno), encima lo de `fields` y
+    // encima lo que el proyecto escribió en su paleta (palette.field)
+    const fieldTonesOf = (mode, scheme) => {
+        const lookTones = tones?.[mode]
+            ? {...FIELD_TONES[mode], fill: tones[mode].fill, hoverFill: tones[mode].fill}
+            : FIELD_TONES[mode] ?? FIELD_TONES.light;
+        return {...lookTones, ...fields[mode], ...scheme?.palette?.field};
+    };
+    const schemes = Object.fromEntries(Object.entries(colorSchemes).map(([mode, scheme]) => [mode, {
+        ...scheme,
+        palette: {
+            ...scheme?.palette,
+            ...(isMinimal && {background: tones[mode] ? {default: tones[mode].default, paper: tones[mode].paper} : scheme?.palette?.background}),
+            field: fieldTonesOf(mode, scheme),
+        },
+    }]));
     const baseTheme = createTheme({
         cssVariables: {colorSchemeSelector},
         colorSchemes: schemes,
@@ -172,7 +190,8 @@ export function createToolkitTheme({
         // sin sombras en el minimalista: lo plano es la idea
         ...(isMinimal && {shadows: Array(SHADOW_LEVELS).fill('none')}),
         // minimalTones: los tonos con que se pintan los rellenos y lo que flota (minimalComponents los lee del tema)
-        toolkit: {glass: glassSettings, look, bar, minimalTones: tones},
+        // fields: las esquinas de los campos (sus tonos van en la paleta: palette.field)
+        toolkit: {glass: glassSettings, look, bar, minimalTones: tones, fields: {radius: fields.radius}},
         ...overrides,
     });
     return responsiveFontSizes(baseTheme);

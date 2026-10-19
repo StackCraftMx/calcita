@@ -45,7 +45,7 @@ export {toolkitComponents} from '@/theme/toolkitComponents.js';
 export {mergeComponents} from '@/theme/mergeComponents.js';
 export {
     GLASS_INSET_PIXELS, GLASS_MENU_RADIUS_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassDropOf, glassStylesOf, glassSurfaceOf,
-    accentTextStylesOf, canvasFieldStylesOf, fieldWellStylesOf, fixedBackgroundLayerOf, isGlassTheme, materialBackgroundOf, materialStylesOf, materialSurfaceOf,
+    FIELD_TONES, accentTextStylesOf, canvasFieldStylesOf, fieldPaletteOf, fieldWellStylesOf, fixedBackgroundLayerOf, isGlassTheme, materialBackgroundOf, materialStylesOf, materialSurfaceOf,
     scrollEdgeStylesOf,
 } from '@/theme/glassSurface.js';
 

@@ -2,9 +2,12 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
+import {createTheme} from '@mui/material/styles';
+
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
+import {FIELD_TONES, fieldVariablesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 
 // lo que vale una propiedad en claro y en oscuro: con lightDarkStylesOf el valor de cada modo vive en su variable
 // (--calcita-…) y la propiedad dice var(--calcita-…); la regla de oscuro solo cambia la variable
@@ -250,8 +253,11 @@ test('el minimalista con los tonos de la marca: fondo, tarjetas, relleno y lo qu
 
     assert.deepEqual(backgroundOf('light'), {default: '#EEF4FF', paper: MINIMAL_TONES.light.paper});
     assert.deepEqual(backgroundOf('dark'), {default: '#101827', paper: '#1A2333'});
-    assert.equal(valueOf(field, 'backgroundColor'), '#DCE6F5');
-    assert.equal(darkValueOf(field, darkKeyOf(field), 'backgroundColor'), MINIMAL_TONES.dark.fill);
+    // el campo lee el relleno de la paleta de su modo (palette.field): el del minimalista de la marca en claro y el gris de
+    // Apple en oscuro, que no se pasó
+    assert.equal(field.backgroundColor, theme.vars.palette.field.fill);
+    assert.equal(theme.colorSchemes.light.palette.field.fill, '#DCE6F5');
+    assert.equal(theme.colorSchemes.dark.palette.field.fill, MINIMAL_TONES.dark.fill);
     assert.equal(valueOf(floating, 'backgroundColor'), MINIMAL_TONES.light.floating);
     assert.equal(darkValueOf(floating, darkKeyOf(floating), 'backgroundColor'), '#243047');
     // sin minimalTones, los grises de Apple de siempre aunque la paleta traiga su fondo
@@ -259,3 +265,37 @@ test('el minimalista con los tonos de la marca: fondo, tarjetas, relleno y lo qu
     // y lo que flota en un tema sin minimalista (el aviso de versión nueva sin vidrio) sigue con el gris de Apple
     assert.equal(valueOf(minimalFloatingStylesOf(createToolkitTheme()), 'backgroundColor'), MINIMAL_TONES.light.floating);
 });
+
+test('los campos con los tonos del proyecto (fields): blancos con borde en claro, las esquinas, y lo demás como venía', () => {
+    const theme = createToolkitTheme({glass: true, fields: {radius: 8, light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}});
+    const well = fieldWellStylesOf(theme);
+
+    assert.deepEqual(
+        {...theme.colorSchemes.light.palette.field},
+        {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5', hoverBorder: FIELD_TONES.light.hoverBorder},
+    );
+    assert.deepEqual({...theme.colorSchemes.dark.palette.field}, {...FIELD_TONES.dark});
+    // el pozo lee la paleta (variables de MUI: cambian solas con el modo) y la orilla va por dentro
+    assert.equal(well.backgroundColor, theme.vars.palette.field.fill);
+    assert.equal(well.boxShadow, `inset 0 0 0 1px ${theme.vars.palette.field.border}`);
+    assert.equal(well.borderRadius, 8);
+    // sin fields, el gris de Apple de siempre en los dos modos
+    assert.deepEqual({...createToolkitTheme({glass: true}).colorSchemes.light.palette.field}, {...FIELD_TONES.light});
+    // y también desde la paleta del proyecto, encima de fields
+    const fromPalette = createToolkitTheme({colorSchemes: {light: {palette: {field: {fill: '#FAFAFA'}}}}, fields: {light: {fill: '#FFFFFF'}}});
+    assert.equal(fromPalette.colorSchemes.light.palette.field.fill, '#FAFAFA');
+});
+
+test('el renglón de FormSection pone los tonos en variables suyas: en oscuro aplican (antes salía el gris de claro)', () => {
+    const withPalette = fieldVariablesOf(createToolkitTheme({glass: true}));
+    assert.match(withPalette['--calcita-field-fill'], /^var\(--mui-palette-field-fill/);
+
+    // con un tema de MUI sin Calcita (sin palette.field): el gris de claro en el renglón y la regla de oscuro en el mismo
+    // renglón, arriba (no anidada debajo de «html body», donde nunca aplicaba)
+    const plainTheme = createTheme({cssVariables: {colorSchemeSelector: 'class'}, colorSchemes: {light: true, dark: true}});
+    const plainVariables = fieldVariablesOf(plainTheme);
+    const darkKey = Object.keys(plainVariables).find((key) => key.includes('dark'));
+    assert.equal(plainVariables['--calcita-field-fill'], FIELD_TONES.light.fill);
+    assert.equal(plainVariables[darkKey]['--calcita-field-fill'], FIELD_TONES.dark.fill);
+});
+
