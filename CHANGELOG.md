@@ -4,6 +4,25 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.30.1] - 2026-10-19
+
+### Corregido
+
+- Los campos dentro de `FormSection` vuelven a ser cápsulas, como se aprobaron: en la 0.30.0 salían con esquinas de 12 px.
+  Antes la cápsula salía por accidente (el renglón decía 12 y `sx` lo multiplicaba por el radio del tema); ahora se escribe
+  tal cual y `--calcita-field-radius` la cambia.
+- `createToolkitTheme({fields: {radius}})` con un número se lee en px también dentro de `FormSection` (ahí se multiplicaba
+  por el radio del tema: 8 daba 64 px).
+- `Wordmark`: la regla de su imagen (alto y `display: block`) le ganaba al estilo propio de la imagen del proyecto; ahora va
+  con `:where()` y gana lo del proyecto.
+
+### Agregado
+
+- `AppLayout wordmark={{light, dark}}`: una imagen para cada modo (el logo de color en claro y el blanco en oscuro). Se
+  pintan las dos y el modo decide cuál se ve, sin parpadeo.
+- README y catálogo: mejor no partir el código a mano (`manualChunks`); medido en un sistema real, 1,171 kB en cada pantalla
+  con el reparto a mano y 971 kB sin él. Si aun así se reparte, qué dejar sin asignar.
+
 ## [0.30.0] - 2026-10-19
 
 La 0.29.0 no se publicó en npm: la 0.30.0 la incluye completa (las piezas desde el tema, abajo).
@@ -443,6 +462,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.30.1]: https://github.com/StackCraftMx/calcita/compare/v0.30.0...v0.30.1
 [0.30.0]: https://github.com/StackCraftMx/calcita/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/StackCraftMx/calcita/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/StackCraftMx/calcita/compare/v0.27.0...v0.28.0
