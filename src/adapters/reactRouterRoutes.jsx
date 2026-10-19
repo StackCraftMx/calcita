@@ -32,11 +32,11 @@ const NOT_FOUND_STATUS = 404;
  * OJO, trampa pagada: un <Outlet /> nuevo corta el contexto que la ruta de arriba le pasa a sus hijas (<Outlet
  * context={...} />, useOutletContext); el inicio de los ejemplos tronaba sin el menú. Aquí se pasa tal cual.
  *
- * @param {{access: object|undefined}} props
+ * @param {{access: object|undefined, fallback?: import('react').ReactNode}} props
  */
-function AccessOutlet({access}) {
+function AccessOutlet({access, fallback}) {
     const parentContext = useOutletContext();
-    return <RequireAccess access={access}><Outlet context={parentContext} /></RequireAccess>;
+    return <RequireAccess access={access} fallback={fallback}><Outlet context={parentContext} /></RequireAccess>;
 }
 
 /**
@@ -44,10 +44,12 @@ function AccessOutlet({access}) {
  *
  * @param {object|undefined} access la regla (accessRules.js); sin ella, el grupo es de todos
  * @param {object[]} routes las rutas del módulo
+ * @param {{fallback?: import('react').ReactNode}} [options] fallback: lo que ve quien no tiene permiso; por omisión la página
+ *     de «sin permiso» de la casa (con ErrorPage y sus props se arma una propia: un botón para pedir acceso)
  * @returns {object} la ruta de react-router
  */
-export function withAccess(access, routes) {
-    return {element: <AccessOutlet access={access} />, children: routes};
+export function withAccess(access, routes, {fallback} = {}) {
+    return {element: <AccessOutlet access={access} fallback={fallback} />, children: routes};
 }
 
 /**
@@ -85,8 +87,14 @@ function reloadPage() {
  * nuestro lado». Las dos últimas con su botón para recargar.
  *
  *   createBrowserRouter([{path: '/', element: <App />, ErrorBoundary: RouteErrorScreen, children: [...]}])
+ *
+ * Con props (como errorElement) se extiende igual que ErrorPage, y onError recibe lo que tronó (para Sentry o su aviso):
+ *   {errorElement: <RouteErrorScreen onError={(error) => reportError(error)} extraActions={<SupportButton />} />}
+ *
+ * @param {object} [props] las de ErrorPage (extraActions, actions, children, icon, homePath, onGoHome, texts) y:
+ * @param {(error: unknown, kind: string) => void} [props.onError] cada error que llega aquí, con su tipo (ERROR_PAGE_KIND)
  */
-export function RouteErrorScreen() {
+export function RouteErrorScreen({onError, ...errorPageProps} = {}) {
     const error = useRouteError();
     const isNotFound = isRouteErrorResponse(error) && error.status === NOT_FOUND_STATUS;
     const kind = isNotFound ? ERROR_PAGE_KIND.notFound : (isStaleChunkError(error) ? ERROR_PAGE_KIND.newVersion : ERROR_PAGE_KIND.serverError);
@@ -95,7 +103,9 @@ export function RouteErrorScreen() {
         if (!isNotFound) {
             log.error('una pantalla no se pudo pintar', {name: error?.name, message: error?.message ?? String(error)});
         }
+        onError?.(error, kind);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [error, isNotFound]);
 
-    return <ErrorPage kind={kind} onRetry={isNotFound ? undefined : reloadPage} />;
+    return <ErrorPage kind={kind} onRetry={isNotFound ? undefined : reloadPage} {...errorPageProps} />;
 }
