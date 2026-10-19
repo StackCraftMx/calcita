@@ -1,7 +1,9 @@
 // Logger con espacio de nombres sobre console.
 //
-// Por qué un envoltorio y no una librería: corre en el navegador, son pocas líneas legibles y, cuando haga falta un
-// reporte externo (Sentry o el que sea), se enchufa en emit() sin tocar cada llamada.
+// Por qué un envoltorio y no una librería: corre en el navegador, son pocas líneas legibles y un reporte externo (Sentry,
+// Datadog, un endpoint propio) se enchufa con addLogSink sin tocar cada llamada:
+//   addLogSink((entry) => Sentry.logger[entry.level](`[${entry.namespace}] ${entry.message}`, entry.context));
+// Cada salida recibe lo mismo que sale en consola (respeta el nivel); una salida que truena no tumba la app.
 //
 // Reglas:
 //   - datos estructurados: log.warn('mensaje', {status, requestId}); nunca concatenar cadenas.
@@ -47,9 +49,36 @@ function currentLevel() {
     return defaultLevel;
 }
 
+// las salidas propias del proyecto (addLogSink), además de la consola
+const sinks = [];
+
+/**
+ * Una salida propia para lo que se anota (un reporte externo): recibe cada anotación que sale en consola, con su nivel.
+ *
+ * @param {(entry: {level: 'error'|'warn'|'info'|'debug', namespace: string, message: string, context?: object, timestamp: number}) => void} sink
+ * @returns {() => void} para quitarla
+ */
+export function addLogSink(sink) {
+    sinks.push(sink);
+    return () => {
+        const position = sinks.indexOf(sink);
+        if (position !== -1) {
+            sinks.splice(position, 1);
+        }
+    };
+}
+
 function emit(level, namespace, message, context) {
     if (LEVELS[level] > currentLevel()) {
         return;
+    }
+    const entry = {level, namespace, message, ...(context !== undefined && {context}), timestamp: Date.now()};
+    for (const sink of sinks) {
+        try {
+            sink(entry);
+        } catch {
+            // una salida con un error no debe tumbar la app ni la anotación en consola
+        }
     }
 
     // OJO: debug sale por console.log a propósito; console.debug cae en "Verbose" y DevTools lo esconde

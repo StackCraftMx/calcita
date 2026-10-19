@@ -33,6 +33,7 @@ const CLIENT_EXTENSIONS = [
     {id: 'fieldErrors', option: 'fieldErrorsOf(error.problem)', example: 'fieldErrorsOf(error.problem).email  // ["Ya existe"]'},
     {id: 'requestId', option: 'error.requestId', example: 'Referencia {error.requestId}'},
     {id: 'toast', option: 'toastProblem(error)', example: 'catch (error) { toastProblem(error); }'},
+    {id: 'apiErrorOf', option: 'apiErrorOf(response)', example: 'if (!response.ok) throw await apiErrorOf(response);  // uploadWithProgress'},
 ];
 const DOWNLOAD_EXTENSIONS = [
     {id: 'download', option: 'api.download(path)', example: "const {blob, fileName} = await api.download('/orders/export');"},

@@ -50,9 +50,10 @@ export default function HeaderTools({
             {user ? (
                 <AccountMenu user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
                              settings={settings} />
-            ) : settings && (
+            ) : (settings || accountMenuItems?.length > 0) && (
+                // sin sesión: el engrane con los ajustes y las ligas propias (en un sistema que ya existía, «Regresar» se perdía)
                 <SettingsMenu showFontSize={showFontSizeToggle} showLanguage={showLanguageToggle} showColorScheme={showColorSchemeToggle}
-                              extraSettings={accountSettings} />
+                              extraSettings={accountSettings} menuLinks={accountMenuItems} />
             )}
         </Box>
     );

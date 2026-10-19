@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-import {menuItemLabelOf} from '@/appShell/menuItemText.js';
+import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
@@ -55,7 +55,7 @@ export default function SubmenuActionsMenu({anchorElement, onClose, menuItem, ac
                 const ChildIcon = child.Icon;
                 const badge = menuBadgeOf(child, menuBadges);
                 return (
-                    <MenuItem key={child.to ?? menuItemLabelOf(child, t)} component={RouterLink} to={child.to} selected={child === activeItem}
+                    <MenuItem key={child.to ?? child.href ?? menuItemLabelOf(child, t)} {...menuLinkPropsOf(child, RouterLink)} selected={child === activeItem}
                               onClick={() => {
                                   onClose();
                                   onNavigate?.();

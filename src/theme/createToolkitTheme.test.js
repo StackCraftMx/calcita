@@ -5,6 +5,15 @@ import {test} from 'node:test';
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
 
+// lo que vale una propiedad en claro y en oscuro: con lightDarkStylesOf el valor de cada modo vive en su variable
+// (--calcita-…) y la propiedad dice var(--calcita-…); la regla de oscuro solo cambia la variable
+const variableOf = (value) => /^var\((--calcita-[\w-]+)\)$/.exec(value ?? '')?.[1];
+const valueOf = (styles, property) => (variableOf(styles[property]) ? styles[variableOf(styles[property])] : styles[property]);
+const darkValueOf = (styles, darkKey, property) => {
+    const variable = variableOf(styles[property]) ?? `--calcita-${property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`;
+    return styles[darkKey]?.[variable] ?? styles[darkKey]?.[property];
+};
+
 test('sin vidrio el tema no lo anota y los componentes del framework pintan sólido', () => {
     const theme = createToolkitTheme();
 
@@ -36,7 +45,7 @@ test('la opacidad que pide el proyecto llega a las superficies', () => {
     const paper = theme.components.MuiPopover.styleOverrides.paper({theme, ownerState: {}});
 
     assert.equal(glassOpacityOf(theme), 0.7);
-    assert.match(paper.backgroundColor, / 70%, transparent\)$/);
+    assert.match(valueOf(paper, 'backgroundColor'), / 70%, transparent\)$/);
 });
 
 test('una opacidad fuera de 0 a 1 truena con su motivo (un 80 en lugar de 0.8 dejaba la barra sin fondo)', () => {
@@ -55,8 +64,8 @@ test('los ajustes de vidrio se suman a los normales: la barra fija es vidrio neu
     const appBar = theme.components.MuiAppBar.styleOverrides.root({theme, ownerState: {position: 'sticky', color: 'primary'}});
 
     // un vidrio naranja al 80 % se veía sólido: la barra es del color de las tarjetas, con letra oscura, como el menú lateral
-    assert.equal(appBar.color, theme.vars.palette.text.primary);
-    assert.match(appBar.backgroundColor, new RegExp(`^color-mix\\(in srgb, ${theme.vars.palette.background.paper.replace(/[()]/g, '\\$&')} 60%`));
+    assert.equal(valueOf(appBar, 'color'), theme.vars.palette.text.primary);
+    assert.match(valueOf(appBar, 'backgroundColor'), new RegExp(`^color-mix\\(in srgb, ${theme.vars.palette.background.paper.replace(/[()]/g, '\\$&')} 60%`));
     assert.equal(appBar.borderBottom, 'none');
     assert.match(appBar.backdropFilter, /blur\(20px\)/);
 });
@@ -87,13 +96,13 @@ test('con glass: {surfaces: true} el contenido lleva material: esmerilado, sin e
     const card = theme.components.MuiCard.styleOverrides.root({theme, ownerState: {}});
     const popover = theme.components.MuiPopover.styleOverrides.paper({theme, ownerState: {}});
 
-    assert.match(card.backdropFilter, /blur\(20px\)/);
-    assert.equal(card.backgroundImage, 'none');
-    assert.doesNotMatch(card.boxShadow, /inset/);
+    assert.match(valueOf(card, 'backdropFilter'), /blur\(20px\)/);
+    assert.equal(valueOf(card, 'backgroundImage'), 'none');
+    assert.doesNotMatch(valueOf(card, 'boxShadow'), /inset/);
     // lo que flota sí lleva el brillo del vidrio
-    assert.match(popover.boxShadow, /^inset/);
+    assert.match(valueOf(popover, 'boxShadow'), /^inset/);
     // material delgado: menos opaco que el vidrio (0.6 - 0.15): las tarjetas dejan pasar el color de atrás
-    assert.match(card.backgroundColor, / 45%, transparent\)$/);
+    assert.match(valueOf(card, 'backgroundColor'), / 45%, transparent\)$/);
 });
 
 test('con vidrio, los títulos chicos en mayúsculas (overline) van como se escriben', () => {
@@ -153,8 +162,8 @@ test('un control chico de vidrio (el botón con borde) lleva sombra corta, no la
     const popover = theme.components.MuiPopover.styleOverrides.paper({theme, ownerState: {}});
 
     // la sombra del panel (la de la ventanita, 0 6px 20px) no está en el botón: él lleva la corta
-    assert.match(popover.boxShadow, /0 6px 20px/);
-    assert.doesNotMatch(outlined.boxShadow, /0 6px 20px/);
+    assert.match(valueOf(popover, 'boxShadow'), /0 6px 20px/);
+    assert.doesNotMatch(valueOf(outlined, 'boxShadow'), /0 6px 20px/);
 });
 
 test('el interruptor tiene la forma del de iPhone: la perilla adentro de la pista, también el chico', () => {
@@ -171,9 +180,9 @@ test('dentro de una tarjeta, el botón con borde es el «bordered» de Apple (re
     const outlined = theme.components.MuiButton.styleOverrides.outlined({theme, ownerState: {color: 'error'}});
     const insideCard = outlined['.MuiPaper-root &:not(.MuiButtonGroup-grouped), body[data-glass-lens="on"] .MuiPaper-root &:not(.MuiButtonGroup-grouped)'];
 
-    assert.match(outlined.backdropFilter, /blur/);
+    assert.match(valueOf(outlined, 'backdropFilter'), /blur/);
     assert.equal(insideCard.backdropFilter, 'none');
-    assert.match(insideCard.backgroundColor, /^color-mix\(in srgb, .* 12%, transparent\)$/);
+    assert.match(valueOf(insideCard, 'backgroundColor'), /^color-mix\(in srgb, .* 12%, transparent\)$/);
 });
 
 test('los campos: etiqueta arriba siempre a la vista, cápsula de vidrio sobre el lienzo y relleno gris dentro de una tarjeta', () => {
@@ -195,8 +204,8 @@ test('un botón con relleno de color lleva la letra de un solo color, no la de s
     const textButton = theme.components.MuiButton.styleOverrides.text({theme, ownerState: {color: 'primary'}});
 
     assert.equal(insideCard.color, theme.vars.palette.text.primary);
-    assert.match(insideCard.backgroundColor, /error/);
-    assert.match(textButton.color, /70%, black\)$/);
+    assert.match(valueOf(insideCard, 'backgroundColor'), /error/);
+    assert.match(valueOf(textButton, 'color'), /70%, black\)$/);
 });
 
 test('lo elegido en oscuro conserva su fondo de oscuro aunque lleve la letra del color del tema (no se pisan)', () => {
@@ -208,8 +217,8 @@ test('lo elegido en oscuro conserva su fondo de oscuro aunque lleve la letra del
     const darkSelected = selected[darkKeyOf(selected)];
 
     // antes la parte oscura de la letra borraba la de la gota y el elegido salía con el fondo de claro
-    assert.match(darkSelected.backgroundColor, /white[^)]*\) 18%, transparent\)$/);
-    assert.match(darkSelected.color, /70%, white\)$/);
+    assert.match(darkValueOf(selected, darkKeyOf(selected), 'backgroundColor'), /white[^)]*\) 18%, transparent\)$/);
+    assert.match(darkValueOf(selected, darkKeyOf(selected), 'color'), /70%, white\)$/);
     assert.ok(listButton);
 });
 

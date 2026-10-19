@@ -65,6 +65,7 @@ import BarCapsule from '@/appShell/BarCapsule.jsx';
 import {BarActionsSlotContext} from '@/appShell/barActionsSlot.js';
 import HeaderTools from '@/appShell/HeaderTools.jsx';
 import MobileTabBar from '@/appShell/MobileTabBar.jsx';
+import Wordmark from '@/appShell/Wordmark.jsx';
 import {PageTitleProvider, usePageTitle} from '@/appShell/pageTitle.jsx';
 import {
     APP_BAR_HEIGHT_PIXELS, DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, GLASS_PANEL_GAP_PIXELS, MAIN_CONTENT_ID,
@@ -76,7 +77,7 @@ import TopMenu from '@/appShell/TopMenu.jsx';
 import {useDrawerCollapsed} from '@/appShell/useDrawerCollapsed.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
-import {activeMenuItemOf} from '@/navigation/appMenu.js';
+import {activeMenuItemOf, menuItemsWithIconsOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
 import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
 import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
@@ -113,18 +114,22 @@ const SkipToContentLink = () => {
     );
 };
 
-/** El logo y el nombre de la app en la barra (con su renglón chico, si lo hay); lleva al inicio. */
-const BarBrand = ({logo, brandName, brandCaption, homePath, sx}) => {
+/** El logo y el nombre de la app en la barra (con su renglón chico, si lo hay), o el logo ancho; lleva al inicio. */
+const BarBrand = ({logo, wordmark, brandName, brandCaption, homePath, sx}) => {
     const {Link: RouterLink} = useToolkitNavigation();
     return (
-        <ButtonBase component={RouterLink} to={homePath}
+        <ButtonBase component={RouterLink} to={homePath} aria-label={wordmark ? brandName : undefined}
                     sx={[{alignItems: 'center', gap: 1.25, borderRadius: 1, flexShrink: 0, minWidth: 0, pr: 1, textAlign: 'left'}, sx]}>
-            {logo && <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>}
-            <Box sx={{minWidth: 0}}>
-                <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
-                {/* el renglón chico hereda el color de la barra (sobre el naranja, el gris del texto secundario no se leía) */}
-                {brandCaption && <Typography variant="caption" component="span" noWrap sx={{display: 'block', lineHeight: 1.3, opacity: 0.8}}>{brandCaption}</Typography>}
-            </Box>
+            {wordmark ? <Wordmark>{wordmark}</Wordmark> : (
+                <>
+                    {logo && <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>}
+                    <Box sx={{minWidth: 0}}>
+                        <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
+                        {/* el renglón chico hereda el color de la barra (sobre el naranja, el gris del texto secundario no se leía) */}
+                        {brandCaption && <Typography variant="caption" component="span" noWrap sx={{display: 'block', lineHeight: 1.3, opacity: 0.8}}>{brandCaption}</Typography>}
+                    </Box>
+                </>
+            )}
         </ButtonBase>
     );
 };
@@ -175,8 +180,8 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 };
 
 const AppLayoutFrame = ({
-    logo, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions, accountSettings, menuBadges,
-    sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
+    logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
+    accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
     onMenuCollapse, onMobileMenuChange, onMobileTabsChange, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
@@ -219,7 +224,7 @@ const AppLayoutFrame = ({
     const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons && !usesBarCapsules;
     const drawerWidth = collapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH_EXPANDED;
     const activeItem = activeMenuItemOf(menuItems, pathname);
-    const sideMenuProps = {logo, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter};
+    const sideMenuProps = {logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter};
     // el lugar de la barra donde caen las acciones de cada pantalla (BarActions); con la barra fundida con el menú no hay
     // barra en escritorio y se quedan en la pantalla
     const [barActionsSlot, setBarActionsSlot] = useState(null);
@@ -287,7 +292,7 @@ const AppLayoutFrame = ({
                             <MenuIcon />
                         </IconButton>
                         {isSideMenu && <CollapseMenuButton collapsed={collapsed} onToggle={toggleCollapsed} />}
-                        <BarBrand logo={logo} brandName={brandName} brandCaption={brandCaption} homePath={homePath}
+                        <BarBrand logo={logo} wordmark={wordmark} brandName={brandName} brandCaption={brandCaption} homePath={homePath}
                                   sx={isSideMenu ? {display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}} : {display: 'flex'}} />
                     </BarGroup>
                     {isSideMenu ? (
@@ -413,6 +418,9 @@ const AppLayoutFrame = ({
 /**
  * @param {object} props
  * @param {import('react').ReactNode} [props.logo] el logo chico (28 px), en la barra junto al nombre y en el cajón del teléfono
+ * @param {import('react').ReactNode} [props.wordmark] el logo ancho, la marca con su nombre en una sola imagen (como el de muchas
+ *     empresas): va en lugar del logo y el nombre en la barra y arriba del menú del teléfono, a 24 px de alto. Con el menú
+ *     encogido se queda el logo chico (logo), si lo hay. brandName sigue siendo su nombre para el lector de pantalla
  * @param {string} [props.brandName] el nombre de la app; por omisión el appName de ToolkitProvider
  * @param {string} [props.brandCaption] el renglón chico debajo del nombre («Panel de administración»)
  * @param {string} [props.homePath] por omisión '/'
@@ -447,19 +455,21 @@ const AppLayoutFrame = ({
  * @param {import('react').ReactNode} props.children el contenido
  */
 export const AppLayout = ({
-    logo, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
+    logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
     isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, onMenuCollapse, onMobileMenuChange, onMobileTabsChange,
     texts, children,
 }) => {
     const {appName} = useToolkitSettings();
-    const appMenu = useMemo(() => ({menuItems}), [menuItems]);
+    // un ícono ya pintado (icon) se vuelve componente aquí, una vez: las piezas del menú pintan siempre Icon
+    const shownMenuItems = useMemo(() => menuItemsWithIconsOf(menuItems), [menuItems]);
+    const appMenu = useMemo(() => ({menuItems: shownMenuItems}), [shownMenuItems]);
     // los textos del marco llegan a todas sus piezas (la cuenta, el menú, las pestañas del teléfono), cada una lee los suyos
     return (
         <ComponentTexts namespace="layout" texts={texts}>
             <PageTitleProvider>
                 <AppMenuContext.Provider value={appMenu}>
-                    <AppLayoutFrame logo={logo} brandName={brandName ?? appName} brandCaption={brandCaption} homePath={homePath} menuItems={menuItems} menuPosition={menuPosition}
+                    <AppLayoutFrame logo={logo} wordmark={wordmark} brandName={brandName ?? appName} brandCaption={brandCaption} homePath={homePath} menuItems={shownMenuItems} menuPosition={menuPosition}
                                     user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
                                     headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}

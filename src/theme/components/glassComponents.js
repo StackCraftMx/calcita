@@ -24,6 +24,7 @@ import {
     insideContentSelectorOf, materialStylesOf, solidFallbackOf,
 } from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
+import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 
@@ -67,14 +68,14 @@ const SHEET_MAX_WIDTH_PIXELS = 640;
 // gris oscuro un tinte tenue no se ve
 const TINTED_FILL_PERCENT = Object.freeze({light: {rest: 12, hover: 18}, dark: {rest: 22, hover: 30}});
 // la letra de los controles llenos de color, y cuánto más se oscurecen con el cursor encima (whiteLabelOf)
-const WHITE_LABEL = '#FFFFFF';
+export const WHITE_LABEL = '#FFFFFF';
 const PROMINENT_HOVER_SHADE_PERCENT = 12;
 // el círculo de los pasos que faltan, con su número blanco: grises de Apple que leen el blanco a 4.5 : 1 o más
 const STEP_PENDING_GRAY = Object.freeze({light: '#6E6E73', dark: '#48484A'});
 // el fondo del monograma (avatar con iniciales): grises de Apple; con blanco encima, 5.07 : 1 en claro y 6.07 : 1 en oscuro
 // lo que se separa el texto de su interruptor (px)
 const SWITCH_LABEL_GAP_PIXELS = 12;
-const MONOGRAM_GRAY = Object.freeze({light: '#6E6E73', dark: '#636366'});
+export const MONOGRAM_GRAY = Object.freeze({light: '#6E6E73', dark: '#636366'});
 // el botón flotante de color con letra blanca va lleno: con vidrio al 92 % lo claro de atrás le bajaba el contraste a
 // 4.23 : 1 (medido con la auditoría)
 const PROMINENT_GLASS_OPACITY = 1;
@@ -211,7 +212,7 @@ function whiteLabelOf(theme, colorName) {
             '&:hover': {backgroundColor: `color-mix(in srgb, ${fill} ${100 - PROMINENT_HOVER_SHADE_PERCENT}%, black)`},
         };
     };
-    return {...schemeStylesOf('light'), ...theme.applyStyles('dark', schemeStylesOf('dark'))};
+    return lightDarkStylesOf(theme, schemeStylesOf('light'), schemeStylesOf('dark'));
 }
 
 /**
@@ -221,11 +222,7 @@ function whiteLabelOf(theme, colorName) {
  * @returns {object}
  */
 function monogramOf(theme) {
-    return {
-        color: WHITE_LABEL,
-        backgroundColor: MONOGRAM_GRAY.light,
-        ...theme.applyStyles('dark', {color: WHITE_LABEL, backgroundColor: MONOGRAM_GRAY.dark}),
-    };
+    return lightDarkStylesOf(theme, {color: WHITE_LABEL, backgroundColor: MONOGRAM_GRAY.light}, {color: WHITE_LABEL, backgroundColor: MONOGRAM_GRAY.dark});
 }
 
 /**
@@ -245,12 +242,9 @@ function tintedControlOf(theme, toneColor) {
     return {
         ...plain,
         color: paletteOf(theme).text.primary,
-        backgroundColor: fillOf(TINTED_FILL_PERCENT.light.rest),
-        '&:hover': {...plain, backgroundColor: fillOf(TINTED_FILL_PERCENT.light.hover)},
-        ...theme.applyStyles('dark', {
-            backgroundColor: fillOf(TINTED_FILL_PERCENT.dark.rest),
-            '&:hover': {backgroundColor: fillOf(TINTED_FILL_PERCENT.dark.hover)},
-        }),
+        ...lightDarkStylesOf(theme,
+            {backgroundColor: fillOf(TINTED_FILL_PERCENT.light.rest), '&:hover': {...plain, backgroundColor: fillOf(TINTED_FILL_PERCENT.light.hover)}},
+            {backgroundColor: fillOf(TINTED_FILL_PERCENT.dark.rest), '&:hover': {backgroundColor: fillOf(TINTED_FILL_PERCENT.dark.hover)}}),
     };
 }
 
@@ -521,11 +515,9 @@ export function glassComponents({surfaces = false} = {}) {
                     return {
                         ...surface,
                         // de color: su vidrio lleva el color oscurecido lo justo para la letra blanca (whiteLabelFillOf)
-                        ...(lightFill && {...glassSurfaceOf(lightFill, {opacity: PROMINENT_GLASS_OPACITY}), color: WHITE_LABEL}),
-                        ...(darkFill && theme.applyStyles('dark', {
-                            ...glassSurfaceOf(darkFill, {opacity: PROMINENT_GLASS_OPACITY, isDark: true}),
-                            color: WHITE_LABEL,
-                        })),
+                        ...lightDarkStylesOf(theme,
+                            lightFill ? {...glassSurfaceOf(lightFill, {opacity: PROMINENT_GLASS_OPACITY}), color: WHITE_LABEL} : {},
+                            darkFill ? {...glassSurfaceOf(darkFill, {opacity: PROMINENT_GLASS_OPACITY, isDark: true}), color: WHITE_LABEL} : {}),
                         transition: theme.transitions.create(['background-color', 'box-shadow', 'transform'], {duration: theme.transitions.duration.short}),
                         // MUI cambia el fondo y la sombra al pasar y al apretar: el vidrio se queda, y al apretar se hunde
                         '&:hover': {backgroundColor: surface.backgroundColor},
@@ -627,8 +619,8 @@ export function glassComponents({surfaces = false} = {}) {
                         overflow: 'hidden',
                         [insideContentSelectorOf()]: {
                             ...plain,
-                            backgroundColor: groupFillOf(TINTED_FILL_PERCENT.light.rest),
-                            ...theme.applyStyles('dark', {backgroundColor: groupFillOf(TINTED_FILL_PERCENT.dark.rest)}),
+                            ...lightDarkStylesOf(theme,
+                                {backgroundColor: groupFillOf(TINTED_FILL_PERCENT.light.rest)}, {backgroundColor: groupFillOf(TINTED_FILL_PERCENT.dark.rest)}),
                         },
                     };
                 },
@@ -812,8 +804,9 @@ export function glassComponents({surfaces = false} = {}) {
                     const whiteMark = {background: 'linear-gradient(#fff, #fff) center / 58% 58% no-repeat', borderRadius: 4};
                     return {
                         '&.Mui-checked .MuiSvgIcon-root, &.MuiCheckbox-indeterminate .MuiSvgIcon-root': whiteMark,
-                        ...(lightFill && {'&.Mui-checked, &.MuiCheckbox-indeterminate': {color: lightFill}}),
-                        ...(darkFill && theme.applyStyles('dark', {'&.Mui-checked, &.MuiCheckbox-indeterminate': {color: darkFill}})),
+                        ...lightDarkStylesOf(theme,
+                            lightFill ? {'&.Mui-checked, &.MuiCheckbox-indeterminate': {color: lightFill}} : {},
+                            darkFill ? {'&.Mui-checked, &.MuiCheckbox-indeterminate': {color: darkFill}} : {}),
                     };
                 },
             },
@@ -839,13 +832,10 @@ export function glassComponents({surfaces = false} = {}) {
                     const lightFill = fillOf('light');
                     const darkFill = fillOf('dark');
                     return {
-                        color: STEP_PENDING_GRAY.light,
                         '& .MuiStepIcon-text': {fill: WHITE_LABEL},
-                        ...(lightFill && {'&.Mui-active, &.Mui-completed': {color: lightFill}}),
-                        ...theme.applyStyles('dark', {
-                            color: STEP_PENDING_GRAY.dark,
-                            ...(darkFill && {'&.Mui-active, &.Mui-completed': {color: darkFill}}),
-                        }),
+                        ...lightDarkStylesOf(theme,
+                            {color: STEP_PENDING_GRAY.light, ...(lightFill && {'&.Mui-active, &.Mui-completed': {color: lightFill}})},
+                            {color: STEP_PENDING_GRAY.dark, ...(darkFill && {'&.Mui-active, &.Mui-completed': {color: darkFill}})}),
                     };
                 },
             },
@@ -967,9 +957,8 @@ export function glassComponents({surfaces = false} = {}) {
                 }),
                 track: ({theme}) => ({
                     opacity: 1,
-                    backgroundColor: SWITCH_OFF_TRACK.light,
                     transition: theme.transitions.create(['background-color'], {duration: theme.transitions.duration.short}),
-                    ...theme.applyStyles('dark', {backgroundColor: SWITCH_OFF_TRACK.dark}),
+                    ...lightDarkStylesOf(theme, {backgroundColor: SWITCH_OFF_TRACK.light}, {backgroundColor: SWITCH_OFF_TRACK.dark}),
                 }),
             },
         },
@@ -1005,8 +994,7 @@ export function glassComponents({surfaces = false} = {}) {
                 },
                 rail: ({theme}) => ({
                     opacity: 1,
-                    backgroundColor: SLIDER_RAIL.light,
-                    ...theme.applyStyles('dark', {backgroundColor: SLIDER_RAIL.dark}),
+                    ...lightDarkStylesOf(theme, {backgroundColor: SLIDER_RAIL.light}, {backgroundColor: SLIDER_RAIL.dark}),
                 }),
                 root: ({ownerState}) => (ownerState.orientation === 'vertical' ? {width: SLIDER_TRACK_PIXELS} : {height: SLIDER_TRACK_PIXELS}),
             },

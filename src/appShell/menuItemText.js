@@ -75,3 +75,15 @@ export function initialsOf(fullName) {
     const words = String(fullName ?? '').trim().split(/\s+/).filter((word) => Boolean(word) && !NAME_PARTICLES.has(word.toLowerCase()));
     return words.slice(0, 2).map((word) => word[0]?.toUpperCase() ?? '').join('') || '?';
 }
+
+/**
+ * Las props de la liga de una entrada: el router para una pantalla de la app (to) y una dirección normal para otro sistema
+ * (href: el sistema que ya existía, otra app de la empresa). Con href la página se carga completa, como cualquier liga.
+ *
+ * @param {{to?: string, href?: string}} menuItem
+ * @param {import('react').ElementType} RouterLink el Link de la navegación del proyecto
+ * @returns {{component: import('react').ElementType|string, to?: string, href?: string}}
+ */
+export function menuLinkPropsOf(menuItem, RouterLink) {
+    return menuItem.href ? {component: 'a', href: menuItem.href} : {component: RouterLink, to: menuItem.to};
+}

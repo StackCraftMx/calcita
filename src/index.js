@@ -66,7 +66,9 @@ export {DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, MAIN_CONTENT_ID} from '@/
 export {useAppMenu} from '@/appShell/appMenuContext.js';
 export {usePageTitle} from '@/appShell/pageTitle.jsx';
 export {initialsOf, menuItemDescriptionOf, menuItemLabelOf, menuItemSectionOf, menuSectionsOf} from '@/appShell/menuItemText.js';
-export {activeMenuItemOf, composeMenu, menuBadgeOf, menuBreadcrumbsOf, mobileTabsOf, parentMenuItemOf, screenMenuItemsOf} from '@/navigation/appMenu.js';
+export {
+    activeMenuItemOf, composeMenu, menuBadgeOf, menuBreadcrumbsOf, menuItemsWithIconsOf, mobileTabsOf, parentMenuItemOf, screenMenuItemsOf,
+} from '@/navigation/appMenu.js';
 export {menuBadgesFrom, useMenuBadges} from '@/navigation/useMenuBadges.js';
 export {allowOnlyUnrestricted, createAccessChecker} from '@/access/accessRules.js';
 export {default as Can} from '@/access/Can.jsx';
@@ -126,14 +128,14 @@ export {REDIRECT_PARAM, readRedirectParam, safeInternalPath, withRedirect} from 
 export {recallListUrl, rememberListUrl, useRememberListUrl} from '@/lastListUrl.js';
 export {currentHistoryIndex, forgetPageName, pageNameAt, rememberPageName, useNavigationTrail, usePageName} from '@/navigationTrail.js';
 export {periodRangeIsValid, rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
-export {createLogger, setLogLevel} from '@/observability/logger.js';
+export {addLogSink, createLogger, setLogLevel} from '@/observability/logger.js';
 export {isNewBuildPublished, reportPublishedBuild, useNewBuildPublished} from '@/observability/publishedBuild.js';
 export {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf} from '@/observability/buildWatch.js';
 export {usePublishedBuildWatch} from '@/observability/usePublishedBuildWatch.js';
 
 // ─── la petición de la casa: el cliente del servidor, sus errores y la recarga por una versión publicada ──
 export {API_ERROR_STATUS, ApiError} from '@/api/ApiError.js';
-export {API_RESPONSE_PARSE, apiUrlOf, createApiClient} from '@/api/createApiClient.js';
+export {API_RESPONSE_PARSE, apiErrorOf, apiUrlOf, createApiClient} from '@/api/createApiClient.js';
 export {isStaleChunkError, recoverFromStaleChunk} from '@/api/staleChunks.js';
 
 // ─── seguridad de la cuenta: códigos de recuperación, sesiones abiertas y bitácora (los formularios van en /forms) ──

@@ -6,6 +6,15 @@ import {
     accentTextStylesOf, ambientBackgroundOf, glassStylesOf, glassSurfaceOf, materialBackgroundOf, materialSurfaceOf, whiteLabelFillOf,
 } from '@/theme/glassSurface.js';
 
+// lo que vale una propiedad en claro y en oscuro: con lightDarkStylesOf el valor de cada modo vive en su variable
+// (--calcita-…) y la propiedad dice var(--calcita-…); la regla de oscuro solo cambia la variable
+const variableOf = (value) => /^var\((--calcita-[\w-]+)\)$/.exec(value ?? '')?.[1];
+const valueOf = (styles, property) => (variableOf(styles[property]) ? styles[variableOf(styles[property])] : styles[property]);
+const darkValueOf = (styles, darkKey, property) => {
+    const variable = variableOf(styles[property]) ?? `--calcita-${property.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`;
+    return styles[darkKey]?.[variable] ?? styles[darkKey]?.[property];
+};
+
 test('el vidrio mezcla el color del tema con la opacidad pedida y desenfoca lo de atrás', () => {
     const surface = glassSurfaceOf('var(--mui-palette-background-paper)', {opacity: 0.8});
 
@@ -34,16 +43,16 @@ test('el fondo del lienzo con vidrio lleva manchas del color principal y del de 
 
     // el fondo va en una capa fija (::before), no con background-attachment: fixed, que el iPhone ignora
     const layer = background['&::before'];
-    assert.equal(background.backgroundColor, '#fafafa');
+    assert.equal(valueOf(background, 'backgroundColor'), '#fafafa');
     assert.equal(layer.position, 'fixed');
-    assert.match(layer.backgroundImage, /#ff6b1a 40%/);
-    assert.match(layer.backgroundImage, /#0369a1 30%/);
+    assert.match(valueOf(layer, 'backgroundImage'), /#ff6b1a 40%/);
+    assert.match(valueOf(layer, 'backgroundImage'), /#0369a1 30%/);
     // la de en medio, detrás del contenido, para que las tarjetas de vidrio no queden sobre blanco
-    assert.match(layer.backgroundImage, /#0369a1 16%/);
+    assert.match(valueOf(layer, 'backgroundImage'), /#0369a1 16%/);
     // en oscuro, los tonos oscuros sobre un casi negro: tiñen sin aclarar el fondo hasta el gris de las tarjetas
-    assert.equal(layer['.dark &'].backgroundColor, '#05070B');
-    assert.match(layer['.dark &'].backgroundImage, /#cc5614 18%/);
-    assert.doesNotMatch(layer['.dark &'].backgroundImage, /#ff6b1a/);
+    assert.equal(darkValueOf(layer, '.dark &', 'backgroundColor'), '#05070B');
+    assert.match(darkValueOf(layer, '.dark &', 'backgroundImage'), /#cc5614 18%/);
+    assert.doesNotMatch(darkValueOf(layer, '.dark &', 'backgroundImage'), /#ff6b1a/);
 });
 
 test('en oscuro el vidrio se aclara un poco sobre su color, para distinguirse del lienzo; el sólido de respaldo no', () => {
@@ -89,9 +98,9 @@ test('el texto del color del tema se oscurece en claro y se aclara en oscuro, pa
     const errorText = accentTextStylesOf(theme, 'error');
 
     // medido: el naranja tal cual daba 2.78 : 1 sobre una tarjeta clara; con 30 % de negro, 5.24 : 1
-    assert.equal(primaryText.color, 'color-mix(in srgb, #ff6b1a 70%, black)');
-    assert.equal(primaryText['.dark &'].color, 'color-mix(in srgb, #ff6b1a 70%, white)');
-    assert.equal(errorText.color, 'color-mix(in srgb, #b91c1c 70%, black)');
+    assert.equal(valueOf(primaryText, 'color'), 'color-mix(in srgb, #ff6b1a 70%, black)');
+    assert.equal(darkValueOf(primaryText, '.dark &', 'color'), 'color-mix(in srgb, #ff6b1a 70%, white)');
+    assert.equal(valueOf(errorText, 'color'), 'color-mix(in srgb, #b91c1c 70%, black)');
 });
 
 test('el relleno para letra blanca se oscurece lo justo para 4.5 : 1, y un color que ya se lee no cambia', () => {
@@ -121,7 +130,7 @@ test('el material grueso (la columna fija de una tabla) tapa lo de abajo al 92 %
     const thin = materialBackgroundOf(theme);
     const thick = materialBackgroundOf(theme, {thick: true});
 
-    assert.match(thin.backgroundImage, / 45%, transparent\)/);
-    assert.match(thick.backgroundImage, / 92%, transparent\)/);
-    assert.match(thick['.dark &'].backgroundImage, / 92%, transparent\)/);
+    assert.match(valueOf(thin, 'backgroundImage'), / 45%, transparent\)/);
+    assert.match(valueOf(thick, 'backgroundImage'), / 92%, transparent\)/);
+    assert.match(darkValueOf(thick, '.dark &', 'backgroundImage'), / 92%, transparent\)/);
 });

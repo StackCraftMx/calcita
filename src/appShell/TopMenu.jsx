@@ -14,7 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import {menuItemLabelOf} from '@/appShell/menuItemText.js';
+import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 
 // la entrada abierta se marca con una raya abajo, del color principal (en la barra naranja, del color del texto)
 const ACTIVE_UNDERLINE_PIXELS = 2;
@@ -38,7 +38,7 @@ function TopMenuEntry({menuItem, activeItem}) {
 
     if (!hasChildren) {
         return (
-            <Button component={RouterLink} to={menuItem.to} startIcon={Icon ? <Icon fontSize="small" /> : undefined}
+            <Button {...menuLinkPropsOf(menuItem, RouterLink)} startIcon={Icon ? <Icon fontSize="small" /> : undefined}
                     aria-current={isActive ? 'page' : undefined} sx={buttonSx}>
                 {menuItemLabelOf(menuItem, t)}
             </Button>
@@ -54,7 +54,7 @@ function TopMenuEntry({menuItem, activeItem}) {
                 {menuItem.children.map((child) => {
                     const ChildIcon = child.Icon;
                     return (
-                        <MenuItem key={child.to} component={RouterLink} to={child.to} selected={child === activeItem} onClick={() => setAnchorElement(null)}>
+                        <MenuItem key={child.to ?? child.href} {...menuLinkPropsOf(child, RouterLink)} selected={child === activeItem} onClick={() => setAnchorElement(null)}>
                             {ChildIcon && <ListItemIcon><ChildIcon fontSize="small" /></ListItemIcon>}
                             <ListItemText primary={menuItemLabelOf(child, t)} />
                         </MenuItem>
@@ -74,7 +74,7 @@ export default function TopMenu({menuItems, activeItem}) {
         <Box component="nav" aria-label={t('drawer.ariaLabel')}
              sx={{display: {xs: 'none', md: 'flex'}, alignItems: 'stretch', alignSelf: 'stretch', gap: 0.5, minWidth: 0, overflowX: 'auto'}}>
             {menuItems.map((menuItem) => (
-                <TopMenuEntry key={menuItem.to ?? menuItemLabelOf(menuItem, t)} menuItem={menuItem} activeItem={activeItem} />
+                <TopMenuEntry key={menuItem.to ?? menuItem.href ?? menuItemLabelOf(menuItem, t)} menuItem={menuItem} activeItem={activeItem} />
             ))}
         </Box>
     );

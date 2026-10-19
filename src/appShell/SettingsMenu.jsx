@@ -1,5 +1,6 @@
-// Los ajustes del teléfono (del marco de walk-ot): en la barra del teléfono no caben tres botones de configuración que
-// casi no se usan, así que van juntos detrás de un engrane (AppearanceSettings: tamaño de letra, idioma y claro / oscuro).
+// Los ajustes sin sesión (del marco de walk-ot): tres botones de configuración que casi no se usan van juntos detrás de un
+// engrane (AppearanceSettings: tamaño de letra, idioma y claro / oscuro), con los del proyecto y sus ligas (las de la cuenta:
+// sin sesión siguen a la mano, como «Regresar al sistema»).
 //
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
@@ -12,6 +13,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
 import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
+import MenuLinks from '@/appShell/MenuLinks.jsx';
 
 /**
  * @param {object} props
@@ -19,12 +21,15 @@ import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
  * @param {boolean} [props.showLanguage]
  * @param {boolean} [props.showColorScheme]
  * @param {import('react').ReactNode} [props.extraSettings] los ajustes del proyecto, debajo de los del paquete
+ * @param {object[]} [props.menuLinks] las ligas propias (accountMenuItems), al final
  */
-export default function SettingsMenu({showFontSize = true, showLanguage = true, showColorScheme = true, extraSettings}) {
+export default function SettingsMenu({showFontSize = true, showLanguage = true, showColorScheme = true, extraSettings, menuLinks = []}) {
     const {t} = useToolkitTranslation('layout');
     const [anchorElement, setAnchorElement] = useState(null);
     // hacia arriba si la barra está abajo (teléfono con vidrio)
     const placement = barMenuPlacementOf(anchorElement);
+    const hasAppearance = showFontSize || showLanguage || showColorScheme;
+    const closeMenu = () => setAnchorElement(null);
 
     return (
         <>
@@ -33,11 +38,13 @@ export default function SettingsMenu({showFontSize = true, showLanguage = true, 
                     <SettingsOutlinedIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
-            <Menu anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={() => setAnchorElement(null)}
+            <Menu anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={closeMenu}
                   anchorOrigin={placement.anchorOrigin} transformOrigin={placement.transformOrigin}
                   slotProps={{paper: {sx: {minWidth: 280, maxWidth: 360, py: 0.5, ...placement.gapSx}}}}>
-                <AppearanceSettings showFontSize={showFontSize} showLanguage={showLanguage} showColorScheme={showColorScheme} />
-                {extraSettings && <><Divider sx={{my: 0.5}} />{extraSettings}</>}
+                {hasAppearance && <AppearanceSettings showFontSize={showFontSize} showLanguage={showLanguage} showColorScheme={showColorScheme} />}
+                {extraSettings && <>{hasAppearance && <Divider sx={{my: 0.5}} />}{extraSettings}</>}
+                {menuLinks.length > 0 && (hasAppearance || extraSettings) && <Divider sx={{my: 0.5}} />}
+                <MenuLinks links={menuLinks} onClose={closeMenu} />
             </Menu>
         </>
     );

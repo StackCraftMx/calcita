@@ -14,6 +14,7 @@
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {accentTextStylesOf} from '@/theme/glassSurface.js';
+import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 
 /** Los fondos del minimalista: el gris agrupado de Apple y la tarjeta un escalón arriba, en claro y en oscuro. */
 export const MINIMAL_BACKGROUND = Object.freeze({
@@ -51,7 +52,7 @@ function tintOf(theme, colorName = 'primary', percent = TINT_PERCENT.rest) {
  * @returns {object}
  */
 function tonalFillOf(theme) {
-    return {backgroundColor: TONAL_FILL.light, ...theme.applyStyles('dark', {backgroundColor: TONAL_FILL.dark})};
+    return lightDarkStylesOf(theme, {backgroundColor: TONAL_FILL.light}, {backgroundColor: TONAL_FILL.dark});
 }
 
 /**
@@ -76,7 +77,7 @@ const FLOATING_TONE = Object.freeze({light: '#E5E5EA', dark: '#2C2C2E'});
  * @returns {object}
  */
 export function minimalFloatingStylesOf(theme) {
-    return {backgroundColor: FLOATING_TONE.light, ...theme.applyStyles('dark', {backgroundColor: FLOATING_TONE.dark})};
+    return lightDarkStylesOf(theme, {backgroundColor: FLOATING_TONE.light}, {backgroundColor: FLOATING_TONE.dark});
 }
 
 /**
@@ -164,8 +165,9 @@ export function minimalComponents() {
             styleOverrides: {
                 root: ({theme}) => ({
                     border: 0,
-                    '&.Mui-selected, &.Mui-selected:hover': {backgroundColor: paletteOf(theme).background.paper, color: paletteOf(theme).text.primary},
-                    ...theme.applyStyles('dark', {'&.Mui-selected, &.Mui-selected:hover': {backgroundColor: 'rgba(118, 118, 128, 0.36)'}}),
+                    ...lightDarkStylesOf(theme,
+                        {'&.Mui-selected, &.Mui-selected:hover': {backgroundColor: paletteOf(theme).background.paper, color: paletteOf(theme).text.primary}},
+                        {'&.Mui-selected, &.Mui-selected:hover': {backgroundColor: 'rgba(118, 118, 128, 0.36)'}}),
                 }),
             },
         },
