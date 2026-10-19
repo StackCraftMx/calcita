@@ -196,6 +196,8 @@ const CASES = [
     ['tema del proyecto: CalcitaAppLayout bar', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS}, 'contenido'), 'rgb(13, 14, 15)', PROJECT_STYLED_THEME],
     ['tema del proyecto: CalcitaSectionCard title y defaultProps', h(SectionCard, {}, 'contenido'), 'Título del tema', PROJECT_STYLED_THEME],
     ['tema del proyecto: CalcitaSectionCard title color', h(SectionCard, {}, 'contenido'), 'rgb(16, 17, 18)', PROJECT_STYLED_THEME],
+    // el logo ancho con una imagen para cada modo: se pintan las dos
+    ['AppLayout con wordmark para cada modo', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, wordmark: {light: h('img', {src: '/logo-color.svg', alt: ''}), dark: h('img', {src: '/logo-blanco.svg', alt: ''})}}, 'contenido'), '/logo-blanco.svg'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 
