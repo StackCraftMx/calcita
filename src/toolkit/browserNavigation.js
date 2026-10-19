@@ -8,25 +8,19 @@
 // Un proyecto con router pasa su adaptador (@stackcraftmx/calcita/react-router); sin él, esta cambia de página como un
 // enlace normal.
 //
-// OJO: aquí cada navegación recarga la página. Para una aplicación de una sola página se usa el adaptador de su router.
+// Para un sistema que ya existe, sin router:
+//   - con prefijo (la app detrás de un proxy en /portal): createBrowserNavigation({basePath: '/portal'}). Los componentes
+//     siguen hablando de '/pedidos' y la dirección real lleva el prefijo;
+//   - con # en la dirección (un servidor que no sabe responder /pedidos al recargar): createHashNavigation(), en
+//     hashNavigation.js.
+//
+// OJO: aquí cada navegación recarga la página. Para una aplicación de una sola página se usa el adaptador de su router (o la
+// de #, que no recarga).
 import {createElement, useSyncExternalStore} from 'react';
 
+import {pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
+
 const HISTORY_BACK = -1;
-
-/**
- * Cambia de página: -1 regresa en el historial; una ruta abre esa ruta.
- *
- * @param {string|number} destination
- * @returns {void}
- */
-function navigateInBrowser(destination) {
-    if (destination === HISTORY_BACK) {
-        window.history.back();
-        return;
-    }
-
-    window.location.assign(destination);
-}
 
 /**
  * Avisa cuando cambia la página por el historial (atrás y adelante).
@@ -50,29 +44,33 @@ function currentHref() {
 }
 
 /**
- * La página actual, como la da react-router: la ruta, la búsqueda y una llave por página.
+ * La navegación del navegador, con o sin prefijo.
  *
- * @returns {{pathname: string, search: string, key: string}}
+ * @param {{basePath?: string}} [options] basePath: donde vive la app detrás de un proxy ('/portal'); sin él, la raíz
+ * @returns {{useNavigate: () => (destination: string|number) => void, useLocation: () => {pathname: string, search: string, key: string}, Link: import('react').ElementType}}
  */
-function useBrowserLocation() {
-    const href = useSyncExternalStore(subscribeToHistory, currentHref, () => '');
-    const url = href ? new URL(href) : null;
+export function createBrowserNavigation({basePath = ''} = {}) {
+    // cambia de página: -1 regresa en el historial; una ruta de la app abre esa ruta con el prefijo
+    const navigate = (destination) => {
+        if (destination === HISTORY_BACK) {
+            window.history.back();
+            return;
+        }
+        window.location.assign(pathWithBase(basePath, destination));
+    };
 
-    return {pathname: url?.pathname ?? '/', search: url?.search ?? '', key: href};
+    // la página actual como la da react-router (la ruta SIN el prefijo, la búsqueda y una llave por página)
+    const useBrowserLocation = () => {
+        const href = useSyncExternalStore(subscribeToHistory, currentHref, () => '');
+        const url = href ? new URL(href) : null;
+        return {pathname: url ? pathWithoutBase(basePath, url.pathname) : '/', search: url?.search ?? '', key: href};
+    };
+
+    // el enlace sin router: un <a> con la dirección real
+    const BrowserLink = ({to, ...props}) => createElement('a', {href: pathWithBase(basePath, to), ...props});
+
+    return Object.freeze({useNavigate: () => navigate, useLocation: useBrowserLocation, Link: BrowserLink});
 }
 
-/**
- * El enlace sin router: un <a> con href.
- *
- * @param {{to: string}} props lo demás pasa al <a>
- * @returns {import('react').ReactElement}
- */
-function BrowserLink({to, ...props}) {
-    return createElement('a', {href: to, ...props});
-}
-
-export const browserNavigation = Object.freeze({
-    useNavigate: () => navigateInBrowser,
-    useLocation: useBrowserLocation,
-    Link: BrowserLink,
-});
+/** La de omisión: sin prefijo. */
+export const browserNavigation = createBrowserNavigation();
