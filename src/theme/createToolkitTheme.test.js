@@ -4,6 +4,7 @@ import {test} from 'node:test';
 
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 
 // lo que vale una propiedad en claro y en oscuro: con lightDarkStylesOf el valor de cada modo vive en su variable
 // (--calcita-…) y la propiedad dice var(--calcita-…); la regla de oscuro solo cambia la variable
@@ -233,4 +234,28 @@ test('el estilo minimalista: superficies por su tono, sin sombras, sin vidrio y 
     assert.ok(theme.shadows.every((shadow) => shadow === 'none'));
     assert.equal(outlined.border, 0);
     assert.match(outlined.backgroundColor, /14%, transparent\)$/);
+});
+
+test('el minimalista con los tonos de la marca: fondo, tarjetas, relleno y lo que flota; lo que no se pasa, el gris de Apple', () => {
+    const theme = createToolkitTheme({
+        look: THEME_LOOK.minimal,
+        minimalTones: {light: {default: '#EEF4FF', fill: '#DCE6F5'}, dark: {default: '#101827', paper: '#1A2333', floating: '#243047'}},
+    });
+    const field = theme.components.MuiOutlinedInput.styleOverrides.root({theme});
+    const floating = minimalFloatingStylesOf(theme);
+    const darkKeyOf = (styles) => Object.keys(styles).find((key) => key.includes('dark'));
+
+    // el fondo y las tarjetas (MUI les suma sus canales: defaultChannel, paperChannel)
+    const backgroundOf = (mode) => ({default: theme.colorSchemes[mode].palette.background.default, paper: theme.colorSchemes[mode].palette.background.paper});
+
+    assert.deepEqual(backgroundOf('light'), {default: '#EEF4FF', paper: MINIMAL_TONES.light.paper});
+    assert.deepEqual(backgroundOf('dark'), {default: '#101827', paper: '#1A2333'});
+    assert.equal(valueOf(field, 'backgroundColor'), '#DCE6F5');
+    assert.equal(darkValueOf(field, darkKeyOf(field), 'backgroundColor'), MINIMAL_TONES.dark.fill);
+    assert.equal(valueOf(floating, 'backgroundColor'), MINIMAL_TONES.light.floating);
+    assert.equal(darkValueOf(floating, darkKeyOf(floating), 'backgroundColor'), '#243047');
+    // sin minimalTones, los grises de Apple de siempre aunque la paleta traiga su fondo
+    assert.equal(createToolkitTheme({look: THEME_LOOK.minimal}).colorSchemes.light.palette.background.default, MINIMAL_BACKGROUND.light.default);
+    // y lo que flota en un tema sin minimalista (el aviso de versión nueva sin vidrio) sigue con el gris de Apple
+    assert.equal(valueOf(minimalFloatingStylesOf(createToolkitTheme()), 'backgroundColor'), MINIMAL_TONES.light.floating);
 });
