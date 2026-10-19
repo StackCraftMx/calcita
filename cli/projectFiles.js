@@ -5,10 +5,12 @@
 import {versionsOf} from './packageVersions.js';
 import {primaryColorOf, templateFlagsOf} from './projectAnswers.js';
 
-// lo que pide toda app con Calcita: React, MUI, el router, los avisos y las máquinas de estados que usa su puerta principal
+// lo que pide toda app con Calcita: React, MUI, el router, los avisos y las máquinas de estados que usa su puerta principal, y
+// formik y yup (los mensajes de validación en español salen de /forms en main.jsx, y la cuenta usa formik). Desde la 0.25 los
+// pone el proyecto: Calcita ya no los trae adentro
 const BASE_DEPENDENCIES = Object.freeze([
-    '@emotion/react', '@emotion/styled', '@mui/icons-material', '@mui/material', '@xstate/react', 'react', 'react-dom', 'react-router',
-    'sonner', 'xstate',
+    '@emotion/react', '@emotion/styled', '@mui/icons-material', '@mui/material', '@xstate/react', 'formik', 'react', 'react-dom',
+    'react-router', 'sonner', 'xstate', 'yup',
 ]);
 const HOOK_FORM_DEPENDENCIES = Object.freeze(['@hookform/resolvers', 'react-hook-form']);
 // la cuenta: las llaves de acceso (las pide @stackcraftmx/calcita/account) y el QR de la demostración

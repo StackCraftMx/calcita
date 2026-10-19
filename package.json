@@ -1,6 +1,6 @@
 {
     "name": "@stackcraftmx/calcita",
-    "version": "0.24.0",
+    "version": "0.25.0",
     "description": "Componentes y utilidades de React con MUI para arrancar proyectos rápido: tabla de servidor, diálogos, avisos, descargas, formularios, formatos y reportes en Excel.",
     "license": "FSL-1.1-MIT",
     "author": "calcifux",
@@ -144,9 +144,7 @@
         "tunnel:status": "bash scripts/tunnel.sh status"
     },
     "dependencies": {
-        "formik": "2.4.9",
-        "uuid": "14.0.2",
-        "yup": "1.7.1"
+        "uuid": "14.0.2"
     },
     "peerDependencies": {
         "@emotion/react": "^11.14.0",
@@ -170,6 +168,7 @@
         "filepond": "^4.32.0",
         "filepond-plugin-file-validate-size": "^2.2.8",
         "filepond-plugin-file-validate-type": "^1.2.9",
+        "formik": "^2.4.0",
         "leaflet": "^1.9.0",
         "next": ">=15.0.0",
         "nuqs": "^2.0.0",
@@ -181,7 +180,8 @@
         "react-router": "^7.0.0",
         "recharts": "^3.0.0",
         "sonner": "^2.0.0",
-        "xstate": "^5.0.0"
+        "xstate": "^5.0.0",
+        "yup": "^1.4.0"
     },
     "peerDependenciesMeta": {
         "@fullcalendar/core": {
@@ -232,6 +232,9 @@
         "filepond-plugin-file-validate-type": {
             "optional": true
         },
+        "formik": {
+            "optional": true
+        },
         "leaflet": {
             "optional": true
         },
@@ -254,6 +257,9 @@
             "optional": true
         },
         "recharts": {
+            "optional": true
+        },
+        "yup": {
             "optional": true
         }
     },
@@ -285,6 +291,7 @@
         "filepond": "4.32.12",
         "filepond-plugin-file-validate-size": "2.2.8",
         "filepond-plugin-file-validate-type": "1.2.9",
+        "formik": "2.4.9",
         "leaflet": "1.9.4",
         "next": "16.4.2",
         "nuqs": "2.10.1",
@@ -299,6 +306,7 @@
         "tsc-alias": "1.9.7",
         "typescript": "7.0.2",
         "vite": "7.3.6",
-        "xstate": "5.33.0"
+        "xstate": "5.33.0",
+        "yup": "1.7.1"
     }
 }

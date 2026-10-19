@@ -4,6 +4,67 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.25.0] - 2026-10-18
+
+### Agregado
+
+- Sistemas que ya existen: Calcita entra por pedazos (islas de React en una página de PHP, JSP o .NET). Navegación sin
+  router con `createHashNavigation()` (pantallas después del `#`, sin recargar ni tocar el servidor) y
+  `createBrowserNavigation({basePath})` (la app bajo un prefijo). Un `ToolkitProvider` dentro de otro toma del de afuera lo
+  que no le digan y ya no le cambia el idioma a toda la app; cada parte escribe con el suyo (`useFormatters()`,
+  `formattersOf`).
+- Eventos hacia afuera en los componentes de la casa: `ServerTable` (`onSelectionChange`, `onQueryChange`, `onLoaded`,
+  `onLoadError`), `createApiClient` (`onRequest`, `onResponse`, `onError`, y `toProblem` y `mapResponse` para backends que
+  contestan a su manera), `AppLayout` (`onMenuCollapse`, `onMobileMenuChange`, `onMobileTabsChange`), las gráficas
+  (`defaultView` y `onViewChange`, `CHART_VIEW`), `EventCalendar` (`onDatesChange`, `onViewChange`, `renderEvent`,
+  `fullCalendarProps`), `KanbanBoard` (`onAddCard`, `onCardComplete`, `onColumnCollapse`), la bandeja
+  (`onSelectionChange`, `onAttachmentClick`, `onExpand`), `MapView` (`onMapClick`, `renderPopup`), `GroupedTimeline`
+  (`onGroupToggle`), `CollapsibleSection` (`onExpandedChange`), `SecretField` (`onRevealChange`), `ColorSchemeToggle` y
+  `FontSizeToggle` (`onChange`), `AppearanceSettings` (`onFontSizeChange`, `onColorSchemeChange`), `InstallPromptBanner`
+  (`onInstallChoice`, `onShowSteps`, `onDismiss`), `RecoveryCodesDialog` (`onCodesSaved`) y las descargas (`onFailed`,
+  `onCanceled`).
+- Textos propios en cada componente de la casa: `texts` con la forma de su namespace, y `ComponentTexts` para todo lo de
+  adentro.
+- `ToolkitProvider`: `languages` (los idiomas del proyecto, con su nombre y su locale) y `fileTypes` (tipos de archivo
+  propios para las descargas).
+- `ServerTable`: elegir renglones y actuar sobre ellos (`selectionActions`, se conservan entre páginas, «todos los que
+  coinciden»); `SelectionActions` para lo mismo fuera de la tabla.
+- Formularios: varias opciones en la lista y el catálogo (`multiple`), `FormWizard` para react-hook-form y `WizardLayout`.
+- `ProfileScreen`: campos y pestañas propias (`extraFields`, `extraTabs`, `hiddenTabs`, `onTabChange`, `onProfileSaved`).
+- Gráficas: `LineChart` (una serie o varias, cada una con color y trazo), `ColumnChart` con series agrupadas y
+  `ChartTooltip` para las propias.
+- `ErrorPage` con botones y contenido propios (`actions`, `extraActions`, `children`, `icon`, `onGoHome`);
+  `withAccess(access, routes, {fallback})`; `RouteErrorScreen` con las props de `ErrorPage` y `onError`.
+- `MetricCard` con `icon`, `children` y `onClick`.
+- Calendario de producto: `EventDetails` (lugar, liga de la reunión, invitados con su respuesta, recordatorio y notas).
+- Tablero de producto: tarjetas con etiquetas, responsables, fecha, pendientes, comentarios y adjuntos; columnas que se
+  encogen (congelador) y terminar una tarea.
+- Bandeja tipo correo: elegir varios, la conversación completa, etiquetas y acciones por mensaje.
+- `BarSearch` (la búsqueda de la barra para cualquier pantalla) y `ActionsMenu` (el menú «⋯» de una tarjeta o un renglón).
+- `calcita new`: la app detrás de un proxy con prefijo (`ASSET_URL=/ventas`): Vite, el router, el logo, `version.json` y el
+  manifiesto con el prefijo.
+- Ejemplos: tareas, citas y bandeja como producto (con su servidor de mentira), selección en pedidos, y en el catálogo la
+  sección «En un sistema que ya existe».
+
+### Cambiado
+
+- **formik y yup ya no vienen dentro del paquete**: son `peerDependencies` (opcionales) y los instala el proyecto que use
+  `/forms` o `/account` (`pnpm add formik yup`). Calcita usa la versión que ya tenga el sistema. `calcita new` ya los pide.
+- Las gráficas leen sus colores del tema (`theme.vars` o la paleta): antes estaban escritos como `var(--mui-…)` y se perdían
+  con un `cssVarPrefix` propio o sin variables CSS.
+- Los formatos dentro de los componentes del paquete usan el proveedor más cercano; los sueltos (`formatDate`…) siguen con
+  el de la raíz.
+
+### Corregido
+
+- Las ventanas abiertas con clic ya no muestran el borde azul del navegador alrededor (desde MUI 7.3 el foco cae en la
+  ventana).
+- La palomita de la opción elegida de una lista caía en otro renglón; un campo de búsqueda mostraba dos «×».
+- Con vidrio, un botón con relleno en la barra seguía naranja.
+- En el teléfono, con algo elegido la barra de arriba se salía por los dos lados: ahora solo quedan las acciones de lo
+  elegido.
+- El panel de descargas decía «0 bytes» de los archivos armados en el navegador.
+
 ## [0.24.0] - 2026-10-18
 
 ### Agregado
@@ -302,6 +363,9 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.25.0]: https://github.com/StackCraftMx/calcita/compare/v0.24.0...v0.25.0
+[0.24.0]: https://github.com/StackCraftMx/calcita/compare/v0.23.0...v0.24.0
+[0.23.0]: https://github.com/StackCraftMx/calcita/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/StackCraftMx/calcita/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/StackCraftMx/calcita/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/StackCraftMx/calcita/compare/v0.19.0...v0.20.0
