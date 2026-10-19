@@ -1172,8 +1172,20 @@ export const catalogPageTexts = {
             themeAndGlass: {
                 title: 'Tema y vidrio',
                 description: 'El tema de Calcita ajusta cada componente: claro y oscuro, el vidrio líquido en lo que flota (como pide la guía de Apple: el contenido va sólido) o el estilo minimalista, con los colores de su proyecto. El configurador de tema de estos ejemplos arma el archivo con vista previa. Cada sección trae para qué sirve, el código mínimo y una tabla con todo lo que acepta.',
+                live: {
+                    title: '1. Cambie el tema en vivo',
+                    description: 'Las piezas de Calcita se cambian desde el tema como las de MUI, y se acoplan a cualquiera: el de Calcita, el de MUI tal cual o el de otro sistema hecho solo con overrides. Las variables CSS (--calcita-…) cambian las esquinas y el desenfoque de un jalón, también desde el CSS de una página que ya existe. Aquí se aplica solo a la vista previa.',
+                    extend: {
+                        overrides: 'El estilo de cada parte de una pieza (la lista de piezas y partes está en el README). Gana lo del proyecto.',
+                        defaultProps: 'Los valores por omisión de una pieza, para no repetirlos en cada pantalla.',
+                        anyTheme: 'Funciona con el tema de Calcita y con cualquier tema de MUI, también el que ya tenía su sistema.',
+                        cssRoot: 'Las esquinas de paneles, menús y campos y el desenfoque del vidrio, desde CSS suelto.',
+                        cssTheme: 'Las mismas variables, declaradas por el tema (un número va en px).',
+                        cssScoped: 'Solo para una parte de la pantalla (un menú flotante toma las de :root).',
+                    },
+                },
                 appearance: {
-                    title: '1. Lo que elige cada persona',
+                    title: '2. Lo que elige cada persona',
                     description: 'Tamaño de letra, idioma y claro u oscuro (lo mismo que el menú de la cuenta), y una superficie de vidrio propia. Cambiarlo aquí cambia toda la app y se recuerda en este navegador.',
                     extend: {
                         settings: 'Los ajustes de apariencia, para ponerlos en una pantalla propia (Mi perfil → Preferencias).',
@@ -1185,7 +1197,7 @@ export const catalogPageTexts = {
                     },
                 },
                 setup: {
-                    title: '2. Armar el tema de su proyecto',
+                    title: '3. Armar el tema de su proyecto',
                     description: 'Con vidrio y su color, minimalista, o los colores de MUI con un ajuste propio de un componente (se suma a los de Calcita, no los borra). De cada color basta el principal: MUI saca el claro, el oscuro y el color de la letra encima.',
                     extend: {
                         colors: 'Sus colores en claro y en oscuro (de cada uno, el principal); solo claro con {light: true}.',
@@ -2808,8 +2820,20 @@ export const catalogPageTexts = {
             themeAndGlass: {
                 title: 'Theme and glass',
                 description: 'Calcita’s theme tunes every component: light and dark, liquid glass on what floats (as Apple’s guide asks: content stays solid) or the minimal style, with your project’s colors. These examples’ theme builder makes the file with a live preview. Each section has what it is for, the minimum code and a table with everything it accepts.',
+                live: {
+                    title: '1. Switch the theme live',
+                    description: 'Calcita pieces change from the theme like MUI ones and fit any theme: Calcita’s, plain MUI or another system’s built only with overrides. The CSS variables (--calcita-…) change corners and blur at once, even from the CSS of an existing page. Here it applies only to the preview.',
+                    extend: {
+                        overrides: 'The style of each part of a piece (the list of pieces and parts is in the README). Your project wins.',
+                        defaultProps: 'A piece’s default values, so you don’t repeat them on every screen.',
+                        anyTheme: 'Works with Calcita’s theme and any MUI theme, including the one your system already had.',
+                        cssRoot: 'Corners of panels, menus and fields and the glass blur, from plain CSS.',
+                        cssTheme: 'The same variables, declared by the theme (a number means px).',
+                        cssScoped: 'Only for part of the screen (a floating menu takes the :root ones).',
+                    },
+                },
                 appearance: {
-                    title: '1. What each person chooses',
+                    title: '2. What each person chooses',
                     description: 'Font size, language and light or dark (the same as the account menu), and a glass surface of your own. Changing it here changes the whole app and is remembered in this browser.',
                     extend: {
                         settings: 'The appearance settings, to place them on your own screen (My profile → Preferences).',
@@ -2821,7 +2845,7 @@ export const catalogPageTexts = {
                     },
                 },
                 setup: {
-                    title: '2. Build your project’s theme',
+                    title: '3. Build your project’s theme',
                     description: 'With glass and your color, minimal, or MUI’s colors with your own tweak for a component (it adds to Calcita’s, it does not erase them). For each color the main one is enough: MUI derives the light, the dark and the text color on top.',
                     extend: {
                         colors: 'Your colors in light and dark (the main one of each); light only with {light: true}.',
