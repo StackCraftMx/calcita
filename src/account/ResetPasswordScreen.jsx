@@ -25,11 +25,12 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  * @param {string} [props.brandName]
  * @param {boolean} [props.showLanguageToggle]
  * @param {boolean} [props.showColorSchemeToggle]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete
  */
 export default function ResetPasswordScreen({
-    signInPath, forgotPasswordPath, tokenParam = 'token', logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true,
+    signInPath, forgotPasswordPath, tokenParam = 'token', logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts,
 }) {
-    const {t} = useToolkitTranslation('account');
+    const {t} = useToolkitTranslation('account', texts);
     const {connector} = useAccount();
     const {useLocation, Link} = useToolkitNavigation();
     const {search} = useLocation();

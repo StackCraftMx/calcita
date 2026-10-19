@@ -26,9 +26,10 @@ import {Yup} from '@/forms/validation.js';
  * @param {(values: {email: string}) => Promise<unknown>} props.onSubmit pide el enlace; si el servidor falla, truena con su
  *     problema
  * @param {string} [props.signInPath] la liga para regresar a iniciar sesión
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ForgotPasswordForm({onSubmit, signInPath}) {
-    const {t} = useToolkitTranslation('auth');
+export default function ForgotPasswordForm({onSubmit, signInPath, texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     const [sentToEmail, setSentToEmail] = useState(null);
     const schema = useMemo(() => Yup.object({email: Yup.string().trim().required().email()}), []);

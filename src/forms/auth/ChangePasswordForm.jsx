@@ -21,6 +21,7 @@ import FormTextField from '@/forms/FormTextField.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 /**
  * @param {object} props
@@ -28,9 +29,10 @@ import {Yup} from '@/forms/validation.js';
  *     contraseña; si el servidor dice que no (la actual no es), truena con su problema
  * @param {boolean} [props.requireCurrentPassword] por omisión sí; sin ella para la pantalla del enlace del correo
  * @param {object} [props.policy] las reglas de la nueva; por omisión DEFAULT_PASSWORD_POLICY
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY}) {
-    const {t} = useToolkitTranslation('auth');
+export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY, texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     const [isDone, setIsDone] = useState(false);
     const schema = useMemo(() => Yup.object({
         currentPassword: requireCurrentPassword ? Yup.string().required() : Yup.string(),
@@ -54,22 +56,24 @@ export default function ChangePasswordForm({onSubmit, requireCurrentPassword = t
     };
 
     return (
-        <Formik initialValues={{currentPassword: '', newPassword: '', confirmPassword: ''}} validationSchema={schema} onSubmit={submit}>
-            {({values}) => (
-                <Form noValidate>
-                    <Stack spacing={2}>
-                        {isDone && <Alert severity="success" role="status">{t('changePassword.done')}</Alert>}
-                        <FormProblemAlert />
-                        {requireCurrentPassword && (
-                            <FormTextField name="currentPassword" label={t('changePassword.current')} type="password" autoComplete="current-password" />
-                        )}
-                        <FormTextField name="newPassword" label={t('changePassword.next')} type="password" autoComplete="new-password" />
-                        <PasswordChecklist password={values.newPassword} policy={policy} />
-                        <FormTextField name="confirmPassword" label={t('changePassword.confirm')} type="password" autoComplete="new-password" />
-                        <SubmitButton sx={{alignSelf: 'flex-start'}}>{t('changePassword.submit')}</SubmitButton>
-                    </Stack>
-                </Form>
-            )}
-        </Formik>
+        <ComponentTexts namespace="auth" texts={texts}>
+            <Formik initialValues={{currentPassword: '', newPassword: '', confirmPassword: ''}} validationSchema={schema} onSubmit={submit}>
+                {({values}) => (
+                    <Form noValidate>
+                        <Stack spacing={2}>
+                            {isDone && <Alert severity="success" role="status">{t('changePassword.done')}</Alert>}
+                            <FormProblemAlert />
+                            {requireCurrentPassword && (
+                                <FormTextField name="currentPassword" label={t('changePassword.current')} type="password" autoComplete="current-password" />
+                            )}
+                            <FormTextField name="newPassword" label={t('changePassword.next')} type="password" autoComplete="new-password" />
+                            <PasswordChecklist password={values.newPassword} policy={policy} />
+                            <FormTextField name="confirmPassword" label={t('changePassword.confirm')} type="password" autoComplete="new-password" />
+                            <SubmitButton sx={{alignSelf: 'flex-start'}}>{t('changePassword.submit')}</SubmitButton>
+                        </Stack>
+                    </Form>
+                )}
+            </Formik>
+        </ComponentTexts>
     );
 }

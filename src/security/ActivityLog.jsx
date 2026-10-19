@@ -26,7 +26,7 @@ import PhonelinkLockOutlinedIcon from '@mui/icons-material/PhonelinkLockOutlined
 import PhonelinkEraseOutlinedIcon from '@mui/icons-material/PhonelinkEraseOutlined';
 import SyncLockOutlinedIcon from '@mui/icons-material/SyncLockOutlined';
 
-import {formatDateTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 
@@ -67,9 +67,11 @@ const LOADING_HEIGHT_PIXELS = 160;
  * @param {Array<{id: string, kind: string, occurredAt: string, device?: string|null, network?: string|null, description?: string}>|null} props.events
  *     del más nuevo al más viejo; null mientras llegan
  * @param {string|null} [props.error] ya traducido si no se pudieron traer
+ * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function ActivityLog({events, error = null}) {
-    const {t} = useToolkitTranslation('security');
+export default function ActivityLog({events, error = null, texts}) {
+    const {t} = useToolkitTranslation('security', texts);
+    const {formatDateTime} = useFormatters();
 
     return (
         <SectionCard title={t('activity.title')}>

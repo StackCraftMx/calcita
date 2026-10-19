@@ -23,10 +23,11 @@ import PhoneIphoneOutlinedIcon from '@mui/icons-material/PhoneIphoneOutlined';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {toastSuccess} from '@/feedback/toast.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
-import {formatDateTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 const LOADING_HEIGHT_PIXELS = 96;
 
@@ -37,6 +38,7 @@ const LOADING_HEIGHT_PIXELS = 96;
  */
 function SessionRow({session}) {
     const {t} = useToolkitTranslation('security');
+    const {formatDateTime} = useFormatters();
     const DeviceIcon = session.isMobile ? PhoneIphoneOutlinedIcon : ComputerOutlinedIcon;
     const device = t('sessions.device', {
         browser: session.browser ?? t('sessions.otherBrowser'), platform: session.platform ?? t('sessions.otherPlatform'),
@@ -66,9 +68,10 @@ function SessionRow({session}) {
  * @param {string|null} [props.error] ya traducido (ApiError.message) si no se pudieron traer
  * @param {() => Promise<number>} props.onCloseOthers cierra las demás; regresa cuántas cerró
  * @param {() => void} [props.onClosed] p. ej. volver a pedir la lista
+ * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SessionsCard({sessions, error = null, onCloseOthers, onClosed}) {
-    const {t} = useToolkitTranslation('security');
+export default function SessionsCard({sessions, error = null, onCloseOthers, onClosed, texts}) {
+    const {t} = useToolkitTranslation('security', texts);
     const othersCount = (sessions ?? []).filter((session) => !session.isCurrent).length;
     const confirmation = useConfirmAction({
         run: () => onCloseOthers(),
@@ -79,30 +82,32 @@ export default function SessionsCard({sessions, error = null, onCloseOthers, onC
     });
 
     return (
-        <SectionCard title={t('sessions.title')}>
-            <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary">{t('sessions.description')}</Typography>
-                {error && <Alert severity="error">{error}</Alert>}
-                {!sessions && !error && <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
-                {sessions && (
-                    <List disablePadding>
-                        {sessions.map((session, index) => (
-                            <li key={session.id}>
-                                {index > 0 && <Divider component="div" />}
-                                <SessionRow session={session} />
-                            </li>
-                        ))}
-                    </List>
-                )}
-                <Stack spacing={1} sx={{alignItems: 'flex-start'}}>
-                    {sessions && othersCount === 0 && <Typography variant="caption" color="text.secondary">{t('sessions.onlyThis')}</Typography>}
-                    <Button variant="outlined" color="warning" disabled={!sessions || othersCount === 0} onClick={() => confirmation.open({})}>
-                        {t('sessions.closeOthers')}
-                    </Button>
+        <ComponentTexts namespace="security" texts={texts}>
+            <SectionCard title={t('sessions.title')}>
+                <Stack spacing={2}>
+                    <Typography variant="body2" color="text.secondary">{t('sessions.description')}</Typography>
+                    {error && <Alert severity="error">{error}</Alert>}
+                    {!sessions && !error && <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
+                    {sessions && (
+                        <List disablePadding>
+                            {sessions.map((session, index) => (
+                                <li key={session.id}>
+                                    {index > 0 && <Divider component="div" />}
+                                    <SessionRow session={session} />
+                                </li>
+                            ))}
+                        </List>
+                    )}
+                    <Stack spacing={1} sx={{alignItems: 'flex-start'}}>
+                        {sessions && othersCount === 0 && <Typography variant="caption" color="text.secondary">{t('sessions.onlyThis')}</Typography>}
+                        <Button variant="outlined" color="warning" disabled={!sessions || othersCount === 0} onClick={() => confirmation.open({})}>
+                            {t('sessions.closeOthers')}
+                        </Button>
+                    </Stack>
                 </Stack>
-            </Stack>
-            <ConfirmDialog {...confirmation.dialogProps} tone="warning" title={t('sessions.confirmTitle')}
-                           description={t('sessions.confirmText', {count: othersCount})} confirmLabel={t('sessions.confirm')} />
-        </SectionCard>
+                <ConfirmDialog {...confirmation.dialogProps} tone="warning" title={t('sessions.confirmTitle')}
+                               description={t('sessions.confirmText', {count: othersCount})} confirmLabel={t('sessions.confirm')} />
+            </SectionCard>
+        </ComponentTexts>
     );
 }

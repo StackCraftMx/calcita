@@ -45,12 +45,13 @@ import {Yup} from '@/forms/validation.js';
 import {
     CURRENT_PASSWORD_MAX_LENGTH, PASSKEY_NAME_MAX_LENGTH, TOTP_CODE_MAX_LENGTH, TOTP_CODE_MIN_LENGTH, TOTP_CODE_PATTERN, normalizeTotpCode,
 } from '@/forms/security/securityRules.js';
-import {formatDateTime} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import RecoveryCodesDialog from '@/security/RecoveryCodesDialog.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import CopyButton from '@/ui/actions/CopyButton.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 // los códigos que quedan desde donde se avisa en ámbar que ya son pocos
 const FEW_CODES_LEFT = 2;
@@ -238,9 +239,11 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  * @param {string} [props.account] la cuenta (el correo), para el archivo de los códigos
  * @param {import('react').ReactNode} [props.passkeyNotice] un aviso en el diálogo de crear la llave, antes de que el
  *     navegador la guarde (p. ej. el de la demostración: la llave queda de verdad en el llavero de la persona)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function TwoStepVerificationCard({security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice}) {
-    const {t} = useToolkitTranslation('security');
+export default function TwoStepVerificationCard({security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts}) {
+    const {t} = useToolkitTranslation('security', texts);
+    const {formatDateTime} = useFormatters();
     // qué diálogo está abierto: uno a la vez
     const [dialog, setDialog] = useState(null);
     const [totpSetup, setTotpSetup] = useState(null);
@@ -273,79 +276,81 @@ export default function TwoStepVerificationCard({security, onSecurityChange, act
     const codesLeft = security.recoveryCodesRemaining;
 
     return (
-        <SectionCard title={t('twoStep.title')}>
-            <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary">{t('twoStep.description')}</Typography>
-                <Box>
-                    {security.isEnabled
-                        ? <Tag label={t('twoStep.active')} color="success" tooltip={t('twoStep.activeSince', {date: formatDateTime(security.enabledAt)})} />
-                        : <Tag label={t('twoStep.inactive')} color="warning" tooltip={t('twoStep.inactiveTooltip')} />}
-                </Box>
-                {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
+        <ComponentTexts namespace="security" texts={texts}>
+            <SectionCard title={t('twoStep.title')}>
+                <Stack spacing={2}>
+                    <Typography variant="body2" color="text.secondary">{t('twoStep.description')}</Typography>
+                    <Box>
+                        {security.isEnabled
+                            ? <Tag label={t('twoStep.active')} color="success" tooltip={t('twoStep.activeSince', {date: formatDateTime(security.enabledAt)})} />
+                            : <Tag label={t('twoStep.inactive')} color="warning" tooltip={t('twoStep.inactiveTooltip')} />}
+                    </Box>
+                    {error && <Alert severity="error" onClose={() => setError(null)}>{error}</Alert>}
 
-                <Divider />
-                <SettingRow Icon={FingerprintOutlinedIcon} title={t('twoStep.passkeysTitle')}
-                            caption={security.passkeys.length === 0 ? (canUsePasskeys ? t('twoStep.passkeysEmpty') : t('passkeys.unsupported')) : null}
-                            action={canUsePasskeys && <Button size="small" onClick={() => setDialog({kind: 'passkey'})}>{t('twoStep.add')}</Button>} />
-                {security.passkeys.length > 0 && (
-                    <List dense disablePadding>
-                        {security.passkeys.map((passkey) => (
-                            <ListItem key={passkey.id} disableGutters secondaryAction={(
-                                <Tooltip title={t('twoStep.removePasskeyTooltip')}>
-                                    <IconButton edge="end" aria-label={t('twoStep.removePasskey', {name: passkey.name})}
-                                                onClick={() => setDialog({kind: 'removePasskey', passkey})}>
-                                        <DeleteOutlineOutlinedIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                            )}>
-                                <ListItemIcon sx={{minWidth: 32}}><VpnKeyOutlinedIcon fontSize="small" /></ListItemIcon>
-                                <ListItemText primary={passkey.name}
-                                              secondary={passkey.lastUsedAt
-                                                  ? t('twoStep.passkeyUsed', {date: formatDateTime(passkey.lastUsedAt)})
-                                                  : t('twoStep.passkeyCreated', {date: formatDateTime(passkey.createdAt)})} />
-                            </ListItem>
-                        ))}
-                    </List>
-                )}
+                    <Divider />
+                    <SettingRow Icon={FingerprintOutlinedIcon} title={t('twoStep.passkeysTitle')}
+                                caption={security.passkeys.length === 0 ? (canUsePasskeys ? t('twoStep.passkeysEmpty') : t('passkeys.unsupported')) : null}
+                                action={canUsePasskeys && <Button size="small" onClick={() => setDialog({kind: 'passkey'})}>{t('twoStep.add')}</Button>} />
+                    {security.passkeys.length > 0 && (
+                        <List dense disablePadding>
+                            {security.passkeys.map((passkey) => (
+                                <ListItem key={passkey.id} disableGutters secondaryAction={(
+                                    <Tooltip title={t('twoStep.removePasskeyTooltip')}>
+                                        <IconButton edge="end" aria-label={t('twoStep.removePasskey', {name: passkey.name})}
+                                                    onClick={() => setDialog({kind: 'removePasskey', passkey})}>
+                                            <DeleteOutlineOutlinedIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}>
+                                    <ListItemIcon sx={{minWidth: 32}}><VpnKeyOutlinedIcon fontSize="small" /></ListItemIcon>
+                                    <ListItemText primary={passkey.name}
+                                                  secondary={passkey.lastUsedAt
+                                                      ? t('twoStep.passkeyUsed', {date: formatDateTime(passkey.lastUsedAt)})
+                                                      : t('twoStep.passkeyCreated', {date: formatDateTime(passkey.createdAt)})} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
 
-                <Divider />
-                <SettingRow Icon={PhonelinkLockOutlinedIcon} title={t('twoStep.appTitle')}
-                            caption={security.totp.isEnabled ? t('twoStep.appActiveSince', {date: formatDateTime(security.totp.enabledAt)}) : t('twoStep.appDescription')}
-                            action={security.totp.isEnabled
-                                ? <Button size="small" color="error" onClick={() => setDialog({kind: 'disableTotp'})}>{t('twoStep.deactivate')}</Button>
-                                : <Button size="small" onClick={startTotp}>{t('twoStep.activate')}</Button>} />
+                    <Divider />
+                    <SettingRow Icon={PhonelinkLockOutlinedIcon} title={t('twoStep.appTitle')}
+                                caption={security.totp.isEnabled ? t('twoStep.appActiveSince', {date: formatDateTime(security.totp.enabledAt)}) : t('twoStep.appDescription')}
+                                action={security.totp.isEnabled
+                                    ? <Button size="small" color="error" onClick={() => setDialog({kind: 'disableTotp'})}>{t('twoStep.deactivate')}</Button>
+                                    : <Button size="small" onClick={startTotp}>{t('twoStep.activate')}</Button>} />
 
-                {/* los códigos de recuperación solo existen con la verificación activa */}
-                {security.isEnabled && (
-                    <>
-                        <Divider />
-                        <SettingRow Icon={VpnKeyOutlinedIcon} title={t('twoStep.codesTitle')}
-                                    caption={codesLeft ? t('twoStep.codesRemaining', {count: codesLeft}) : t('twoStep.codesNone')}
-                                    captionColor={codesLeft <= FEW_CODES_LEFT ? 'warning.main' : 'text.secondary'}
-                                    action={<Button size="small" onClick={() => setDialog({kind: 'regenerateCodes'})}>{t('twoStep.regenerate')}</Button>} />
-                    </>
-                )}
-            </Stack>
+                    {/* los códigos de recuperación solo existen con la verificación activa */}
+                    {security.isEnabled && (
+                        <>
+                            <Divider />
+                            <SettingRow Icon={VpnKeyOutlinedIcon} title={t('twoStep.codesTitle')}
+                                        caption={codesLeft ? t('twoStep.codesRemaining', {count: codesLeft}) : t('twoStep.codesNone')}
+                                        captionColor={codesLeft <= FEW_CODES_LEFT ? 'warning.main' : 'text.secondary'}
+                                        action={<Button size="small" onClick={() => setDialog({kind: 'regenerateCodes'})}>{t('twoStep.regenerate')}</Button>} />
+                        </>
+                    )}
+                </Stack>
 
-            <PasskeyDialog open={dialog?.kind === 'passkey'} onClose={close} notice={passkeyNotice}
-                           onAdd={async (name) => apply(await actions.addPasskey(name), t('twoStep.passkeyAdded'))} />
-            <TotpDialog setup={totpSetup} onClose={() => setTotpSetup(null)}
-                        onConfirm={async (code) => {
-                            const result = await actions.confirmTotp(code);
-                            setTotpSetup(null);
-                            apply(result, t('twoStep.appActivated'));
-                        }} />
-            <PasswordDialog open={dialog?.kind === 'disableTotp'} onClose={close} title={t('twoStep.disableTitle')}
-                            description={t('twoStep.disableText')} confirmLabel={t('twoStep.deactivate')}
-                            onConfirm={async (password) => apply(await actions.disableTotp(password), t('twoStep.appDeactivated'))} />
-            <PasswordDialog open={dialog?.kind === 'removePasskey'} onClose={close}
-                            title={t('twoStep.removeTitle', {name: passkeyBeingRemoved?.name ?? ''})} description={t('twoStep.removeText')}
-                            confirmLabel={t('twoStep.remove')}
-                            onConfirm={async (password) => apply(await actions.removePasskey(passkeyBeingRemoved, password), t('twoStep.passkeyRemoved'))} />
-            <PasswordDialog open={dialog?.kind === 'regenerateCodes'} onClose={close} title={t('twoStep.regenerateTitle')}
-                            description={t('twoStep.regenerateText')} confirmLabel={t('twoStep.generate')}
-                            onConfirm={async (password) => apply(await actions.regenerateRecoveryCodes(password))} />
-            <RecoveryCodesDialog codes={recoveryCodes} account={account} onClose={() => setRecoveryCodes(null)} />
-        </SectionCard>
+                <PasskeyDialog open={dialog?.kind === 'passkey'} onClose={close} notice={passkeyNotice}
+                               onAdd={async (name) => apply(await actions.addPasskey(name), t('twoStep.passkeyAdded'))} />
+                <TotpDialog setup={totpSetup} onClose={() => setTotpSetup(null)}
+                            onConfirm={async (code) => {
+                                const result = await actions.confirmTotp(code);
+                                setTotpSetup(null);
+                                apply(result, t('twoStep.appActivated'));
+                            }} />
+                <PasswordDialog open={dialog?.kind === 'disableTotp'} onClose={close} title={t('twoStep.disableTitle')}
+                                description={t('twoStep.disableText')} confirmLabel={t('twoStep.deactivate')}
+                                onConfirm={async (password) => apply(await actions.disableTotp(password), t('twoStep.appDeactivated'))} />
+                <PasswordDialog open={dialog?.kind === 'removePasskey'} onClose={close}
+                                title={t('twoStep.removeTitle', {name: passkeyBeingRemoved?.name ?? ''})} description={t('twoStep.removeText')}
+                                confirmLabel={t('twoStep.remove')}
+                                onConfirm={async (password) => apply(await actions.removePasskey(passkeyBeingRemoved, password), t('twoStep.passkeyRemoved'))} />
+                <PasswordDialog open={dialog?.kind === 'regenerateCodes'} onClose={close} title={t('twoStep.regenerateTitle')}
+                                description={t('twoStep.regenerateText')} confirmLabel={t('twoStep.generate')}
+                                onConfirm={async (password) => apply(await actions.regenerateRecoveryCodes(password))} />
+                <RecoveryCodesDialog codes={recoveryCodes} account={account} onClose={() => setRecoveryCodes(null)} />
+            </SectionCard>
+        </ComponentTexts>
     );
 }

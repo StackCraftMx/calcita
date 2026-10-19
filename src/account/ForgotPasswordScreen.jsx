@@ -8,6 +8,7 @@ import {useAccount} from '@/account/AccountProvider.jsx';
 import {AuthLayout} from '@/appShell/AuthLayout.jsx';
 import ForgotPasswordForm from '@/forms/auth/ForgotPasswordForm.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 /**
  * @param {object} props
@@ -16,15 +17,18 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  * @param {string} [props.brandName]
  * @param {boolean} [props.showLanguageToggle]
  * @param {boolean} [props.showColorSchemeToggle]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true}) {
-    const {t} = useToolkitTranslation('auth');
+export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     const {connector} = useAccount();
 
     return (
-        <AuthLayout logo={logo} brandName={brandName} title={t('forgotPassword.title')} description={t('forgotPassword.subtitle')}
-                    showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
-            <ForgotPasswordForm onSubmit={connector.requestPasswordReset} signInPath={signInPath} />
-        </AuthLayout>
+        <ComponentTexts namespace="auth" texts={texts}>
+            <AuthLayout logo={logo} brandName={brandName} title={t('forgotPassword.title')} description={t('forgotPassword.subtitle')}
+                        showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
+                <ForgotPasswordForm onSubmit={connector.requestPasswordReset} signInPath={signInPath} />
+            </AuthLayout>
+        </ComponentTexts>
     );
 }

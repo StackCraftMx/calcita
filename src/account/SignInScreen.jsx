@@ -22,6 +22,7 @@ import {readRedirectParam} from '@/navigation.js';
 import {passkeysSupported, signWithPasskey} from '@/security/passkeys.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 
 /**
  * @param {object} props
@@ -32,9 +33,10 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  * @param {import('react').ReactNode | ((helpers: {signIn: (credentials: {email: string, password: string, remember?: boolean}) => Promise<void>}) => import('react').ReactNode)} [props.footer]
  * @param {boolean} [props.showLanguageToggle] por omisión sí
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInScreen({homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true}) {
-    const {t} = useToolkitTranslation('auth');
+export default function SignInScreen({homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     const {connector, session, refreshSession} = useAccount();
     const {useNavigate, useLocation} = useToolkitNavigation();
     const navigate = useNavigate();
@@ -82,29 +84,33 @@ export default function SignInScreen({homePath = '/', forgotPasswordPath, logo, 
     if (secondStep) {
         const showsDemoCode = typeof connector.demoTotpCode === 'function' && secondStep.methods.includes(SECOND_STEP_METHOD.totp);
         return (
-            <AuthLayout logo={logo} brandName={brandName} title={t('security:twoStep.title')}
-                        showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
-                <SecondStepForm methods={secondStep.methods} canUsePasskeys={passkeysSupported()}
-                                onUsePasskey={async () => {
-                                    await connector.signInWithPasskey(await signWithPasskey(await connector.secondStepPasskeyOptions()));
-                                    await refreshSession();
-                                }}
-                                onSubmitCode={async ({method, code}) => {
-                                    await connector.signInSecondStep({method, code});
-                                    await refreshSession();
-                                }}
-                                onCancel={backToPassword}
-                                footer={showsDemoCode && <DemoTotpCodeButton loadCode={connector.demoTotpCode} />} />
-            </AuthLayout>
+            <ComponentTexts namespace="auth" texts={texts}>
+                <AuthLayout logo={logo} brandName={brandName} title={t('security:twoStep.title')}
+                            showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
+                    <SecondStepForm methods={secondStep.methods} canUsePasskeys={passkeysSupported()}
+                                    onUsePasskey={async () => {
+                                        await connector.signInWithPasskey(await signWithPasskey(await connector.secondStepPasskeyOptions()));
+                                        await refreshSession();
+                                    }}
+                                    onSubmitCode={async ({method, code}) => {
+                                        await connector.signInSecondStep({method, code});
+                                        await refreshSession();
+                                    }}
+                                    onCancel={backToPassword}
+                                    footer={showsDemoCode && <DemoTotpCodeButton loadCode={connector.demoTotpCode} />} />
+                </AuthLayout>
+            </ComponentTexts>
         );
     }
 
     return (
-        <AuthLayout logo={logo} brandName={brandName} title={t('signIn.title')} description={t('signIn.subtitle')}
-                    showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}
-                    footer={typeof footer === 'function' ? footer({signIn: signInFromFooter}) : footer}>
-            {notice && <Alert severity="warning" sx={{mb: 2}}>{notice}</Alert>}
-            <SignInForm onSubmit={signIn} forgotPasswordPath={forgotPasswordPath} />
-        </AuthLayout>
+        <ComponentTexts namespace="auth" texts={texts}>
+            <AuthLayout logo={logo} brandName={brandName} title={t('signIn.title')} description={t('signIn.subtitle')}
+                        showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}
+                        footer={typeof footer === 'function' ? footer({signIn: signInFromFooter}) : footer}>
+                {notice && <Alert severity="warning" sx={{mb: 2}}>{notice}</Alert>}
+                <SignInForm onSubmit={signIn} forgotPasswordPath={forgotPasswordPath} />
+            </AuthLayout>
+        </ComponentTexts>
     );
 }

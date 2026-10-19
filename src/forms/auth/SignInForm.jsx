@@ -37,9 +37,10 @@ function RememberMeField({label}) {
  * @param {string} [props.forgotPasswordPath] sin ella no sale la liga de «¿Olvidó su contraseña?»
  * @param {boolean} [props.showRememberMe] por omisión sí
  * @param {string} [props.initialEmail]
+ * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInForm({onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = ''}) {
-    const {t} = useToolkitTranslation('auth');
+export default function SignInForm({onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts}) {
+    const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     // el esquema se arma al pintar y no al importar: yup toma sus mensajes al armarlo (buildYupLocale ya corrió)
     const schema = useMemo(() => Yup.object({

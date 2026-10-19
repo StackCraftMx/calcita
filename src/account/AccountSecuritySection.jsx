@@ -29,9 +29,10 @@ const LOADING_HEIGHT_PIXELS = 220;
 /**
  * @param {object} props
  * @param {boolean} [props.showPasswordChange] por omisión sí
+ * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete
  */
-export default function AccountSecuritySection({showPasswordChange = true}) {
-    const {t} = useToolkitTranslation('account');
+export default function AccountSecuritySection({showPasswordChange = true, texts}) {
+    const {t} = useToolkitTranslation('account', texts);
     const {connector, session} = useAccount();
     const [security, setSecurity] = useState(null);
     const [sessions, setSessions] = useState(null);
