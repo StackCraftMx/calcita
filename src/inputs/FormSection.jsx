@@ -11,7 +11,7 @@
 //
 // Las reglas, de la guía de Apple (HIG «Text fields», «Pickers», «Combo boxes» y sus imágenes):
 //   - la etiqueta siempre a la vista, a la izquierda (la pista se va al escribir; la etiqueta no);
-//   - el campo es un «pozo» parejo con esquinas de 12 px (fieldWellStylesOf): gris tenue en claro y más oscuro que la
+//   - el campo es un «pozo» parejo con esquinas de 12 px (fieldWellStylesOf): gris tenue en claro y más claro que la
 //     tarjeta en oscuro, con la letra clara, como el campo de la imagen de Apple. Antes iba transparente y el relleno solo
 //     salía con el cursor encima, en cuadro: no se entendía dónde escribir (lo reportaron);
 //   - la fecha es el mismo campo que los demás, a todo lo ancho (en cápsula al final del renglón quedaba descuadrada), con
@@ -32,7 +32,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
-import {GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
+import {GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
 
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
@@ -61,7 +61,8 @@ function rowControlSxOf(theme) {
     const roots = ['.MuiOutlinedInput-root', '.MuiFilledInput-root', '.MuiPickersOutlinedInput-root'];
     const ringOf = (color, percent) => ({outline: `${RING.pixels}px solid color-mix(in srgb, ${color} ${percent}%, transparent)`, outlineOffset: 0});
     return {
-        [strong(roots)]: {...fieldWellStylesOf(theme), outline: 'none'},
+        // los tonos van en variables del renglón (fieldVariablesOf, abajo en FormRow): aquí abajo una regla de oscuro no aplica
+        [strong(roots)]: {...fieldWellFromVariablesOf(theme), outline: 'none'},
         [strong(roots.map((root) => `${root}.Mui-focused`))]: ringOf(palette.primary.main, RING.focusPercent),
         [strong(roots.map((root) => `${root}.Mui-error`))]: ringOf(palette.error.main, RING.errorPercent),
         [strong(['.MuiOutlinedInput-notchedOutline', '.MuiPickersOutlinedInput-notchedOutline'])]: {display: 'none'},
@@ -101,6 +102,8 @@ export function FormRow({label, htmlFor, labelId, children}) {
                      py: `${ROW_PADDING_BLOCK_PIXELS}px`,
                      '&:focus-within > label': accentTextStylesOf(theme),
                      '&:has(.Mui-error) > label': {color: palette.error.main},
+                     // los tonos de los campos (los del proyecto con createToolkitTheme fields, o los de Apple) para sus campos
+                     ...fieldVariablesOf(theme),
                      ...rowControlSxOf(theme),
                  };
              }}>
