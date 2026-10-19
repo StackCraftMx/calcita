@@ -4,6 +4,16 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.27.0] - 2026-10-19
+
+### Agregado
+
+- `createToolkitTheme({minimalTones})`: el minimalista con los colores de la marca. Por modo: el fondo de la página
+  (`default`), las tarjetas (`paper`), el relleno de campos, grupos y botones sin color (`fill`) y lo que flota, como la
+  barra del teléfono (`floating`). Lo que no se pase se queda con el gris de Apple (`MINIMAL_TONES`, exportado). Salió de
+  la prueba en un sistema que ya existía: el minimalista cambiaba el fondo del proyecto por los grises de Apple y no había
+  forma limpia de escribir encima.
+
 ## [0.26.0] - 2026-10-19
 
 Lo que salió al meter Calcita en un sistema que ya existía (una SPA con su propio core, su i18next, su router y su prefijo
@@ -386,6 +396,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.27.0]: https://github.com/StackCraftMx/calcita/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/StackCraftMx/calcita/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/StackCraftMx/calcita/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/StackCraftMx/calcita/compare/v0.23.0...v0.24.0
