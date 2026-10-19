@@ -5,22 +5,54 @@
 //   - variant="dot" (por defecto): punto de color + texto, sin fondo. Para la columna de estado de una tabla.
 //   - variant="chip": Chip de MUI con contorno, para formatos, hallazgos o encabezados.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaStatusChip con defaultProps (p. ej.
+// {variant: 'chip'}) y styleOverrides de sus partes: root (el renglón del punto y el texto), dot, label y chip.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import {styled, useThemeProps} from '@mui/material/styles';
 
 import {labelOf, lookup, shortLabelOf} from '@/dictionaries/dictionaries.js';
+import {paletteOf} from '@/theme/components/paletteOf.js';
+import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 
-// color del diccionario → color de texto del punto (default no existe en la paleta)
-const DOT_COLOR_BY_TONE = {
-    success: 'success.main',
-    warning: 'warning.main',
-    error: 'error.main',
-    info: 'info.main',
-    default: 'text.disabled',
-};
+// el nombre de la pieza en el tema (theme.components.CalcitaStatusChip)
+const THEME_NAME = 'CalcitaStatusChip';
+// los colores que trae la paleta; otro (o «default») se pinta neutro
+const PALETTE_TONES = ['primary', 'secondary', 'success', 'warning', 'error', 'info'];
+
+/** El color del diccionario si la paleta lo tiene; si no, null (neutro). */
+function paletteToneOf(theme, tone) {
+    return PALETTE_TONES.includes(tone) && paletteOf(theme)[tone] ? paletteOf(theme)[tone] : null;
+}
+
+// el punto y el texto. El texto va en el tono oscuro de su color en claro y en el claro en oscuro: con el oscuro también en
+// modo oscuro casi no se leía (el «Suspendido» rojo sobre la tabla oscura, lo vio el usuario). Con lightDarkStylesOf para
+// que el tema del proyecto (styleOverrides.root) le gane también en oscuro
+const StatusChipRoot = styled('span', {name: THEME_NAME, slot: 'Root'})(({theme, ownerState}) => {
+    const color = paletteToneOf(theme, ownerState.tone);
+    return {
+        display: 'inline-flex', alignItems: 'center', gap: theme.spacing(0.75),
+        fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap',
+        ...(color
+            ? lightDarkStylesOf(theme, {color: color.dark}, {color: color.light})
+            : {color: paletteOf(theme).text.secondary}),
+    };
+});
+
+// OJO: flexShrink 0; en una celda angosta el punto se encogía a 0 px y el estado perdía su color
+const StatusChipDot = styled('span', {name: THEME_NAME, slot: 'Dot'})(({theme, ownerState}) => ({
+    width: 6, height: 6, flexShrink: 0, borderRadius: '50%',
+    backgroundColor: paletteToneOf(theme, ownerState.tone)?.main ?? paletteOf(theme).text.disabled,
+}));
+
+// el texto en su propio span: un nodo de texto suelto dentro de un flex se corta sin «…»
+const StatusChipLabel = styled('span', {name: THEME_NAME, slot: 'Label'})({minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis'});
+
+const StatusChipChip = styled(Chip, {name: THEME_NAME, slot: 'Chip'})({});
 
 /**
  * @param {object} props
@@ -34,7 +66,9 @@ const DOT_COLOR_BY_TONE = {
  *     que decir. OJO: no envuelvas este componente en otro Tooltip, porque el suyo sigue ahí y se ven los dos encimados
  * @param {object} [props.sx] ajustes de estilo del Chip (solo variant="chip")
  */
-export default function StatusChip({dictionary, value, variant = 'dot', short = false, suffix, tooltip: customTooltip, sx}) {
+export default function StatusChip(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaStatusChip.defaultProps) y encima lo que llega aquí
+    const {dictionary, value, variant = 'dot', short = false, suffix, tooltip: customTooltip, sx} = useThemeProps({props, name: THEME_NAME});
     const {t} = useToolkitTranslation('dictionaries');
     const dictionaryEntry = lookup(dictionary, value);
     const fullLabel = labelOf(dictionaryEntry, t);
@@ -50,22 +84,14 @@ export default function StatusChip({dictionary, value, variant = 'dot', short = 
         </Box>
     );
 
+    const ownerState = {tone: dictionaryEntry.color, variant};
     const content = variant === 'chip' ? (
-        <Chip size="small" label={label} color={dictionaryEntry.color} variant="outlined" sx={sx} />
+        <StatusChipChip size="small" label={label} color={dictionaryEntry.color} variant="outlined" sx={sx} />
     ) : (
-        <Box component="span" sx={{
-            display: 'inline-flex', alignItems: 'center', gap: 0.75,
-            fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap',
-            color: dictionaryEntry.color === 'default' ? 'text.secondary' : `${dictionaryEntry.color}.dark`,
-        }}>
-            {/* OJO: flexShrink 0; en una celda angosta el punto se encogía a 0 px y el estado perdía su color */}
-            <Box component="span" aria-hidden="true" sx={{
-                width: 6, height: 6, flexShrink: 0, borderRadius: '50%',
-                bgcolor: DOT_COLOR_BY_TONE[dictionaryEntry.color] ?? DOT_COLOR_BY_TONE.default,
-            }} />
-            {/* el texto en su propio span: un nodo de texto suelto dentro de un flex se corta sin «…» */}
-            <Box component="span" sx={{minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis'}}>{label}</Box>
-        </Box>
+        <StatusChipRoot ownerState={ownerState}>
+            <StatusChipDot aria-hidden="true" ownerState={ownerState} />
+            <StatusChipLabel ownerState={ownerState}>{label}</StatusChipLabel>
+        </StatusChipRoot>
     );
 
     // guard clause: sin tooltip no envolvemos (un Tooltip vacío igual agrega listeners)
