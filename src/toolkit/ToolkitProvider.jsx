@@ -6,8 +6,14 @@
 //
 // Sin proveedor todo funciona en español, con la zona del navegador y la navegación del navegador.
 //
+// Un proveedor dentro de otro (una parte de la app en otro idioma, una vista previa) toma del de afuera lo que no le digan, y
+// sus componentes leen el suyo: el más cercano. Solo el de la raíz pone la configuración que leen las funciones sueltas
+// (avisos, errores, formatos sueltos): antes el de adentro se la cambiaba a toda la app. Dos islas de React en una página
+// vieja son dos raíces: cada isla pinta con la suya, y las funciones sueltas usan la última que se pintó (en ese caso los
+// componentes de la casa ya formatean con su proveedor; para un aviso, mándelo con el texto ya traducido).
+//
 // Lo renderiza la app: arrow (regla de la casa).
-import {useMemo} from 'react';
+import {useContext, useMemo} from 'react';
 import {allowOnlyUnrestricted} from '@/access/accessRules.js';
 import {browserNavigation} from '@/toolkit/browserNavigation.js';
 import {ToolkitContext} from '@/toolkit/toolkitContext.js';
@@ -38,30 +44,34 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, 
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language = DEFAULT_LANGUAGE, languages = DEFAULT_LANGUAGES, onLanguageChange, texts, translate, timeZone, currency = DEFAULT_CURRENCY, appName = '',
-    navigation = browserNavigation, buildId = '', canAccess = allowOnlyUnrestricted, fileTypes, children,
+    language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes, children,
 }) => {
+    // el proveedor de afuera, si este va dentro de otro: de él sale lo que este no diga
+    const parent = useContext(ToolkitContext);
     const settings = useMemo(() => ({
-        language,
-        languages,
-        onLanguageChange: onLanguageChange ?? null,
-        texts: texts ?? {},
-        translate: translate ?? null,
-        timeZone: timeZone ?? browserTimeZone(),
-        currency,
-        appName,
-        navigation,
-        buildId,
-        canAccess,
-        fileTypes: fileTypes ?? null,
-    }), [language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes]);
+        language: language ?? parent?.language ?? DEFAULT_LANGUAGE,
+        languages: languages ?? parent?.languages ?? DEFAULT_LANGUAGES,
+        onLanguageChange: onLanguageChange ?? parent?.onLanguageChange ?? null,
+        texts: texts ?? parent?.texts ?? {},
+        translate: translate ?? parent?.translate ?? null,
+        timeZone: timeZone ?? parent?.timeZone ?? browserTimeZone(),
+        currency: currency ?? parent?.currency ?? DEFAULT_CURRENCY,
+        appName: appName ?? parent?.appName ?? '',
+        navigation: navigation ?? parent?.navigation ?? browserNavigation,
+        buildId: buildId ?? parent?.buildId ?? '',
+        canAccess: canAccess ?? parent?.canAccess ?? allowOnlyUnrestricted,
+        fileTypes: fileTypes ?? parent?.fileTypes ?? null,
+    }), [parent, language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes]);
 
+    // solo el de la raíz: un proveedor de adentro le cambiaba el idioma y la zona a las funciones sueltas de toda la app.
     // OJO: se configura durante el render (no en un efecto) para que los formatos y avisos que se llaman en este mismo
     // render ya vean el idioma y la zona nuevos
-    configureToolkit({
-        language: settings.language, texts: settings.texts, translate: settings.translate, timeZone: settings.timeZone, currency, appName,
-        buildId, languages,
-    });
+    if (!parent) {
+        configureToolkit({
+            language: settings.language, texts: settings.texts, translate: settings.translate, timeZone: settings.timeZone, currency: settings.currency,
+            appName: settings.appName, buildId: settings.buildId, languages: settings.languages,
+        });
+    }
 
     // el tamaño de letra que la persona guardó: se aplica aquí, que siempre está montado. Antes lo aplicaba su botón en la
     // barra; al pasar los ajustes al menú de la cuenta, al recargar se perdía hasta abrir el menú (error pagado)
