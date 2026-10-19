@@ -25,11 +25,16 @@
 // primero queda escondida. OJO: antes la línea se dibujaba entre dos hermanos seguidos y con un Grid en medio desaparecían
 // todas (lo señalaron en una revisión: obligaba a «la forma Calcita»).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFormSection (sus partes root, title, card y
+// footer) y components.CalcitaFormRow (root, label y control), con styleOverrides y defaultProps. Los colores de los campos,
+// más fácil con createToolkitTheme({fields}).
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import {styled, useThemeProps} from '@mui/material/styles';
 
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
 import {GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
@@ -77,6 +82,53 @@ function rowControlSxOf(theme) {
     };
 }
 
+// los nombres de las piezas en el tema (theme.components.CalcitaFormSection y CalcitaFormRow)
+const SECTION_THEME_NAME = 'CalcitaFormSection';
+const ROW_THEME_NAME = 'CalcitaFormRow';
+
+// el renglón: la etiqueta a la izquierda y el campo a la derecha, con la línea de arriba y los tonos de los campos
+const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root'})(({theme}) => {
+    const palette = (theme.vars ?? theme).palette;
+    return theme.unstable_sx({
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 2,
+        minHeight: ROW_MIN_HEIGHT_PIXELS,
+        px: 2,
+        py: `${ROW_PADDING_BLOCK_PIXELS}px`,
+        '&:focus-within > label': accentTextStylesOf(theme),
+        '&:has(.Mui-error) > label': {color: palette.error.main},
+        // los tonos de los campos (los del proyecto con createToolkitTheme fields, o los de Apple) para sus campos
+        ...fieldVariablesOf(theme),
+        ...rowControlSxOf(theme),
+    });
+});
+
+const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label'})(({theme}) => theme.unstable_sx({
+    flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels, pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary',
+}));
+
+const FormRowControl = styled(Box, {name: ROW_THEME_NAME, slot: 'Control'})({
+    flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 40,
+});
+
+const FormSectionRoot = styled(Box, {name: SECTION_THEME_NAME, slot: 'Root'})({});
+
+const FormSectionTitle = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Title'})(({theme}) => theme.unstable_sx({px: 2, mb: 0.75, fontWeight: 600}));
+
+// la tarjeta: la línea de arriba de cada renglón, desde donde empieza el texto (la del primero la recorta la tarjeta)
+const FormSectionCard = styled(Paper, {name: SECTION_THEME_NAME, slot: 'Card'})(({theme}) => ({
+    borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+    overflow: 'hidden',
+    [`& .${FORM_ROW_CLASS}::before`]: {
+        content: '""', position: 'absolute', top: 0, right: 0, left: theme.spacing(2), height: '1px',
+        backgroundColor: (theme.vars ?? theme).palette.divider,
+    },
+}));
+
+const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Footer'})(({theme}) => theme.unstable_sx({px: 2, mt: 0.75}));
+
 /**
  * Un renglón del formulario agrupado: la etiqueta a la izquierda y lo que sea a la derecha (un campo, un interruptor, un
  * texto). Los campos del framework lo usan solos dentro de una FormSection; FormRow suelto es para lo demás.
@@ -87,34 +139,18 @@ function rowControlSxOf(theme) {
  * @param {string} [props.labelId] el id de la etiqueta (para un campo que la nombra con aria-labelledby)
  * @param {import('react').ReactNode} props.children
  */
-export function FormRow({label, htmlFor, labelId, children}) {
+export function FormRow(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaFormRow.defaultProps) y encima lo que llega aquí
+    const {label, htmlFor, labelId, children} = useThemeProps({props, name: ROW_THEME_NAME});
     return (
-        <Box className={FORM_ROW_CLASS}
-             sx={(theme) => {
-                 const palette = (theme.vars ?? theme).palette;
-                 return {
-                     position: 'relative',
-                     display: 'flex',
-                     alignItems: 'flex-start',
-                     gap: 2,
-                     minHeight: ROW_MIN_HEIGHT_PIXELS,
-                     px: 2,
-                     py: `${ROW_PADDING_BLOCK_PIXELS}px`,
-                     '&:focus-within > label': accentTextStylesOf(theme),
-                     '&:has(.Mui-error) > label': {color: palette.error.main},
-                     // los tonos de los campos (los del proyecto con createToolkitTheme fields, o los de Apple) para sus campos
-                     ...fieldVariablesOf(theme),
-                     ...rowControlSxOf(theme),
-                 };
-             }}>
-            <Typography component="label" id={labelId} htmlFor={htmlFor} variant="body1"
-                        sx={{flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels, pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary'}}>
+        <FormRowRoot className={FORM_ROW_CLASS}>
+            <FormRowLabel component="label" id={labelId} htmlFor={htmlFor} variant="body1">
                 {label}
-            </Typography>
-            <Box sx={{flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 40}}>
+            </FormRowLabel>
+            <FormRowControl>
                 {children}
-            </Box>
-        </Box>
+            </FormRowControl>
+        </FormRowRoot>
     );
 }
 
@@ -124,33 +160,26 @@ export function FormRow({label, htmlFor, labelId, children}) {
  * @param {import('react').ReactNode} [props.footer] la explicación, abajo de la tarjeta
  * @param {import('react').ReactNode} props.children los campos, directo o dentro de un Grid, un Stack o un componente propio
  */
-export default function FormSection({title, footer, children}) {
+export default function FormSection(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaFormSection.defaultProps) y encima lo que llega aquí
+    const {title, footer, children} = useThemeProps({props, name: SECTION_THEME_NAME});
     const titleId = useId();
     return (
         <FormSectionContext value>
-            <Box component="section" aria-labelledby={title ? titleId : undefined}>
+            <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined}>
                 {title && (
-                    <Typography id={titleId} variant="subtitle2" component="h2" color="text.secondary" sx={{px: 2, mb: 0.75, fontWeight: 600}}>
+                    <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary">
                         {title}
-                    </Typography>
+                    </FormSectionTitle>
                 )}
-                <Paper variant="outlined"
-                       sx={(theme) => ({
-                           borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
-                           overflow: 'hidden',
-                           // la línea de arriba de cada renglón, desde donde empieza el texto (la del primero la recorta la tarjeta)
-                           [`& .${FORM_ROW_CLASS}::before`]: {
-                               content: '""', position: 'absolute', top: 0, right: 0, left: theme.spacing(2), height: '1px',
-                               backgroundColor: (theme.vars ?? theme).palette.divider,
-                           },
-                       })}>
+                <FormSectionCard variant="outlined">
                     {/* un píxel arriba: la línea de los renglones de hasta arriba queda fuera de la tarjeta (overflow hidden) */}
                     <Box sx={{mt: '-1px'}}>{children}</Box>
-                </Paper>
+                </FormSectionCard>
                 {footer && (
-                    <Typography variant="caption" component="p" color="text.secondary" sx={{px: 2, mt: 0.75}}>{footer}</Typography>
+                    <FormSectionFooter variant="caption" component="p" color="text.secondary">{footer}</FormSectionFooter>
                 )}
-            </Box>
+            </FormSectionRoot>
         </FormSectionContext>
     );
 }

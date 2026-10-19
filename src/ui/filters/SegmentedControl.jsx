@@ -8,9 +8,13 @@
 // de las pestañas y de los botones de opción), no en un relleno de color. Con el naranja fijo le ganaba al vidrio, no se
 // parecía a las pestañas de al lado y en oscuro quedaba con letra negra.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSegmentedControl con styleOverrides.root
+// (la tira y, adentro, sus opciones: '& .MuiToggleButton-root') y defaultProps.
+//
 // Genérico del paquete: function (regla de la casa).
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import {styled, useThemeProps} from '@mui/material/styles';
 
 import {glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
@@ -30,9 +34,13 @@ export const SEGMENTED_CONTROL_SX = {
     flexWrap: 'nowrap',
     flex: '0 0 auto',
     '& .MuiToggleButton-root': {
-        border: 0, borderRadius: '999px !important', px: 1.75, py: 0.375, m: '0 !important',
+        border: 0, borderRadius: '999px', m: 0, px: 1.75, py: 0.375,
         ...textSizeOf(13), fontWeight: 600, textTransform: 'none', color: 'text.secondary', whiteSpace: 'nowrap',
     },
+    // la píldora de cada opción. OJO: con dos clases; el grupo de MUI quita las esquinas y junta los botones de en medio con
+    // reglas de dos clases (& .MuiToggleButtonGroup-middleButton). Antes se le ganaba con !important, y así el tema del
+    // proyecto tampoco podía cambiar la forma
+    '& .MuiToggleButton-root.MuiToggleButtonGroup-grouped': {border: 0, borderRadius: '999px', m: 0},
     '& .MuiToggleButton-root.Mui-selected, & .MuiToggleButton-root.Mui-selected:hover': {
         bgcolor: 'primary.main', color: 'primary.contrastText',
     },
@@ -67,6 +75,14 @@ function glassSegmentedSxOf(theme) {
     };
 }
 
+// el nombre de la pieza en el tema (theme.components.CalcitaSegmentedControl)
+const THEME_NAME = 'CalcitaSegmentedControl';
+
+// la tira con su estilo y el de vidrio o minimalista; el tema del proyecto (styleOverrides.root) va después y le gana
+const SegmentedControlRoot = styled(ToggleButtonGroup, {name: THEME_NAME, slot: 'Root'})(({theme}) => (
+    theme.unstable_sx([SEGMENTED_CONTROL_SX, glassSegmentedSxOf(theme)])
+));
+
 /**
  * @param {object} props
  * @param {Array<{value: string, label: string, disabled?: boolean}>} props.options en el orden en que se pintan; ya
@@ -75,18 +91,20 @@ function glassSegmentedSxOf(theme) {
  * @param {(value: string) => void} props.onChange
  * @param {string} props.ariaLabel ya traducido
  */
-export default function SegmentedControl({options, value, onChange, ariaLabel}) {
+export default function SegmentedControl(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSegmentedControl.defaultProps) y encima lo que llega aquí
+    const {options, value, onChange, ariaLabel} = useThemeProps({props, name: THEME_NAME});
     return (
         // la fila deja 4 px arriba y abajo para que la sombra no se corte (ScrollableRow, py 0.5); el margen negativo los
         // devuelve: el control mide sus 40 px y se alinea con los campos de junto (quedaba 4 px más arriba)
         <ScrollableRow gap={1} py={ROW_SHADOW_ROOM} sx={{alignItems: 'center', my: -ROW_SHADOW_ROOM}}>
-            <ToggleButtonGroup exclusive size="small" value={value} aria-label={ariaLabel} sx={[SEGMENTED_CONTROL_SX, glassSegmentedSxOf]}
+            <SegmentedControlRoot exclusive size="small" value={value} aria-label={ariaLabel}
                                // quitar la selección no existe: un clic en la pestaña elegida no la apaga
                                onChange={(event, nextValue) => nextValue !== null && onChange(nextValue)}>
                 {options.map((option) => (
                     <ToggleButton key={option.value} value={option.value} disabled={option.disabled}>{option.label}</ToggleButton>
                 ))}
-            </ToggleButtonGroup>
+            </SegmentedControlRoot>
         </ScrollableRow>
     );
 }

@@ -185,7 +185,9 @@ export function minimalComponents() {
         MuiToggleButtonGroup: {
             styleOverrides: {
                 root: ({theme}) => ({...tonalFillOf(theme), border: 0, borderRadius: RADIUS_PIXELS.group, padding: 3, gap: 3}),
-                grouped: {border: 0, borderRadius: `${RADIUS_PIXELS.segment}px !important`},
+                // sin !important: el ajuste del tema va después de las reglas del grupo de MUI (las que quitan las esquinas de los
+                // de en medio) y les gana igual; con !important ni el control segmentado ni el proyecto podían cambiar la forma
+                grouped: {border: 0, borderRadius: RADIUS_PIXELS.segment},
             },
         },
         MuiToggleButton: {
