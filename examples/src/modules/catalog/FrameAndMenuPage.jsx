@@ -20,6 +20,7 @@ const loadBack = () => import('@/modules/catalog/demos/shell/BackToList.tsx?demo
 const LAYOUT_EXTENSIONS = [
     {id: 'brand', option: 'logo · brandName · brandCaption', example: 'brandCaption="Panel de administración"'},
     {id: 'wordmark', option: 'wordmark', example: 'wordmark={<img src={logoAncho} alt="" />}'},
+    {id: 'wordmarkPair', option: 'wordmark {light, dark}', example: 'wordmark={{light: <img src={logoColor} alt="" />, dark: <img src={logoBlanco} alt="" />}}'},
     {id: 'menuPosition', option: 'menuPosition', example: 'menuPosition={MENU_POSITION.top}'},
     {id: 'headerActions', option: 'headerActions', example: 'headerActions={<HelpButton />}'},
     {id: 'accountMenuItems', option: 'accountMenuItems', example: "accountMenuItems={[{to: '/billing', label: 'Facturación', Icon: ReceiptIcon}]}"},

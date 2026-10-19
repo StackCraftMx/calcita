@@ -482,12 +482,23 @@ function fieldEdgeOf(color) {
     return `inset 0 0 0 1px ${color}`;
 }
 
+// los campos de un renglón de FormSection son cápsulas. OJO: así se aprobaron, aunque salían por accidente: el renglón
+// decía 12 y sx lo multiplicaba por el radio del tema (96 px). Con la variable el número se lee en px, así que la cápsula
+// se escribe tal cual (999 px: con 40 px de alto da lo mismo que 96)
+const FORM_ROW_FIELD_RADIUS = '999px';
+
+/** Un radio en px: un número lleva «px» (en sx un número se multiplica por el radio del tema); un texto va tal cual. */
+function pixelsOf(radius) {
+    return typeof radius === 'number' ? `${radius}px` : radius;
+}
+
 /**
- * Las esquinas de los campos: las que pidió el proyecto en su tema (createToolkitTheme fields.radius), o la variable
- * --calcita-field-radius con las de cada estilo de respaldo.
+ * Las esquinas de los campos: las que pidió el proyecto en su tema (createToolkitTheme fields.radius; un número va en px
+ * en todos lados), o la variable --calcita-field-radius con las de cada estilo de respaldo.
  */
 function fieldRadiusOf(theme, lookRadius) {
-    return theme.toolkit?.fields?.radius ?? cssTokenOf('fieldRadius', `${lookRadius}px`);
+    const projectRadius = theme.toolkit?.fields?.radius;
+    return projectRadius !== undefined && projectRadius !== null ? pixelsOf(projectRadius) : cssTokenOf('fieldRadius', pixelsOf(lookRadius));
 }
 
 /**
@@ -555,7 +566,7 @@ export function fieldWellFromVariablesOf(theme) {
         backgroundImage: 'none',
         backdropFilter: 'none',
         WebkitBackdropFilter: 'none',
-        borderRadius: fieldRadiusOf(theme, FIELD_WELL_RADIUS_PIXELS),
+        borderRadius: fieldRadiusOf(theme, FORM_ROW_FIELD_RADIUS),
         backgroundColor: 'var(--calcita-field-fill)',
         boxShadow: 'var(--calcita-field-edge)',
         '&:hover': {backgroundColor: 'var(--calcita-field-hover-fill)', boxShadow: 'var(--calcita-field-hover-edge)'},

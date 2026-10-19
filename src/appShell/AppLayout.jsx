@@ -453,8 +453,9 @@ const AppLayoutFrame = ({
 /**
  * @param {object} props
  * @param {import('react').ReactNode} [props.logo] el logo chico (28 px), en la barra junto al nombre y en el cajón del teléfono
- * @param {import('react').ReactNode} [props.wordmark] el logo ancho, la marca con su nombre en una sola imagen (como el de muchas
- *     empresas): va en lugar del logo y el nombre en la barra y arriba del menú del teléfono, a 24 px de alto. Con el menú
+ * @param {import('react').ReactNode | {light?: import('react').ReactNode, dark?: import('react').ReactNode}} [props.wordmark] el logo
+ *     ancho, la marca con su nombre en una sola imagen (como el de muchas empresas), o uno para cada modo ({light, dark}: el de
+ *     color en claro y el blanco en oscuro): va en lugar del logo y el nombre en la barra y arriba del menú del teléfono, a 24 px de alto. Con el menú
  *     encogido se queda el logo chico (logo), si lo hay. brandName sigue siendo su nombre para el lector de pantalla
  * @param {string} [props.brandName] el nombre de la app; por omisión el appName de ToolkitProvider
  * @param {string} [props.brandCaption] el renglón chico debajo del nombre («Panel de administración»)

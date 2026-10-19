@@ -86,7 +86,8 @@ const SECTION_TITLE_FONT_REM = Object.freeze({solid: 0.6875, glass: 0.75});
 /**
  * @param {object} props
  * @param {import('react').ReactNode} [props.logo] el logo chico (28 px), el que se queda con el menú encogido
- * @param {import('react').ReactNode} [props.wordmark] el logo ancho (en lugar del logo y el nombre arriba)
+ * @param {import('react').ReactNode | {light?: import('react').ReactNode, dark?: import('react').ReactNode}} [props.wordmark] el logo
+ *     ancho (en lugar del logo y el nombre arriba), o uno para cada modo ({light, dark})
  * @param {string} props.brandName el nombre de la app
  * @param {string} [props.brandCaption] el renglón chico debajo del nombre («Panel de administración»)
  * @param {string} props.homePath

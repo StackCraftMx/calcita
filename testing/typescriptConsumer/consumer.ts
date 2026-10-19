@@ -89,6 +89,11 @@ const tokensTheme = createToolkitTheme({cssTokens: {panelRadius: 6, menuRadius: 
 const panelRadiusValue: string = cssTokenOf('panelRadius');
 const rootTokens: Record<string, string> = cssTokenDeclarationsOf({fieldRadius: 4});
 const tokenNames: string[] = Object.values(CSS_TOKENS).map((token) => token.variable);
+// el logo ancho con una imagen para cada modo: el de color en claro y el blanco en oscuro
+const pairedWordmarkLayout = createElement(AppLayout, {
+    wordmark: {light: createElement('img', {src: '/logo-color.svg', alt: ''}), dark: createElement('img', {src: '/logo-blanco.svg', alt: ''})},
+    children: null,
+});
 const piecesTheme = createToolkitTheme({components: {CalcitaStatusChip: {defaultProps: {variant: 'chip'}}, CalcitaFormSection: {styleOverrides: {card: {borderRadius: 4}}}}});
 // las cápsulas de una pantalla en la barra y una cápsula suelta
 const screenCapsules = [
@@ -212,5 +217,5 @@ const withIcons = menuItemsWithIconsOf([{to: '/inicio', label: 'Inicio', icon: '
 const wrongView = createElement(LineChart, {data: [], series: [], periodLabel: '', ariaLabel: '', emptyLabel: '', defaultView: 'pie'});
 
 export {wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
