@@ -22,6 +22,18 @@ const INBOX_EXTENSIONS = [
     {id: 'message', option: 'MessageView message', example: '<MessageView message={selectedMessage} />'},
     {id: 'actions', option: 'actions', example: 'actions={<Button>Responder</Button>}'},
     {id: 'phone', option: 'isDetailOpen · onCloseDetail', example: 'isDetailOpen={Boolean(messageId)} onCloseDetail={() => setMessageId(null)}'},
+    {id: 'labels', option: 'InboxLayout labels', example: "labels={[{id: 'urgent', label: 'Urgente', color: 'error', unreadCount: 2}]}"},
+    {id: 'foldersHeader', option: 'InboxLayout foldersHeader', example: 'foldersHeader={<Button variant="contained" fullWidth>Redactar</Button>}'},
+    {id: 'selection', option: 'MessageList selectedIds · onSelectionChange', example: 'selectedIds={selectedIds} onSelectionChange={setSelectedIds}'},
+    {id: 'messageActions', option: 'MessageList messageActions', example: "messageActions={(message) => [{key: 'archive', label: 'Archivar', onClick: () => archive(message.id)}]}"},
+    {id: 'messageFields', option: 'messages[].labels · threadCount', example: "{…, labels: [{label: 'Clientes', color: 'info'}], threadCount: 3}"},
+    {id: 'renderMessage', option: 'MessageList renderMessage', example: 'renderMessage={(message) => <TicketRow ticket={message} />}'},
+    {id: 'thread', option: 'MessageView message.thread · cc · labels', example: "message={{…, cc: ['bruno@…'], thread: [{id, from, receivedAt, body}]}}"},
+    {id: 'onAttachmentClick', option: 'MessageView onAttachmentClick', example: 'onAttachmentClick={(attachment) => filesApi.download(attachment.id)}'},
+    {id: 'onExpand', option: 'MessageView onExpand', example: 'onExpand={(threadMessageId) => mailApi.markRead(threadMessageId)}'},
+    {id: 'renderBody', option: 'MessageView renderBody', example: 'renderBody={(message) => <SafeHtml html={DOMPurify.sanitize(message.html)} />}'},
+    {id: 'footer', option: 'MessageView footer', example: 'footer={<QuickReply conversationId={message.id} />}'},
+    {id: 'texts', option: 'texts', example: "texts={{empty: 'Sin solicitudes', labels: 'Categorías'}}"},
 ];
 
 export const InboxPage = () => {

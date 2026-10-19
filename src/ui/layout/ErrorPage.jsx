@@ -5,7 +5,13 @@
 //   <ErrorPage kind={ERROR_PAGE_KIND.serverError} onRetry={reload} />   la pantalla tronó (errorElement del router)
 //   <ErrorPage kind={ERROR_PAGE_KIND.newVersion} onRetry={reload} />    se publicó otra versión con la pestaña abierta
 //
-// Los textos salen del paquete (namespace errorPage) en el idioma activo; title y text los cambian para un caso propio.
+// Los textos salen del paquete (namespace errorPage) en el idioma activo; title y text los cambian para un caso propio, y
+// `texts` cualquier otro («Ir al inicio», «Intentar de nuevo»).
+//
+// Se extiende sin tocar el framework: botones suyos junto a los de la casa (extraActions: «Contactar a soporte») o en lugar
+// de ellos (actions), algo debajo del texto (children: el teléfono de soporte, un folio), otro ícono (icon) y el evento de
+// «Ir al inicio» (onGoHome). La de «sin permiso» de las rutas se cambia con withAccess(…, {fallback}) y la de error de ruta
+// pasándole estas mismas props a RouteErrorScreen (/react-router).
 //
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -38,20 +44,35 @@ const ICON_PIXELS = 56;
  * @param {import('react').ReactNode} [props.text] ya traducido; por omisión el del paquete
  * @param {string} [props.homePath] a dónde lleva «Ir al inicio» (por omisión '/')
  * @param {() => void} [props.onRetry] con él sale «Intentar de nuevo»
+ * @param {() => void} [props.onGoHome] al picar «Ir al inicio», antes de ir (para avisar o limpiar algo)
+ * @param {import('react').ReactNode} [props.extraActions] botones suyos junto a los de la casa
+ * @param {import('react').ReactNode} [props.actions] botones suyos EN LUGAR de los de la casa
+ * @param {import('react').ReactNode} [props.icon] otro ícono; por omisión el de cada error
+ * @param {import('react').ReactNode} [props.children] algo debajo del texto (el teléfono de soporte, un folio)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `errorPage` en los textos del paquete:
+ *     {goHome: 'Volver al tablero', notFound: {title: '…'}}
  */
-export default function ErrorPage({kind, title, text, homePath = '/', onRetry}) {
-    const {t} = useToolkitTranslation('errorPage');
+export default function ErrorPage({
+    kind, title, text, homePath = '/', onRetry, onGoHome, extraActions, actions, icon, children, texts,
+}) {
+    const {t} = useToolkitTranslation('errorPage', texts);
     const {Link} = useToolkitNavigation();
     const look = ERROR_PAGE_LOOK[kind] ?? ERROR_PAGE_LOOK[ERROR_PAGE_KIND.serverError];
 
     return (
         <Stack spacing={2} sx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
-            <look.Icon color={look.color} sx={{fontSize: ICON_PIXELS}} />
+            {icon ?? <look.Icon color={look.color} sx={{fontSize: ICON_PIXELS}} />}
             <Typography variant="h4" component="h1">{title ?? t(`${kind}.title`)}</Typography>
             <Typography variant="body1" color="text.secondary">{text ?? t(`${kind}.text`)}</Typography>
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5} sx={{pt: 1}}>
-                {onRetry && <Button variant="contained" onClick={onRetry}>{t(look.retryKey ?? 'retry')}</Button>}
-                <Button variant={onRetry ? 'outlined' : 'contained'} component={Link} to={homePath}>{t('goHome')}</Button>
+            {children}
+            <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5} useFlexGap sx={{pt: 1, flexWrap: 'wrap', justifyContent: 'center'}}>
+                {actions ?? (
+                    <>
+                        {onRetry && <Button variant="contained" onClick={onRetry}>{t(look.retryKey ?? 'retry')}</Button>}
+                        <Button variant={onRetry ? 'outlined' : 'contained'} component={Link} to={homePath} onClick={onGoHome}>{t('goHome')}</Button>
+                        {extraActions}
+                    </>
+                )}
             </Stack>
             {look.httpStatus && <Typography variant="caption" color="text.disabled">{look.httpStatus}</Typography>}
         </Stack>

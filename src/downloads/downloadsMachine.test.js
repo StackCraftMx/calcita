@@ -56,3 +56,12 @@ test('limpiar quita las terminadas y deja las que siguen descargando', () => {
 
     assert.deepEqual(actor.getSnapshot().context.downloads.map((download) => download.id), ['running']);
 });
+
+test('al terminar se queda con el tamaño del archivo aunque nadie haya avisado avance (un CSV armado en el navegador)', () => {
+    const actor = createActor(downloadsMachine).start();
+    actor.send({type: 'STARTED', id: 'json', label: 'Reporte', format: 'json'});
+    actor.send({type: 'COMPLETED', id: 'json', fileName: 'reporte.json', sizeBytes: 2048});
+    const [download] = actor.getSnapshot().context.downloads;
+    assert.equal(download.loadedBytes, 2048);
+    assert.equal(download.totalBytes, 2048);
+});

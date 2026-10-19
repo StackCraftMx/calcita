@@ -1,7 +1,8 @@
 // Ejemplo de descargas y del reporte en Excel.
 //
 // Lo que se ve aquí:
-//   - DownloadMenu: «Descargar ▾» con Excel y CSV; cada formato pasa por su confirmación y el archivo va al panel;
+//   - DownloadMenu: «Descargar ▾» con Excel, CSV y JSON (un tipo propio de la app: APP_FILE_TYPES); cada formato pasa por su
+//     confirmación y el archivo va al panel;
 //   - el reporte (reportSheetOf, reportWorkbookOf, reportCsvOf): la misma hoja se pinta aquí y se descarga;
 //   - el panel de descargas (DownloadManager, montado en AppShell) con startDownload: una descarga lenta que se puede
 //     cancelar y una que falla con el motivo del servidor.
@@ -119,7 +120,7 @@ export const ReportsPage = () => {
             download={(format) => reportFileOf(sheet, format, excelTexts)}
             confirmation={(format) => ({
                 title: t('download.confirmTitle', {format: t(`common:download.formats.${format}.label`)}),
-                description: format === REPORT_FORMATS.xlsx ? t('download.confirmDescriptionXlsx') : t('download.confirmDescriptionCsv'),
+                description: t(`download.confirmDescription.${format}`),
             })}
         />
     );

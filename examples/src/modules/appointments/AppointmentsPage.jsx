@@ -1,86 +1,68 @@
-// El calendario de entregas: EventCalendar de /calendar con las citas del servidor. Elegir días u horas abre «Nueva cita»;
-// picar una cita enseña su detalle con «Borrar»; arrastrarla la cambia de día u hora. Los domingos la tienda no entrega:
-// el servidor responde 409, sale el aviso y la cita regresa sola a donde estaba.
-//
-// El color dice el tipo: azul las entregas, verde las instalaciones, morado las visitas.
+// La agenda como producto: EventCalendar de /calendar con todo lo de afuera puesto por la pantalla.
+//   - pide al servidor solo las citas del rango que se ve (onDatesChange): así lo haría un backend con un año de citas;
+//   - elegir días u horas abre «Agendar cita»; picar una cita enseña su detalle (EventDetails): cuándo, dónde, la liga de la
+//     reunión con «Unirse», los invitados con su respuesta y el recordatorio, con «Editar» y «Borrar» (con confirmación);
+//   - arrastrarla la cambia de día u hora; los domingos la tienda no entrega: el servidor responde 409 y la cita regresa;
+//   - el horario de la tienda (lunes a sábado de 8 a 20) se marca en la semana y el día (fullCalendarProps businessHours).
+// El color dice el tipo: las entregas con el color de información, las instalaciones con el de éxito y las visitas con el
+// secundario del tema.
 //
 // Lo renderiza la app: arrow (regla de la casa).
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import {PageHeading, SectionCard, formatDate, formatDateTime, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {EventCalendar} from '@stackcraftmx/calcita/calendar';
-import {Form, FormProblemAlert, FormSelectField, FormTextField, Formik, SubmitButton, Yup, applyServerProblem} from '@stackcraftmx/calcita/forms';
+import {
+    ConfirmDialog, PageHeading, SectionCard, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
+} from '@stackcraftmx/calcita';
+import {EventCalendar, EventDetails} from '@stackcraftmx/calcita/calendar';
 
-import {APPOINTMENT_KIND, createAppointment, deleteAppointment, listAppointments, moveAppointment} from '@/modules/appointments/appointmentsApi.js';
+import {AppointmentDialog} from '@/modules/appointments/AppointmentDialog.jsx';
+import {APPOINTMENT_KIND, deleteAppointment, loadAppointments, moveAppointment} from '@/modules/appointments/appointmentsApi.js';
+import {loadPeople} from '@/modules/appointments/peopleApi.js';
 
 // el color de cada tipo de cita (un color del tema)
 const TONE_BY_KIND = Object.freeze({[APPOINTMENT_KIND.delivery]: 'info', [APPOINTMENT_KIND.installation]: 'success', [APPOINTMENT_KIND.visit]: 'secondary'});
-// un día completo viene sin hora («2026-10-20»)
-const WHOLE_DAY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-/** Cuándo, en palabras: un día completo sin moverlo de zona (formatDate) o el día con su hora. */
-const whenOf = (text) => (WHOLE_DAY_PATTERN.test(text) ? formatDate(text) : formatDateTime(text));
-
-/** «Nueva cita» para los días u horas elegidos. */
-const NewAppointmentDialog = ({range, onCreated, onClose}) => {
-    const {t} = useToolkitTranslation('appointments');
-    // el esquema se arma al pintar: yup toma sus mensajes al armarlo
-    const schema = useMemo(() => Yup.object({customer: Yup.string().trim().required(), kind: Yup.string().required()}), []);
-    const kindOptions = Object.values(APPOINTMENT_KIND).map((kind) => ({value: kind, label: t(`kinds.${kind}`)}));
-
-    const save = async (values, formikHelpers) => {
-        try {
-            const response = await createAppointment({...values, start: range.start, end: range.end});
-            toastSuccess(response.message);
-            onCreated();
-        } catch (error) {
-            applyServerProblem(error, {...formikHelpers, values});
-        }
-    };
-
-    return (
-        <Dialog open={Boolean(range)} onClose={onClose} maxWidth="xs" fullWidth>
-            <Formik initialValues={{customer: '', kind: APPOINTMENT_KIND.delivery}} validationSchema={schema} onSubmit={save}>
-                <Form noValidate>
-                    <DialogTitle>{t('new.title')}</DialogTitle>
-                    <DialogContent>
-                        <Stack spacing={2}>
-                            <Typography variant="body2" color="text.secondary">{range && t('new.when', {start: whenOf(range.start)})}</Typography>
-                            <FormProblemAlert />
-                            <FormTextField name="customer" label={t('new.customer')} autoFocus />
-                            <FormSelectField name="kind" label={t('new.kind')} options={kindOptions} />
-                        </Stack>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={onClose}>{t('common:actions.cancel')}</Button>
-                        <SubmitButton size="medium">{t('new.save')}</SubmitButton>
-                    </DialogActions>
-                </Form>
-            </Formik>
-        </Dialog>
-    );
-};
+// el horario de la tienda: lunes a sábado de 8 a 20 (FullCalendar lo sombrea en la semana y el día)
+const STORE_HOURS = Object.freeze({daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '08:00', endTime: '20:00'});
+const CALENDAR_OPTIONS = Object.freeze({businessHours: STORE_HOURS, slotMinTime: '07:00:00', slotMaxTime: '21:00:00'});
+const DETAIL_TITLE_ID = 'appointment-detail-title';
 
 export const AppointmentsPage = () => {
-    const {t} = useToolkitTranslation('appointments');
+    const {t, language} = useToolkitTranslation('appointments');
     const [appointments, setAppointments] = useState([]);
-    const [newRange, setNewRange] = useState(null);
-    const [openAppointment, setOpenAppointment] = useState(null);
+    const [people, setPeople] = useState([]);
+    // lo que se abre: la ventana de agendar o editar (draft) y el detalle de una cita
+    const [draft, setDraft] = useState(null);
+    const [openId, setOpenId] = useState(null);
+    // el rango que se ve (lo avisa el calendario): se vuelve a pedir al guardar, mover o borrar
+    const visibleRange = useRef(null);
 
-    const load = useCallback(() => listAppointments().then(setAppointments).catch(toastProblem), []);
+    const load = useCallback(() => {
+        if (visibleRange.current) {
+            loadAppointments(visibleRange.current).then(setAppointments).catch(toastProblem);
+        }
+    }, []);
     useEffect(() => {
-        load();
-    }, [load]);
+        loadPeople().then(setPeople).catch(toastProblem);
+    }, []);
+    // al cambiar el idioma se vuelve a pedir (los mensajes del servidor llegan traducidos)
+    useEffect(load, [load, language]);
 
+    const deleteAction = useConfirmAction({
+        run: ({subject}) => deleteAppointment(subject.id),
+        onDone: (response) => {
+            toastSuccess(response.message);
+            setOpenId(null);
+            load();
+        },
+    });
+
+    const openAppointment = appointments.find((appointment) => appointment.id === openId);
+    const titleOf = (appointment) => `${t(`kinds.${appointment.kind}`)} · ${appointment.title}`;
     const events = appointments.map((appointment) => ({
-        id: appointment.id, title: `${t(`kinds.${appointment.kind}`)} · ${appointment.customer}`, start: appointment.start, end: appointment.end,
-        tone: TONE_BY_KIND[appointment.kind],
+        id: appointment.id, title: titleOf(appointment), start: appointment.start, end: appointment.end, tone: TONE_BY_KIND[appointment.kind],
     }));
 
     // arrastrar: si el servidor dice que no (domingo), el aviso y el calendario la regresa (EventCalendar recibe el error)
@@ -95,35 +77,48 @@ export const AppointmentsPage = () => {
         }
     };
 
-    const removeOpenAppointment = async () => {
-        const response = await deleteAppointment(openAppointment.id);
-        toastSuccess(response.message);
-        setOpenAppointment(null);
-        load();
-    };
-
     return (
         <Stack spacing={3}>
             <PageHeading title={t('page.title')} description={t('page.description')} />
             <SectionCard title={t('calendar')}>
-                <EventCalendar ariaLabel={t('calendar')} events={events} onDateSelect={setNewRange} onEventChange={move}
-                               onEventClick={(eventId) => setOpenAppointment(appointments.find((appointment) => appointment.id === eventId))} />
+                <EventCalendar ariaLabel={t('calendar')} events={events} onEventChange={move} fullCalendarProps={CALENDAR_OPTIONS}
+                               onDatesChange={({start, end}) => {
+                                   visibleRange.current = {from: start, to: end};
+                                   load();
+                               }}
+                               onDateSelect={(range) => setDraft({range})} onEventClick={setOpenId} />
             </SectionCard>
 
-            <NewAppointmentDialog range={newRange} onClose={() => setNewRange(null)} onCreated={() => {
-                setNewRange(null);
-                load();
-            }} />
-            <Dialog open={Boolean(openAppointment)} onClose={() => setOpenAppointment(null)} maxWidth="xs" fullWidth>
-                <DialogTitle>{openAppointment && `${t(`kinds.${openAppointment.kind}`)} · ${openAppointment.customer}`}</DialogTitle>
+            <AppointmentDialog key={draft?.appointment?.id ?? draft?.range?.start ?? 'closed'} draft={draft} people={people}
+                               onClose={() => setDraft(null)}
+                               onSaved={() => {
+                                   setDraft(null);
+                                   load();
+                               }} />
+            {/* la ventana se nombra con el título de la cita (titleId) */}
+            <Dialog open={Boolean(openAppointment)} onClose={() => setOpenId(null)} maxWidth="xs" fullWidth aria-labelledby={DETAIL_TITLE_ID}>
                 <DialogContent>
-                    <Typography variant="body2">{openAppointment && t('detail.when', {start: whenOf(openAppointment.start), end: whenOf(openAppointment.end)})}</Typography>
+                    {openAppointment && (
+                        <EventDetails
+                            titleId={DETAIL_TITLE_ID}
+                            event={{
+                                ...openAppointment, title: titleOf(openAppointment), tone: TONE_BY_KIND[openAppointment.kind], description: openAppointment.notes,
+                            }}
+                            actions={(
+                                <>
+                                    <Button color="error" onClick={() => deleteAction.open(openAppointment)}>{t('detail.delete')}</Button>
+                                    <Button onClick={() => {
+                                        setDraft({appointment: openAppointment});
+                                        setOpenId(null);
+                                    }}>{t('detail.edit')}</Button>
+                                    <Button variant="contained" onClick={() => setOpenId(null)}>{t('detail.close')}</Button>
+                                </>
+                            )} />
+                    )}
                 </DialogContent>
-                <DialogActions>
-                    <Button color="error" onClick={removeOpenAppointment}>{t('detail.delete')}</Button>
-                    <Button variant="contained" onClick={() => setOpenAppointment(null)}>{t('detail.close')}</Button>
-                </DialogActions>
             </Dialog>
+            <ConfirmDialog {...deleteAction.dialogProps} tone="error" title={t('confirmDelete.title')} description={t('confirmDelete.description')}
+                           confirmLabel={t('detail.delete')} cancelLabel={t('dialog.cancel')} />
         </Stack>
     );
 };

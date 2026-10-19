@@ -9,6 +9,11 @@
 // Arrastrar un evento lo cambia de día u hora: onEventChange recibe lo nuevo y, si truena (el servidor dijo que no), el
 // evento regresa a donde estaba. Sin onEventChange no se puede arrastrar; sin onDateSelect no se pueden elegir días.
 //
+// Se extiende sin tocar el framework: onDatesChange avisa el rango que se ve (para que el backend mande solo esas citas),
+// onViewChange la vista, renderEvent pinta cada cita a su manera (recibe la cita tal cual, con sus campos propios),
+// fullCalendarProps pasa lo demás de FullCalendar (horario laboral, días ocultos, horas visibles…) y texts los textos. El
+// detalle de una cita para su ventana: EventDetails.
+//
 // OJO: las horas se pintan en la zona del navegador (FullCalendar pide un complemento aparte para zonas con nombre).
 //
 // Genérico del paquete: function (regla de la casa).
@@ -96,13 +101,22 @@ function calendarStylesOf(theme) {
  *     al arrastrar un evento; si truena, el evento regresa
  * @param {number|'auto'} [props.height]
  * @param {string} props.ariaLabel ya traducido
+ * @param {(range: {start: string, end: string, view: string}) => void} [props.onDatesChange] cada que cambia lo que se ve (al
+ *     abrir, al ir al anterior o siguiente, al cambiar de vista): para pedir al backend solo las citas de ese rango
+ * @param {(view: string) => void} [props.onViewChange] al cambiar de vista (CALENDAR_VIEW)
+ * @param {(event: any) => import('react').ReactNode} [props.renderEvent] lo de adentro de cada cita (recibe la cita de events
+ *     tal cual, con sus campos propios)
+ * @param {object} [props.fullCalendarProps] lo demás de FullCalendar (businessHours, hiddenDays, slotMinTime, locale…); lo
+ *     que el calendario controla (las citas, la barra, los eventos de arriba) no se reemplaza desde aquí
+ * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
  */
 export default function EventCalendar({
     events, initialView = CALENDAR_VIEW.month, views = Object.values(CALENDAR_VIEW), onEventClick, onDateSelect, onEventChange, height = 'auto', ariaLabel,
+    onDatesChange, onViewChange, renderEvent, fullCalendarProps, texts,
 }) {
     const theme = useTheme();
     const palette = paletteOf(theme);
-    const {t} = useToolkitTranslation('calendar');
+    const {t} = useToolkitTranslation('calendar', texts);
     const {language} = useToolkitSettings();
     const calendarRef = useRef(null);
     const [title, setTitle] = useState('');
@@ -142,12 +156,19 @@ export default function EventCalendar({
                 )}
             </Stack>
             <Box sx={calendarStylesOf}>
-                <FullCalendar ref={calendarRef} plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} initialView={initialView}
-                              headerToolbar={false} locale={language === 'es' ? spanishLocale : 'en'} firstDay={MONDAY} height={height}
+                {/* primero lo del proyecto (fullCalendarProps); lo de abajo es lo que el calendario controla y le gana */}
+                <FullCalendar locale={language === 'es' ? spanishLocale : 'en'} firstDay={MONDAY} {...fullCalendarProps}
+                              ref={calendarRef} plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, ...(fullCalendarProps?.plugins ?? [])]}
+                              initialView={initialView} headerToolbar={false} height={height}
                               nowIndicator dayMaxEvents={DAY_MAX_EVENTS} events={coloredEvents} eventDisplay="block"
+                              eventContent={renderEvent ? (contentInfo) => renderEvent(events.find((event) => event.id === contentInfo.event.id) ?? contentInfo.event) : undefined}
                               datesSet={(dateInfo) => {
                                   setTitle(dateInfo.view.title);
+                                  if (dateInfo.view.type !== view) {
+                                      onViewChange?.(dateInfo.view.type);
+                                  }
                                   setView(dateInfo.view.type);
+                                  onDatesChange?.({start: dateInfo.startStr, end: dateInfo.endStr, view: dateInfo.view.type});
                               }}
                               eventClick={onEventClick ? (clickInfo) => onEventClick(clickInfo.event.id) : undefined}
                               selectable={Boolean(onDateSelect)} selectMirror

@@ -17,7 +17,9 @@ import {DownloadManager, InstallPromptBanner, Toaster, ToolkitProvider, usePubli
 import {AccountProvider} from '@stackcraftmx/calcita/account';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 
-import {APP_BUILD_ID, APP_LANGUAGES, APP_NAME, BUILD_VERSION_URL, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE} from '@/app/appSettings.js';
+import {
+    APP_BUILD_ID, APP_FILE_TYPES, APP_LANGUAGES, APP_NAME, BUILD_VERSION_URL, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE,
+} from '@/app/appSettings.js';
 import {accountConnector} from '@/app/accountConnector.js';
 import {APP_TEXTS} from '@/app/appTexts.js';
 
@@ -36,7 +38,7 @@ export const AppProviders = () => {
             {(canAccess) => (
                 <ToolkitProvider language={language} onLanguageChange={setLanguage} texts={APP_TEXTS} timeZone={PRODUCT_TIME_ZONE}
                                  currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation} buildId={APP_BUILD_ID}
-                                 canAccess={canAccess}>
+                                 canAccess={canAccess} fileTypes={APP_FILE_TYPES}>
                     <NuqsAdapter>
                         <Outlet />
                     </NuqsAdapter>

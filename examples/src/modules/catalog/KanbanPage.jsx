@@ -18,6 +18,14 @@ const KANBAN_EXTENSIONS = [
     {id: 'renderCard', option: 'renderCard', example: 'renderCard={(card) => <TaskCardContent task={card} />}'},
     {id: 'onCardClick', option: 'onCardClick', example: 'onCardClick={(cardId) => openTask(cardId)}'},
     {id: 'ariaLabel', option: 'ariaLabel', example: 'ariaLabel="Tareas del equipo"'},
+    {id: 'cardFields', option: 'cards[].tags · assignees · dueDate · checklist · comments · attachments', example: "{…, tags: [{label: 'Alta', color: 'error'}], assignees: [{id, name}], dueDate: '2026-10-20', checklist: {done: 1, total: 3}}"},
+    {id: 'onAddCard', option: 'onAddCard', example: 'onAddCard={({columnId, title}) => tasksApi.create({columnId, title})}'},
+    {id: 'cardActions', option: 'cardActions', example: "cardActions={(card) => [{key: 'delete', label: 'Borrar', color: 'error', onClick: () => remove(card.id)}]}"},
+    {id: 'columnActions', option: 'columnActions', example: "columnActions={(column) => [{key: 'archive', label: 'Archivar', onClick: () => archive(column.id)}]}"},
+    {id: 'onCardComplete', option: 'onCardComplete · cards[].completed', example: 'onCardComplete={(card, completed) => tasksApi.setCompleted(card.id, completed)}'},
+    {id: 'collapsible', option: 'columns[].collapsible · defaultCollapsed · onColumnCollapse', example: "columns={[{id: 'icebox', title: 'Congelador', collapsible: true, defaultCollapsed: true}, …]}"},
+    {id: 'count', option: 'columns[].count', example: 'columns={columns.map((column) => ({...column, count: allTasksOf(column.id).length}))}'},
+    {id: 'texts', option: 'texts', example: "texts={{addCardPlaceholder: 'Nombre de la tarea'}}"},
 ];
 
 export const KanbanPage = () => {

@@ -24,24 +24,18 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import PictureAsPdfOutlinedIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined';
-import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 
 import {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
 import {startDownload} from '@/downloads/downloadQueue.js';
+import {useFileTypes} from '@/downloads/fileTypes.js';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
 
-const ICON_BY_FORMAT = {
-    pdf: PictureAsPdfOutlinedIcon,
-    xlsx: TableViewOutlinedIcon,
-    csv: TextSnippetOutlinedIcon,
-};
 
 /**
  * @param {object} props
- * @param {Array<'pdf'|'xlsx'|'csv'>} props.formats
+ * @param {string[]} props.formats los tipos de archivo, en orden: los de la casa (xlsx, csv, pdf) y los que el proyecto declare
+ *     en ToolkitProvider fileTypes (zip, xml…)
  * @param {(format: string, transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void}) => Promise<{blob: Blob, fileName: string}>} props.download
  * @param {string} [props.label] ya traducido; por defecto "Descargar"
  * @param {string} [props.downloadLabel] ya traducido; lo que se ve en el panel de descargas antes de saber el nombre
@@ -50,6 +44,8 @@ const ICON_BY_FORMAT = {
  * @param {(format: string) => {title: string, description: import('react').ReactNode, confirmLabel?: string}} [props.confirmation]
  * @param {(format: string) => void} [props.onDownloaded] p. ej. volver a pedir la tabla (si la descarga cambia algo en
  *     el servidor)
+ * @param {(format: string, error: unknown) => void} [props.onFailed] cuando la descarga no se pudo (el panel ya lo dice)
+ * @param {(format: string) => void} [props.onCanceled] cuando la persona la canceló desde el panel
  * @param {'button'|'icon'} [props.variant] icon = solo el icono (columna de acciones de una tabla)
  * @param {string} [props.ariaLabel] ya traducido; obligatorio en la variante icon
  * @param {(format: string) => void} [props.onChooseFormat] quien llama se encarga de confirmar y descargar
@@ -64,10 +60,11 @@ const ICON_BY_FORMAT = {
  * se eligió y la pantalla abre SU confirmación (useConfirmAction) fuera de la tabla.
  */
 export default function DownloadMenu({
-    formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, variant = 'button', ariaLabel, onChooseFormat,
-    icon: ButtonIcon = FileDownloadOutlinedIcon,
+    formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, onFailed, onCanceled, variant = 'button', ariaLabel,
+    onChooseFormat, icon: ButtonIcon = FileDownloadOutlinedIcon,
 }) {
     const {t} = useToolkitTranslation('common');
+    const fileTypes = useFileTypes();
     // de dónde sale el menú de formatos: del botón, o (desde el «⋯» del teléfono, que se cierra) de donde estaba el renglón
     const [anchorElement, setAnchorElement] = useState(null);
     const [anchorPosition, setAnchorPosition] = useState(null);
@@ -85,6 +82,8 @@ export default function DownloadMenu({
             format,
             request: (transferOptions) => download(format, transferOptions),
             onCompleted: () => onDownloaded?.(format),
+            onFailed: (error) => onFailed?.(format, error),
+            onCanceled: () => onCanceled?.(format),
         });
     };
 
@@ -157,11 +156,14 @@ export default function DownloadMenu({
                   anchorReference={anchorPosition ? 'anchorPosition' : 'anchorEl'} anchorEl={anchorElement} anchorPosition={anchorPosition ?? undefined}
                   anchorOrigin={{vertical: 'bottom', horizontal: 'right'}} transformOrigin={{vertical: 'top', horizontal: 'right'}}>
                 {formats.map((format) => {
-                    const Icon = ICON_BY_FORMAT[format] ?? FileDownloadOutlinedIcon;
+                    const fileType = fileTypes[format];
+                    const Icon = fileType?.Icon ?? FileDownloadOutlinedIcon;
                     return (
                         <MenuItem key={format} onClick={() => chooseFormat(format)}>
                             <ListItemIcon><Icon fontSize="small" /></ListItemIcon>
-                            <ListItemText primary={t(`download.formats.${format}.label`)} secondary={t(`download.formats.${format}.hint`)}
+                            {/* los de la casa con sus textos; los del proyecto con su label y hint (o esas llaves en sus texts) */}
+                            <ListItemText primary={t(`download.formats.${format}.label`, {defaultValue: fileType?.label ?? format.toUpperCase()})}
+                                          secondary={t(`download.formats.${format}.hint`, {defaultValue: fileType?.hint ?? ''})}
                                           slotProps={{secondary: {variant: 'caption'}}} />
                         </MenuItem>
                     );

@@ -24,6 +24,7 @@
 import {Children, useState} from 'react';
 import {createPortal} from 'react-dom';
 import Box from '@mui/material/Box';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
@@ -37,6 +38,11 @@ import {
 import {DESKTOP_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import useFittingActionCount from '@/appShell/useFittingActionCount.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+
+// la marca de un grupo exclusivo (BarActions exclusive) y la regla que, mientras exista, esconde a los demás grupos del
+// renglón flotante del teléfono (data-phone-bar-actions lo pone AppLayout)
+const EXCLUSIVE_ATTRIBUTE = 'data-bar-exclusive';
+const HIDE_NOT_EXCLUSIVE_STYLES = {[`[data-phone-bar-actions] > :not([${EXCLUSIVE_ATTRIBUTE}])`]: {display: 'none !important'}};
 
 /** Lo de adentro sabe que quedó en una cápsula (BarActionButton se vuelve solo ícono). */
 const InCapsule = ({children}) => (
@@ -68,14 +74,14 @@ const MoreActionsMenu = ({label, children}) => {
 };
 
 /** La cápsula que flota en el teléfono: las que caben como ícono y, si sobran, el «⋯» con las demás. */
-const PhoneFloatingCapsule = ({phoneSlot, label, sx, children}) => {
+const PhoneFloatingCapsule = ({phoneSlot, label, sx, children, ...rest}) => {
     const {t} = useToolkitTranslation('layout');
     const [capsuleElement, setCapsuleElement] = useState(null);
     const actions = Children.toArray(children);
     const visibleCount = useFittingActionCount(phoneSlot, capsuleElement, actions.length);
     const hiddenActions = actions.slice(visibleCount);
     return (
-        <BarCapsule ref={setCapsuleElement} aria-label={label} sx={sx}>
+        <BarCapsule ref={setCapsuleElement} aria-label={label} sx={sx} {...rest}>
             <InCapsule>{actions.slice(0, visibleCount)}</InCapsule>
             {hiddenActions.length > 0 && <MoreActionsMenu label={t('barActions.more')}>{hiddenActions}</MoreActionsMenu>}
         </BarCapsule>
@@ -91,8 +97,10 @@ const PhoneFloatingCapsule = ({phoneSlot, label, sx, children}) => {
  *     grupo, en la franja)
  * @param {object|Function|Array} [props.inlineSx] estilos de la cápsula cuando se queda en la pantalla
  * @param {boolean} [props.bare] sin cápsula alrededor: lo de adentro ya es una (un buscador)
+ * @param {boolean} [props.exclusive] en el teléfono, mientras se ve, es lo único del renglón flotante (con los demás grupos
+ *     exclusivos): los otros se esconden, como el modo de edición del iPhone deja solo lo de lo elegido. Lo usa SelectionActions
  */
-export default function BarActions({children, label, order, sx, inlineSx, bare = false}) {
+export default function BarActions({children, label, order, sx, inlineSx, bare = false, exclusive = false}) {
     const {slot, phoneSlot, usesCapsules} = useBarActionsSlot();
     const isDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
     // en escritorio, la barra; en el teléfono, el renglón flotante (solo existe con cápsulas)
@@ -112,16 +120,30 @@ export default function BarActions({children, label, order, sx, inlineSx, bare =
             </BarCapsule>
         );
     }
+    // exclusivo en el teléfono: se marca y esconde a los demás grupos del renglón mientras se ve. OJO: sin esto, con algo
+    // elegido no cabían el conteo, sus acciones, la lupa y las de la pantalla, y el renglón se salía por los dos lados
+    const exclusiveProps = !isDesktop && exclusive ? {[EXCLUSIVE_ATTRIBUTE]: ''} : {};
+    const hideOthers = !isDesktop && exclusive && <GlobalStyles styles={HIDE_NOT_EXCLUSIVE_STYLES} />;
     // flotando en el teléfono: las que caben y el «⋯»
     if (!isDesktop && !bare) {
-        return createPortal(<PhoneFloatingCapsule phoneSlot={phoneSlot} label={label} sx={[orderSx, ...extraSx]}>{children}</PhoneFloatingCapsule>, target);
+        return (
+            <>
+                {hideOthers}
+                {createPortal(<PhoneFloatingCapsule phoneSlot={phoneSlot} label={label} sx={[orderSx, ...extraSx]} {...exclusiveProps}>{children}</PhoneFloatingCapsule>, target)}
+            </>
+        );
     }
     // arriba en la barra (o el buscador flotando en el teléfono)
     if (usesCapsules && !bare) {
         return createPortal(<BarCapsule aria-label={label} sx={[orderSx, ...extraSx]}><InCapsule>{children}</InCapsule></BarCapsule>, target);
     }
     if (usesCapsules) {
-        return createPortal(<Box role="group" aria-label={label} sx={[{display: 'flex', alignItems: 'center'}, orderSx, ...extraSx]}>{children}</Box>, target);
+        return (
+            <>
+                {hideOthers}
+                {createPortal(<Box role="group" aria-label={label} sx={[{display: 'flex', alignItems: 'center'}, orderSx, ...extraSx]} {...exclusiveProps}>{children}</Box>, target)}
+            </>
+        );
     }
     // en la franja: botones sueltos (solo ícono) con el color de la franja (sobre el naranja de Stackcraft, el color
     // principal no se vería)

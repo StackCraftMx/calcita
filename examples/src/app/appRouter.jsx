@@ -8,11 +8,12 @@
 // Cada pantalla viaja en su propio archivo (lazy): si se publicó otra versión con la pestaña abierta, withChunkRecovery
 // recarga una vez, y si una pantalla truena RouteErrorScreen dice qué pasó con su botón para recargar.
 import {createBrowserRouter} from 'react-router';
-import {ERROR_PAGE_KIND, ErrorPage, FullPageLoader} from '@stackcraftmx/calcita';
+import {FullPageLoader} from '@stackcraftmx/calcita';
 import {RouteErrorScreen, withAccess, withChunkRecovery} from '@stackcraftmx/calcita/react-router';
 
 import {AppProviders} from '@/app/AppProviders.jsx';
 import {AppShell} from '@/app/AppShell.jsx';
+import {ForbiddenPage, NotFoundPage} from '@/app/ErrorPages.jsx';
 import {APP_PATHS, ROUTER_BASENAME} from '@/core';
 
 const ROUTE_MODULES = import.meta.glob('@/modules/*/routes.js', {eager: true});
@@ -23,7 +24,8 @@ const moduleRouteGroups = Object.entries(ROUTE_MODULES)
     .filter(([, routeModule]) => routeModule.routes?.length)
     .map(([routesPath, routeModule]) => {
         const menuModule = MENU_MODULES[routesPath.replace(/routes\.js$/, 'menu.js')];
-        return withAccess(menuModule?.access, routeModule.routes);
+        // quien no tiene permiso ve la página de la casa con un botón para pedir acceso (fallback)
+        return withAccess(menuModule?.access, routeModule.routes, {fallback: <ForbiddenPage />});
     });
 
 // las pantallas de entrar: fuera del marco, sin sesión
@@ -42,7 +44,7 @@ export const appRouter = createBrowserRouter([
                 element: <AppShell />,
                 children: [
                     ...moduleRouteGroups,
-                    {path: '*', element: <ErrorPage kind={ERROR_PAGE_KIND.notFound} />},
+                    {path: '*', element: <NotFoundPage />},
                 ],
             },
         ]),

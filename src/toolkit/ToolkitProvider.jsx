@@ -20,6 +20,8 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, 
  * @param {Array<{code: string, label: string, locale?: string}>} [props.languages] los idiomas que ofrece la app: su código,
  *     su nombre en su propio idioma («Português») y su locale de Intl ('pt-BR'). Por omisión español e inglés
  *     (DEFAULT_LANGUAGES). Sus traducciones van en `texts`
+ * @param {Record<string, {Icon: import('react').ElementType, color?: string, label?: string, hint?: string}>} [props.fileTypes]
+ *     tipos de archivo del proyecto para las descargas, además de Excel, CSV y PDF (downloads/fileTypes.js)
  * @param {(language: string) => void} [props.onLanguageChange] lo llama LanguageToggle; el proyecto cambia su idioma
  * @param {object} [props.texts] textos propios por idioma, con la forma de locales/ ({es: {table: {...}}})
  * @param {(namespace: string, key: string, values?: object) => string|undefined} [props.translate] traductor del
@@ -37,7 +39,7 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, 
  */
 export const ToolkitProvider = ({
     language = DEFAULT_LANGUAGE, languages = DEFAULT_LANGUAGES, onLanguageChange, texts, translate, timeZone, currency = DEFAULT_CURRENCY, appName = '',
-    navigation = browserNavigation, buildId = '', canAccess = allowOnlyUnrestricted, children,
+    navigation = browserNavigation, buildId = '', canAccess = allowOnlyUnrestricted, fileTypes, children,
 }) => {
     const settings = useMemo(() => ({
         language,
@@ -51,7 +53,8 @@ export const ToolkitProvider = ({
         navigation,
         buildId,
         canAccess,
-    }), [language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess]);
+        fileTypes: fileTypes ?? null,
+    }), [language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes]);
 
     // OJO: se configura durante el render (no en un efecto) para que los formatos y avisos que se llaman en este mismo
     // render ya vean el idioma y la zona nuevos

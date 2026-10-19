@@ -18,6 +18,11 @@ const MAP_EXTENSIONS = [
     {id: 'ariaLabel', option: 'ariaLabel', example: 'ariaLabel="Sucursales de la tienda"'},
     {id: 'height', option: 'height', example: 'height={420}'},
     {id: 'tileLayer', option: 'tileLayer', example: "tileLayer={{url: 'https://…/{z}/{x}/{y}.png', attribution: '© Su proveedor'}}"},
+    {id: 'renderPopup', option: 'renderPopup', example: 'renderPopup={(marker) => <BranchPopup branch={marker} />}'},
+    {id: 'ownFields', option: 'markers[].(sus campos)', example: "markers={[{id, position, title, status: 'open', orders: 412}]}  // llegan a renderPopup"},
+    {id: 'onMapClick', option: 'onMapClick', example: 'onMapClick={([latitude, longitude]) => addPoint(latitude, longitude)}'},
+    {id: 'layers', option: 'children (react-leaflet)', example: '<MapView …><Circle center={center} radius={8000} /></MapView>'},
+    {id: 'mapProps', option: 'mapProps', example: 'mapProps={{scrollWheelZoom: true, minZoom: 4}}'},
 ];
 
 export const MapsPage = () => {

@@ -19,6 +19,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import {
     CalendarHeatmap, MetricCard, PageHeading, PeriodRangeSelector, SectionCard, SegmentedControl, formatDate, formatMonthName,
     formatNumber, useToolkitTranslation,
@@ -40,10 +44,10 @@ const ALL_ORDERS_KEY = 'all';
 
 // las tarjetas: lo que cuentan, su tono y si llevan a la tabla filtrada por ese estado
 const STATUS_CARDS = Object.freeze([
-    {status: ALL_ORDERS_KEY, tone: 'info', opensTable: false},
-    {status: ORDER_STATUS.pending.value, tone: 'warning', opensTable: true},
-    {status: ORDER_STATUS.delivered.value, tone: 'success', opensTable: true},
-    {status: ORDER_STATUS.canceled.value, tone: 'error', opensTable: true},
+    {status: ALL_ORDERS_KEY, tone: 'info', opensTable: false, Icon: ReceiptLongOutlinedIcon},
+    {status: ORDER_STATUS.pending.value, tone: 'warning', opensTable: true, Icon: HourglassEmptyOutlinedIcon},
+    {status: ORDER_STATUS.delivered.value, tone: 'success', opensTable: true, Icon: LocalShippingOutlinedIcon},
+    {status: ORDER_STATUS.canceled.value, tone: 'error', opensTable: true, Icon: BlockOutlinedIcon},
 ]);
 
 /**
@@ -164,6 +168,7 @@ export const MetricsPage = () => {
                                 ? t(`cards.${card.status}Caption`)
                                 : t('cards.allCaption', {from: formatDate(metrics.first_date), to: formatDate(metrics.last_date)})}
                             tone={card.tone}
+                            icon={<card.Icon />}
                             to={card.opensTable ? ordersListFilteredBy('status', card.status) : undefined}
                         />
                     </Grid>

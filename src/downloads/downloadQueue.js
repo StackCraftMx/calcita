@@ -34,13 +34,16 @@ const abortControllerByDownloadId = new Map();
  * @param {object} options
  * @param {string} options.label ya traducido; lo que se ve en el panel mientras todavía no se sabe el nombre del
  *     archivo
- * @param {'xlsx'|'csv'|'pdf'} [options.format] para el ícono del tipo de archivo en el panel
+ * @param {string} [options.format] el tipo de archivo, para su ícono en el panel: xlsx, csv, pdf o uno del proyecto
+ *     (ToolkitProvider fileTypes)
  * @param {(transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void}) => Promise<{blob: Blob, fileName: string}>} options.request
  * @param {(fileName: string) => void} [options.onCompleted] p. ej. volver a pedir la tabla (si la descarga cambia algo
  *     en el servidor)
+ * @param {(error: unknown) => void} [options.onFailed] cuando no se pudo (el panel ya lo dice; para avisar o reportarlo)
+ * @param {() => void} [options.onCanceled] cuando la persona la canceló
  * @returns {Promise<string>} id de la descarga; la promesa se cumple cuando termina (bien, mal o cancelada), nunca falla
  */
-export async function startDownload({label, format, request, onCompleted}) {
+export async function startDownload({label, format, request, onCompleted, onFailed, onCanceled}) {
     const downloadId = newIdentifier();
     const abortController = new AbortController();
     abortControllerByDownloadId.set(downloadId, abortController);
@@ -56,16 +59,18 @@ export async function startDownload({label, format, request, onCompleted}) {
             }),
         });
         saveBlob(blob, fileName);
-        downloadsActor.send({type: 'COMPLETED', id: downloadId, fileName});
+        downloadsActor.send({type: 'COMPLETED', id: downloadId, fileName, sizeBytes: blob.size});
         onCompleted?.(fileName);
     } catch (error) {
         // OJO: cancelar también llega aquí como error (el AbortError del navegador); se distingue por la señal, no por el
         // tipo de error, porque cada `request` del proyecto puede tronar con el suyo
         if (abortController.signal.aborted) {
             downloadsActor.send({type: 'CANCELED', id: downloadId});
+            onCanceled?.();
         } else {
             // el mensaje ya viene traducido del API (ApiError con el detail de RFC 9457)
             downloadsActor.send({type: 'FAILED', id: downloadId, errorMessage: error?.message ?? null});
+            onFailed?.(error);
         }
     } finally {
         abortControllerByDownloadId.delete(downloadId);

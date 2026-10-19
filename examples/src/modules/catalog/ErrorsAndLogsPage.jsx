@@ -24,6 +24,14 @@ const PAGES_EXTENSIONS = [
     {id: 'homePath', option: 'homePath', example: 'homePath="/dashboard"'},
     {id: 'onRetry', option: 'onRetry', example: 'onRetry={() => window.location.reload()}'},
     {id: 'router', option: "path: '*' · ErrorBoundary", example: "{path: '*', element: <ErrorPage kind={ERROR_PAGE_KIND.notFound} />}"},
+    {id: 'extraActions', option: 'extraActions', example: 'extraActions={<Button onClick={openSupportChat}>Contactar a soporte</Button>}'},
+    {id: 'actions', option: 'actions', example: 'actions={<Button href="/legacy/inicio.php">Volver al sistema</Button>}'},
+    {id: 'children', option: 'children', example: '<ErrorPage kind={…}><Typography>Folio {requestId}</Typography></ErrorPage>'},
+    {id: 'icon', option: 'icon', example: 'icon={<img src={logoUrl} alt="" width={56} />}'},
+    {id: 'onGoHome', option: 'onGoHome', example: "onGoHome={() => analytics.track('error_go_home')}"},
+    {id: 'ownTexts', option: 'texts', example: "texts={{goHome: 'Volver al tablero'}}"},
+    {id: 'forbidden', option: 'withAccess(access, routes, {fallback})', example: 'withAccess(access, routes, {fallback: <ForbiddenPage />})'},
+    {id: 'routeError', option: '<RouteErrorScreen onError …>', example: '{errorElement: <RouteErrorScreen onError={(error) => reportError(error)} extraActions={…} />}'},
 ];
 const LOGS_EXTENSIONS = [
     {id: 'logger', option: 'createLogger(namespace)', example: "createLogger('orders').warn('No se pudo cancelar', {orderId, status, requestId})"},

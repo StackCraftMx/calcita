@@ -70,6 +70,9 @@ const CASES = [
     ['ColorSchemeToggle', h(ColorSchemeToggle), ''],
     // en el servidor no hay pestaña que comparar: no pinta nada, pero no debe tronar (useSyncExternalStore pide su versión del servidor)
     ['NewBuildNotice', h(NewBuildNotice), ''],
+    // un botón propio junto a los de la casa y una línea debajo del texto
+    ['ErrorPage con lo del proyecto', h(ErrorPage, {kind: ERROR_PAGE_KIND.notFound, extraActions: h('button', null, 'Contactar a soporte'), children: 'Folio 4521'}),
+        'Contactar a soporte'],
     // sin canAccess del proyecto, lo que tiene regla no se ve: sale la página de «sin permiso»
     ['RequireAccess sin permiso', h(RequireAccess, {access: {ability: 'users.admin'}}, 'pantalla secreta'), 'No tiene permiso para ver esta pantalla'],
     ['AppLayout lateral con secciones y submenú', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, user: {name: 'Ana López'}}, 'contenido'), 'Operación'],

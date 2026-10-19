@@ -34,6 +34,10 @@ const loadHeatmap = () => import('@/modules/catalog/demos/charts/ActivityHeatmap
 const METRICS_EXTENSIONS = [
     {id: 'metric', option: '<MetricCard label value trend to>', example: "<MetricCard label=\"Pedidos\" value={formatNumber(174)} trend={{label: '+10 %', direction: TREND_DIRECTION.up, isGood: true}} />"},
     {id: 'grid', option: '<Grid size>', example: '<Grid size={{xs: 12, sm: 4}}><MetricCard … /></Grid>'},
+    {id: 'icon', option: 'icon', example: '<MetricCard icon={<ShoppingBagOutlinedIcon />} … />'},
+    {id: 'children', option: 'children', example: '<MetricCard …><LinearProgress variant="determinate" value={72} /></MetricCard>'},
+    {id: 'onClick', option: 'onClick', example: 'onClick={() => setDetailOpen(true)}'},
+    {id: 'texts', option: 'texts', example: "texts={{trend: {up: 'subió'}}}"},
 ];
 const COLUMNS_EXTENSIONS = [
     {id: 'data', option: 'data', example: "data={[{key: '2026-9', value: 174, label: 'sep', tooltip: 'sep: 174 pedidos'}]}"},

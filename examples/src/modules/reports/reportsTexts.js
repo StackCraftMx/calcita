@@ -19,8 +19,11 @@ export const reportsTexts = {
                 label: 'Descargar el reporte',
                 panelLabel: 'Reporte de pedidos y ventas',
                 confirmTitle: '¿Descargar el reporte en {{format}}?',
-                confirmDescriptionXlsx: 'Un libro con dos hojas: el Resumen, para leer e imprimir, y los Datos, con filtros para cruzar con otros datos.',
-                confirmDescriptionCsv: 'Texto plano con las cifras de cada mes, para importarlas a otro sistema.',
+                confirmDescription: {
+                    xlsx: 'Un libro con dos hojas: el Resumen, para leer e imprimir, y los Datos, con filtros para cruzar con otros datos.',
+                    csv: 'Texto plano con las cifras de cada mes, para importarlas a otro sistema.',
+                    json: 'Las cifras de cada mes tal como las tiene la pantalla, para que otro sistema las lea.',
+                },
             },
             excel: {
                 title: 'Pedidos y ventas por mes',
@@ -80,8 +83,11 @@ export const reportsTexts = {
                 label: 'Download the report',
                 panelLabel: 'Orders and sales report',
                 confirmTitle: 'Download the report in {{format}}?',
-                confirmDescriptionXlsx: 'A workbook with two sheets: the Summary, to read and print, and the Data, with filters to cross with other data.',
-                confirmDescriptionCsv: 'Plain text with the figures of each month, to import them into another system.',
+                confirmDescription: {
+                    xlsx: 'A workbook with two sheets: the Summary, to read and print, and the Data, with filters to cross with other data.',
+                    csv: 'Plain text with the figures of each month, to import them into another system.',
+                    json: 'The figures of each month as the screen has them, for another system to read.',
+                },
             },
             excel: {
                 title: 'Orders and sales per month',
