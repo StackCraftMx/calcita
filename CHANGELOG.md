@@ -4,6 +4,25 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.29.0] - 2026-10-19
+
+### Agregado
+
+- Todas las piezas de Calcita (93) se cambian desde el tema del proyecto, como las de MUI: con su nombre en `components`
+  (`CalcitaAppLayout`, `CalcitaServerTable`, `CalcitaMetricCard`, `CalcitaFormSection`…), `styleOverrides` para cada parte y
+  `defaultProps`. El orden: el estilo de Calcita, encima el del tema del proyecto y al final el `sx` de la pantalla. Sirve
+  también con un tema de MUI que no es de Calcita: un sistema que ya existe deja Calcita con su propia cara. La lista de
+  piezas y partes está en el README. `piecePart` y `usePieceProps` (`src/theme/themePieces.js`) son las que lo arman.
+  Salió de poner a un sistema que ya existía su tema de antes, tal cual, debajo de Calcita.
+
+### Corregido
+
+- `StatusChip` y `MetricCard` en modo oscuro: el texto (y la cifra) iba en el tono oscuro de su color y casi no se leía
+  sobre el fondo oscuro. Ahora va en el tono claro.
+- `ServerTable`: el `sx` que la pantalla pasa en `gridProps` ya no lo pisa el de la tabla.
+- `SegmentedControl` y los grupos de botones del minimalista ya no usan `!important` para sus esquinas: el tema del
+  proyecto las puede cambiar. Se ven igual que antes.
+
 ## [0.28.0] - 2026-10-19
 
 ### Agregado
@@ -411,6 +430,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.29.0]: https://github.com/StackCraftMx/calcita/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/StackCraftMx/calcita/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/StackCraftMx/calcita/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/StackCraftMx/calcita/compare/v0.25.0...v0.26.0
