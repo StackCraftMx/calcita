@@ -3,10 +3,13 @@
 // «Agregar sucursal» abre el formulario en una ventana (NewBranchDialog); al guardar, la nueva sale en la lista y el mapa
 // vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra como ícono con su tooltip
 // (BarActionButton); en el teléfono flota arriba a la derecha.
+// El globo de cada alfiler es del proyecto (renderPopup de MapView): su estado, sus pedidos del mes y «Cómo llegar», que
+// abre la ruta en OpenStreetMap.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useState} from 'react';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -15,6 +18,8 @@ import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import DirectionsOutlinedIcon from '@mui/icons-material/DirectionsOutlined';
+import Typography from '@mui/material/Typography';
 import {BarActionButton, PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {MapView} from '@stackcraftmx/calcita/maps';
 
@@ -24,6 +29,8 @@ import {NewBranchDialog} from '@/modules/branches/NewBranchDialog.jsx';
 // «todas» en el filtro: sin estado
 const ALL = 'all';
 const MAP_HEIGHT_PIXELS = 520;
+// la ruta hasta una sucursal en OpenStreetMap (el mismo proveedor de los mosaicos del mapa)
+const directionsUrlOf = ([latitude, longitude]) => `https://www.openstreetmap.org/directions?route=%3B${latitude}%2C${longitude}`;
 
 export const BranchesPage = () => {
     const {t} = useToolkitTranslation('branches');
@@ -85,7 +92,23 @@ export const BranchesPage = () => {
                     <MapView ariaLabel={t('map')} height={MAP_HEIGHT_PIXELS} selectedId={selectedId} onSelect={setSelectedId}
                              markers={(branches ?? []).map((branch) => ({
                                  id: branch.id, position: branch.position, title: `${branch.name} · ${branch.city}`, description: branch.address, tone: branch.tone,
-                             }))} />
+                                 status: branch.status, orders: branch.orders,
+                             }))}
+                             // el globo del proyecto: recibe el marcador con sus campos propios (status, orders)
+                             renderPopup={(marker) => (
+                                 <Stack spacing={0.75} sx={{minWidth: 200}}>
+                                     <Typography variant="subtitle2" component="p">{marker.title}</Typography>
+                                     <Typography variant="body2" color="text.secondary" component="p">{marker.description}</Typography>
+                                     <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                                         <Tag label={t(`status.${marker.status}`)} color={marker.tone} />
+                                         {marker.orders > 0 && <Typography variant="caption">{t('orders', {count: formatNumber(marker.orders)})}</Typography>}
+                                     </Stack>
+                                     <Button size="small" startIcon={<DirectionsOutlinedIcon />} href={directionsUrlOf(marker.position)} target="_blank" rel="noreferrer"
+                                             sx={{alignSelf: 'flex-start'}}>
+                                         {t('directions')}
+                                     </Button>
+                                 </Stack>
+                             )} />
                 </Grid>
             </Grid>
             <NewBranchDialog key={addingRound} open={isAdding} onClose={() => setIsAdding(false)} onCreated={showNewBranch} />

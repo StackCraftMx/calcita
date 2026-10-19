@@ -11,6 +11,7 @@ export const branchesTexts = {
             list: 'Lista de sucursales',
             map: 'Mapa de sucursales',
             orders: '{{count}} pedidos este mes',
+            directions: 'Cómo llegar',
             add: {
                 button: 'Agregar sucursal',
                 title: 'Nueva sucursal',
@@ -37,6 +38,7 @@ export const branchesTexts = {
             list: 'Branch list',
             map: 'Branch map',
             orders: '{{count}} orders this month',
+            directions: 'How to get there',
             add: {
                 button: 'Add branch',
                 title: 'New branch',

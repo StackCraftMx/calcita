@@ -2,7 +2,15 @@
 // vidrio y la tarjeta de abajo del menú.
 export const shellTexts = {
     es: {
+        // un tipo de archivo propio de la app (APP_FILE_TYPES): su nombre y su ayuda en el menú «Descargar»
+        common: {download: {formats: {json: {label: 'Datos (JSON)', hint: 'Las cifras tal cual, para otro sistema'}}}},
         shell: {
+            errorPages: {
+                goOrders: 'Ver los pedidos',
+                requestAccess: 'Pedir acceso',
+                accessRequested: 'Se avisó a administración: le escriben cuando tenga acceso a esta pantalla.',
+                support: '¿Llegó por una liga? Avísenos y la corregimos.',
+            },
             title: 'Calcita',
             caption: 'Ejemplos sin backend',
             sections: {
@@ -32,7 +40,15 @@ export const shellTexts = {
         },
     },
     en: {
+        // un tipo de archivo propio de la app (APP_FILE_TYPES): su nombre y su ayuda en el menú «Descargar»
+        common: {download: {formats: {json: {label: 'Data (JSON)', hint: 'The figures as they are, for another system'}}}},
         shell: {
+            errorPages: {
+                goOrders: 'See the orders',
+                requestAccess: 'Request access',
+                accessRequested: 'Administration was notified: they will write to you when you have access to this screen.',
+                support: 'Did you come from a link? Let us know and we will fix it.',
+            },
             title: 'Calcita',
             caption: 'Examples without a backend',
             sections: {

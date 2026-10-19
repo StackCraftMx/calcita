@@ -9,9 +9,13 @@ import {XLSX_CONTENT_TYPE} from '@stackcraftmx/calcita';
 import {fileNameSlugOf, reportCsvOf, reportWorkbookOf} from '@stackcraftmx/calcita/excel';
 
 /** Los formatos en que se baja el reporte, en el orden del menú. */
-export const REPORT_FORMATS = Object.freeze({xlsx: 'xlsx', csv: 'csv'});
+// json es un tipo propio de la app (APP_FILE_TYPES en app/appSettings.js): Calcita no lo trae, la app lo declara
+export const REPORT_FORMATS = Object.freeze({xlsx: 'xlsx', csv: 'csv', json: 'json'});
 
 const CSV_CONTENT_TYPE = 'text/csv;charset=utf-8';
+const JSON_CONTENT_TYPE = 'application/json';
+// la sangría del JSON: se lee a mano si hace falta
+const JSON_INDENT_SPACES = 2;
 
 /**
  * @param {object} sheet la hoja de monthlyReportSheetOf
@@ -24,6 +28,9 @@ export async function reportFileOf(sheet, format, texts) {
 
     if (format === REPORT_FORMATS.csv) {
         return {blob: new Blob([reportCsvOf(sheet)], {type: CSV_CONTENT_TYPE}), fileName};
+    }
+    if (format === REPORT_FORMATS.json) {
+        return {blob: new Blob([JSON.stringify(sheet, null, JSON_INDENT_SPACES)], {type: JSON_CONTENT_TYPE}), fileName};
     }
 
     const {default: ExcelJS} = await import('exceljs');

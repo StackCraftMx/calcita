@@ -1,4 +1,6 @@
 // Lo que la app de ejemplos le pasa a ToolkitProvider y que no cambia mientras corre.
+import DataObjectOutlinedIcon from '@mui/icons-material/DataObjectOutlined';
+
 import {publicUrlOf} from '@/core';
 
 /** El nombre que sale en la pestaña después del título de cada pantalla («Pedidos | Ejemplos de Calcita»). */
@@ -24,3 +26,11 @@ export const BUILD_VERSION_URL = import.meta.env.PROD ? publicUrlOf('version.jso
 
 /** Los idiomas que ofrece la app; el primero es el de arranque. */
 export const APP_LANGUAGES = Object.freeze({spanish: 'es', english: 'en'});
+
+/**
+ * Los tipos de archivo propios de la app para las descargas, además de Excel, CSV y PDF que trae Calcita: su ícono y su color
+ * en el menú «Descargar» y en el panel. Sus textos van en shellTexts.js (common.download.formats.json).
+ */
+export const APP_FILE_TYPES = Object.freeze({
+    json: Object.freeze({Icon: DataObjectOutlinedIcon, color: 'secondary.main'}),
+});
