@@ -429,6 +429,16 @@ createTheme({
 });
 ```
 
+Para un ajuste solo en escritorio o solo en el teléfono, las mismas reglas que usa el marco: `DESKTOP_MEDIA_QUERY` y
+`PHONE_MEDIA_QUERY` (teléfono es angosto, menos de 900 px, o bajito, menos de 500 px de alto: un teléfono acostado).
+
+```js
+import {DESKTOP_MEDIA_QUERY} from '@stackcraftmx/calcita';
+
+// la barra sin el espacio de la izquierda, solo en escritorio
+createToolkitTheme({components: {CalcitaAppLayout: {styleOverrides: {toolbar: {[DESKTOP_MEDIA_QUERY]: {paddingLeft: 0}}}}}});
+```
+
 ## El marco de la app, el menú y los permisos
 
 `AppLayout` es el marco de las plantillas de MUI: la barra a todo lo ancho, con el logo y el nombre de la app; debajo,
