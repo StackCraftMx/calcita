@@ -282,6 +282,9 @@ nombre; las demás, en «Más».
 Claro u oscuro tiene tres opciones en el menú de la cuenta: Claro, Oscuro y Automático, que sigue lo que diga el equipo y
 es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la forma de volver a seguir al equipo.
 
+Una marca que es una palabra larga va en `wordmark` (a 24 px de alto, en lugar del logo cuadrado y el nombre). Una entrada
+del menú puede llevar a otro sistema (`href`) y traer su ícono ya pintado (`icon`) en lugar del componente (`Icon`).
+
 El menú no se escribe en una lista central: cada módulo trae su `menu.js` y `composeMenu` los junta, los ordena y deja
 solo los que la sesión puede ver (también dentro de los submenús).
 
@@ -357,6 +360,19 @@ un `<div>` de la página vieja, con su propio `ToolkitProvider`.
   los de su isla.
 - **Un backend que contesta a su manera:** `createApiClient({toProblem, mapResponse})` convierte sus errores a RFC 9457
   (Laravel manda `{message, errors}`) y desenvuelve sus respuestas (`{data: …}`); `onError` recibe cada error en un lugar.
+  Una subida con avance (`uploadWithProgress`) regresa la respuesta tal cual: `apiErrorOf(response)` da el mismo `ApiError`.
+- **Su marca y su menú:** un logo ancho (`wordmark`) en lugar del cuadrado y el nombre; entradas del menú con liga a otro
+  sistema (`href`) o con un ícono ya pintado (`icon`, por ejemplo de iconify); y las ligas de la cuenta (`accountMenuItems`)
+  salen también sin sesión, detrás del engrane («Regresar al sistema»).
+- **Su `sx` gana:** lo que el proyecto pinte con `sx` les gana a los ajustes de Calcita en claro y en oscuro.
+- **Su registro:** `addLogSink` manda cada anotación también a su reporte (Sentry, Datadog, su endpoint).
+- **Si parte el código en archivos** (`manualChunks`): Calcita en el suyo. Junto con lo demás de `node_modules` arma un
+  círculo con MUI y la app truena al abrir («reading 'isValidElementType'»). Su FilePond se queda fuera para seguir bajando
+  solo donde se usa:
+
+```js
+if (id.includes('@stackcraftmx/calcita') && !id.includes('/filepond')) return 'calcita';
+```
 
 ```jsx
 const hashNavigation = createHashNavigation();       // una vez, fuera de los componentes
