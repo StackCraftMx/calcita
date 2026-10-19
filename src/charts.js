@@ -5,3 +5,4 @@ export {default as ColumnChart} from '@/ui/metrics/ColumnChart.jsx';
 export {default as LineChart} from '@/ui/metrics/LineChart.jsx';
 export {default as ChartTooltip} from '@/ui/metrics/ChartTooltip.jsx';
 export {CHART_LINE_DASHES, CHART_SERIES_TONES} from '@/ui/metrics/chartParts.jsx';
+export {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';

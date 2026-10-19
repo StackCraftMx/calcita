@@ -53,4 +53,4 @@ export {default as SecretField} from '@/ui/actions/SecretField.jsx';
 // ─── metrics ─────────────────────────────────────────────────────────────────
 export {default as CalendarHeatmap} from '@/ui/metrics/CalendarHeatmap.jsx';
 export {TREND_DIRECTION, default as MetricCard} from '@/ui/metrics/MetricCard.jsx';
-export {default as TableToggle} from '@/ui/metrics/TableToggle.jsx';
+export {CHART_VIEW, default as TableToggle} from '@/ui/metrics/TableToggle.jsx';

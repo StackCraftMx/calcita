@@ -14,7 +14,8 @@ import {
     AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
-    ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView,
+    ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
+    createHashNavigation,
 } from '@stackcraftmx/calcita';
 import {ServerTable, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -53,6 +54,11 @@ const PROJECT_TEXTS = {es: {dictionaries: {orderStatus: {pending: {label: 'Pendi
 const CASES = [
     ['PageHeader', h(PageHeader, {title: 'Pedidos del mes', eyebrow: 'VENTAS', subtitle: 'Todos los pedidos'}), 'Pedidos del mes'],
     ['MetricCard con enlace', h(MetricCard, {label: 'Pedidos', value: '1,200', caption: 'este mes', to: '/pedidos'}), 'href="/pedidos"'],
+    // sistemas que ya existen, sin router: la app detrás de un prefijo, o con # en la dirección
+    ['MetricCard con prefijo sin router', h(ToolkitProvider, {navigation: createBrowserNavigation({basePath: '/portal'})},
+        h(MetricCard, {label: 'Pedidos', value: '1,200', to: '/pedidos'})), 'href="/portal/pedidos"'],
+    ['MetricCard con # sin router', h(ToolkitProvider, {navigation: createHashNavigation()},
+        h(MetricCard, {label: 'Pedidos', value: '1,200', to: '/pedidos'})), 'href="#/pedidos"'],
     ['QuickFilters con contador', h(QuickFilters, {value: 'pending', onChange: () => {}, ariaLabel: 'Estado', options: [{value: '', label: 'Todos', count: 20}, {value: 'pending', label: 'Pendientes', count: 12}]}), 'Pendientes'],
     ['StatusChip con texto del proyecto', h(StatusChip, {dictionary: ORDER_STATUS, value: 'pending'}), 'Pendiente'],
     ['StatusChip con valor nuevo', h(StatusChip, {dictionary: ORDER_STATUS, value: 'shipped'}), 'shipped'],
@@ -121,6 +127,11 @@ const CASES = [
     })), 'Opcional'],
     ['BarList', h(BarList, {items: [{key: 'a', label: 'Producto A', value: 3}], emptyLabel: 'Sin datos'}), ''],
     ['ColumnChart', h(ColumnChart, {data: [{key: 'ene', value: 3, label: 'ene'}], periodLabel: 'Mes', valueLabel: 'Pedidos', ariaLabel: 'Pedidos por mes', emptyLabel: 'Sin datos'}), ''],
+    // los colores salen del tema con su prefijo de variables: escritos como var(--mui-…) se perdían con un cssVarPrefix propio
+    ['ColumnChart con el prefijo de variables del proyecto', h(ColumnChart, {
+        data: [{key: 'ene', label: 'ene', sales: 3, returns: 1}], periodLabel: 'Mes', ariaLabel: 'Ventas', emptyLabel: 'Sin datos',
+        series: [{key: 'sales', label: 'Ventas'}, {key: 'returns', label: 'Devoluciones'}],
+    }), 'var(--acme-palette-info-main)', createTheme({cssVariables: {cssVarPrefix: 'acme'}})],
     ['ErrorPage de versión nueva', h(ErrorPage, {kind: ERROR_PAGE_KIND.newVersion, onRetry: () => {}}), 'Hay una versión nueva'],
     ['StaleBuildBoundary sin error', h(StaleBuildBoundary, {resetKey: '/'}, 'la pantalla'), 'la pantalla'],
     ['SessionsCard con este equipo y otro', h(SessionsCard, {
@@ -132,6 +143,9 @@ const CASES = [
     }), 'Este equipo'],
     ['ActivityLog', h(ActivityLog, {events: [{id: 'e1', kind: 'signInFailed', occurredAt: '2026-10-17T15:00:00Z', device: 'Chrome en macOS', network: '187.190.x.x'}]}),
         'Intento de entrar con contraseña equivocada'],
+    // un proveedor dentro de otro: lo de adentro escribe en su idioma (el más cercano) y no le cambia el idioma a lo de afuera
+    ['ToolkitProvider dentro de otro, en inglés', h(ToolkitProvider, {language: 'en'},
+        h(ActivityLog, {events: [{id: 'e1', kind: 'signInFailed', occurredAt: '2026-10-17T15:00:00Z', device: 'Chrome en macOS'}]})), 'Oct 17, 2026'],
     ['TwoStepVerificationCard activa', h(TwoStepVerificationCard, {
         security: {isEnabled: true, enabledAt: '2026-10-01T10:00:00Z', passkeys: [{id: 'p1', name: 'MacBook', createdAt: '2026-10-01T10:00:00Z'}],
             totp: {isEnabled: true, enabledAt: '2026-10-01T10:00:00Z'}, recoveryCodesRemaining: 2},
@@ -175,7 +189,14 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
     }
 }
 
-// los formatos sin componente usan la configuración del último proveedor: zona de México y pesos
-console.log(`OK     formatos: ${formatDate('2027-01-05T18:00:00Z')} · ${formatCurrency(1234.5)}`);
+// los formatos sin componente usan la configuración del proveedor de la raíz: zona de México, pesos y español (el de adentro,
+// en inglés, ya no se la cambia)
+const looseFormats = `${formatDate('2027-01-05T18:00:00Z')} · ${formatCurrency(1234.5)}`;
+if (looseFormats === '5 ene 2027 · $1,234.50') {
+    console.log(`OK     formatos sueltos con el de la raíz: ${looseFormats}`);
+} else {
+    failures += 1;
+    console.log(`FALLA  formatos sueltos: salió «${looseFormats}» y se esperaba «5 ene 2027 · $1,234.50»`);
+}
 process.exitCode = failures === 0 ? 0 : 1;
 console.log(failures === 0 ? 'todo pinta' : `${failures} con problema`);
