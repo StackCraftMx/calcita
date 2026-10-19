@@ -4,6 +4,21 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.28.0] - 2026-10-19
+
+### Agregado
+
+- `createToolkitTheme({fields})`: cómo se ven los campos de captura, por modo: el relleno, el relleno con el cursor encima,
+  la orilla y la orilla con el cursor encima; y sus esquinas. Vale con vidrio, con el minimalista y dentro de
+  `FormSection`. Van en la paleta de cada modo (`palette.field`), así que también se escriben en `colorSchemes`.
+  `FIELD_TONES` (los de omisión) y `fieldPaletteOf` exportados. Salió de la prueba en un sistema que ya existía: su gris
+  se leía como campo deshabilitado y el tema del proyecto no le podía ganar a `FormSection`.
+
+### Corregido
+
+- Dentro de `FormSection`, en modo oscuro, los campos salían con el gris de claro: la regla de oscuro quedaba anidada debajo
+  de un selector que empieza en `html body` y nunca aplicaba. Ahora los tonos van en variables del renglón.
+
 ## [0.27.0] - 2026-10-19
 
 ### Agregado
@@ -396,6 +411,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.28.0]: https://github.com/StackCraftMx/calcita/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/StackCraftMx/calcita/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/StackCraftMx/calcita/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/StackCraftMx/calcita/compare/v0.24.0...v0.25.0
