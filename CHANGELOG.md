@@ -4,6 +4,15 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.31.0] - 2026-10-19
+
+### Agregado
+
+- `DESKTOP_MEDIA_QUERY` y `PHONE_MEDIA_QUERY` se exportan: un ajuste desde el tema que vale solo en escritorio o solo en el
+  teléfono usa la misma regla que el marco (teléfono = menos de 900 px de ancho o menos de 500 de alto) y no una copia que
+  se le pueda desfasar. Salió de un sistema que ya existía: para alinear la cápsula de la barra con su menú lateral tuvo
+  que copiar la regla a mano.
+
 ## [0.30.1] - 2026-10-19
 
 ### Corregido
@@ -462,6 +471,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.31.0]: https://github.com/StackCraftMx/calcita/compare/v0.30.1...v0.31.0
 [0.30.1]: https://github.com/StackCraftMx/calcita/compare/v0.30.0...v0.30.1
 [0.30.0]: https://github.com/StackCraftMx/calcita/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/StackCraftMx/calcita/compare/v0.28.0...v0.29.0
