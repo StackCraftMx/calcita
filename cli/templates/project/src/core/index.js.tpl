@@ -2,6 +2,7 @@
 // ruta. Core no importa módulos ni app/: si algo lo usan dos módulos, sube aquí.
 export {APP_PATHS} from '@/core/appPaths.js';
 export {AppLogo} from '@/core/AppLogo.jsx';
+export {ROUTER_BASENAME, publicUrlOf} from '@/core/publicPaths.js';
 export {apiClient} from '@/core/apiClient.js';
 //#if auth
 export {DEMO_USER, USES_DEMO_ACCOUNT, accountConnector} from '@/core/accountConnector.js';

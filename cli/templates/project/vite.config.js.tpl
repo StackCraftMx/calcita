@@ -17,6 +17,15 @@ const SINGLE_COPY_PACKAGES = [
 // de los ~790 kB del archivo principal (medido con el proyecto recién creado). Cada pantalla va aparte (rutas lazy)
 const LARGEST_CHUNK_KILOBYTES = 1000;
 
+// Detrás de un proxy con prefijo (miempresa.com/ventas/, sin subdominio): UNA variable al construir, ASSET_URL=/ventas, la
+// misma línea que lleva el .env del servidor. Vite pide sus archivos con el prefijo, se lo pone a las rutas de index.html y lo
+// deja en import.meta.env.BASE_URL, de donde lo toman el router, las imágenes y version.json (src/core/publicPaths.js). Sin
+// ella, todo en la raíz. Con otro prefijo hay que volver a construir.
+const basePathOf = (assetUrl) => {
+    const prefix = (assetUrl ?? '').trim().replace(/^\/+|\/+$/g, '');
+    return prefix ? `/${prefix}/` : '/';
+};
+
 // La versión de esta compilación: va dentro de la app (import.meta.env.VITE_BUILD_ID → ToolkitProvider buildId) y en
 // dist/version.json, que la app publicada vuelve a leer al abrirla para saber si ya hay otra (usePublishedBuildWatch). Se
 // puede fijar desde afuera (VITE_BUILD_ID=… al construir, p. ej. el commit); si no, la hora en que se construyó
@@ -33,6 +42,7 @@ function buildVersionPlugin() {
 }
 
 export default defineConfig({
+    base: basePathOf(process.env.ASSET_URL),
     plugins: [react(), buildVersionPlugin()],
     define: {'import.meta.env.VITE_BUILD_ID': JSON.stringify(BUILD_ID)},
     resolve: {
