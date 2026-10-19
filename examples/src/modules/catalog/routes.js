@@ -2,7 +2,7 @@
 import {BUILT_IN_PATHS, CATALOG_PATHS} from '@/modules/catalog/catalogPaths.js';
 
 // lazy: cada pantalla se descarga hasta que alguien la abre
-export const routes = [
+const pages = [
     {path: CATALOG_PATHS.buttons, lazy: async () => ({Component: (await import('@/modules/catalog/ButtonsPage.jsx')).ButtonsPage})},
     {path: CATALOG_PATHS.chips, lazy: async () => ({Component: (await import('@/modules/catalog/ChipsPage.jsx')).ChipsPage})},
     {path: CATALOG_PATHS.inputs, lazy: async () => ({Component: (await import('@/modules/catalog/InputsPage.jsx')).InputsPage})},
@@ -35,4 +35,9 @@ export const routes = [
     {path: BUILT_IN_PATHS.errorsAndLogs, lazy: async () => ({Component: (await import('@/modules/catalog/ErrorsAndLogsPage.jsx')).ErrorsAndLogsPage})},
     {path: BUILT_IN_PATHS.installApp, lazy: async () => ({Component: (await import('@/modules/catalog/InstallAppPage.jsx')).InstallAppPage})},
     {path: BUILT_IN_PATHS.inbox, lazy: async () => ({Component: (await import('@/modules/catalog/InboxPage.jsx')).InboxPage})},
+];
+
+// todas dentro de CatalogTexts: los textos de las páginas (240 kB) bajan al entrar al catálogo, no al abrir la app
+export const routes = [
+    {lazy: async () => ({Component: (await import('@/modules/catalog/CatalogTexts.jsx')).CatalogTexts}), children: pages},
 ];
