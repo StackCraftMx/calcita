@@ -263,6 +263,19 @@ navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para
 const theme = isAndroidDevice() ? createToolkitTheme({look: THEME_LOOK.minimal}) : createToolkitTheme({glass: true});
 ```
 
+El minimalista separa las superficies por su tono con los grises de Apple. Para pintarlo con los colores de la marca:
+`minimalTones`, por modo, con el fondo de la página (`default`), las tarjetas (`paper`), el relleno de campos, grupos y
+botones sin color (`fill`) y lo que flota, como la barra del teléfono (`floating`). Lo que no se pase se queda con el gris
+de Apple (`MINIMAL_TONES`). Ojo: con el minimalista el fondo sale de aquí y no de la paleta.
+
+```js
+createToolkitTheme({
+    colorSchemes: {light: {palette: brandLight}, dark: {palette: brandDark}},
+    look: THEME_LOOK.minimal,
+    minimalTones: {light: {default: '#EEF4FF', fill: '#DCE6F5'}, dark: {default: '#101827', paper: '#1A2333'}},
+});
+```
+
 Para lo que el proyecto quiera hacer flotar (los botones encima de un mapa, una barra de acciones): `GlassPanel`, que es
 de vidrio si el tema lo trae y una tarjeta con sombra si no. Para algo propio: `sx={(theme) => glassStylesOf(theme)}` e
 `isGlassTheme(theme)`. Cada ajuste vive en su archivo (`src/theme/components/MuiButton.js`…).
