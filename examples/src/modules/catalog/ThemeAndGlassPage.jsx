@@ -35,6 +35,7 @@ const SETUP_EXTENSIONS = [
     {id: 'font', option: 'fontFamily', example: "fontFamily: 'Inter, system-ui, sans-serif'"},
     {id: 'components', option: 'components', example: 'components: {MuiButton: {defaultProps: {disableElevation: true}}}'},
     {id: 'overrides', option: 'overrides', example: 'overrides: {shape: {borderRadius: 12}}'},
+    {id: 'pieces', option: 'components.Calcita…', example: "components: {CalcitaFormSection: {styleOverrides: {card: {borderRadius: 4}}}}"},
     {id: 'selector', option: 'colorSchemeSelector', example: "colorSchemeSelector: 'data'"},
     {id: 'android', option: 'isAndroidDevice()', example: 'isAndroidDevice() ? minimalTheme : glassTheme'},
 ];

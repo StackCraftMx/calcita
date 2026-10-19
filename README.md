@@ -290,6 +290,123 @@ Para lo que el proyecto quiera hacer flotar (los botones encima de un mapa, una 
 de vidrio si el tema lo trae y una tarjeta con sombra si no. Para algo propio: `sx={(theme) => glassStylesOf(theme)}` e
 `isGlassTheme(theme)`. Cada ajuste vive en su archivo (`src/theme/components/MuiButton.js`…).
 
+Todas las piezas de Calcita se cambian desde el tema del proyecto igual que las de MUI: con su nombre en `components`,
+`styleOverrides` para cada parte y `defaultProps`. El orden, de abajo hacia arriba: el estilo de Calcita, encima el del
+tema del proyecto y al final el `sx` que pase la pantalla. Los números se leen como en MUI (`borderRadius: 4` son 4 px).
+Sirve con `createToolkitTheme` y con cualquier tema de MUI (el que ya tenía un sistema, tal cual): así un sistema puede
+dejar Calcita con su propia cara, parte por parte.
+
+<details>
+<summary>Las piezas, con su nombre en el tema y sus partes</summary>
+
+| Nombre en el tema | Partes |
+| --- | --- |
+| `CalcitaAccountMenu` | `button`, `avatar`, `header`, `name`, `settings` |
+| `CalcitaAccountSecurity` | `title`, `form` |
+| `CalcitaActionsMenu` | `item`, `itemIcon` |
+| `CalcitaActivityLog` | `itemIcon` |
+| `CalcitaAppearanceSettings` | `selectSection`, `section`, `sectionLabel`, `option`, `divider` |
+| `CalcitaAppLayout` | `skipLink`, `brand`, `brandLogo`, `brandText`, `brandName`, `brandCaption`, `titleArea`, `phoneTitle`, `desktopTitle`, `railBrand`, `railLogo`, `collapseButton`, `root`, `scrollEdge`, `bar`, `toolbar`, `menuButton`, `spacer`, `tools`, `progress`, `body`, `drawer`, `main`, `phoneSlot`, `content`, `phoneDrawer` |
+| `CalcitaAuditTrailDialog` | `description` |
+| `CalcitaAuthLayout` | `root`, `tools`, `body`, `brand`, `logo`, `brandName`, `card`, `description`, `content`, `footer` |
+| `CalcitaBarActions` | `group` |
+| `CalcitaBarCapsule` | `root` |
+| `CalcitaBarList` | `row`, `chart` |
+| `CalcitaBarSearch` | `field` |
+| `CalcitaCalendarHeatmap` | `header`, `toggle`, `tableArea`, `dateCell`, `valueCell`, `descriptionCell`, `gridArea`, `grid`, `monthLabel`, `week`, `dayLabel`, `cell`, `legend`, `legendLess`, `legendCell`, `legendMore` |
+| `CalcitaChart` | `tableArea`, `legend`, `legendItem`, `legendLine`, `legendSwatch`, `reference`, `referenceLine` |
+| `CalcitaChartTooltip` | `root` |
+| `CalcitaCollapsibleSection` | `root`, `accordion`, `summary`, `titleArea`, `collapsedTitle`, `expandedTitle`, `details` |
+| `CalcitaColorInput` | `swatch`, `nativeInput` |
+| `CalcitaColorSchemeToggle` | `button` |
+| `CalcitaColumnChart` | `chart` |
+| `CalcitaConfirmDialog` | `problem`, `actions` |
+| `CalcitaContentDialog` | `header`, `title`, `closeButton`, `body` |
+| `CalcitaDateRangeFilter` | `chip`, `panel`, `actions` |
+| `CalcitaDefinitionList` | `root`, `entry`, `label`, `value` |
+| `CalcitaDemoTotpCode` | `root`, `code` |
+| `CalcitaDetailHeader` | `root`, `titleArea`, `title`, `badges`, `actions` |
+| `CalcitaDownloadManager` | `doneIcon`, `failedIcon`, `canceledIcon`, `cancelButton`, `progress`, `cancelIcon`, `item`, `itemText`, `itemStatus`, `itemActions`, `panel`, `header`, `title`, `list` |
+| `CalcitaDownloadMenu` | `button` |
+| `CalcitaEmptyState` | `root`, `icon` |
+| `CalcitaErrorPage` | `root`, `actions` |
+| `CalcitaEventCalendar` | `toolbar`, `navigation`, `title`, `calendar` |
+| `CalcitaEventDetails` | `row`, `rowContent`, `titleRow`, `toneDot`, `linkRow`, `link`, `guestsTitle`, `guest`, `guestAvatar`, `guestName`, `notes`, `actions` |
+| `CalcitaFileDropzone` | `root`, `fileArea`, `fileChip`, `hint`, `actions`, `limits`, `extra` |
+| `CalcitaFilterChips` | `root`, `header`, `clearButton` |
+| `CalcitaFontSizeToggle` | `button` |
+| `CalcitaFormProblemAlert` | `root` |
+| `CalcitaFormRow` | `root`, `label`, `control` |
+| `CalcitaFormSection` | `root`, `title`, `card`, `footer` |
+| `CalcitaFullPageLoader` | `root` |
+| `CalcitaGlassPanel` | `root` |
+| `CalcitaGoToPage` | `root`, `field` |
+| `CalcitaGroupedTimeline` | `group`, `groupHeader`, `groupButton`, `groupTitle`, `expandIcon`, `timeline`, `opposite`, `connector`, `content`, `entryTitle` |
+| `CalcitaHeaderFilter` | `button`, `badge`, `panel` |
+| `CalcitaHeaderTools` | `divider`, `root` |
+| `CalcitaInboxLayout` | `labelDot`, `folder`, `folderIcon`, `folderCount`, `root`, `folders`, `foldersHeader`, `labelsTitle`, `listPane`, `phoneTabs`, `phoneTabBadge`, `listHeader`, `list`, `detail`, `backButton` |
+| `CalcitaInstallAppSetting` | `root` |
+| `CalcitaInstallInstructions` | `steps` |
+| `CalcitaInstallPromptBanner` | `root`, `alert` |
+| `CalcitaKanbanBoard` | `completeButton`, `tags`, `titleRow`, `doneIcon`, `cardTitle`, `meta`, `due`, `dueIcon`, `dueText`, `checklist`, `checklistIcon`, `comments`, `commentsIcon`, `attachments`, `attachmentsIcon`, `assignees`, `root`, `collapsedColumn`, `collapsedTitle`, `hidden`, `column`, `columnHeader`, `columnTitle`, `quickAdd`, `dropZone`, `card`, `cardActions`, `cardContent`, `empty` |
+| `CalcitaLanguageToggle` | `button` |
+| `CalcitaLineChart` | `chart` |
+| `CalcitaMapView` | `popupText`, `root` |
+| `CalcitaMessageList` | `empty`, `selectedAvatar`, `item`, `actions`, `starButton`, `itemButton`, `avatarSlot`, `avatarButton`, `avatar`, `body`, `text`, `topRow`, `unreadDot`, `sender`, `threadCount`, `date`, `subject`, `labels` |
+| `CalcitaMessageView` | `header`, `headerText`, `recipients`, `body`, `empty`, `labels`, `attachments`, `divider`, `collapsed`, `collapsedAvatar`, `collapsedText`, `collapsedSender`, `collapsedDate` |
+| `CalcitaMetricCard` | `root`, `action`, `header`, `icon`, `label`, `value`, `caption`, `extra`, `trend` |
+| `CalcitaMobileTabBar` | `tab`, `tabIconPlaceholder`, `tabLabel`, `root`, `bar`, `minimized`, `account`, `sheetHeader` |
+| `CalcitaModalWaiting` | `root`, `title`, `body`, `text` |
+| `CalcitaMultiSelectFilter` | `list`, `option` |
+| `CalcitaNewBuildNotice` | `floating`, `icon`, `message`, `reloadButton`, `banner` |
+| `CalcitaPageBreadcrumbs` | `root`, `link`, `current` |
+| `CalcitaPageHeader` | `root`, `subtitle`, `action` |
+| `CalcitaPageHeading` | `root`, `breadcrumbs`, `titleRow`, `title`, `actions`, `description` |
+| `CalcitaPasswordChecklist` | `title`, `list`, `item`, `hidden` |
+| `CalcitaPeriodRangeSelector` | `field`, `select`, `root` |
+| `CalcitaPermissionMatrix` | `permission`, `checkbox`, `group`, `groupHeader`, `groupTitle`, `grid` |
+| `CalcitaPondDropzone` | `root`, `summary`, `limits`, `actions`, `extra` |
+| `CalcitaProfileHeader` | `root`, `cover`, `body`, `avatar`, `text`, `name`, `chips`, `actions` |
+| `CalcitaProfileScreen` | `sectionTitle`, `form`, `preferences` |
+| `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
+| `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
+| `CalcitaScrollableRow` | `root` |
+| `CalcitaSecondStepForm` | `actions` |
+| `CalcitaSectionCard` | `root`, `header`, `title` |
+| `CalcitaSegmentedControl` | `root` |
+| `CalcitaSelectInput` | `option`, `optionText` |
+| `CalcitaSelectionActions` | `bar`, `count`, `clear`, `phoneCount`, `phoneActions` |
+| `CalcitaServerTable` | `toolbar`, `summary`, `customHeader`, `count`, `countRow`, `selectionNotice`, `error`, `card`, `grid`, `pagination` |
+| `CalcitaSessionsCard` | `item`, `itemIcon`, `itemHeader`, `actions` |
+| `CalcitaSettingsMenu` | `divider` |
+| `CalcitaSideMenu` | `scrollArrow`, `root`, `brand`, `brandLogo`, `brandText`, `brandName`, `brandCaption`, `railTop`, `listArea`, `list`, `section`, `sectionTitle`, `sectionTitleText`, `footer`, `railBottom` |
+| `CalcitaSideMenuEntry` | `button`, `icon`, `iconPlaceholder`, `text`, `badge`, `expand` |
+| `CalcitaSignInForm` | `footer` |
+| `CalcitaSignInScreen` | `alert` |
+| `CalcitaSortableFilterHeader` | `title`, `root`, `sortButton`, `sortIndicator`, `clearButton` |
+| `CalcitaStatusChip` | `root`, `dot`, `label`, `chip` |
+| `CalcitaSubmenuActionsMenu` | `badge` |
+| `CalcitaTabBarEditor` | `root`, `header`, `title`, `list`, `itemIcon`, `footer` |
+| `CalcitaTableToggle` | `root`, `button` |
+| `CalcitaTag` | `root` |
+| `CalcitaTextInput` | `field` |
+| `CalcitaTopMenu` | `link`, `root` |
+| `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
+| `CalcitaWizardLayout` | `stepper`, `phoneSteps`, `actions` |
+| `CalcitaWordmark` | `root` |
+
+</details>
+
+```js
+createTheme({
+    components: {
+        CalcitaStatusChip: {defaultProps: {variant: 'chip'}},
+        CalcitaFormSection: {styleOverrides: {card: {borderRadius: 4}}},
+        CalcitaSegmentedControl: {styleOverrides: {root: {'& .MuiToggleButton-root': {textTransform: 'uppercase'}}}},
+    },
+});
+```
+
 ## El marco de la app, el menú y los permisos
 
 `AppLayout` es el marco de las plantillas de MUI: la barra a todo lo ancho, con el logo y el nombre de la app; debajo,
