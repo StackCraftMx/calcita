@@ -13,7 +13,7 @@
 // Genérico del paquete: function (regla de la casa).
 import Paper from '@mui/material/Paper';
 
-import {GLASS_PANEL_RADIUS_PIXELS, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {PANEL_RADIUS, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaGlassPanel)
@@ -31,7 +31,7 @@ const SOLID_FLOATING_ELEVATION = 8;
  */
 function floatingSurfaceOf(theme) {
     return {
-        borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+        borderRadius: PANEL_RADIUS,
         ...(isGlassTheme(theme) ? glassStylesOf(theme) : {boxShadow: theme.shadows[SOLID_FLOATING_ELEVATION]}),
     };
 }

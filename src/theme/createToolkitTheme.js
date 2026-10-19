@@ -33,6 +33,7 @@ import {trackingOf} from '@/theme/appleTracking.js';
 import {toolkitComponents} from '@/theme/toolkitComponents.js';
 import {minimalComponents, minimalTonesOf} from '@/theme/components/minimalComponents.js';
 import {FIELD_TONES} from '@/theme/glassSurface.js';
+import {cssTokenDeclarationsOf} from '@/theme/cssTokens.js';
 import {createLogger} from '@/observability/logger.js';
 
 const log = createLogger('theme');
@@ -83,6 +84,12 @@ function glassSettingsOf(glass) {
     return {opacity, surfaces};
 }
 
+/** Las variables CSS del proyecto declaradas en :root (con el CssBaseline de MUI); sin valores, nada. */
+function cssTokenComponentsOf(cssTokens) {
+    const declarations = cssTokenDeclarationsOf(cssTokens);
+    return Object.keys(declarations).length > 0 ? {MuiCssBaseline: {styleOverrides: {':root': declarations}}} : {};
+}
+
 /**
  * @param {object} [options]
  * @param {{light?: object|boolean, dark?: object|boolean}} [options.colorSchemes] los colores de cada modo; por omisión los de
@@ -108,6 +115,10 @@ function glassSettingsOf(glass) {
  *     se pase se queda como el estilo lo trae (FIELD_TONES: el gris de Apple; con el minimalista, su relleno). Van en la
  *     paleta de cada modo (palette.field), así que también se pueden escribir en colorSchemes y cambian solos con el modo.
  *     Ejemplo, campos blancos con borde en claro: {light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}
+ * @param {{panelRadius?: number|string, menuRadius?: number|string, fieldRadius?: number|string, glassBlur?: number|string, glassSaturate?: number|string}} [options.cssTokens]
+ *     los valores globales de Calcita como variables CSS (--calcita-panel-radius…, ver cssTokens.js): las esquinas de los
+ *     paneles, los menús y los campos, y el desenfoque del vidrio. Se declaran en :root con el CssBaseline; un número va en
+ *     px (glassSaturate en %). Sin la opción, cada estilo usa los suyos. También se pueden poner en CSS suelto
  * @param {object} [options.components] ajustes propios de componentes (se suman; en el mismo estilo ganan los del proyecto)
  * @param {object} [options.overrides] cualquier otra cosa de createTheme (breakpoints, spacing…)
  * @returns {object} el tema de MUI
@@ -121,6 +132,7 @@ export function createToolkitTheme({
     bar = TOP_BAR.capsules,
     minimalTones = {},
     fields = {},
+    cssTokens = {},
     components = {},
     overrides = {},
 } = {}) {
@@ -186,7 +198,8 @@ export function createToolkitTheme({
             },
         },
         shape: {borderRadius: CORNER_RADIUS_PIXELS},
-        components: mergeComponents(frameworkComponents, components),
+        // las variables CSS del proyecto en :root (con el CssBaseline), y encima sus propios ajustes de componentes
+        components: mergeComponents(mergeComponents(frameworkComponents, cssTokenComponentsOf(cssTokens)), components),
         // sin sombras en el minimalista: lo plano es la idea
         ...(isMinimal && {shadows: Array(SHADOW_LEVELS).fill('none')}),
         // minimalTones: los tonos con que se pintan los rellenos y lo que flota (minimalComponents los lee del tema)

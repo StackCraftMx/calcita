@@ -14,14 +14,13 @@
 //
 // Funciones puras, sin React: function (regla de la casa).
 import {paletteOf} from '@/theme/components/paletteOf.js';
-import {GLASS_MENU_RADIUS_PIXELS, solidFallbackOf} from '@/theme/glassSurface.js';
+import {GLASS_BLUR, MENU_RADIUS, solidFallbackOf} from '@/theme/glassSurface.js';
 
 // el texto de un aviso es chico: un poco más opaco que el resto del vidrio
 const TOAST_OPACITY_PERCENT = 88;
 // cuánto del color del aviso (éxito, error…) tiñe su fondo
 const STATUS_TINT_PERCENT = 14;
 const TOAST_STATUSES = Object.freeze(['success', 'info', 'warning', 'error']);
-const GLASS_BLUR = 'blur(20px) saturate(180%)';
 
 const TOASTER_LIGHT_SELECTOR = "html [data-sonner-toaster][data-sonner-theme='light']";
 const TOASTER_DARK_SELECTOR = "html [data-sonner-toaster][data-sonner-theme='dark']";
@@ -37,7 +36,7 @@ const TOAST_SELECTOR = "html [data-sonner-toaster] [data-sonner-toast][data-styl
  */
 function toasterVariablesOf(palette, textShade, surfaceOf) {
     const variables = {
-        '--border-radius': `${GLASS_MENU_RADIUS_PIXELS}px`,
+        '--border-radius': MENU_RADIUS,
         '--normal-bg': surfaceOf(palette.background.paper),
         '--normal-border': palette.divider,
         '--normal-text': palette.text.primary,

@@ -85,7 +85,7 @@ import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotic
 import {activeMenuItemOf, menuItemsWithIconsOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
 import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
-import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
+import {PANEL_RADIUS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
@@ -302,7 +302,7 @@ const AppLayoutFrame = ({
                             overflow: usesBarCapsules ? 'visible' : 'hidden',
                             [DESKTOP_MEDIA_QUERY]: {
                                 top: panelGap, mt: `${panelGap}px`, mx: `${panelGap}px`, width: 'auto',
-                                borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+                                borderRadius: PANEL_RADIUS,
                                 // sin la raya de abajo de la barra fija: no hay franja que separar
                                 ...(usesBarCapsules && {borderBottom: 0, boxShadow: 'none'}),
                                 ...(isBarMerged && {display: 'none'}),
@@ -387,7 +387,7 @@ const AppLayoutFrame = ({
                                     // Encogido es una cápsula (radio de la mitad de su ancho), como las barras de pestañas de vidrio
                                     ...(isGlass && {
                                         border: 0,
-                                        borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+                                        borderRadius: PANEL_RADIUS,
                                     }),
                                 },
                             })}>

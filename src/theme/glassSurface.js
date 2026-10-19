@@ -34,6 +34,7 @@
 // Funciones puras, sin React: function (regla de la casa).
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
+import {cssTokenOf} from '@/theme/cssTokens.js';
 
 /** Qué tan opaca es la superficie (0 a 1). */
 export const GLASS_OPACITY = 0.6;
@@ -44,6 +45,11 @@ export const GLASS_PANEL_RADIUS_PIXELS = 20;
 /** Las esquinas de los menús y ventanitas: renglones de 8 px a 4 px del borde. */
 export const GLASS_MENU_RADIUS_PIXELS = 12;
 
+// las esquinas y el desenfoque como variables CSS que el proyecto cambia de un jalón (cssTokens.js), con el valor de siempre
+// como respaldo
+export const PANEL_RADIUS = cssTokenOf('panelRadius', `${GLASS_PANEL_RADIUS_PIXELS}px`);
+export const MENU_RADIUS = cssTokenOf('menuRadius', `${GLASS_MENU_RADIUS_PIXELS}px`);
+
 /**
  * Lo que se separa de la orilla de la ventana lo que flota (la barra, el menú lateral, los cajones y la hoja de abajo):
  * Apple lo pide para que el contenido se asome por detrás («half sheets are inset from the edge of the display to allow
@@ -51,7 +57,7 @@ export const GLASS_MENU_RADIUS_PIXELS = 12;
  */
 export const GLASS_INSET_PIXELS = 8;
 
-const GLASS_BLUR = 'blur(20px) saturate(180%)';
+export const GLASS_BLUR = `blur(${cssTokenOf('glassBlur')}) saturate(${cssTokenOf('glassSaturate')})`;
 
 /**
  * El lente de cada tamaño (ver lensRulesOf), medido en capturas de Chrome: el control chico (botón, chip) más claro y con
@@ -476,9 +482,12 @@ function fieldEdgeOf(color) {
     return `inset 0 0 0 1px ${color}`;
 }
 
-/** Las esquinas de los campos: las que pidió el proyecto (createToolkitTheme fields.radius) o las de cada estilo. */
+/**
+ * Las esquinas de los campos: las que pidió el proyecto en su tema (createToolkitTheme fields.radius), o la variable
+ * --calcita-field-radius con las de cada estilo de respaldo.
+ */
 function fieldRadiusOf(theme, lookRadius) {
-    return theme.toolkit?.fields?.radius ?? lookRadius;
+    return theme.toolkit?.fields?.radius ?? cssTokenOf('fieldRadius', `${lookRadius}px`);
 }
 
 /**
@@ -566,7 +575,7 @@ export function canvasFieldStylesOf(theme) {
         backgroundImage: 'none',
         backdropFilter: GLASS_BLUR,
         WebkitBackdropFilter: GLASS_BLUR,
-        borderRadius: FIELD_WELL_RADIUS_PIXELS,
+        borderRadius: cssTokenOf('fieldRadius', `${FIELD_WELL_RADIUS_PIXELS}px`),
         ...lightDarkStylesOf(theme, {
             backgroundColor: CANVAS_FIELD.light.rest,
             boxShadow: `0 0 0 1px ${CANVAS_FIELD.light.edge}`,

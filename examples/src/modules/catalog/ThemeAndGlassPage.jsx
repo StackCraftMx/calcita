@@ -11,12 +11,22 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import AppearanceDemo from '@/modules/catalog/demos/theme/AppearanceDemo.tsx';
+import ThemeSwitchDemo from '@/modules/catalog/demos/theme/ThemeSwitchDemo.tsx';
 
+const loadThemeSwitch = () => import('@/modules/catalog/demos/theme/ThemeSwitchDemo.tsx?demo-source');
 const loadAppearance = () => import('@/modules/catalog/demos/theme/AppearanceDemo.tsx?demo-source');
 const loadSetup = () => import('@/modules/catalog/demos/theme/ThemeSetup.ts?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (themeAndGlass.<sección>.extend.<id>)
+const LIVE_EXTENSIONS = [
+    {id: 'overrides', option: 'components.Calcita… styleOverrides', example: 'CalcitaMetricCard: {styleOverrides: {value: {fontWeight: 800}}}'},
+    {id: 'defaultProps', option: 'components.Calcita… defaultProps', example: "CalcitaStatusChip: {defaultProps: {variant: 'chip'}}"},
+    {id: 'anyTheme', option: 'createTheme · createToolkitTheme', example: 'createTheme({palette, components})'},
+    {id: 'cssRoot', option: ':root {--calcita-…}', example: ':root {--calcita-panel-radius: 6px; --calcita-glass-blur: 12px;}'},
+    {id: 'cssTheme', option: 'cssTokens', example: 'createToolkitTheme({cssTokens: {panelRadius: 6, fieldRadius: 4}})'},
+    {id: 'cssScoped', option: "sx={{'--calcita-…'}}", example: "<Box sx={{'--calcita-field-radius': '4px'}}>…</Box>"},
+];
 const APPEARANCE_EXTENSIONS = [
     {id: 'settings', option: '<AppearanceSettings />', example: '<AppearanceSettings />'},
     {id: 'show', option: 'showFontSize · showLanguage · showColorScheme', example: '<AppearanceSettings showLanguage={false} />'},
@@ -47,6 +57,8 @@ export const ThemeAndGlassPage = () => {
     return (
         <Stack spacing={3}>
             <PageHeading title={t('themeAndGlass.title')} description={t('themeAndGlass.description')} />
+            <DemoSection title={t('themeAndGlass.live.title')} description={t('themeAndGlass.live.description')}
+                         extensions={rowsOf('live', LIVE_EXTENSIONS)} Demo={ThemeSwitchDemo} loadSource={loadThemeSwitch} />
             <DemoSection title={t('themeAndGlass.appearance.title')} description={t('themeAndGlass.appearance.description')}
                          extensions={rowsOf('appearance', APPEARANCE_EXTENSIONS)} Demo={AppearanceDemo} loadSource={loadAppearance} />
             <CodeSection title={t('themeAndGlass.setup.title')} description={t('themeAndGlass.setup.description')}

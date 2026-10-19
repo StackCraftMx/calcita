@@ -16,6 +16,7 @@ import {paletteOf} from '@/theme/components/paletteOf.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {accentTextStylesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
+import {cssTokenOf} from '@/theme/cssTokens.js';
 
 /**
  * Los tonos del minimalista por omisión, los grises de Apple, en claro y en oscuro:
@@ -117,7 +118,8 @@ export function minimalComponents() {
             styleOverrides: {
                 root: {backgroundImage: 'none', boxShadow: 'none'},
                 outlined: {border: 0},
-                rounded: {borderRadius: RADIUS_PIXELS.card},
+                // las tarjetas: la variable de los paneles (cssTokens.js) con sus 16 px de respaldo
+                rounded: {borderRadius: cssTokenOf('panelRadius', `${RADIUS_PIXELS.card}px`)},
             },
         },
         MuiCard: {defaultProps: {elevation: 0}},

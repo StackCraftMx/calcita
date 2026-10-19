@@ -31,7 +31,7 @@ import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/acco
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
-    withPermissionGroup, TOP_BAR, MINIMAL_TONES, FIELD_TONES, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
+    withPermissionGroup, TOP_BAR, MINIMAL_TONES, FIELD_TONES, CSS_TOKENS, cssTokenOf, cssTokenDeclarationsOf, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
     useBarActionsPlacement, useCloseBarActionsMenu,
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
@@ -84,6 +84,11 @@ const appleFloating: string = MINIMAL_TONES.dark.floating;
 const brandFieldsTheme = createToolkitTheme({glass: true, fields: {radius: 8, light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}});
 const appleFieldFill: string = FIELD_TONES.light.fill;
 // las piezas de Calcita desde el tema, como las de MUI: estilos de sus partes y props por omisión
+// las variables CSS desde el tema: un número va en px; la lista y el valor para un estilo propio
+const tokensTheme = createToolkitTheme({cssTokens: {panelRadius: 6, menuRadius: '0.5rem', glassBlur: 12}});
+const panelRadiusValue: string = cssTokenOf('panelRadius');
+const rootTokens: Record<string, string> = cssTokenDeclarationsOf({fieldRadius: 4});
+const tokenNames: string[] = Object.values(CSS_TOKENS).map((token) => token.variable);
 const piecesTheme = createToolkitTheme({components: {CalcitaStatusChip: {defaultProps: {variant: 'chip'}}, CalcitaFormSection: {styleOverrides: {card: {borderRadius: 4}}}}});
 // las cápsulas de una pantalla en la barra y una cápsula suelta
 const screenCapsules = [
@@ -207,5 +212,5 @@ const withIcons = menuItemsWithIconsOf([{to: '/inicio', label: 'Inicio', icon: '
 const wrongView = createElement(LineChart, {data: [], series: [], periodLabel: '', ariaLabel: '', emptyLabel: '', defaultView: 'pie'});
 
 export {wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -22,7 +22,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {PANEL_RADIUS, ambientBackgroundOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
@@ -53,7 +53,7 @@ const CARD_MAX_WIDTH_PIXELS = 440;
  * @returns {object}
  */
 const cardSurfaceOf = (theme) => (isGlassTheme(theme)
-    ? {...glassStylesOf(theme), borderColor: 'transparent', borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`}
+    ? {...glassStylesOf(theme), borderColor: 'transparent', borderRadius: PANEL_RADIUS}
     : {});
 
 /**

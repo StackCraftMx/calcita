@@ -397,6 +397,28 @@ dejar Calcita con su propia cara, parte por parte.
 
 </details>
 
+Para cambiar de un jalón los valores globales, sin tocar pieza por pieza, Calcita los lee de variables CSS. Cada una trae su
+valor de siempre de respaldo: sin ella se ve igual.
+
+| Variable | Qué cambia | De fábrica |
+| --- | --- | --- |
+| `--calcita-panel-radius` | las esquinas de lo que flota grande y las tarjetas grandes (menú lateral, diálogos, la sección de un formulario) | 20px (16px en el minimalista) |
+| `--calcita-menu-radius` | las esquinas de menús, listas desplegables, globos y avisos | 12px |
+| `--calcita-field-radius` | las esquinas de los campos de captura | 12px (10px en el minimalista) |
+| `--calcita-glass-blur` | el desenfoque del vidrio | 20px |
+| `--calcita-glass-saturate` | cuánto aviva el vidrio los colores de atrás | 180% |
+
+```css
+:root { --calcita-panel-radius: 6px; --calcita-glass-blur: 12px; }   /* también en la página de un sistema que ya existe */
+```
+
+```js
+createToolkitTheme({cssTokens: {panelRadius: 6, glassBlur: 12}});    // las mismas, declaradas por el tema (un número va en px)
+```
+
+Los colores de los campos son variables de MUI (`--mui-palette-field-fill`, `--mui-palette-field-border`…; ver `fields`).
+Lo que se pinta flotando al final de la página (menús, ventanas) toma las de `:root`, no las de un contenedor.
+
 ```js
 createTheme({
     components: {
