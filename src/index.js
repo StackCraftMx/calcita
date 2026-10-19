@@ -30,7 +30,10 @@ export {
     ConfirmDialog, ModalWaiting, NEW_BUILD_NOTICE_VARIANT, NewBuildNotice, StaleBuildBoundary, TOAST_DEFAULT_OPTIONS, Toaster, confirmActionMachine, dismissToast, errorsObjectToMessage,
     toastDefault, toastError, toastInfo, toastLoading, toastProblem, toastPromise, toastSuccess, toastWarn, useConfirmAction,
 } from '@/feedback/index.js';
-export {DOWNLOAD_STATUS, DownloadManager, cancelDownload, clearFinishedDownloads, downloadsMachine, startDownload} from '@/downloads/index.js';
+export {
+    DEFAULT_FILE_TYPES, DOWNLOAD_STATUS, DownloadManager, UNKNOWN_FILE_TYPE, cancelDownload, clearFinishedDownloads, downloadsMachine, startDownload,
+    useFileTypes,
+} from '@/downloads/index.js';
 
 // ─── el tema (opcional): el estilo de Stackcraft, con claro / oscuro y vidrio líquido ─
 export {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
@@ -50,6 +53,8 @@ export {AppLayout, MENU_POSITION} from '@/appShell/AppLayout.jsx';
 export {AuthLayout} from '@/appShell/AuthLayout.jsx';
 export {default as BarActions} from '@/appShell/BarActions.jsx';
 export {default as BarActionButton} from '@/appShell/BarActionButton.jsx';
+export {default as BarSearch} from '@/appShell/BarSearch.jsx';
+export {default as ActionsMenu} from '@/ui/actions/ActionsMenu.jsx';
 export {SELECTION_PHONE_LAYOUT, default as SelectionActions, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
 export {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
 export {BAR_CAPSULE_HEIGHT_PIXELS, default as BarCapsule} from '@/appShell/BarCapsule.jsx';
