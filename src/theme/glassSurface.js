@@ -33,6 +33,7 @@
 //
 // Funciones puras, sin React: function (regla de la casa).
 import {paletteOf} from '@/theme/components/paletteOf.js';
+import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 
 /** Qué tan opaca es la superficie (0 a 1). */
 export const GLASS_OPACITY = 0.6;
@@ -230,8 +231,9 @@ export function glassStylesOf(theme, {color, darkColor, opacity, isControl = fal
     const lightColor = color ?? paletteOf(theme).background.paper;
     const glassOpacity = opacity ?? glassOpacityOf(theme);
     return {
-        ...glassSurfaceOf(lightColor, {opacity: glassOpacity, isControl}),
-        ...theme.applyStyles('dark', glassSurfaceOf(darkColor ?? lightColor, {opacity: glassOpacity, isDark: true, isControl})),
+        ...lightDarkStylesOf(theme,
+            glassSurfaceOf(lightColor, {opacity: glassOpacity, isControl}),
+            glassSurfaceOf(darkColor ?? lightColor, {opacity: glassOpacity, isDark: true, isControl})),
         ...lensRulesOf(theme, {lightColor, darkColor: darkColor ?? lightColor, opacity: glassOpacity, isControl}),
     };
 }
@@ -336,10 +338,7 @@ export function materialSurfaceOf(solidColor, {opacity = GLASS_OPACITY, isDark =
 export function materialStylesOf(theme, {color, darkColor} = {}) {
     const lightColor = color ?? paletteOf(theme).background.paper;
     const opacity = glassOpacityOf(theme);
-    return {
-        ...materialSurfaceOf(lightColor, {opacity}),
-        ...theme.applyStyles('dark', materialSurfaceOf(darkColor ?? lightColor, {opacity, isDark: true})),
-    };
+    return lightDarkStylesOf(theme, materialSurfaceOf(lightColor, {opacity}), materialSurfaceOf(darkColor ?? lightColor, {opacity, isDark: true}));
 }
 
 /**
@@ -367,8 +366,9 @@ export function materialBackgroundOf(theme, {thick = false} = {}) {
         WebkitBackdropFilter: GLASS_BLUR,
     });
     return {
-        ...frostedOf(paper, opacityOf(MATERIAL_OPACITY_OFFSET.light)),
-        ...theme.applyStyles('dark', frostedOf(`color-mix(in srgb, ${paper}, white ${DARK_GLASS_LIFT_PERCENT}%)`, opacityOf(MATERIAL_OPACITY_OFFSET.dark))),
+        ...lightDarkStylesOf(theme,
+            frostedOf(paper, opacityOf(MATERIAL_OPACITY_OFFSET.light)),
+            frostedOf(`color-mix(in srgb, ${paper}, white ${DARK_GLASS_LIFT_PERCENT}%)`, opacityOf(MATERIAL_OPACITY_OFFSET.dark))),
         ...solidFallbackOf({backgroundImage: layerOf(paper), backdropFilter: 'none', WebkitBackdropFilter: 'none'}),
     };
 }
@@ -386,15 +386,14 @@ export function materialBackgroundOf(theme, {thick = false} = {}) {
  */
 export function glassDropOf(theme) {
     const palette = paletteOf(theme);
-    return {
+    return lightDarkStylesOf(theme, {
         backgroundColor: palette.background.paper,
         color: palette.text.primary,
         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 3px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08)',
-        ...theme.applyStyles('dark', {
-            backgroundColor: `color-mix(in srgb, ${palette.common.white} ${DARK_DROP_WHITE_PERCENT}%, transparent)`,
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
-        }),
-    };
+    }, {
+        backgroundColor: `color-mix(in srgb, ${palette.common.white} ${DARK_DROP_WHITE_PERCENT}%, transparent)`,
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
+    });
 }
 
 /**
@@ -467,12 +466,9 @@ export function fieldWellStylesOf(theme) {
         WebkitBackdropFilter: 'none',
         boxShadow: 'none',
         borderRadius: FIELD_WELL_RADIUS_PIXELS,
-        backgroundColor: FIELD_WELL_FILL.light.rest,
-        '&:hover': {backgroundColor: FIELD_WELL_FILL.light.hover},
-        ...theme.applyStyles('dark', {
-            backgroundColor: FIELD_WELL_FILL.dark.rest,
-            '&:hover': {backgroundColor: FIELD_WELL_FILL.dark.hover},
-        }),
+        ...lightDarkStylesOf(theme,
+            {backgroundColor: FIELD_WELL_FILL.light.rest, '&:hover': {backgroundColor: FIELD_WELL_FILL.light.hover}},
+            {backgroundColor: FIELD_WELL_FILL.dark.rest, '&:hover': {backgroundColor: FIELD_WELL_FILL.dark.hover}}),
     };
 }
 
@@ -490,10 +486,11 @@ export function canvasFieldStylesOf(theme) {
         backdropFilter: GLASS_BLUR,
         WebkitBackdropFilter: GLASS_BLUR,
         borderRadius: FIELD_WELL_RADIUS_PIXELS,
-        backgroundColor: CANVAS_FIELD.light.rest,
-        boxShadow: `0 0 0 1px ${CANVAS_FIELD.light.edge}`,
-        '&:hover': {backgroundColor: CANVAS_FIELD.light.hover},
-        ...theme.applyStyles('dark', {
+        ...lightDarkStylesOf(theme, {
+            backgroundColor: CANVAS_FIELD.light.rest,
+            boxShadow: `0 0 0 1px ${CANVAS_FIELD.light.edge}`,
+            '&:hover': {backgroundColor: CANVAS_FIELD.light.hover},
+        }, {
             backgroundColor: CANVAS_FIELD.dark.rest,
             boxShadow: `0 0 0 1px ${CANVAS_FIELD.dark.edge}`,
             '&:hover': {backgroundColor: CANVAS_FIELD.dark.hover},
@@ -518,10 +515,7 @@ export function accentTextStylesOf(theme, colorName = 'primary') {
     const palette = paletteOf(theme);
     const main = (palette[colorName] ?? palette.primary).main;
     const keep = 100 - ACCENT_TEXT_SHADE_PERCENT;
-    return {
-        color: `color-mix(in srgb, ${main} ${keep}%, black)`,
-        ...theme.applyStyles('dark', {color: `color-mix(in srgb, ${main} ${keep}%, white)`}),
-    };
+    return lightDarkStylesOf(theme, {color: `color-mix(in srgb, ${main} ${keep}%, black)`}, {color: `color-mix(in srgb, ${main} ${keep}%, white)`});
 }
 
 /**
@@ -584,13 +578,10 @@ export function ambientBackgroundOf(theme) {
     // vidrio (más claros) no se pierden (ver DARK_CANVAS)
     const darkTones = {primary: palette.primary.dark, info: palette.info.dark, accent: palette.primary.dark};
     return {
-        backgroundColor: palette.background.default,
-        ...theme.applyStyles('dark', {backgroundColor: DARK_CANVAS.base}),
-        ...fixedBackgroundLayerOf({
-            backgroundColor: palette.background.default,
-            backgroundImage: washOf(AMBIENT_STRENGTH_LIGHT, lightTones),
-            ...theme.applyStyles('dark', {backgroundColor: DARK_CANVAS.base, backgroundImage: washOf(AMBIENT_STRENGTH_DARK, darkTones)}),
-        }),
+        ...lightDarkStylesOf(theme, {backgroundColor: palette.background.default}, {backgroundColor: DARK_CANVAS.base}),
+        ...fixedBackgroundLayerOf(lightDarkStylesOf(theme,
+            {backgroundColor: palette.background.default, backgroundImage: washOf(AMBIENT_STRENGTH_LIGHT, lightTones)},
+            {backgroundColor: DARK_CANVAS.base, backgroundImage: washOf(AMBIENT_STRENGTH_DARK, darkTones)})),
     };
 }
 
@@ -613,8 +604,7 @@ export function scrollEdgeStylesOf(theme) {
     // de arriba (cubre) hacia abajo (se desvanece): sin raya donde termina
     const fade = 'linear-gradient(to bottom, black 45%, transparent)';
     return {
-        backgroundColor: tintOf(palette.background.default),
-        ...theme.applyStyles('dark', {backgroundColor: tintOf(DARK_CANVAS.base)}),
+        ...lightDarkStylesOf(theme, {backgroundColor: tintOf(palette.background.default)}, {backgroundColor: tintOf(DARK_CANVAS.base)}),
         backdropFilter: blur,
         WebkitBackdropFilter: blur,
         maskImage: fade,
