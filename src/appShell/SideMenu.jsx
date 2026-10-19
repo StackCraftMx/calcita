@@ -26,6 +26,7 @@ import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownR
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 
 import {menuItemLabelOf, menuSectionsOf} from '@/appShell/menuItemText.js';
+import Wordmark from '@/appShell/Wordmark.jsx';
 import {APP_BAR_HEIGHT_PIXELS} from '@/appShell/shellSizes.js';
 import SideMenuEntry from '@/appShell/SideMenuEntry.jsx';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
@@ -62,6 +63,7 @@ const SECTION_TITLE_FONT_REM = Object.freeze({solid: 0.6875, glass: 0.75});
 /**
  * @param {object} props
  * @param {import('react').ReactNode} [props.logo] el logo chico (28 px), el que se queda con el menú encogido
+ * @param {import('react').ReactNode} [props.wordmark] el logo ancho (en lugar del logo y el nombre arriba)
  * @param {string} props.brandName el nombre de la app
  * @param {string} [props.brandCaption] el renglón chico debajo del nombre («Panel de administración»)
  * @param {string} props.homePath
@@ -76,7 +78,7 @@ const SECTION_TITLE_FONT_REM = Object.freeze({solid: 0.6875, glass: 0.75});
  * @param {import('react').ReactNode} [props.railBottom] abajo de ese menú: los ajustes y la cuenta
  */
 export default function SideMenu({
-    logo, brandName, brandCaption, homePath, menuItems, activeItem, collapsed, footer, showBrand = true, onNavigate, railTop, railBottom, menuBadges,
+    logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, collapsed, footer, showBrand = true, onNavigate, railTop, railBottom, menuBadges,
 }) {
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
@@ -120,11 +122,15 @@ export default function SideMenu({
                     <ButtonBase component={RouterLink} to={homePath} onClick={onNavigate} aria-label={brandName}
                                 sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 1.25, minHeight: APP_BAR_HEIGHT_PIXELS,
                                      pl: BRAND_LEFT_PADDING, pr: 2, flexShrink: 0}}>
-                        <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>
-                        <Box sx={(theme) => ({minWidth: 0, textAlign: 'left', ...fadeWhenCollapsed(theme)})}>
-                            <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
-                            {brandCaption && <Typography variant="caption" component="span" color="text.secondary" noWrap sx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</Typography>}
-                        </Box>
+                        {wordmark ? <Wordmark>{wordmark}</Wordmark> : (
+                            <>
+                                <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>
+                                <Box sx={(theme) => ({minWidth: 0, textAlign: 'left', ...fadeWhenCollapsed(theme)})}>
+                                    <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
+                                    {brandCaption && <Typography variant="caption" component="span" color="text.secondary" noWrap sx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</Typography>}
+                                </Box>
+                            </>
+                        )}
                     </ButtonBase>
                     <Divider />
                 </>

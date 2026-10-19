@@ -30,7 +30,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
-import {menuItemLabelOf} from '@/appShell/menuItemText.js';
+import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import {
     GLASS_PANEL_GAP_PIXELS, MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_LANDSCAPE_MEDIA_QUERY, PHONE_MEDIA_QUERY,
 } from '@/appShell/shellSizes.js';
@@ -268,9 +268,9 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                     {tabs.map((menuItem) => {
                         const hasChildren = (menuItem.children ?? []).length > 0;
                         return (
-                            <TabButton key={menuItem.to ?? menuItemLabelOf(menuItem, t)} label={menuItemLabelOf(menuItem, t)} Icon={menuItem.Icon}
+                            <TabButton key={menuItem.to ?? menuItem.href ?? menuItemLabelOf(menuItem, t)} label={menuItemLabelOf(menuItem, t)} Icon={menuItem.Icon}
                                        isActive={isInside(menuItem)} badge={menuBadgeOf(menuItem, menuBadges)} hasPopup={hasChildren}
-                                       linkProps={hasChildren ? {} : {component: RouterLink, to: menuItem.to}}
+                                       linkProps={hasChildren ? {} : menuLinkPropsOf(menuItem, RouterLink)}
                                        onClick={hasChildren ? (event) => setSubmenu({anchorElement: event.currentTarget, menuItem}) : undefined} />
                         );
                     })}

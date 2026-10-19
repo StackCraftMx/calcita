@@ -34,7 +34,7 @@ import {useTheme} from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import {menuItemLabelOf} from '@/appShell/menuItemText.js';
+import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import SubmenuActionsMenu, {SUBMENU_PLACEMENT} from '@/appShell/SubmenuActionsMenu.jsx';
 import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {accentTextStylesOf, glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
@@ -102,7 +102,7 @@ export default function SideMenuEntry({menuItem, activeItem, collapsed, onNaviga
 
     const linkProps = hasChildren
         ? {onClick: toggleChildren, ...(collapsed && {'aria-haspopup': 'menu'})}
-        : {component: RouterLink, to: menuItem.to, onClick: onNavigate};
+        : {...menuLinkPropsOf(menuItem, RouterLink), onClick: onNavigate};
     const fadeWhenCollapsed = (theme) => ({opacity: collapsed ? 0 : 1, transition: theme.transitions.create('opacity')});
 
     const isChild = depth > 0;
@@ -158,7 +158,7 @@ export default function SideMenuEntry({menuItem, activeItem, collapsed, onNaviga
                 <Collapse in={isOpen && !collapsed} unmountOnExit>
                     <List dense disablePadding>
                         {menuItem.children.map((child) => (
-                            <SideMenuEntry key={child.to ?? menuItemLabelOf(child, t)} menuItem={child} activeItem={activeItem} collapsed={collapsed}
+                            <SideMenuEntry key={child.to ?? child.href ?? menuItemLabelOf(child, t)} menuItem={child} activeItem={activeItem} collapsed={collapsed}
                                            onNavigate={onNavigate} menuBadges={menuBadges} depth={depth + 1} />
                         ))}
                     </List>

@@ -5,7 +5,6 @@
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -19,8 +18,11 @@ import Typography from '@mui/material/Typography';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 
-import {initialsOf, menuItemLabelOf} from '@/appShell/menuItemText.js';
+import {initialsOf} from '@/appShell/menuItemText.js';
 import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
+import MenuLinks from '@/appShell/MenuLinks.jsx';
+import {MONOGRAM_GRAY, WHITE_LABEL} from '@/theme/components/glassComponents.js';
+import {isGlassTheme} from '@/theme/glassSurface.js';
 
 /**
  * @param {object} props
@@ -33,7 +35,6 @@ import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
  */
 export default function AccountMenu({user, profilePath, accountMenuItems = [], onSignOut, isSigningOut = false, settings}) {
     const {t} = useToolkitTranslation('layout');
-    const {Link: RouterLink} = useToolkitNavigation();
     const [anchorElement, setAnchorElement] = useState(null);
     const closeMenu = () => setAnchorElement(null);
     const menuLinks = [
@@ -53,7 +54,12 @@ export default function AccountMenu({user, profilePath, accountMenuItems = [], o
         <>
             <Tooltip title={t('account.open')}>
                 <IconButton size="small" aria-label={t('account.open')} aria-haspopup="menu" onClick={(event) => setAnchorElement(event.currentTarget)} sx={{p: 0.5}}>
-                    <Avatar src={user.avatarUrl} alt="" sx={{width: 32, height: 32, fontSize: '0.875rem', bgcolor: 'secondary.main', color: 'secondary.contrastText'}}>
+                    <Avatar src={user.avatarUrl} alt="" sx={(theme) => ({
+                        width: 32, height: 32, fontSize: '0.875rem', bgcolor: 'secondary.main', color: 'secondary.contrastText',
+                        // con vidrio, en oscuro el monograma de Apple (gris oscuro con letra blanca), el que se aprobó. Antes lo
+                        // ponía el tema porque su regla de oscuro le ganaba a este sx; ahora el sx gana en los dos modos
+                        ...(isGlassTheme(theme) && theme.applyStyles('dark', {bgcolor: MONOGRAM_GRAY.dark, color: WHITE_LABEL})),
+                    })}>
                         {initialsOf(user.name)}
                     </Avatar>
                 </IconButton>
@@ -70,20 +76,7 @@ export default function AccountMenu({user, profilePath, accountMenuItems = [], o
                 {settings && <Divider />}
                 {settings && <Box sx={{py: 0.5}}>{settings}</Box>}
                 {menuLinks.length > 0 && <Divider />}
-                {menuLinks.map((menuLink) => {
-                    const Icon = menuLink.Icon;
-                    const linkProps = menuLink.to ? {component: RouterLink, to: menuLink.to} : {};
-                    return (
-                        <MenuItem key={menuLink.to ?? menuItemLabelOf(menuLink, t)} {...linkProps}
-                                  onClick={() => {
-                                      closeMenu();
-                                      menuLink.onClick?.();
-                                  }}>
-                            {Icon && <ListItemIcon><Icon fontSize="small" /></ListItemIcon>}
-                            <ListItemText primary={menuItemLabelOf(menuLink, t)} />
-                        </MenuItem>
-                    );
-                })}
+                <MenuLinks links={menuLinks} onClose={closeMenu} />
                 {onSignOut && <Divider />}
                 {onSignOut && (
                     <MenuItem onClick={signOut} disabled={isSigningOut}>

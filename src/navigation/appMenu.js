@@ -12,7 +12,8 @@
 //           to: '/orders', label: 'Pedidos',           // o labelKey: 'orders:menu.label' (se traduce al pintarse)
 //           description: 'Todos los pedidos…',         // o descriptionKey: para las tarjetas de un inicio
 //           section: 'Operación',                      // o sectionKey: el título de la sección del menú lateral
-//           Icon: ReceiptLongOutlinedIcon,
+//           Icon: ReceiptLongOutlinedIcon,             // o icon: <Iconify icon="mdi:receipt" /> (un ícono ya pintado)
+//           href: 'https://sistema-anterior/inicio',   // en lugar de to: una liga a otro sistema (carga la página completa)
 //           badge: 3,                                  // opcional: el numerito o la palabra a la derecha («Nuevo»)
 //           mobileTab: true,                           // opcional: va en la barra de pestañas del teléfono (mobileTabsOf)
 //           badgeKey: 'pendingPayment',                 // opcional: su conteo llega del servidor (AppLayout menuBadges)
@@ -53,7 +54,28 @@ export function composeMenu(menuModules, {canAccess = () => true, context = {}} 
         .flatMap((menuModule) => menuModule.buildMenuItems?.(context) ?? [menuModule.buildMenuItem?.(context)])
         .filter((menuItem) => Boolean(menuItem) && canAccess(menuItem.access))
         .map((menuItem) => withAllowedChildren(menuItem, canAccess))
-        .filter((menuItem) => Boolean(menuItem.to) || menuItem.children?.length > 0);
+        .filter((menuItem) => Boolean(menuItem.to) || Boolean(menuItem.href) || menuItem.children?.length > 0);
+}
+
+/**
+ * Las entradas con su ícono como componente (Icon), que es lo que pintan las piezas del menú: el proyecto puede dar el
+ * componente o un ícono ya pintado (icon, por ejemplo <Iconify icon="mdi:bank" /> de un sistema que ya usaba iconify).
+ *
+ * @param {object[]} menuItems
+ * @returns {object[]}
+ */
+export function menuItemsWithIconsOf(menuItems) {
+    return menuItems.map((menuItem) => {
+        const Icon = menuItem.Icon ?? (menuItem.icon ? iconComponentOf(menuItem.icon) : undefined);
+        const children = Array.isArray(menuItem.children) ? menuItemsWithIconsOf(menuItem.children) : menuItem.children;
+        return {...menuItem, Icon, children};
+    });
+}
+
+/** Un componente que pinta el ícono ya hecho (no recibe el tamaño: el proyecto lo pinta a su gusto). */
+function iconComponentOf(icon) {
+    const MenuIcon = () => icon;
+    return MenuIcon;
 }
 
 /**

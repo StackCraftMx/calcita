@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {createAccessChecker} from '@/access/accessRules.js';
-import {activeMenuItemOf, composeMenu, menuBadgeOf, menuBreadcrumbsOf, mobileTabsOf, parentMenuItemOf} from '@/navigation/appMenu.js';
+import {activeMenuItemOf, composeMenu, menuBadgeOf, menuBreadcrumbsOf, menuItemsWithIconsOf, mobileTabsOf, parentMenuItemOf} from '@/navigation/appMenu.js';
 
 // lo que regresaría import.meta.glob('@/modules/*/menu.js', {eager: true})
 const MENU_MODULES = {
@@ -138,4 +138,13 @@ test('las pestañas del teléfono según las que caben a lo ancho (la barra mide
     assert.deepEqual(mobileTabsOf(marked, null, 5).tabs.map((item) => item.label), ['b', 'e']);
     // aunque no quepa nada, al menos una pestaña junto a «Más»
     assert.equal(mobileTabsOf(items, null, 1).tabs.length, 1);
+});
+
+test('una entrada con liga a otro sistema (href) también sale, y un ícono ya pintado se vuelve componente', () => {
+    const menuItems = composeMenu([{buildMenuItem: () => ({href: 'https://sistema-anterior/inicio', label: 'Regresar', icon: 'ícono'})}]);
+    const [withIcon] = menuItemsWithIconsOf(menuItems);
+
+    assert.equal(menuItems.length, 1);
+    assert.equal(typeof withIcon.Icon, 'function');
+    assert.equal(withIcon.Icon(), 'ícono');
 });
