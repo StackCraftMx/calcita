@@ -6,6 +6,9 @@
 //
 // El clic no llega a lo de abajo: no levanta una tarjeta que se arrastra ni abre el renglón donde vive.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaActionsMenu con defaultProps y
+// styleOverrides de sus partes: item, itemIcon.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -15,6 +18,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActionsMenu)
+const THEME_NAME = 'CalcitaActionsMenu';
+const ActionsItem = piecePart(THEME_NAME, 'Item', MenuItem);
+const ActionsItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
 
 /**
  * @param {object} props
@@ -23,7 +32,9 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
  * @param {import('react').ReactNode} [props.icon] otro ícono para el botón (por omisión «⋯»)
  * @param {'small'|'medium'} [props.size]
  */
-export default function ActionsMenu({label, actions, icon, size = 'small'}) {
+export default function ActionsMenu(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaActionsMenu.defaultProps) y encima lo que llega aquí
+    const {label, actions, icon, size = 'small'} = usePieceProps(props, THEME_NAME);
     const [anchor, setAnchor] = useState(null);
     if (!actions?.length) {
         return null;
@@ -41,15 +52,15 @@ export default function ActionsMenu({label, actions, icon, size = 'small'}) {
             </Tooltip>
             <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)} onClick={(event) => event.stopPropagation()}>
                 {actions.map((action) => (
-                    <MenuItem key={action.key} disabled={action.disabled}
+                    <ActionsItem key={action.key} disabled={action.disabled}
                               onClick={() => {
                                   setAnchor(null);
                                   action.onClick();
                               }}
-                              sx={action.color ? {color: `${action.color}.main`} : undefined}>
-                        {action.icon && <ListItemIcon sx={action.color ? {color: 'inherit'} : undefined}>{action.icon}</ListItemIcon>}
+                              ownSx={action.color ? {color: `${action.color}.main`} : undefined}>
+                        {action.icon && <ActionsItemIcon ownSx={action.color ? {color: 'inherit'} : undefined}>{action.icon}</ActionsItemIcon>}
                         <ListItemText>{action.label}</ListItemText>
-                    </MenuItem>
+                    </ActionsItem>
                 ))}
             </Menu>
         </>

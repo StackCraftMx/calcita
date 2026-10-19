@@ -2,6 +2,9 @@
 // a la vista (botones de grupo) en lugar de un botón que cambia sin decir a qué. Los usan el engrane del teléfono
 // (SettingsMenu), el menú de la cuenta (AccountMenu) y la pantalla de «Mi perfil» del proyecto: un solo lugar para todos.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaAppearanceSettings con defaultProps y
+// styleOverrides de sus partes: selectSection, section, sectionLabel, option, divider.
+//
 // Genérico del paquete: function (regla de la casa).
 import {Fragment} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -20,6 +23,15 @@ import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppearanceSettings)
+const THEME_NAME = 'CalcitaAppearanceSettings';
+const AppearanceSelectSection = piecePart(THEME_NAME, 'SelectSection', Box);
+const AppearanceSection = piecePart(THEME_NAME, 'Section', Box);
+const AppearanceSectionLabel = piecePart(THEME_NAME, 'SectionLabel', Typography);
+const AppearanceOption = piecePart(THEME_NAME, 'Option', ToggleButton);
+const AppearanceDivider = piecePart(THEME_NAME, 'Divider', Divider);
 
 // cuántas opciones caben como botones lado a lado en el menú de la cuenta; con más, lista desplegable
 const SETTING_BUTTONS_LIMIT = 3;
@@ -41,16 +53,16 @@ export function SettingSection({label, value, options, onChange}) {
     // con muchas opciones (los idiomas de una app que ofrece cinco) los botones lado a lado no caben: lista desplegable
     if (options.length > SETTING_BUTTONS_LIMIT) {
         return (
-            <Box sx={{px: 1, py: 0.5}}>
+            <AppearanceSelectSection ownSx={{px: 1, py: 0.5}}>
                 <TextField select fullWidth size="small" label={label} value={value} onChange={(event) => onChange(event.target.value)}>
                     {options.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
                 </TextField>
-            </Box>
+            </AppearanceSelectSection>
         );
     }
     return (
-        <Box sx={{px: 1, py: 0.5}}>
-            <Typography variant="overline" color="text.secondary" component="p" sx={{px: 1, lineHeight: 1.6}}>{label}</Typography>
+        <AppearanceSection ownSx={{px: 1, py: 0.5}}>
+            <AppearanceSectionLabel variant="overline" color="text.secondary" component="p" ownSx={{px: 1, lineHeight: 1.6}}>{label}</AppearanceSectionLabel>
             <ToggleButtonGroup value={value} exclusive fullWidth size="small" aria-label={label}
                                onChange={(event, nextValue) => {
                                    // al picar la opción ya elegida MUI manda null: se queda la que estaba
@@ -59,10 +71,10 @@ export function SettingSection({label, value, options, onChange}) {
                                    }
                                }}>
                 {options.map((option) => (
-                    <ToggleButton key={option.value} value={option.value} sx={{gap: 0.75}}>{option.icon}{option.label}</ToggleButton>
+                    <AppearanceOption key={option.value} value={option.value} ownSx={{gap: 0.75}}>{option.icon}{option.label}</AppearanceOption>
                 ))}
             </ToggleButtonGroup>
-        </Box>
+        </AppearanceSection>
     );
 }
 
@@ -76,9 +88,11 @@ export function SettingSection({label, value, options, onChange}) {
  * @param {(mode: 'light'|'dark'|'system') => void} [props.onColorSchemeChange] la persona eligió otro modo
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function AppearanceSettings({
+export default function AppearanceSettings(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaAppearanceSettings.defaultProps) y encima lo que llega aquí
+    const {
     showFontSize = true, showLanguage = true, showColorScheme = true, onFontSizeChange, onColorSchemeChange, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t, language, changeLanguage} = useToolkitTranslation('layout', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const {level, setLevel, levels} = useFontSize();
@@ -118,7 +132,7 @@ export default function AppearanceSettings({
 
     return sections.map((section, index) => (
         <Fragment key={section.key}>
-            {index > 0 && <Divider sx={{my: 0.5}} />}
+            {index > 0 && <AppearanceDivider ownSx={{my: 0.5}} />}
             {section}
         </Fragment>
     ));

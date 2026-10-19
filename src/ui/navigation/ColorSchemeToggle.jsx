@@ -9,6 +9,9 @@
 //
 // El tooltip sale de i18n.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaColorSchemeToggle con defaultProps y
+// styleOverrides de sus partes: button.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -19,6 +22,11 @@ import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 
 import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColorSchemeToggle)
+const THEME_NAME = 'CalcitaColorSchemeToggle';
+const SchemeButton = piecePart(THEME_NAME, 'Button', IconButton);
 
 /**
  * @param {object} [props]
@@ -27,7 +35,9 @@ import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
  * @param {(mode: 'light'|'dark'|'system') => void} [props.onChange] la persona cambió el modo (para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ColorSchemeToggle({size = 'small', inverted = false, onChange, texts}) {
+export default function ColorSchemeToggle(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaColorSchemeToggle.defaultProps) y encima lo que llega aquí
+    const {size = 'small', inverted = false, onChange, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {mode, systemMode, setMode} = useColorScheme();
 
@@ -37,7 +47,7 @@ export default function ColorSchemeToggle({size = 'small', inverted = false, onC
         setIsMounted(true);
     }, []);
     if (!isMounted || !mode) {
-        return <IconButton size={size} disabled aria-hidden="true" sx={{width: 34, height: 34}} />;
+        return <SchemeButton size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
     }
 
     const nextMode = nextColorModeOf(mode, systemMode);
@@ -45,13 +55,13 @@ export default function ColorSchemeToggle({size = 'small', inverted = false, onC
 
     return (
         <Tooltip title={label}>
-            <IconButton size={size} aria-label={label} onClick={() => {
+            <SchemeButton size={size} aria-label={label} onClick={() => {
                             setMode(nextMode);
                             onChange?.(nextMode);
                         }}
-                        sx={{color: inverted ? 'common.white' : 'text.secondary'}}>
+                        ownSx={{color: inverted ? 'common.white' : 'text.secondary'}}>
                 {nextMode === 'light' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
-            </IconButton>
+            </SchemeButton>
         </Tooltip>
     );
 }

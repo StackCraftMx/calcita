@@ -14,6 +14,9 @@
 // Dentro de un Stack, que separa a sus hijos con margen, eso hacía brincar el encabezado 16 px al abrir y al cerrar. Por eso
 // va envuelto en una caja: el margen del Stack cae en la caja y el encabezado se queda quieto.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaCollapsibleSection con defaultProps y
+// styleOverrides de sus partes: root, accordion, summary, titleArea, collapsedTitle, expandedTitle, details.
+//
 // Genérico del paquete: function (regla de la casa). No sabe de negocio: sus textos llegan ya traducidos.
 import {useState} from 'react';
 import Accordion from '@mui/material/Accordion';
@@ -22,6 +25,17 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCollapsibleSection)
+const THEME_NAME = 'CalcitaCollapsibleSection';
+const CollapsibleRoot = piecePart(THEME_NAME, 'Root', Box);
+const CollapsibleAccordion = piecePart(THEME_NAME, 'Accordion', Accordion);
+const CollapsibleSummary = piecePart(THEME_NAME, 'Summary', AccordionSummary);
+const CollapsibleTitleArea = piecePart(THEME_NAME, 'TitleArea', Box);
+const CollapsibleCollapsedTitle = piecePart(THEME_NAME, 'CollapsedTitle', Typography);
+const CollapsibleExpandedTitle = piecePart(THEME_NAME, 'ExpandedTitle', Typography);
+const CollapsibleDetails = piecePart(THEME_NAME, 'Details', AccordionDetails);
 
 // el mismo radio de las tarjetas (theme/components/surfaces.js): el encabezado se lee como una pieza más de la página
 const CARD_BORDER_RADIUS_PIXELS = 10;
@@ -44,7 +58,9 @@ const HEADER_SX = {
  *     adentro hasta que se abre)
  * @param {import('react').ReactNode} props.children
  */
-export default function CollapsibleSection({collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children}) {
+export default function CollapsibleSection(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaCollapsibleSection.defaultProps) y encima lo que llega aquí
+    const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children} = usePieceProps(props, THEME_NAME);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const changeExpanded = (nextIsExpanded) => {
         setIsExpanded(nextIsExpanded);
@@ -52,22 +68,22 @@ export default function CollapsibleSection({collapsedTitle, expandedTitle, hint 
     };
 
     return (
-        <Box sx={{minWidth: 0}}>
-            <Accordion expanded={isExpanded} onChange={(changeEvent, nextIsExpanded) => changeExpanded(nextIsExpanded)}
-                       disableGutters elevation={0} square sx={{bgcolor: 'transparent', '&::before': {display: 'none'}}}>
+        <CollapsibleRoot ownSx={{minWidth: 0}}>
+            <CollapsibleAccordion expanded={isExpanded} onChange={(changeEvent, nextIsExpanded) => changeExpanded(nextIsExpanded)}
+                       disableGutters elevation={0} square ownSx={{bgcolor: 'transparent', '&::before': {display: 'none'}}}>
                 {/* NOTA: el acordeón ya envuelve este renglón en un encabezado (h3); los textos van como span para no anidar dos */}
-                <AccordionSummary expandIcon={<ExpandMoreIcon color="primary" />} sx={HEADER_SX}>
-                    <Box sx={{minWidth: 0}}>
-                        <Typography variant="subtitle2" component="span" color="primary" sx={{display: 'block'}}>
+                <CollapsibleSummary expandIcon={<ExpandMoreIcon color="primary" />} ownSx={HEADER_SX}>
+                    <CollapsibleTitleArea ownSx={{minWidth: 0}}>
+                        <CollapsibleCollapsedTitle variant="subtitle2" component="span" color="primary" ownSx={{display: 'block'}}>
                             {isExpanded ? expandedTitle : collapsedTitle}
-                        </Typography>
+                        </CollapsibleCollapsedTitle>
                         {!isExpanded && hint && (
-                            <Typography variant="caption" component="span" color="text.secondary" sx={{display: 'block'}}>{hint}</Typography>
+                            <CollapsibleExpandedTitle variant="caption" component="span" color="text.secondary" ownSx={{display: 'block'}}>{hint}</CollapsibleExpandedTitle>
                         )}
-                    </Box>
-                </AccordionSummary>
-                <AccordionDetails sx={{p: 0, pt: 2}}>{children}</AccordionDetails>
-            </Accordion>
-        </Box>
+                    </CollapsibleTitleArea>
+                </CollapsibleSummary>
+                <CollapsibleDetails ownSx={{p: 0, pt: 2}}>{children}</CollapsibleDetails>
+            </CollapsibleAccordion>
+        </CollapsibleRoot>
     );
 }

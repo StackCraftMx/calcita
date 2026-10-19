@@ -7,6 +7,9 @@
 // La usan la tabla de servidor (searchInBar) y cualquier pantalla que busque en lo suyo (Tareas). Con inBar={false} es la
 // misma caja dentro de la pantalla.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarSearch con defaultProps y
+// styleOverrides de sus partes: field.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -16,6 +19,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import BarActions from '@/appShell/BarActions.jsx';
 import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarSearch)
+const THEME_NAME = 'CalcitaBarSearch';
+const SearchField = piecePart(THEME_NAME, 'Field', TextField);
 
 // ancho de la caja dentro de la pantalla en escritorio: cabe un texto de ayuda como «Buscar por pedido, cliente o producto…».
 // OJO: con 280 se cortaba («…cliente o pro»); en el teléfono la caja toma todo el ancho
@@ -36,12 +44,14 @@ const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
  * @param {() => void} [props.onBlur]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef] la caja, para enfocarla desde afuera (un atajo «/»)
  */
-export default function BarSearch({value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef}) {
+export default function BarSearch(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaBarSearch.defaultProps) y encima lo que llega aquí
+    const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef} = usePieceProps(props, THEME_NAME);
     const [isFocused, setIsFocused] = useState(false);
     // en la barra, chica cuando no se usa: ni tiene el foco ni tiene texto
     const isCompact = inBar && collapsible && !isFocused && !value;
     const searchBox = (
-        <TextField
+        <SearchField
             type="search"
             size="small"
             inputRef={inputRef}
@@ -63,7 +73,7 @@ export default function BarSearch({value, onChange, placeholder, inBar = true, c
                 }
             }}
             placeholder={placeholder}
-            sx={{
+            ownSx={{
                 minWidth: {xs: 0, md: inBar ? 0 : SEARCH_BOX_MIN_WIDTH_PIXELS},
                 // la × del navegador para type="search" no va: la caja se borra con Escape
                 '& input[type="search"]::-webkit-search-cancel-button': {WebkitAppearance: 'none', display: 'none'},

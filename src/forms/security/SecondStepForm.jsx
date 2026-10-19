@@ -13,6 +13,9 @@
 //                   onSubmitCode={async ({method, code}) => finishWith(await api.post(`/auth/second-step/${method}`, {code}))}
 //                   onCancel={(message) => backToSignIn(message)} />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSecondStepForm con defaultProps y
+// styleOverrides de sus partes: actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {Form, Formik} from 'formik';
@@ -34,6 +37,11 @@ import {
     normalizeRecoveryCode, normalizeTotpCode,
 } from '@/forms/security/securityRules.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSecondStepForm)
+const THEME_NAME = 'CalcitaSecondStepForm';
+const SecondStepActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 /** Las formas de confirmar el segundo paso, como las manda el servidor. */
 export const SECOND_STEP_METHOD = Object.freeze({passkey: 'passkey', totp: 'totp', recoveryCode: 'recoveryCode'});
@@ -64,7 +72,9 @@ function isOutOfAttempts(error) {
  *     useFormikContext (p. ej. el atajo de los ejemplos)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SecondStepForm({methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts}) {
+export default function SecondStepForm(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSecondStepForm.defaultProps) y encima lo que llega aquí
+    const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('security', texts);
     const hasApp = methods.includes(SECOND_STEP_METHOD.totp);
     const hasRecovery = methods.includes(SECOND_STEP_METHOD.recoveryCode);
@@ -150,7 +160,7 @@ export default function SecondStepForm({methods, canUsePasskeys = false, onUsePa
             )}
             {!hasApp && !hasRecovery && footer}
 
-            <Stack spacing={0.5} sx={{alignItems: 'center'}}>
+            <SecondStepActions spacing={0.5} ownSx={{alignItems: 'center'}}>
                 {hasApp && hasRecovery && (
                     <Link component="button" type="button" variant="body2"
                           onClick={() => setMethod(isApp ? SECOND_STEP_METHOD.recoveryCode : SECOND_STEP_METHOD.totp)}>
@@ -158,7 +168,7 @@ export default function SecondStepForm({methods, canUsePasskeys = false, onUsePa
                     </Link>
                 )}
                 <Link component="button" type="button" variant="body2" onClick={() => onCancel(null)}>{t('secondStep.otherAccount')}</Link>
-            </Stack>
+            </SecondStepActions>
         </Stack>
     );
 }

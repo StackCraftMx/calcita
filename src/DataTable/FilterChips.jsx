@@ -10,6 +10,9 @@
 //
 // Los accesos rápidos cuentan aunque no tengan chip aquí: su propio chip encendido ya dice qué está elegido.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFilterChips con defaultProps y
+// styleOverrides de sus partes: root, header, clearButton.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
@@ -20,6 +23,13 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFilterChips)
+const THEME_NAME = 'CalcitaFilterChips';
+const ChipsRoot = piecePart(THEME_NAME, 'Root', Box);
+const ChipsHeader = piecePart(THEME_NAME, 'Header', Stack);
+const ChipsClearButton = piecePart(THEME_NAME, 'ClearButton', Button);
 
 /**
  * @param {object} props
@@ -30,7 +40,9 @@ import Tag from '@/ui/labels/Tag.jsx';
  * @param {number} [props.quickActiveCount] accesos rápidos puestos que no tienen chip aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function FilterChips({chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts}) {
+export default function FilterChips(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaFilterChips.defaultProps) y encima lo que llega aquí
+    const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('table', texts);
     const chips = chipConfig
         .filter((chipDeclaration) => chipDeclaration.isActive(filters[chipDeclaration.key]))
@@ -43,16 +55,16 @@ export default function FilterChips({chipConfig, filters, onSetFilter, onClearAl
     }
 
     return (
-        <Box sx={{mb: 1.5, minWidth: 0}}>
-            <Stack direction="row" spacing={1} sx={{px: 0.25, alignItems: 'center', justifyContent: 'space-between'}}>
+        <ChipsRoot ownSx={{mb: 1.5, minWidth: 0}}>
+            <ChipsHeader direction="row" spacing={1} ownSx={{px: 0.25, alignItems: 'center', justifyContent: 'space-between'}}>
                 <Typography variant="caption" color="text.secondary" noWrap>
                     {t('chips.applied', {count: activeCount})}
                 </Typography>
-                <Button size="small" color="error" startIcon={<ClearAllIcon fontSize="small" />} onClick={onClearAll}
-                        sx={{flexShrink: 0}}>
+                <ChipsClearButton size="small" color="error" startIcon={<ClearAllIcon fontSize="small" />} onClick={onClearAll}
+                        ownSx={{flexShrink: 0}}>
                     {t('chips.clearAll')}
-                </Button>
-            </Stack>
+                </ChipsClearButton>
+            </ChipsHeader>
 
             {chips.length > 0 && (
                 <ScrollableRow>
@@ -61,6 +73,6 @@ export default function FilterChips({chipConfig, filters, onSetFilter, onClearAl
                     ))}
                 </ScrollableRow>
             )}
-        </Box>
+        </ChipsRoot>
     );
 }

@@ -6,6 +6,9 @@
 //
 //   <SessionsCard sessions={sessions} onCloseOthers={async () => (await api.post('/sessions/close-others')).closed} />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSessionsCard con defaultProps y
+// styleOverrides de sus partes: item, itemIcon, itemHeader, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -28,6 +31,14 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSessionsCard)
+const THEME_NAME = 'CalcitaSessionsCard';
+const SessionsItem = piecePart(THEME_NAME, 'Item', ListItem);
+const SessionsItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
+const SessionsItemHeader = piecePart(THEME_NAME, 'ItemHeader', Stack);
+const SessionsActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 const LOADING_HEIGHT_PIXELS = 96;
 
@@ -49,15 +60,15 @@ function SessionRow({session}) {
     }
 
     return (
-        <ListItem disableGutters alignItems="flex-start" sx={{gap: 1}}>
-            <ListItemIcon sx={{minWidth: 36, mt: 0.5}}><DeviceIcon /></ListItemIcon>
+        <SessionsItem disableGutters alignItems="flex-start" ownSx={{gap: 1}}>
+            <SessionsItemIcon ownSx={{minWidth: 36, mt: 0.5}}><DeviceIcon /></SessionsItemIcon>
             <ListItemText primary={(
-                <Stack direction="row" spacing={1} useFlexGap sx={{alignItems: 'center', flexWrap: 'wrap'}}>
+                <SessionsItemHeader direction="row" spacing={1} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
                     <span>{device}</span>
                     {session.isCurrent && <Tag label={t('sessions.current')} color="success" />}
-                </Stack>
+                </SessionsItemHeader>
             )} secondary={details.join(' · ')} slotProps={{primary: {sx: {fontWeight: 600}}}} />
-        </ListItem>
+        </SessionsItem>
     );
 }
 
@@ -70,7 +81,9 @@ function SessionRow({session}) {
  * @param {() => void} [props.onClosed] p. ej. volver a pedir la lista
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SessionsCard({sessions, error = null, onCloseOthers, onClosed, texts}) {
+export default function SessionsCard(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSessionsCard.defaultProps) y encima lo que llega aquí
+    const {sessions, error = null, onCloseOthers, onClosed, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('security', texts);
     const othersCount = (sessions ?? []).filter((session) => !session.isCurrent).length;
     const confirmation = useConfirmAction({
@@ -98,12 +111,12 @@ export default function SessionsCard({sessions, error = null, onCloseOthers, onC
                             ))}
                         </List>
                     )}
-                    <Stack spacing={1} sx={{alignItems: 'flex-start'}}>
+                    <SessionsActions spacing={1} ownSx={{alignItems: 'flex-start'}}>
                         {sessions && othersCount === 0 && <Typography variant="caption" color="text.secondary">{t('sessions.onlyThis')}</Typography>}
                         <Button variant="outlined" color="warning" disabled={!sessions || othersCount === 0} onClick={() => confirmation.open({})}>
                             {t('sessions.closeOthers')}
                         </Button>
-                    </Stack>
+                    </SessionsActions>
                 </Stack>
                 <ConfirmDialog {...confirmation.dialogProps} tone="warning" title={t('sessions.confirmTitle')}
                                description={t('sessions.confirmText', {count: othersCount})} confirmLabel={t('sessions.confirm')} />

@@ -16,6 +16,9 @@
 //
 //   <ProfileScreen />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaProfileScreen con defaultProps y
+// styleOverrides de sus partes: sectionTitle, form, preferences.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useMemo} from 'react';
 import {Form, Formik} from 'formik';
@@ -38,6 +41,13 @@ import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ProfileHeader from '@/ui/layout/ProfileHeader.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaProfileScreen)
+const THEME_NAME = 'CalcitaProfileScreen';
+const ProfileScreenSectionTitle = piecePart(THEME_NAME, 'SectionTitle', Typography);
+const ProfileScreenForm = piecePart(THEME_NAME, 'Form', Stack);
+const ProfileScreenPreferences = piecePart(THEME_NAME, 'Preferences', Stack);
 
 /** Las pestañas, en el orden en que se pintan. */
 export const PROFILE_TAB = Object.freeze({data: 'data', security: 'security', preferences: 'preferences'});
@@ -82,10 +92,10 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
 
     return (
         <SectionCard title={t('profile.data.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('profile.data.text')}</Typography>
+            <ProfileScreenSectionTitle variant="body2" color="text.secondary" ownSx={{mb: 2}}>{t('profile.data.text')}</ProfileScreenSectionTitle>
             <Formik initialValues={initialValues} validationSchema={schema} onSubmit={save}>
                 <Form noValidate>
-                    <Stack spacing={2} sx={{maxWidth: FORM_MAX_WIDTH}}>
+                    <ProfileScreenForm spacing={2} ownSx={{maxWidth: FORM_MAX_WIDTH}}>
                         <FormProblemAlert />
                         <FormTextField name="name" label={t('profile.data.name')} autoComplete="name" />
                         {/* el correo se ve con el mismo estilo de los demás campos, pero no se cambia aquí */}
@@ -94,7 +104,7 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
                         <FormTextField name="phone" label={t('profile.data.phone')} type="tel" autoComplete="tel" inputMode="tel" />
                         {extraFields?.fields}
                         <SubmitButton sx={{alignSelf: 'flex-start'}}>{t('profile.data.save')}</SubmitButton>
-                    </Stack>
+                    </ProfileScreenForm>
                 </Form>
             </Formik>
         </SectionCard>
@@ -118,9 +128,11 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete:
  *     {profile: {tabs: {data: 'Mis datos'}}}
  */
-export default function ProfileScreen({
+export default function ProfileScreen(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaProfileScreen.defaultProps) y encima lo que llega aquí
+    const {
     showColorScheme = true, extraFields, extraTabs = [], hiddenTabs = [], onTabChange, onProfileSaved, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('account', texts);
     const {session} = useAccount();
     const {useNavigate, useLocation} = useToolkitNavigation();
@@ -156,10 +168,10 @@ export default function ProfileScreen({
             {activeTab === PROFILE_TAB.security && <AccountSecuritySection />}
             {activeTab === PROFILE_TAB.preferences && (
                 <SectionCard title={t('profile.preferences.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>{t('profile.preferences.text')}</Typography>
-                    <Stack sx={{maxWidth: FORM_MAX_WIDTH, mx: -1}}>
+                    <ProfileScreenSectionTitle variant="body2" color="text.secondary" ownSx={{mb: 1}}>{t('profile.preferences.text')}</ProfileScreenSectionTitle>
+                    <ProfileScreenPreferences ownSx={{maxWidth: FORM_MAX_WIDTH, mx: -1}}>
                         <AppearanceSettings showColorScheme={showColorScheme} />
-                    </Stack>
+                    </ProfileScreenPreferences>
                 </SectionCard>
             )}
             {activeExtraTab?.content}

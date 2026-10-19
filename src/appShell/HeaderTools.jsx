@@ -9,6 +9,9 @@
 // Los botones toman el color de la barra (color: inherit): sobre la barra naranja de Stackcraft van claros, sobre una
 // barra blanca van oscuros, sin que cada botón sepa de qué color es la barra.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaHeaderTools con defaultProps y
+// styleOverrides de sus partes: divider, root.
+//
 // Genérico del paquete: function (regla de la casa).
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -16,6 +19,12 @@ import Divider from '@mui/material/Divider';
 import AccountMenu from '@/appShell/AccountMenu.jsx';
 import SettingsMenu from '@/appShell/SettingsMenu.jsx';
 import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaHeaderTools)
+const THEME_NAME = 'CalcitaHeaderTools';
+const ToolsDivider = piecePart(THEME_NAME, 'Divider', Divider);
+const ToolsRoot = piecePart(THEME_NAME, 'Root', Box);
 
 /**
  * @param {object} props
@@ -31,21 +40,23 @@ import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
  * @param {() => void} [props.onSignOut]
  * @param {boolean} [props.isSigningOut]
  */
-export default function HeaderTools({
+export default function HeaderTools(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaHeaderTools.defaultProps) y encima lo que llega aquí
+    const {
     headerActions, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, user, profilePath, accountMenuItems, onSignOut, isSigningOut,
     accountSettings, vertical = false,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const hasAppearance = showFontSizeToggle || showLanguageToggle || showColorSchemeToggle;
     const settings = hasAppearance || accountSettings ? (
         <>
             <AppearanceSettings showFontSize={showFontSizeToggle} showLanguage={showLanguageToggle} showColorScheme={showColorSchemeToggle} />
-            {hasAppearance && accountSettings && <Divider sx={{my: 0.5}} />}
+            {hasAppearance && accountSettings && <ToolsDivider ownSx={{my: 0.5}} />}
             {accountSettings}
         </>
     ) : null;
 
     return (
-        <Box sx={{display: 'flex', flexDirection: vertical ? 'column' : 'row', alignItems: 'center', gap: 0.5, flexShrink: 0, '& .MuiButtonBase-root': {color: 'inherit'}}}>
+        <ToolsRoot ownSx={{display: 'flex', flexDirection: vertical ? 'column' : 'row', alignItems: 'center', gap: 0.5, flexShrink: 0, '& .MuiButtonBase-root': {color: 'inherit'}}}>
             {headerActions}
             {user ? (
                 <AccountMenu user={user} profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut} isSigningOut={isSigningOut}
@@ -55,6 +66,6 @@ export default function HeaderTools({
                 <SettingsMenu showFontSize={showFontSizeToggle} showLanguage={showLanguageToggle} showColorScheme={showColorSchemeToggle}
                               extraSettings={accountSettings} menuLinks={accountMenuItems} />
             )}
-        </Box>
+        </ToolsRoot>
     );
 }

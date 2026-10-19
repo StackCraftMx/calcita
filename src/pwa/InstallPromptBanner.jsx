@@ -6,6 +6,9 @@
 // Color de información, no de advertencia: instalar es una sugerencia, no un problema. En el teléfono con vidrio va encima
 // de la barra de pestañas; sin ella, respeta la zona del gesto de inicio del iPhone.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaInstallPromptBanner con defaultProps y
+// styleOverrides de sus partes: root, alert.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Alert from '@mui/material/Alert';
@@ -22,6 +25,12 @@ import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallPromptBanner)
+const THEME_NAME = 'CalcitaInstallPromptBanner';
+const PromptRoot = piecePart(THEME_NAME, 'Root', Snackbar);
+const PromptAlert = piecePart(THEME_NAME, 'Alert', Alert);
 
 // lo que se separa de la barra de pestañas (px)
 const TAB_BAR_GAP_PIXELS = 8;
@@ -35,7 +44,9 @@ const TAB_BAR_GAP_PIXELS = 8;
  * @param {() => void} [props.onDismiss] dijo «Ahora no» (o cerró los pasos): no se le vuelve a ofrecer en este navegador
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallPromptBanner({message, onInstallChoice, onShowSteps, onDismiss, texts}) {
+export default function InstallPromptBanner(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaInstallPromptBanner.defaultProps) y encima lo que llega aquí
+    const {message, onInstallChoice, onShowSteps, onDismiss, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {variant, dismissed, promptInstall, dismiss} = useInstallPrompt();
     const [stepsOpen, setStepsOpen] = useState(false);
@@ -69,11 +80,11 @@ export default function InstallPromptBanner({message, onInstallChoice, onShowSte
     return (
         <ComponentTexts namespace="common" texts={texts}>
             <>
-                <Snackbar open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                          sx={(theme) => (usesMobileTabBar(theme)
+                <PromptRoot open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                          ownSx={(theme) => (usesMobileTabBar(theme)
                               ? aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)
                               : {mb: 'env(safe-area-inset-bottom)'})}>
-                    <Alert severity="info" icon={<InstallMobileRoundedIcon />} sx={{width: '100%', alignItems: 'center'}}
+                    <PromptAlert severity="info" icon={<InstallMobileRoundedIcon />} ownSx={{width: '100%', alignItems: 'center'}}
                            action={(
                                <>
                                    <Button color="inherit" size="small" onClick={handleAction}>
@@ -85,8 +96,8 @@ export default function InstallPromptBanner({message, onInstallChoice, onShowSte
                                </>
                            )}>
                         {message ?? t('install.banner')}
-                    </Alert>
-                </Snackbar>
+                    </PromptAlert>
+                </PromptRoot>
                 <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={handleStepsClose} />
             </>
         </ComponentTexts>

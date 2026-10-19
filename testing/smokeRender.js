@@ -12,7 +12,7 @@ import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
     AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
-    AppearanceSettings, AuthLayout, FormSection, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
+    AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
     createHashNavigation,
@@ -49,6 +49,20 @@ const DEMO_CONNECTOR = createDemoAccountConnector({delayMilliseconds: 0, labels:
 const DEMO_SESSION = {user: {id: 'u1', name: 'Ana Martínez Ruiz', email: 'ana@ejemplo.com'}, roles: [], abilities: [], labels: ['Administración']};
 const withAccount = (session, screen) => h(AccountProvider, {connector: DEMO_CONNECTOR, initialSession: session}, () => screen);
 const PROJECT_TEXTS = {es: {dictionaries: {orderStatus: {pending: {label: 'Pendiente', tooltip: 'Esperando pago'}}}}};
+// el tema de un proyecto que cambia las piezas de Calcita como cambia las de MUI (components.Calcita…): estilos de sus partes
+// y props por omisión. Colores raros a propósito: si salen en lo pintado, el tema del proyecto llegó a la pieza
+const PROJECT_STYLED_THEME = createTheme({
+    components: {
+        CalcitaStatusChip: {styleOverrides: {root: {color: 'rgb(1, 2, 3)'}, dot: {borderRadius: '2px'}}},
+        CalcitaSegmentedControl: {styleOverrides: {root: {gap: '13px'}}},
+        CalcitaFormSection: {styleOverrides: {card: {borderRadius: '3px'}, title: {color: 'rgb(4, 5, 6)'}}},
+        CalcitaFormRow: {styleOverrides: {label: {color: 'rgb(7, 8, 9)'}}},
+        CalcitaMetricCard: {styleOverrides: {root: {borderRadius: 5}, value: {color: 'rgb(10, 11, 12)'}}},
+        CalcitaAppLayout: {styleOverrides: {bar: {borderBottom: '7px solid rgb(13, 14, 15)'}}},
+        CalcitaSectionCard: {styleOverrides: {title: {color: 'rgb(16, 17, 18)'}}, defaultProps: {title: 'Título del tema'}},
+    },
+});
+const PROJECT_DEFAULT_PROPS_THEME = createTheme({components: {CalcitaStatusChip: {defaultProps: {variant: 'chip'}}}});
 
 // cada caso: su nombre, el componente y un texto que debe salir en lo pintado
 const CASES = [
@@ -169,6 +183,19 @@ const CASES = [
     ['SignInScreen sin sesión', withAccount(null, h(SignInScreen, {forgotPasswordPath: '/forgot-password'})), '¿Olvidó su contraseña?'],
     ['ResetPasswordScreen sin clave en la dirección', withAccount(null, h(ResetPasswordScreen, {signInPath: '/sign-in'})), 'Este enlace no sirve'],
     ['ProfileScreen con sesión', withAccount(DEMO_SESSION, h(ProfileScreen)), 'Sus datos'],
+    // las piezas de Calcita se cambian desde el tema del proyecto, como las de MUI
+    ['tema del proyecto: CalcitaStatusChip root y dot', h(StatusChip, {dictionary: ORDER_STATUS, value: 'pending'}), 'rgb(1, 2, 3)', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaStatusChip dot', h(StatusChip, {dictionary: ORDER_STATUS, value: 'pending'}), 'border-radius:2px', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaStatusChip defaultProps', h(StatusChip, {dictionary: ORDER_STATUS, value: 'pending'}), 'MuiChip-root', PROJECT_DEFAULT_PROPS_THEME],
+    ['tema del proyecto: CalcitaSegmentedControl', h(SegmentedControl, {options: [{value: 'a', label: 'Uno'}, {value: 'b', label: 'Dos'}], value: 'a', onChange: () => {}, ariaLabel: 'Vista'}), 'gap:13px', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaFormSection card', h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'border-radius:3px', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaFormSection title', h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'rgb(4, 5, 6)', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaFormRow label', h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'rgb(7, 8, 9)', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaMetricCard root (número como en MUI: 5 px)', h(MetricCard, {label: 'Pedidos', value: '1,200'}), 'border-radius:5px', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaMetricCard value', h(MetricCard, {label: 'Pedidos', value: '1,200'}), 'rgb(10, 11, 12)', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaAppLayout bar', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS}, 'contenido'), 'rgb(13, 14, 15)', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaSectionCard title y defaultProps', h(SectionCard, {}, 'contenido'), 'Título del tema', PROJECT_STYLED_THEME],
+    ['tema del proyecto: CalcitaSectionCard title color', h(SectionCard, {}, 'contenido'), 'rgb(16, 17, 18)', PROJECT_STYLED_THEME],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 

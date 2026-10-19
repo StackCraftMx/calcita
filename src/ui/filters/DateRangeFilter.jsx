@@ -7,6 +7,9 @@
 // para no sumar dos dependencias (x-date-pickers y moment) que ninguna
 // pantalla del 22-sep necesita. Si el calendario nativo estorba (Safari de escritorio), se cambia SOLO este archivo.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDateRangeFilter con defaultProps y
+// styleOverrides de sus partes: chip, panel, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -19,6 +22,13 @@ import Typography from '@mui/material/Typography';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDateRangeFilter)
+const THEME_NAME = 'CalcitaDateRangeFilter';
+const RangeChip = piecePart(THEME_NAME, 'Chip', Chip);
+const RangePanel = piecePart(THEME_NAME, 'Panel', Stack);
+const RangeActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 /**
  * @param {object} props
@@ -28,7 +38,9 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
  * @param {string} [props.label] ya traducido; por defecto "Personalizado"
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function DateRangeFilter({from = '', to = '', onChange, label, texts}) {
+export default function DateRangeFilter(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaDateRangeFilter.defaultProps) y encima lo que llega aquí
+    const {from = '', to = '', onChange, label, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('table', texts);
     const {formatDate} = useFormatters();
     const [anchorElement, setAnchorElement] = useState(null);
@@ -57,11 +69,11 @@ export default function DateRangeFilter({from = '', to = '', onChange, label, te
 
     return (
         <>
-            <Chip icon={<DateRangeOutlinedIcon />} label={summary} clickable onClick={open}
+            <RangeChip icon={<DateRangeOutlinedIcon />} label={summary} clickable onClick={open}
                   variant={isActive ? 'filled' : 'outlined'} color={isActive ? 'primary' : 'default'}
-                  onDelete={isActive ? clear : undefined} sx={{flex: '0 0 auto', height: 32}} />
+                  onDelete={isActive ? clear : undefined} ownSx={{flex: '0 0 auto', height: 32}} />
             <Popover open={Boolean(anchorElement)} anchorEl={anchorElement} onClose={close} anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>
-                <Stack spacing={2} sx={{p: 2, width: 280}}>
+                <RangePanel spacing={2} ownSx={{p: 2, width: 280}}>
                     <Typography variant="subtitle2">{t('dateRange.title')}</Typography>
                     <TextField type="date" size="small" fullWidth label={t('dateRange.from')} value={draft.from}
                                helperText={t('dateRange.fromHelp')}
@@ -71,13 +83,13 @@ export default function DateRangeFilter({from = '', to = '', onChange, label, te
                                helperText={isInvalid ? t('dateRange.invalid') : t('dateRange.toHelp')}
                                onChange={(event) => setDraft((currentDraft) => ({...currentDraft, to: event.target.value}))}
                                slotProps={{inputLabel: {shrink: true}, htmlInput: {min: draft.from || undefined}}} />
-                    <Stack direction="row" spacing={1} sx={{justifyContent: 'flex-end'}}>
+                    <RangeActions direction="row" spacing={1} ownSx={{justifyContent: 'flex-end'}}>
                         {isActive && <Button onClick={clear}>{t('dateRange.clear')}</Button>}
                         <Button variant="contained" onClick={apply} disabled={isInvalid || !(draft.from || draft.to)}>
                             {t('dateRange.apply')}
                         </Button>
-                    </Stack>
-                </Stack>
+                    </RangeActions>
+                </RangePanel>
             </Popover>
         </>
     );

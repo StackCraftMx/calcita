@@ -6,6 +6,9 @@
 //
 //   <RecoveryCodesDialog codes={codes} account={session.email} onClose={() => setCodes(null)} />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaRecoveryCodesDialog con defaultProps y
+// styleOverrides de sus partes: codes, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Alert from '@mui/material/Alert';
@@ -24,6 +27,12 @@ import {saveBlob} from '@/files.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import CopyButton from '@/ui/actions/CopyButton.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaRecoveryCodesDialog)
+const THEME_NAME = 'CalcitaRecoveryCodesDialog';
+const RecoveryCodes = piecePart(THEME_NAME, 'Codes', Box);
+const RecoveryActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 const CODE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 
@@ -45,7 +54,9 @@ function todayText() {
  *     seguridad)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function RecoveryCodesDialog({codes, account = '', onClose, onCodesSaved, texts}) {
+export default function RecoveryCodesDialog(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaRecoveryCodesDialog.defaultProps) y encima lo que llega aquí
+    const {codes, account = '', onClose, onCodesSaved, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('security', texts);
     const {appName} = useToolkitSettings();
     const [isSaved, setIsSaved] = useState(false);
@@ -80,16 +91,16 @@ export default function RecoveryCodesDialog({codes, account = '', onClose, onCod
             <DialogContent>
                 <Stack spacing={2}>
                     <Alert severity="warning">{t('recoveryCodes.warning')}</Alert>
-                    <Box component="ol" sx={{
+                    <RecoveryCodes component="ol" ownSx={{
                         m: 0, p: 2, pl: 5, borderRadius: 2, bgcolor: 'action.hover', fontFamily: CODE_FONT, fontSize: 15,
                         columns: 2, columnGap: 4,
                     }}>
                         {(codes ?? []).map((code) => <li key={code}>{code}</li>)}
-                    </Box>
-                    <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                    </RecoveryCodes>
+                    <RecoveryActions direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                         <CopyButton value={(codes ?? []).join('\n')} label={t('recoveryCodes.copyAll')} onCopied={() => onCodesSaved?.('copy')} />
                         <Button size="small" startIcon={<DownloadIcon />} onClick={download}>{t('recoveryCodes.download')}</Button>
-                    </Stack>
+                    </RecoveryActions>
                     <FormControlLabel control={<Checkbox checked={isSaved} onChange={(event) => setIsSaved(event.target.checked)} />}
                                       label={t('recoveryCodes.saved')} />
                 </Stack>

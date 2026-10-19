@@ -13,6 +13,9 @@
 // «Ir al inicio» (onGoHome). La de «sin permiso» de las rutas se cambia con withAccess(…, {fallback}) y la de error de ruta
 // pasándole estas mismas props a RouteErrorScreen (/react-router).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaErrorPage con defaultProps y
+// styleOverrides de sus partes: root, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
@@ -23,6 +26,12 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SystemUpdateAltRoundedIcon from '@mui/icons-material/SystemUpdateAltRounded';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaErrorPage)
+const THEME_NAME = 'CalcitaErrorPage';
+const ErrorRoot = piecePart(THEME_NAME, 'Root', Stack);
+const ErrorActions = piecePart(THEME_NAME, 'Actions', Stack);
 
 /** Los errores que tiene pantalla propia. */
 export const ERROR_PAGE_KIND = Object.freeze({notFound: 'notFound', forbidden: 'forbidden', serverError: 'serverError', newVersion: 'newVersion'});
@@ -52,20 +61,22 @@ const ICON_PIXELS = 56;
  * @param {object} [props.texts] los textos que cambian, con la forma de `errorPage` en los textos del paquete:
  *     {goHome: 'Volver al tablero', notFound: {title: '…'}}
  */
-export default function ErrorPage({
+export default function ErrorPage(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaErrorPage.defaultProps) y encima lo que llega aquí
+    const {
     kind, title, text, homePath = '/', onRetry, onGoHome, extraActions, actions, icon, children, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('errorPage', texts);
     const {Link} = useToolkitNavigation();
     const look = ERROR_PAGE_LOOK[kind] ?? ERROR_PAGE_LOOK[ERROR_PAGE_KIND.serverError];
 
     return (
-        <Stack spacing={2} sx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
+        <ErrorRoot spacing={2} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
             {icon ?? <look.Icon color={look.color} sx={{fontSize: ICON_PIXELS}} />}
             <Typography variant="h4" component="h1">{title ?? t(`${kind}.title`)}</Typography>
             <Typography variant="body1" color="text.secondary">{text ?? t(`${kind}.text`)}</Typography>
             {children}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5} useFlexGap sx={{pt: 1, flexWrap: 'wrap', justifyContent: 'center'}}>
+            <ErrorActions direction={{xs: 'column', sm: 'row'}} spacing={1.5} useFlexGap ownSx={{pt: 1, flexWrap: 'wrap', justifyContent: 'center'}}>
                 {actions ?? (
                     <>
                         {onRetry && <Button variant="contained" onClick={onRetry}>{t(look.retryKey ?? 'retry')}</Button>}
@@ -73,8 +84,8 @@ export default function ErrorPage({
                         {extraActions}
                     </>
                 )}
-            </Stack>
+            </ErrorActions>
             {look.httpStatus && <Typography variant="caption" color="text.disabled">{look.httpStatus}</Typography>}
-        </Stack>
+        </ErrorRoot>
     );
 }

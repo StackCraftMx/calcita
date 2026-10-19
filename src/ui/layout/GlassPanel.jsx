@@ -7,10 +7,18 @@
 //
 //   <GlassPanel sx={{position: 'absolute', top: 16, right: 16, p: 1}}>…los botones del mapa…</GlassPanel>
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaGlassPanel con defaultProps y
+// styleOverrides.root (el sx de la pantalla sigue ganando a todo).
+//
 // Genérico del paquete: function (regla de la casa).
 import Paper from '@mui/material/Paper';
 
 import {GLASS_PANEL_RADIUS_PIXELS, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaGlassPanel)
+const THEME_NAME = 'CalcitaGlassPanel';
+const PanelRoot = piecePart(THEME_NAME, 'Root', Paper);
 
 // sin vidrio, la sombra de lo que flota (la misma de los menús de MUI)
 const SOLID_FLOATING_ELEVATION = 8;
@@ -34,10 +42,12 @@ function floatingSurfaceOf(theme) {
  * @param {object|Function|Array} [props.sx] estilos propios: se suman y ganan
  * @param {import('react').ElementType} [props.component] por omisión 'div'
  */
-export default function GlassPanel({children, sx, ...paperProps}) {
+export default function GlassPanel(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaGlassPanel.defaultProps) y encima lo que llega aquí
+    const {children, sx, ...paperProps} = usePieceProps(props, THEME_NAME);
     return (
-        <Paper elevation={0} {...paperProps} sx={[floatingSurfaceOf, ...(Array.isArray(sx) ? sx : [sx])]}>
+        <PanelRoot elevation={0} {...paperProps} ownSx={floatingSurfaceOf} sx={sx}>
             {children}
-        </Paper>
+        </PanelRoot>
     );
 }

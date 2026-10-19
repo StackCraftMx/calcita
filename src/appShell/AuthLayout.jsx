@@ -12,6 +12,9 @@
 // También pinta el aviso de versión nueva (cápsula flotante), como el marco: quien abre la app sin sesión (o la deja abierta
 // en esta pantalla) también debe enterarse; antes solo salía en las pantallas con sesión.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaAuthLayout con defaultProps y
+// styleOverrides de sus partes: root, tools, body, brand, logo, brandName, card, description, content, footer.
+//
 // Lo renderiza la app: arrow (regla de la casa).
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import Box from '@mui/material/Box';
@@ -25,6 +28,20 @@ import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import ColorSchemeToggle from '@/ui/navigation/ColorSchemeToggle.jsx';
 import LanguageToggle from '@/ui/navigation/LanguageToggle.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAuthLayout)
+const THEME_NAME = 'CalcitaAuthLayout';
+const AuthRoot = piecePart(THEME_NAME, 'Root', Box);
+const AuthTools = piecePart(THEME_NAME, 'Tools', Stack);
+const AuthBody = piecePart(THEME_NAME, 'Body', Box);
+const AuthBrand = piecePart(THEME_NAME, 'Brand', Stack);
+const AuthLogo = piecePart(THEME_NAME, 'Logo', Box);
+const AuthBrandName = piecePart(THEME_NAME, 'BrandName', Typography);
+const AuthCard = piecePart(THEME_NAME, 'Card', Paper);
+const AuthDescription = piecePart(THEME_NAME, 'Description', Typography);
+const AuthContent = piecePart(THEME_NAME, 'Content', Box);
+const AuthFooter = piecePart(THEME_NAME, 'Footer', Box);
 
 // lo ancho de la tarjeta: lo que cabe cómodo un correo largo
 const CARD_MAX_WIDTH_PIXELS = 440;
@@ -50,30 +67,32 @@ const cardSurfaceOf = (theme) => (isGlassTheme(theme)
  * @param {boolean} [props.showLanguageToggle] por omisión sí
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
  */
-export const AuthLayout = ({logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true}) => {
+export const AuthLayout = (props) => {
+    // lo que el proyecto puso en su tema (components.CalcitaAuthLayout.defaultProps) y encima lo que llega aquí
+    const {logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true} = usePieceProps(props, THEME_NAME);
     const {appName} = useToolkitSettings();
     return (
-        <Box sx={[{minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default'},
+        <AuthRoot ownSx={[{minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default'},
             (theme) => (isGlassTheme(theme) ? ambientBackgroundOf(theme) : {})]}>
             <DocumentTitle title={title} />
             <GlassLensFilter />
             <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />
-            <Stack direction="row" spacing={1} sx={{justifyContent: 'flex-end', p: 2, pt: 'max(16px, env(safe-area-inset-top))'}}>
+            <AuthTools direction="row" spacing={1} ownSx={{justifyContent: 'flex-end', p: 2, pt: 'max(16px, env(safe-area-inset-top))'}}>
                 {showLanguageToggle && <LanguageToggle />}
                 {showColorSchemeToggle && <ColorSchemeToggle />}
-            </Stack>
-            <Box component="main" sx={{flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', px: 2, pb: 6}}>
-                <Stack direction="row" spacing={1.25} sx={{alignItems: 'center', mb: 3}}>
-                    {logo && <Box sx={{width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>}
-                    <Typography variant="subtitle1" component="p" sx={{fontWeight: 600}}>{brandName ?? appName}</Typography>
-                </Stack>
-                <Paper variant="outlined" sx={[{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, p: {xs: 3, sm: 4}}, cardSurfaceOf]}>
+            </AuthTools>
+            <AuthBody component="main" ownSx={{flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', px: 2, pb: 6}}>
+                <AuthBrand direction="row" spacing={1.25} ownSx={{alignItems: 'center', mb: 3}}>
+                    {logo && <AuthLogo ownSx={{width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</AuthLogo>}
+                    <AuthBrandName variant="subtitle1" component="p" ownSx={{fontWeight: 600}}>{brandName ?? appName}</AuthBrandName>
+                </AuthBrand>
+                <AuthCard variant="outlined" ownSx={[{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, p: {xs: 3, sm: 4}}, cardSurfaceOf]}>
                     <Typography variant="h5" component="h1">{title}</Typography>
-                    {description && <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>{description}</Typography>}
-                    <Box sx={{mt: 3}}>{children}</Box>
-                </Paper>
-                {footer && <Box sx={{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, mt: 2}}>{footer}</Box>}
-            </Box>
-        </Box>
+                    {description && <AuthDescription variant="body2" color="text.secondary" ownSx={{mt: 1}}>{description}</AuthDescription>}
+                    <AuthContent ownSx={{mt: 3}}>{children}</AuthContent>
+                </AuthCard>
+                {footer && <AuthFooter ownSx={{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, mt: 2}}>{footer}</AuthFooter>}
+            </AuthBody>
+        </AuthRoot>
     );
 };

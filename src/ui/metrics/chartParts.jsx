@@ -11,6 +11,9 @@
 // Los colores salen del tema (useChartColors), nunca escritos como var(--mui-…): un proyecto con su propio prefijo de
 // variables (cssVarPrefix) o sin variables CSS se quedaba con ejes y texto sin color.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaChart con defaultProps y
+// styleOverrides de sus partes: tableArea, legend, legendItem, legendLine, legendSwatch, reference, referenceLine.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useMemo} from 'react';
 import Box from '@mui/material/Box';
@@ -23,6 +26,17 @@ import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
+import {piecePart} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaChart)
+const THEME_NAME = 'CalcitaChart';
+const ChartTableArea = piecePart(THEME_NAME, 'TableArea', Box);
+const ChartLegendPart = piecePart(THEME_NAME, 'Legend', Box);
+const ChartLegendItem = piecePart(THEME_NAME, 'LegendItem', Box);
+const ChartLegendLine = piecePart(THEME_NAME, 'LegendLine', Box);
+const ChartLegendSwatch = piecePart(THEME_NAME, 'LegendSwatch', Box);
+const ChartReference = piecePart(THEME_NAME, 'Reference', Box);
+const ChartReferenceLine = piecePart(THEME_NAME, 'ReferenceLine', Box);
 
 const AXIS_FONT_PIXELS = 12;
 // ancho del eje de valores: nunca menos que esto, más lo que pida su número más largo
@@ -115,7 +129,7 @@ export function highestValueOf(data, series, referenceLine) {
  */
 export function ChartTable({data, series, periodLabel, formatValue, height}) {
     return (
-        <Box sx={{maxHeight: height, overflowY: 'auto'}}>
+        <ChartTableArea ownSx={{maxHeight: height, overflowY: 'auto'}}>
             <Table size="small">
                 <TableHead>
                     <TableRow>
@@ -132,7 +146,7 @@ export function ChartTable({data, series, periodLabel, formatValue, height}) {
                     ))}
                 </TableBody>
             </Table>
-        </Box>
+        </ChartTableArea>
     );
 }
 
@@ -149,20 +163,20 @@ export function ChartLegend({series, showsDash = false, ariaLabel}) {
         return null;
     }
     return (
-        <Box component="ul" aria-label={ariaLabel} sx={{display: 'flex', flexWrap: 'wrap', gap: 2, listStyle: 'none', p: 0, m: 0, mt: 1}}>
+        <ChartLegendPart component="ul" aria-label={ariaLabel} ownSx={{display: 'flex', flexWrap: 'wrap', gap: 2, listStyle: 'none', p: 0, m: 0, mt: 1}}>
             {series.map((item) => (
-                <Box component="li" key={item.key} sx={{display: 'flex', alignItems: 'center', gap: 0.75}}>
+                <ChartLegendItem component="li" key={item.key} ownSx={{display: 'flex', alignItems: 'center', gap: 0.75}}>
                     {showsDash ? (
-                        <Box component="svg" aria-hidden="true" width={SWATCH_PIXELS} height={8} sx={{color: item.color}}>
+                        <ChartLegendLine component="svg" aria-hidden="true" width={SWATCH_PIXELS} height={8} ownSx={{color: item.color}}>
                             <line x1="0" y1="4" x2={SWATCH_PIXELS} y2="4" stroke="currentColor" strokeWidth="2" strokeDasharray={item.dash} />
-                        </Box>
+                        </ChartLegendLine>
                     ) : (
-                        <Box aria-hidden="true" sx={{width: 10, height: 10, borderRadius: 0.5, bgcolor: item.color}} />
+                        <ChartLegendSwatch aria-hidden="true" ownSx={{width: 10, height: 10, borderRadius: 0.5, bgcolor: item.color}} />
                     )}
                     <Typography variant="caption" color="text.secondary">{item.label}</Typography>
-                </Box>
+                </ChartLegendItem>
             ))}
-        </Box>
+        </ChartLegendPart>
     );
 }
 
@@ -177,9 +191,9 @@ export function ReferenceCaption({referenceLine}) {
         return null;
     }
     return (
-        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.75, mt: 0.5}}>
-            <Box aria-hidden="true" sx={{width: SWATCH_PIXELS, borderTop: '2px dashed', borderColor: 'text.secondary'}} />
+        <ChartReference ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.75, mt: 0.5}}>
+            <ChartReferenceLine aria-hidden="true" ownSx={{width: SWATCH_PIXELS, borderTop: '2px dashed', borderColor: 'text.secondary'}} />
             <Typography variant="caption" color="text.secondary">{referenceLine.label}</Typography>
-        </Box>
+        </ChartReference>
     );
 }

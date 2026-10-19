@@ -15,6 +15,9 @@
 // El valor se escribe con formatValue (por omisión, número con separador de miles): con él una serie puede ir en
 // porcentaje. El eje mide lo que mide su número más largo, para que «2,500,000» no salga cortado.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaColumnChart con defaultProps y
+// styleOverrides de sus partes: chart.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -28,6 +31,11 @@ import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColumnChart)
+const THEME_NAME = 'CalcitaColumnChart';
+const ColumnChartPart = piecePart(THEME_NAME, 'Chart', Box);
 
 // la llave del valor cuando la gráfica es de una sola serie
 const SINGLE_SERIES_KEY = 'value';
@@ -55,10 +63,12 @@ const SINGLE_SERIES_KEY = 'value';
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
-export default function ColumnChart({
+export default function ColumnChart(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaColumnChart.defaultProps) y encima lo que llega aquí
+    const {
     data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue: formatValueProp,
     referenceLine, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {formatNumber} = useFormatters();
     const formatValue = formatValueProp ?? formatNumber;
@@ -93,7 +103,7 @@ export default function ColumnChart({
             {asTable ? (
                 <ChartTable data={data} series={drawnSeries} periodLabel={periodLabel} formatValue={formatValue} height={height} />
             ) : (
-                <Box role="img" aria-label={ariaLabel} sx={{height, color: `${tone}.main`}}>
+                <ColumnChartPart role="img" aria-label={ariaLabel} ownSx={{height, color: `${tone}.main`}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={data} margin={{top: 8, right: 8, bottom: 0, left: -8}} barCategoryGap={4}>
                             <CartesianGrid vertical={false} stroke={colors.grid} />
@@ -114,7 +124,7 @@ export default function ColumnChart({
                             ))}
                         </BarChart>
                     </ResponsiveContainer>
-                </Box>
+                </ColumnChartPart>
             )}
             <ChartLegend series={drawnSeries} ariaLabel={t('charts.legend')} />
             <ReferenceCaption referenceLine={referenceLine} />

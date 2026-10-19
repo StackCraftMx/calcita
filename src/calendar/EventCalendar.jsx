@@ -16,6 +16,9 @@
 //
 // OJO: las horas se pintan en la zona del navegador (FullCalendar pide un complemento aparte para zonas con nombre).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaEventCalendar con defaultProps y
+// styleOverrides de sus partes: toolbar, navigation, title, calendar.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useRef, useState} from 'react';
 import FullCalendar from '@fullcalendar/react';
@@ -38,6 +41,14 @@ import {paletteOf} from '@/theme/components/paletteOf.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SegmentedControl from '@/ui/filters/SegmentedControl.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEventCalendar)
+const THEME_NAME = 'CalcitaEventCalendar';
+const CalendarToolbar = piecePart(THEME_NAME, 'Toolbar', Stack);
+const CalendarNavigation = piecePart(THEME_NAME, 'Navigation', Stack);
+const CalendarTitle = piecePart(THEME_NAME, 'Title', Typography);
+const CalendarCalendar = piecePart(THEME_NAME, 'Calendar', Box);
 
 /** Las vistas del calendario (los nombres de FullCalendar). */
 export const CALENDAR_VIEW = Object.freeze({month: 'dayGridMonth', week: 'timeGridWeek', day: 'timeGridDay', list: 'listWeek'});
@@ -110,10 +121,12 @@ function calendarStylesOf(theme) {
  *     que el calendario controla (las citas, la barra, los eventos de arriba) no se reemplaza desde aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
  */
-export default function EventCalendar({
+export default function EventCalendar(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaEventCalendar.defaultProps) y encima lo que llega aquí
+    const {
     events, initialView = CALENDAR_VIEW.month, views = Object.values(CALENDAR_VIEW), onEventClick, onDateSelect, onEventChange, height = 'auto', ariaLabel,
     onDatesChange, onViewChange, renderEvent, fullCalendarProps, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const theme = useTheme();
     const palette = paletteOf(theme);
     const {t} = useToolkitTranslation('calendar', texts);
@@ -139,8 +152,8 @@ export default function EventCalendar({
 
     return (
         <Stack spacing={2} role="region" aria-label={ariaLabel}>
-            <Stack direction={{xs: 'column', md: 'row'}} spacing={1.5} sx={{alignItems: {md: 'center'}, justifyContent: 'space-between'}}>
-                <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+            <CalendarToolbar direction={{xs: 'column', md: 'row'}} spacing={1.5} ownSx={{alignItems: {md: 'center'}, justifyContent: 'space-between'}}>
+                <CalendarNavigation direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                     <Tooltip title={t('previous')}>
                         <IconButton aria-label={t('previous')} onClick={() => calendarApi()?.prev()}><ChevronLeftRoundedIcon /></IconButton>
                     </Tooltip>
@@ -148,14 +161,14 @@ export default function EventCalendar({
                         <IconButton aria-label={t('next')} onClick={() => calendarApi()?.next()}><ChevronRightRoundedIcon /></IconButton>
                     </Tooltip>
                     <Button variant="outlined" size="small" onClick={() => calendarApi()?.today()}>{t('today')}</Button>
-                    <Typography variant="h6" component="h2" sx={{pl: 1}} aria-live="polite">{capitalizeFirst(title)}</Typography>
-                </Stack>
+                    <CalendarTitle variant="h6" component="h2" ownSx={{pl: 1}} aria-live="polite">{capitalizeFirst(title)}</CalendarTitle>
+                </CalendarNavigation>
                 {views.length > 1 && (
                     <SegmentedControl ariaLabel={t('view')} value={view} onChange={(nextView) => calendarApi()?.changeView(nextView)}
                                       options={views.map((value) => ({value, label: t(`views.${VIEW_TEXT_KEY[value]}`)}))} />
                 )}
-            </Stack>
-            <Box sx={calendarStylesOf}>
+            </CalendarToolbar>
+            <CalendarCalendar ownSx={calendarStylesOf}>
                 {/* primero lo del proyecto (fullCalendarProps); lo de abajo es lo que el calendario controla y le gana */}
                 <FullCalendar locale={language === 'es' ? spanishLocale : 'en'} firstDay={MONDAY} {...fullCalendarProps}
                               ref={calendarRef} plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, ...(fullCalendarProps?.plugins ?? [])]}
@@ -177,7 +190,7 @@ export default function EventCalendar({
                                   calendarApi()?.unselect();
                               } : undefined}
                               editable={Boolean(onEventChange)} eventChange={onEventChange ? changeEvent : undefined} />
-            </Box>
+            </CalendarCalendar>
         </Stack>
     );
 }

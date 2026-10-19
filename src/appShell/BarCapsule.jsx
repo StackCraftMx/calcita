@@ -10,11 +10,19 @@
 // logra con selectores de más clases que las del botón; los deshabilitados se quedan con su gris. Con el minimalista
 // conservan su color.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarCapsule con defaultProps y
+// styleOverrides.root (el sx de la pantalla sigue ganando a todo).
+//
 // Genérico del paquete: function (regla de la casa).
 import Box from '@mui/material/Box';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaBarCapsule)
+const THEME_NAME = 'CalcitaBarCapsule';
+const CapsuleRoot = piecePart(THEME_NAME, 'Root', Box);
 
 // lo alto de una cápsula (px): cabe en el alto de siempre de la barra con aire arriba y abajo
 export const BAR_CAPSULE_HEIGHT_PIXELS = 48;
@@ -47,16 +55,20 @@ export function monochromeButtonsSxOf(color) {
  * @param {Omit<import('react').HTMLAttributes<HTMLDivElement>, 'children'> & {children: import('react').ReactNode, sx?: object|Function|Array<any>}} props
  *     children: los botones del grupo; sx: estilos propios, encima de los de la cápsula
  */
-export default function BarCapsule({children, sx, role = 'group', ...rest}) {
+export default function BarCapsule(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaBarCapsule.defaultProps) y encima lo que llega aquí
+    const {children, sx, role = 'group', ...rest} = usePieceProps(props, THEME_NAME);
+    // el estilo de la cápsula va abajo (ownSx): encima el del tema del proyecto y, al final, el sx de la pantalla
     return (
-        <Box role={role} {...rest}
-             sx={[(theme) => ({
+        <CapsuleRoot role={role} {...rest}
+             ownSx={(theme) => ({
                  ...(isGlassTheme(theme) ? glassStylesOf(theme, {isControl: true}) : {backgroundColor: paletteOf(theme).background.paper}),
                  ...(isGlassTheme(theme) && monochromeButtonsSxOf(paletteOf(theme).text.primary)),
                  display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0, minWidth: 0,
                  height: BAR_CAPSULE_HEIGHT_PIXELS, px: 0.75, borderRadius: '999px',
-             }), ...(Array.isArray(sx) ? sx : [sx])]}>
+             })}
+             sx={sx}>
             {children}
-        </Box>
+        </CapsuleRoot>
     );
 }

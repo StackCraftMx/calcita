@@ -12,6 +12,9 @@
 //              series={[{key: 'sales', label: 'Ventas'}, {key: 'returns', label: 'Devoluciones', tone: 'error'}]}
 //              ariaLabel="Ventas y devoluciones por mes" emptyLabel="Sin datos" />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaLineChart con defaultProps y
+// styleOverrides de sus partes: chart.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -25,6 +28,11 @@ import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLineChart)
+const THEME_NAME = 'CalcitaLineChart';
+const LineChartPart = piecePart(THEME_NAME, 'Chart', Box);
 
 // el grueso de la línea y el tamaño de su punto (px): se ven en el teléfono sin tapar a la vecina
 const LINE_WIDTH_PIXELS = 2;
@@ -49,9 +57,11 @@ const ACTIVE_DOT_RADIUS_PIXELS = 5;
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
-export default function LineChart({
+export default function LineChart(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaLineChart.defaultProps) y encima lo que llega aquí
+    const {
     data, series, periodLabel, ariaLabel, emptyLabel, height = 220, formatValue: formatValueProp, referenceLine, onSelect, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {formatNumber} = useFormatters();
     const formatValue = formatValueProp ?? formatNumber;
@@ -89,7 +99,7 @@ export default function LineChart({
             {asTable ? (
                 <ChartTable data={data} series={drawnSeries} periodLabel={periodLabel} formatValue={formatValue} height={height} />
             ) : (
-                <Box role="img" aria-label={ariaLabel} sx={{height}}>
+                <LineChartPart role="img" aria-label={ariaLabel} ownSx={{height}}>
                     <ResponsiveContainer width="100%" height="100%">
                         {/* OJO: recharts 3 avisa el clic con el índice del periodo (activeIndex), ya no con activePayload (el de
                             la versión 2) */}
@@ -112,7 +122,7 @@ export default function LineChart({
                             ))}
                         </RechartsLineChart>
                     </ResponsiveContainer>
-                </Box>
+                </LineChartPart>
             )}
             <ChartLegend series={drawnSeries} showsDash ariaLabel={t('charts.legend')} />
             <ReferenceCaption referenceLine={referenceLine} />

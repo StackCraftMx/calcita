@@ -5,6 +5,9 @@
 // Las llaves de acceso se crean aquí con el navegador (createPasskey) y la respuesta va al servidor (savePasskey). La
 // bitácora se vuelve a pedir después de cada cambio: así se ve aparecer lo que se acaba de hacer.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaAccountSecurity con defaultProps y
+// styleOverrides de sus partes: title, form.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import Alert from '@mui/material/Alert';
@@ -21,6 +24,12 @@ import {createPasskey, passkeysSupported} from '@/security/passkeys.js';
 import SessionsCard from '@/security/SessionsCard.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAccountSecurity)
+const THEME_NAME = 'CalcitaAccountSecurity';
+const SecurityTitle = piecePart(THEME_NAME, 'Title', Typography);
+const SecurityForm = piecePart(THEME_NAME, 'Form', Stack);
 
 // lo ancho del formulario de la contraseña: un renglón cómodo
 const FORM_MAX_WIDTH = 520;
@@ -31,7 +40,9 @@ const LOADING_HEIGHT_PIXELS = 220;
  * @param {boolean} [props.showPasswordChange] por omisión sí
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete
  */
-export default function AccountSecuritySection({showPasswordChange = true, texts}) {
+export default function AccountSecuritySection(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaAccountSecurity.defaultProps) y encima lo que llega aquí
+    const {showPasswordChange = true, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('account', texts);
     const {connector, session} = useAccount();
     const [security, setSecurity] = useState(null);
@@ -73,13 +84,13 @@ export default function AccountSecuritySection({showPasswordChange = true, texts
             {loadError && <Alert severity="error">{loadError}</Alert>}
             {showPasswordChange && (
                 <SectionCard title={t('profile.password.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('profile.password.text')}</Typography>
-                    <Stack sx={{maxWidth: FORM_MAX_WIDTH}}>
+                    <SecurityTitle variant="body2" color="text.secondary" ownSx={{mb: 2}}>{t('profile.password.text')}</SecurityTitle>
+                    <SecurityForm ownSx={{maxWidth: FORM_MAX_WIDTH}}>
                         <ChangePasswordForm onSubmit={async (values) => {
                             await connector.changePassword(values);
                             refreshActivity();
                         }} />
-                    </Stack>
+                    </SecurityForm>
                 </SectionCard>
             )}
             {security

@@ -7,6 +7,9 @@
 //
 // Desde ocho opciones aparece una caja para buscar entre ellas.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMultiSelectFilter con defaultProps y
+// styleOverrides de sus partes: list, option.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -17,6 +20,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMultiSelectFilter)
+const THEME_NAME = 'CalcitaMultiSelectFilter';
+const MultiList = piecePart(THEME_NAME, 'List', Stack);
+const MultiOption = piecePart(THEME_NAME, 'Option', Stack);
 
 const SEARCHABLE_FROM_OPTIONS = 8;
 
@@ -27,7 +36,9 @@ const SEARCHABLE_FROM_OPTIONS = 8;
  * @param {Array<{value: string, total: number}>} [props.options] faceta del servidor
  * @param {(value: string) => import('react').ReactNode} [props.renderOption] cómo se lee el valor (diccionario)
  */
-export default function MultiSelectColumnFilter({value = [], onChange, options = [], renderOption}) {
+export default function MultiSelectColumnFilter(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMultiSelectFilter.defaultProps) y encima lo que llega aquí
+    const {value = [], onChange, options = [], renderOption} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('table');
     const {formatNumber} = useFormatters();
     const [searchText, setSearchText] = useState('');
@@ -47,7 +58,7 @@ export default function MultiSelectColumnFilter({value = [], onChange, options =
                 <TextField size="small" autoFocus fullWidth placeholder={t('options.searchPlaceholder')} value={searchText}
                            onChange={(event) => setSearchText(event.target.value)} />
             )}
-            <Stack sx={{maxHeight: 300, overflowY: 'auto'}}>
+            <MultiList ownSx={{maxHeight: 300, overflowY: 'auto'}}>
                 {options.length === 0 && (
                     <Typography variant="caption" color="text.secondary">{t('options.empty')}</Typography>
                 )}
@@ -59,14 +70,14 @@ export default function MultiSelectColumnFilter({value = [], onChange, options =
                         key={option.value}
                         control={<Checkbox size="small" checked={value.includes(option.value)} onChange={() => toggleOption(option.value)} />}
                         label={(
-                            <Stack direction="row" spacing={0.75} sx={{alignItems: 'center'}}>
+                            <MultiOption direction="row" spacing={0.75} ownSx={{alignItems: 'center'}}>
                                 {renderOption ? renderOption(option.value) : <Typography variant="body2">{option.value}</Typography>}
                                 <Typography variant="caption" color="text.secondary">{formatNumber(option.total)}</Typography>
-                            </Stack>
+                            </MultiOption>
                         )}
                     />
                 ))}
-            </Stack>
+            </MultiList>
         </Stack>
     );
 }

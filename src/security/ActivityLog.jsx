@@ -6,6 +6,9 @@
 //
 //   <ActivityLog events={events} />
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaActivityLog con defaultProps y
+// styleOverrides de sus partes: itemIcon.
+//
 // Genérico del paquete: function (regla de la casa).
 import Alert from '@mui/material/Alert';
 import List from '@mui/material/List';
@@ -29,6 +32,11 @@ import SyncLockOutlinedIcon from '@mui/icons-material/SyncLockOutlined';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActivityLog)
+const THEME_NAME = 'CalcitaActivityLog';
+const ActivityItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
 
 /** Los tipos de evento que el paquete conoce, con su texto en security:activity.kinds. */
 export const ACCOUNT_EVENT_KIND = Object.freeze({
@@ -69,7 +77,9 @@ const LOADING_HEIGHT_PIXELS = 160;
  * @param {string|null} [props.error] ya traducido si no se pudieron traer
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function ActivityLog({events, error = null, texts}) {
+export default function ActivityLog(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaActivityLog.defaultProps) y encima lo que llega aquí
+    const {events, error = null, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
 
@@ -87,7 +97,7 @@ export default function ActivityLog({events, error = null, texts}) {
                             const where = event.device && event.network ? ` · ${t('activity.from', {device: event.device, network: event.network})}` : '';
                             return (
                                 <ListItem key={event.id} disableGutters>
-                                    <ListItemIcon sx={{minWidth: 36}}><look.Icon fontSize="small" color={look.color ?? 'action'} /></ListItemIcon>
+                                    <ActivityItemIcon ownSx={{minWidth: 36}}><look.Icon fontSize="small" color={look.color ?? 'action'} /></ActivityItemIcon>
                                     <ListItemText primary={event.description ?? t(`activity.kinds.${event.kind}`)}
                                                   secondary={`${formatDateTime(event.occurredAt)}${where}`} />
                                 </ListItem>

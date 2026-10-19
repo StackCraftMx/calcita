@@ -30,6 +30,9 @@
 //
 // Los colores salen del tema (claro y oscuro) con selectores que le ganan a la hoja de FilePond sin importar el orden.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaPondDropzone con defaultProps y
+// styleOverrides de sus partes: root, summary, limits, actions, extra.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useCallback, useEffect, useId, useMemo, useRef} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -49,6 +52,16 @@ import {toastError} from '@/feedback/toast.jsx';
 import {accentTextStylesOf} from '@/theme/glassSurface.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPondDropzone)
+const THEME_NAME = 'CalcitaPondDropzone';
+// la raíz: el estilo de FilePond de Calcita abajo, el tema del proyecto encima y el sx de la pantalla al final
+const PondRoot = piecePart(THEME_NAME, 'Root', Box);
+const PondSummary = piecePart(THEME_NAME, 'Summary', Typography);
+const PondLimits = piecePart(THEME_NAME, 'Limits', Typography);
+const PondActions = piecePart(THEME_NAME, 'Actions', Stack);
+const PondExtra = piecePart(THEME_NAME, 'Extra', Box);
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileValidateSize);
 
@@ -180,11 +193,13 @@ function pondThemeSxOf(theme) {
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FileDropzone({
+export default function FileDropzone(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaPondDropzone.defaultProps) y encima lo que llega aquí
+    const {
     value = null, onChange, accept, maxSize, multiple = false, maxFiles, maxTotalSize, name, hint, buttonLabel, disabled = false,
     busy = false, busyModal = false, autoReject = true, validate = null, server = null, instantUpload = false, apiRef = null,
     onProcessProgress, onReject, actions, children, sx, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {formatFileSize} = useFormatters();
     const generatedId = useId();
@@ -318,7 +333,7 @@ export default function FileDropzone({
     const chooseText = buttonLabel ?? (multiple ? t('upload.chooseMultiple') : t('upload.choose'));
 
     return (
-        <Box sx={[(theme) => pondThemeSxOf(theme), ...(Array.isArray(sx) ? sx : [sx])]}>
+        <PondRoot ownSx={(theme) => pondThemeSxOf(theme)} sx={sx}>
             <FilePond
                 ref={pondRef}
                 name={pondName}
@@ -352,24 +367,24 @@ export default function FileDropzone({
                 {...pondLabelsOf(t)}
             />
             {multiple && files.length > 0 && (
-                <Typography variant="body2" sx={{textAlign: 'center', mt: 1, fontWeight: 500}}>
+                <PondSummary variant="body2" ownSx={{textAlign: 'center', mt: 1, fontWeight: 500}}>
                     {maxTotalBytes
                         ? t('upload.summaryOf', {count: files.length, total: formatFileSize(totalBytes), max: formatFileSize(maxTotalBytes)})
                         : t('upload.summary', {count: files.length, total: formatFileSize(totalBytes)})}
-                </Typography>
+                </PondSummary>
             )}
             {limitHints.length > 0 && (
-                <Typography variant="caption" color="text.secondary" sx={{display: 'block', textAlign: 'center', mt: 0.5}}>
+                <PondLimits variant="caption" color="text.secondary" ownSx={{display: 'block', textAlign: 'center', mt: 0.5}}>
                     {limitHints.join(' · ')}
-                </Typography>
+                </PondLimits>
             )}
             {actions && (
-                <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{justifyContent: 'center', alignItems: {xs: 'stretch', sm: 'center'}, mt: 2}}>
+                <PondActions direction={{xs: 'column', sm: 'row'}} spacing={2} ownSx={{justifyContent: 'center', alignItems: {xs: 'stretch', sm: 'center'}, mt: 2}}>
                     {actions}
-                </Stack>
+                </PondActions>
             )}
-            {children && <Box sx={{mt: 3}}>{children}</Box>}
+            {children && <PondExtra ownSx={{mt: 3}}>{children}</PondExtra>}
             {busyModal && <ModalWaiting open={busy} title={busyModal.title} text={busyModal.text} />}
-        </Box>
+        </PondRoot>
     );
 }

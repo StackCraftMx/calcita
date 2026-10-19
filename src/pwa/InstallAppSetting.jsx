@@ -5,6 +5,9 @@
 // El diálogo de los pasos va aquí mismo: el menú de la cuenta se queda abierto mientras se ve, y al cerrarlo se regresa al
 // menú.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaInstallAppSetting con defaultProps y
+// styleOverrides de sus partes: root.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -16,6 +19,11 @@ import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallAppSetting)
+const THEME_NAME = 'CalcitaInstallAppSetting';
+const InstallRoot = piecePart(THEME_NAME, 'Root', Box);
 
 /**
  * @param {object} [props]
@@ -40,12 +48,12 @@ export default function InstallAppSetting({texts} = {}) {
 
     return (
         <ComponentTexts namespace="common" texts={texts}>
-            <Box sx={{px: 1, py: 0.5}}>
+            <InstallRoot ownSx={{px: 1, py: 0.5}}>
                 <Button fullWidth variant="outlined" startIcon={<InstallMobileRoundedIcon />} onClick={handleClick}>
                     {t('install.menuLabel')}
                 </Button>
                 <InstallInstructionsDialog variant={variant} open={stepsOpen} onClose={() => setStepsOpen(false)} />
-            </Box>
+            </InstallRoot>
         </ComponentTexts>
     );
 }

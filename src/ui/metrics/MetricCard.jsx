@@ -12,6 +12,9 @@
 // resúmenes de Salud de Apple), contenido propio debajo de la nota (children: una barra de avance, un desglose), onClick
 // cuando no lleva a otra pantalla, y texts para los textos de la tendencia.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMetricCard con defaultProps y
+// styleOverrides de sus partes: root, action, header, icon, label, value, caption, extra y trend.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -24,6 +27,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {alpha} from '@mui/material/styles';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import RemoveIcon from '@mui/icons-material/Remove';
 
@@ -44,6 +49,18 @@ const TITLE_ROW_MIN_HEIGHT_PIXELS = 24;
 const ICON_BOX_PIXELS = 28;
 const ICON_PIXELS = 18;
 
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMetricCard)
+const THEME_NAME = 'CalcitaMetricCard';
+const CardRoot = piecePart(THEME_NAME, 'Root', Paper);
+const CardAction = piecePart(THEME_NAME, 'Action', CardActionArea);
+const CardHeader = piecePart(THEME_NAME, 'Header', Stack);
+const CardIcon = piecePart(THEME_NAME, 'Icon', Box);
+const CardLabel = piecePart(THEME_NAME, 'Label', Typography);
+const CardValue = piecePart(THEME_NAME, 'Value', Typography);
+const CardCaption = piecePart(THEME_NAME, 'Caption', Typography);
+const CardExtra = piecePart(THEME_NAME, 'Extra', Box);
+const CardTrend = piecePart(THEME_NAME, 'Trend', Chip);
+
 /**
  * El cambio contra el periodo anterior: verde si es bueno, rojo si es malo, gris si no cambió.
  *
@@ -57,8 +74,8 @@ function TrendChip({trend, texts}) {
     const isGood = trend.isGood ?? direction === TREND_DIRECTION.up;
     const color = direction === TREND_DIRECTION.flat ? 'default' : (isGood ? 'success' : 'error');
     return (
-        <Chip size="small" color={color} variant="outlined" icon={<TrendIcon />} label={trend.label}
-              aria-label={`${t(`trend.${direction}`)} ${trend.label}`} sx={{fontWeight: 600, '& .MuiChip-icon': {fontSize: 16}}} />
+        <CardTrend size="small" color={color} variant="outlined" icon={<TrendIcon />} label={trend.label}
+                   aria-label={`${t(`trend.${direction}`)} ${trend.label}`} ownSx={{fontWeight: 600, '& .MuiChip-icon': {fontSize: 16}}} />
     );
 }
 
@@ -77,9 +94,11 @@ function TrendChip({trend, texts}) {
  * @param {() => void} [props.onClick] la tarjeta entera como botón, cuando no lleva a otra pantalla (to)
  * @param {object} [props.texts] los textos que cambian, con la forma de `metricCard`: {trend: {up: 'subió'}}
  */
-export default function MetricCard({
-    label, value, caption, tone = 'info', valueColor, isLoading = false, to, trend, icon, children, onClick, texts,
-}) {
+export default function MetricCard(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMetricCard.defaultProps) y encima lo que llega aquí
+    const {
+        label, value, caption, tone = 'info', valueColor, isLoading = false, to, trend, icon, children, onClick, texts,
+    } = usePieceProps(props, THEME_NAME);
     // el enlace del router que conectó el proyecto (ToolkitProvider)
     const {Link} = useToolkitNavigation();
     const paletteTone = TONES.includes(tone) ? tone : 'info';
@@ -88,10 +107,10 @@ export default function MetricCard({
         <>
             {/* la tendencia va en el renglón del título, a la derecha: en el mismo lugar en todas las tarjetas aunque la cifra
                 sea larga (junto a la cifra, con un importe largo se bajaba a otro renglón y no quedaban parejas; lo reportaron) */}
-            <Stack direction="row" spacing={1} sx={{alignItems: 'center', justifyContent: 'space-between', minHeight: TITLE_ROW_MIN_HEIGHT_PIXELS}}>
+            <CardHeader direction="row" spacing={1} ownSx={{alignItems: 'center', justifyContent: 'space-between', minHeight: TITLE_ROW_MIN_HEIGHT_PIXELS}}>
                 <Stack direction="row" spacing={1} sx={{alignItems: 'center', minWidth: 0}}>
                     {icon && (
-                        <Box aria-hidden="true" sx={(theme) => ({
+                        <CardIcon aria-hidden="true" ownSx={(theme) => ({
                             width: ICON_BOX_PIXELS, height: ICON_BOX_PIXELS, flexShrink: 0, display: 'grid', placeItems: 'center',
                             borderRadius: 1.5, color: `${paletteTone}.main`, '& svg': {fontSize: ICON_PIXELS},
                             // el tono al 14 %: se distingue del papel sin competir con la cifra
@@ -100,28 +119,35 @@ export default function MetricCard({
                                 : alpha(theme.palette[paletteTone].main, 0.14),
                         })}>
                             {icon}
-                        </Box>
+                        </CardIcon>
                     )}
-                    <Typography variant="overline" color="text.secondary" component="p" sx={{minWidth: 0}}>{label}</Typography>
+                    <CardLabel variant="overline" color="text.secondary" component="p" ownSx={{minWidth: 0}}>{label}</CardLabel>
                 </Stack>
                 {trend && !isLoading && <TrendChip trend={trend} texts={texts} />}
-            </Stack>
-            <Typography variant="h5" component="p" sx={{mt: 0.75, fontWeight: 600, fontVariantNumeric: 'tabular-nums', color: valueColor ?? `${paletteTone}.dark`}}>
+            </CardHeader>
+            {/* la cifra en el tono oscuro de su color en claro y en el claro en oscuro (con el oscuro también en modo oscuro
+                casi no se leía); valueColor del proyecto manda en los dos */}
+            <CardValue variant="h5" component="p" ownSx={(theme) => ({
+                mt: 0.75, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
+                ...(valueColor
+                    ? {color: valueColor}
+                    : lightDarkStylesOf(theme, {color: (theme.vars ?? theme).palette[paletteTone].dark}, {color: (theme.vars ?? theme).palette[paletteTone].light})),
+            })}>
                 {isLoading ? <Skeleton width={120} /> : value}
-            </Typography>
+            </CardValue>
             {caption && (
-                <Typography variant="caption" color="text.secondary" component="p" sx={{mt: 0.5}}>
+                <CardCaption variant="caption" color="text.secondary" component="p" ownSx={{mt: 0.5}}>
                     {isLoading ? <Skeleton width={160} /> : caption}
-                </Typography>
+                </CardCaption>
             )}
-            {children && <Box sx={{mt: 1.5}}>{children}</Box>}
+            {children && <CardExtra ownSx={{mt: 1.5}}>{children}</CardExtra>}
         </>
     );
     // una liga a la pantalla que explica el número, o un botón (onClick); sin ninguno, solo se lee
     const isClickable = Boolean(to || onClick);
 
     return (
-        <Paper variant="outlined" sx={{
+        <CardRoot variant="outlined" ownSx={{
             borderTop: 3,
             borderTopColor: `${paletteTone}.light`,
             height: '100%',
@@ -129,10 +155,10 @@ export default function MetricCard({
             ...(isClickable ? {} : {p: 2.5}),
         }}>
             {isClickable ? (
-                <CardActionArea {...(to ? {component: Link, to} : {onClick})} sx={{p: 2.5, height: '100%', alignItems: 'flex-start', display: 'block'}}>
+                <CardAction {...(to ? {component: Link, to} : {onClick})} ownSx={{p: 2.5, height: '100%', alignItems: 'flex-start', display: 'block'}}>
                     {content}
-                </CardActionArea>
+                </CardAction>
             ) : content}
-        </Paper>
+        </CardRoot>
     );
 }

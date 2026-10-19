@@ -8,6 +8,9 @@
 // Si onSubmit truena con el problema del servidor (RFC 9457; un 401 «correo o contraseña incorrectos», un 429 «espere
 // un minuto»), el aviso sale arriba del formulario y lo de cada campo, en su campo (applyServerProblem).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSignInForm con defaultProps y
+// styleOverrides de sus partes: footer.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useMemo} from 'react';
 import {Form, Formik, useField} from 'formik';
@@ -23,6 +26,11 @@ import FormTextField from '@/forms/FormTextField.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInForm)
+const THEME_NAME = 'CalcitaSignInForm';
+const SignInFormFooter = piecePart(THEME_NAME, 'Footer', Stack);
 
 /** «Mantener la sesión abierta», conectado a formik. */
 function RememberMeField({label}) {
@@ -39,7 +47,9 @@ function RememberMeField({label}) {
  * @param {string} [props.initialEmail]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInForm({onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts}) {
+export default function SignInForm(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSignInForm.defaultProps) y encima lo que llega aquí
+    const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     // el esquema se arma al pintar y no al importar: yup toma sus mensajes al armarlo (buildYupLocale ya corrió)
@@ -63,12 +73,12 @@ export default function SignInForm({onSubmit, forgotPasswordPath, showRememberMe
                     <FormProblemAlert />
                     <FormTextField name="email" label={t('signIn.email')} type="email" autoComplete="username" autoFocus />
                     <FormTextField name="password" label={t('signIn.password')} type="password" autoComplete="current-password" />
-                    <Stack direction="row" sx={{alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1}}>
+                    <SignInFormFooter direction="row" ownSx={{alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1}}>
                         {showRememberMe ? <RememberMeField label={t('signIn.remember')} /> : <span />}
                         {forgotPasswordPath && (
                             <Link component={RouterLink} to={forgotPasswordPath} variant="body2">{t('signIn.forgot')}</Link>
                         )}
-                    </Stack>
+                    </SignInFormFooter>
                     <SubmitButton fullWidth>{t('signIn.submit')}</SubmitButton>
                 </Stack>
             </Form>

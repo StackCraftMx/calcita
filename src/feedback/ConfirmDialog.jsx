@@ -8,6 +8,9 @@
 //
 // children: lo que el diálogo necesita pedir antes de confirmar (p. ej. el motivo de una baja), debajo del texto.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaConfirmDialog con defaultProps y
+// styleOverrides de sus partes: problem, actions.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -19,6 +22,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaConfirmDialog)
+const THEME_NAME = 'CalcitaConfirmDialog';
+const ConfirmProblem = piecePart(THEME_NAME, 'Problem', Alert);
+const ConfirmActions = piecePart(THEME_NAME, 'Actions', DialogActions);
 
 /**
  * @param {object} props
@@ -36,10 +45,12 @@ import DialogTitle from '@mui/material/DialogTitle';
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ConfirmDialog({
+export default function ConfirmDialog(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaConfirmDialog.defaultProps) y encima lo que llega aquí
+    const {
     open, title, description, confirmLabel, cancelLabel, tone = 'primary',
     isPending = false, isConfirmDisabled = false, errorMessage = null, onConfirm, onClose, children, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     // ids propios: una pantalla puede tener varios diálogos montados y los aria-* no deben apuntar al de otro
     const dialogId = useId();
@@ -57,13 +68,13 @@ export default function ConfirmDialog({
                 aria-labelledby={`${dialogId}-title`} aria-describedby={`${dialogId}-description`}>
             <DialogTitle id={`${dialogId}-title`}>{title}</DialogTitle>
             <DialogContent>
-                {errorMessage && <Alert severity="error" role="alert" sx={{mb: 2}}>{errorMessage}</Alert>}
+                {errorMessage && <ConfirmProblem severity="error" role="alert" ownSx={{mb: 2}}>{errorMessage}</ConfirmProblem>}
                 {description && (
                     <DialogContentText id={`${dialogId}-description`}>{description}</DialogContentText>
                 )}
                 {children}
             </DialogContent>
-            <DialogActions sx={{px: 3, pb: 2.5}}>
+            <ConfirmActions ownSx={{px: 3, pb: 2.5}}>
                 <Button variant="outlined" color="inherit" onClick={handleClose} disabled={isPending}>
                     {cancelLabel ?? t('actions.cancel')}
                 </Button>
@@ -71,7 +82,7 @@ export default function ConfirmDialog({
                         aria-busy={isPending}>
                     {isPending ? <CircularProgress size={20} color="inherit" /> : (confirmLabel ?? t('actions.confirm'))}
                 </Button>
-            </DialogActions>
+            </ConfirmActions>
         </Dialog>
     );
 }

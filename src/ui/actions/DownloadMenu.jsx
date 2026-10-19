@@ -12,6 +12,9 @@
 // completa de clientes tarda unos minutos). Con `confirmation` el formato elegido NO se descarga de inmediato: abre
 // ConfirmDialog (máquina confirmActionMachine) y solo al confirmar se pide el archivo, una sola vez aunque haya doble clic.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDownloadMenu con defaultProps y
+// styleOverrides de sus partes: button.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -30,6 +33,11 @@ import {startDownload} from '@/downloads/downloadQueue.js';
 import {useFileTypes} from '@/downloads/fileTypes.js';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDownloadMenu)
+const THEME_NAME = 'CalcitaDownloadMenu';
+const DownloadButton = piecePart(THEME_NAME, 'Button', Button);
 
 
 /**
@@ -59,10 +67,12 @@ import {useConfirmAction} from '@/feedback/useConfirmAction.js';
  * virtualiza y vuelve a pintar sus celdas; el diálogo se perdía al elegir el formato). Ahí el menú solo avisa qué formato
  * se eligió y la pantalla abre SU confirmación (useConfirmAction) fuera de la tabla.
  */
-export default function DownloadMenu({
+export default function DownloadMenu(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaDownloadMenu.defaultProps) y encima lo que llega aquí
+    const {
     formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, onFailed, onCanceled, variant = 'button', ariaLabel,
     onChooseFormat, icon: ButtonIcon = FileDownloadOutlinedIcon,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common');
     const fileTypes = useFileTypes();
     // de dónde sale el menú de formatos: del botón, o (desde el «⋯» del teléfono, que se cierra) de donde estaba el renglón
@@ -147,10 +157,10 @@ export default function DownloadMenu({
                     </span>
                 </Tooltip>
             ) : (
-                <Button variant="outlined" startIcon={<ButtonIcon />} endIcon={<ArrowDropDownIcon />}
-                        sx={{flexShrink: 0}} disabled={disabled} aria-haspopup="menu" onClick={openMenu}>
+                <DownloadButton variant="outlined" startIcon={<ButtonIcon />} endIcon={<ArrowDropDownIcon />}
+                        ownSx={{flexShrink: 0}} disabled={disabled} aria-haspopup="menu" onClick={openMenu}>
                     {buttonLabel}
-                </Button>
+                </DownloadButton>
             ))}
             <Menu open={isFormatsOpen} onClose={closeFormats}
                   anchorReference={anchorPosition ? 'anchorPosition' : 'anchorEl'} anchorEl={anchorElement} anchorPosition={anchorPosition ?? undefined}

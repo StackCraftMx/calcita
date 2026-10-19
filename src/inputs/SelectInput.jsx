@@ -8,6 +8,9 @@
 // separados por coma, en el orden de las opciones. Al formulario llega la lista de valores (Yup.array().min(1) la valida).
 // Para catálogos largos, CatalogInput con `multiple` (busca y deja chips).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSelectInput con defaultProps y
+// styleOverrides de sus partes: option, optionText.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -18,6 +21,12 @@ import Typography from '@mui/material/Typography';
 
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSelectInput)
+const THEME_NAME = 'CalcitaSelectInput';
+const SelectOption = piecePart(THEME_NAME, 'Option', MenuItem);
+const SelectOptionText = piecePart(THEME_NAME, 'OptionText', Box);
 
 /**
  * @param {object} props
@@ -35,9 +44,11 @@ import FieldFrame from '@/inputs/FieldFrame.jsx';
  * @param {boolean} [props.multiple] elegir varias opciones
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function SelectInput({
+export default function SelectInput(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
+    const {
     name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'select'}-${generatedId}`;
@@ -85,14 +96,14 @@ export default function SelectInput({
                 {options.map((option) => (
                     // la opción en renglón y su nombre con su explicación en un bloque: con la opción en columna, la palomita del
                     // elegido (el tema la pinta al final) se bajaba a otro renglón (lo cachó una captura de Tareas)
-                    <MenuItem key={option.value} value={option.value} sx={{whiteSpace: 'normal'}}>
-                        <Box component="span" sx={{display: 'flex', flexDirection: 'column', minWidth: 0, flexGrow: 1}}>
+                    <SelectOption key={option.value} value={option.value} ownSx={{whiteSpace: 'normal'}}>
+                        <SelectOptionText component="span" ownSx={{display: 'flex', flexDirection: 'column', minWidth: 0, flexGrow: 1}}>
                             <Typography component="span" variant="body2">{option.label}</Typography>
                             {option.description && (
                                 <Typography component="span" variant="caption" color="text.secondary">{option.description}</Typography>
                             )}
-                        </Box>
-                    </MenuItem>
+                        </SelectOptionText>
+                    </SelectOption>
                 ))}
             </TextField>
         </FieldFrame>

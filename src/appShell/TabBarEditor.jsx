@@ -7,6 +7,9 @@
 //   - Lo elegido se guarda al picar «Listo»; «Como venía» regresa a las que eligió el proyecto.
 //   - Van en el orden del menú: acomodarlas arrastrando sería otra decisión para la persona y otra cosa que probar.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTabBarEditor con defaultProps y
+// styleOverrides de sus partes: root, header, title, list, itemIcon, footer.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Box from '@mui/material/Box';
@@ -21,6 +24,16 @@ import Typography from '@mui/material/Typography';
 import {menuItemLabelOf} from '@/appShell/menuItemText.js';
 import {PINNABLE_TAB_LIMIT, menuItemKeyOf} from '@/navigation/appMenu.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTabBarEditor)
+const THEME_NAME = 'CalcitaTabBarEditor';
+const EditorRoot = piecePart(THEME_NAME, 'Root', Box);
+const EditorHeader = piecePart(THEME_NAME, 'Header', Box);
+const EditorTitle = piecePart(THEME_NAME, 'Title', Typography);
+const EditorList = piecePart(THEME_NAME, 'List', List);
+const EditorItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
+const EditorFooter = piecePart(THEME_NAME, 'Footer', Box);
 
 /**
  * @param {object} props
@@ -29,7 +42,9 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  * @param {(keys: string[]) => void} props.onDone con las elegidas, en el orden del menú
  * @param {() => void} props.onReset regresar a las del proyecto
  */
-export default function TabBarEditor({menuItems, pinnedKeys, onDone, onReset}) {
+export default function TabBarEditor(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaTabBarEditor.defaultProps) y encima lo que llega aquí
+    const {menuItems, pinnedKeys, onDone, onReset} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     const [chosenKeys, setChosenKeys] = useState(pinnedKeys);
     const isFull = chosenKeys.length >= PINNABLE_TAB_LIMIT;
@@ -39,12 +54,12 @@ export default function TabBarEditor({menuItems, pinnedKeys, onDone, onReset}) {
     const chosenInMenuOrder = () => menuItems.map(menuItemKeyOf).filter((key) => chosenKeys.includes(key));
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
-            <Box sx={{px: 2, pt: 2, pb: 1, flexShrink: 0}}>
-                <Typography variant="subtitle1" component="h2" sx={{fontWeight: 600}}>{t('drawer.editTabs')}</Typography>
+        <EditorRoot ownSx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
+            <EditorHeader ownSx={{px: 2, pt: 2, pb: 1, flexShrink: 0}}>
+                <EditorTitle variant="subtitle1" component="h2" ownSx={{fontWeight: 600}}>{t('drawer.editTabs')}</EditorTitle>
                 <Typography variant="body2" color="text.secondary">{t('drawer.editTabsHint', {count: PINNABLE_TAB_LIMIT})}</Typography>
-            </Box>
-            <List dense sx={{overflowY: 'auto', flex: '1 1 auto', minHeight: 0, px: 1}}>
+            </EditorHeader>
+            <EditorList dense ownSx={{overflowY: 'auto', flex: '1 1 auto', minHeight: 0, px: 1}}>
                 {menuItems.map((menuItem) => {
                     const key = menuItemKeyOf(menuItem);
                     const label = menuItemLabelOf(menuItem, t);
@@ -57,16 +72,16 @@ export default function TabBarEditor({menuItems, pinnedKeys, onDone, onReset}) {
                                     onChange={(event) => toggle(key, event.target.checked)}
                                     slotProps={{input: {id: switchId, 'aria-label': t('drawer.tabInBar', {label})}}} />
                         )}>
-                            {menuItem.Icon && <ListItemIcon sx={{minWidth: 40}}><menuItem.Icon /></ListItemIcon>}
+                            {menuItem.Icon && <EditorItemIcon ownSx={{minWidth: 40}}><menuItem.Icon /></EditorItemIcon>}
                             <ListItemText primary={<label htmlFor={switchId}>{label}</label>} />
                         </ListItem>
                     );
                 })}
-            </List>
-            <Box sx={{display: 'flex', justifyContent: 'space-between', gap: 1, px: 2, py: 1.5, flexShrink: 0}}>
+            </EditorList>
+            <EditorFooter ownSx={{display: 'flex', justifyContent: 'space-between', gap: 1, px: 2, py: 1.5, flexShrink: 0}}>
                 <Button onClick={onReset}>{t('drawer.resetTabs')}</Button>
                 <Button variant="contained" onClick={() => onDone(chosenInMenuOrder())}>{t('drawer.doneEditing')}</Button>
-            </Box>
-        </Box>
+            </EditorFooter>
+        </EditorRoot>
     );
 }

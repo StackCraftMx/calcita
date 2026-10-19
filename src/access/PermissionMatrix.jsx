@@ -8,6 +8,9 @@
 // se palomea aquí es lo que el menú enseña o esconde. La lista de grupos la arma el proyecto (RBAC propio); guardar es
 // cosa de la pantalla.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaPermissionMatrix con defaultProps y
+// styleOverrides de sus partes: permission, checkbox, group, groupHeader, groupTitle, grid.
+//
 // Genérico del paquete: function (regla de la casa). No sabe de negocio: todo llega ya traducido.
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -21,6 +24,16 @@ import Typography from '@mui/material/Typography';
 
 import {groupStateOf, withPermission, withPermissionGroup} from '@/access/permissionGroups.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPermissionMatrix)
+const THEME_NAME = 'CalcitaPermissionMatrix';
+const PermissionsPermission = piecePart(THEME_NAME, 'Permission', FormControlLabel);
+const PermissionsCheckbox = piecePart(THEME_NAME, 'Checkbox', Checkbox);
+const PermissionsGroup = piecePart(THEME_NAME, 'Group', Paper);
+const PermissionsGroupHeader = piecePart(THEME_NAME, 'GroupHeader', Stack);
+const PermissionsGroupTitle = piecePart(THEME_NAME, 'GroupTitle', Typography);
+const PermissionsGrid = piecePart(THEME_NAME, 'Grid', Box);
 
 /**
  * Un permiso: su casilla, su nombre y qué deja hacer.
@@ -29,10 +42,10 @@ import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
  */
 function PermissionOption({permission, isGranted, readOnly, onToggle}) {
     return (
-        <FormControlLabel
-            sx={{alignItems: 'flex-start', m: 0, gap: 0.5}}
-            control={<Checkbox size="small" checked={isGranted} disabled={readOnly} onChange={(event) => onToggle(event.target.checked)}
-                               slotProps={{input: {'data-permission': permission.key}}} sx={{mt: -0.5}} />}
+        <PermissionsPermission
+            ownSx={{alignItems: 'flex-start', m: 0, gap: 0.5}}
+            control={<PermissionsCheckbox size="small" checked={isGranted} disabled={readOnly} onChange={(event) => onToggle(event.target.checked)}
+                               slotProps={{input: {'data-permission': permission.key}}} ownSx={{mt: -0.5}} />}
             label={(
                 <Box>
                     <Typography variant="body2">{permission.label}</Typography>
@@ -56,22 +69,22 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
     const titleId = useId();
     const state = groupStateOf(group, value);
     return (
-        <Paper variant="outlined" role="group" aria-labelledby={titleId} data-group={group.key} sx={{overflow: 'hidden'}}>
-            <Stack direction="row" spacing={1} sx={{alignItems: 'center', px: 1.5, py: 0.75, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover'}}>
+        <PermissionsGroup variant="outlined" role="group" aria-labelledby={titleId} data-group={group.key} ownSx={{overflow: 'hidden'}}>
+            <PermissionsGroupHeader direction="row" spacing={1} ownSx={{alignItems: 'center', px: 1.5, py: 0.75, borderBottom: 1, borderColor: 'divider', bgcolor: 'action.hover'}}>
                 <Checkbox size="small" checked={state.isAll} indeterminate={state.isSome} disabled={isReadOnly || state.total === 0}
                           onChange={(event) => onChange(withPermissionGroup(value, group, event.target.checked))}
                           slotProps={{input: {'aria-label': t('permissions.allOf', {group: group.label})}}} />
-                <Typography id={titleId} variant="subtitle2" component="h3" sx={{flexGrow: 1}}>{group.label}</Typography>
+                <PermissionsGroupTitle id={titleId} variant="subtitle2" component="h3" ownSx={{flexGrow: 1}}>{group.label}</PermissionsGroupTitle>
                 <Chip size="small" label={t('permissions.countOf', {count: state.grantedCount, total: state.total})}
                       color={state.grantedCount > 0 ? 'primary' : 'default'} variant={state.isAll ? 'filled' : 'outlined'} />
-            </Stack>
-            <Box sx={{display: 'grid', gridTemplateColumns: {xs: '1fr', md: 'repeat(2, minmax(0, 1fr))'}, gap: 1.5, p: 2}}>
+            </PermissionsGroupHeader>
+            <PermissionsGrid ownSx={{display: 'grid', gridTemplateColumns: {xs: '1fr', md: 'repeat(2, minmax(0, 1fr))'}, gap: 1.5, p: 2}}>
                 {group.permissions.map((permission) => (
                     <PermissionOption key={permission.key} permission={permission} isGranted={value.includes(permission.key)} readOnly={isReadOnly}
                                       onToggle={(isGranted) => onChange(withPermission(value, permission.key, isGranted))} />
                 ))}
-            </Box>
-        </Paper>
+            </PermissionsGrid>
+        </PermissionsGroup>
     );
 }
 
@@ -83,7 +96,9 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
  * @param {boolean} [props.readOnly] un perfil que no se puede cambiar (el de administración)
  * @param {object} [props.texts] los textos que cambian, con la forma de `access` en los textos del paquete
  */
-export default function PermissionMatrix({groups, value, onChange, readOnly = false, texts}) {
+export default function PermissionMatrix(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaPermissionMatrix.defaultProps) y encima lo que llega aquí
+    const {groups, value, onChange, readOnly = false, texts} = usePieceProps(props, THEME_NAME);
     const isReadOnly = readOnly || !onChange;
     return (
         <ComponentTexts namespace="access" texts={texts}>

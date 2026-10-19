@@ -1,6 +1,9 @@
 // El botón del tamaño de letra (normal, grande, muy grande), del tema de walk-ot: para quien lee con lentes o en una
 // pantalla chica. Va en la barra de escritorio; en el teléfono vive en el menú de ajustes.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFontSizeToggle con defaultProps y
+// styleOverrides de sus partes: button.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -12,6 +15,11 @@ import Tooltip from '@mui/material/Tooltip';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
 
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFontSizeToggle)
+const THEME_NAME = 'CalcitaFontSizeToggle';
+const FontSizeButton = piecePart(THEME_NAME, 'Button', IconButton);
 
 /**
  * @param {object} [props]
@@ -19,14 +27,16 @@ import {useFontSize} from '@/ui/navigation/useFontSize.js';
  * @param {(level: string) => void} [props.onChange] la persona eligió otro tamaño (FONT_SIZE_LEVELS; para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function FontSizeToggle({size = 'small', onChange, texts}) {
+export default function FontSizeToggle(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaFontSizeToggle.defaultProps) y encima lo que llega aquí
+    const {size = 'small', onChange, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout', texts);
     const {level, setLevel, isMounted, levels} = useFontSize();
     const [anchorElement, setAnchorElement] = useState(null);
 
     // antes de montar no se sabe el nivel guardado: se reserva el lugar para que la barra no brinque
     if (!isMounted) {
-        return <IconButton size={size} disabled aria-hidden="true" sx={{width: 34, height: 34}} />;
+        return <FontSizeButton size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
     }
 
     const chooseLevel = (levelKey) => {

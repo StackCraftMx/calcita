@@ -3,9 +3,17 @@
 //
 // Sin mensaje no pinta nada ni ocupa lugar.
 //
+// Se cambia desde el tema del proyecto: components.CalcitaFormProblemAlert con styleOverrides.root.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useFormikContext} from 'formik';
 import Alert from '@mui/material/Alert';
+import {piecePart} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaFormProblemAlert): el estilo del proyecto va
+// después del de MUI y el sx de la pantalla al final
+const THEME_NAME = 'CalcitaFormProblemAlert';
+const ProblemAlert = piecePart(THEME_NAME, 'Root', Alert);
 
 /**
  * @param {{sx?: object}} props
@@ -17,5 +25,5 @@ export default function FormProblemAlert({sx}) {
     if (!status) {
         return null;
     }
-    return <Alert severity="error" role="alert" sx={sx}>{status}</Alert>;
+    return <ProblemAlert severity="error" role="alert" sx={sx}>{status}</ProblemAlert>;
 }

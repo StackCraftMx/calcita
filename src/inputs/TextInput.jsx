@@ -13,6 +13,9 @@
 //   - el error llega como LLAVE de yup ({key, values}) o como texto ya traducido (el del servidor) y se pinta en el idioma
 //     activo. Cuándo enseñarlo (ya se tocó, ya se envió) lo decide quien lo conecta al formulario.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTextInput con defaultProps y
+// styleOverrides.field (el TextField). El sx de la pantalla sigue ganando a todo.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -26,6 +29,12 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaTextInput): el campo de MUI con lo de Calcita abajo,
+// el tema del proyecto encima y el sx de la pantalla al final
+const THEME_NAME = 'CalcitaTextInput';
+const InputField = piecePart(THEME_NAME, 'Field', TextField);
 
 // la ⓧ de borrar: escondida hasta que el campo tiene el cursor encima o se está escribiendo en él
 const CLEAR_BUTTON_CLASS = 'calcita-clear-button';
@@ -67,10 +76,12 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function TextInput({
-    name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
-    uppercase = false, normalizeOnBlur, inputRef, clearable = true, texts, ...textFieldProps
-}) {
+export default function TextInput(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaTextInput.defaultProps) y encima lo que llega aquí
+    const {
+        name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
+        uppercase = false, normalizeOnBlur, inputRef, clearable = true, texts, ...textFieldProps
+    } = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const [isRevealed, setIsRevealed] = useState(false);
     const generatedId = useId();
@@ -114,7 +125,7 @@ export default function TextInput({
 
     return (
         <FieldFrame inputId={inputId} label={label}>
-            <TextField
+            <InputField
                 {...textFieldProps}
                 name={name}
                 id={inputId}
@@ -123,7 +134,8 @@ export default function TextInput({
                 onChange={(event) => onChange(uppercase ? event.target.value.toUpperCase() : event.target.value)}
                 onBlur={handleBlur}
                 type={isPassword && isRevealed ? 'text' : type}
-                sx={[CLEAR_BUTTON_SX, ...[].concat(textFieldProps.sx ?? [])]}
+                ownSx={CLEAR_BUTTON_SX}
+                sx={textFieldProps.sx}
                 error={Boolean(errorText)}
                 helperText={errorText ?? helperText}
                 fullWidth
