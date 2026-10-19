@@ -163,6 +163,25 @@ async function readProblem(response) {
 }
 
 /**
+ * El ApiError de una respuesta que salió mal, para lo que no pasa por createApiClient: la subida con avance
+ * (uploadWithProgress regresa la respuesta tal cual) o un fetch propio. Es el mismo error que da el cliente: el problema RFC
+ * 9457 del servidor ({title, detail, errors}), su status (401 = sesión vencida, 422 = errores por campo) y el texto del
+ * paquete si el cuerpo no es JSON (un 502 del proxy). Así la pantalla no lee el error a mano.
+ *
+ *   const response = await uploadWithProgress(url, form, {headers, onProgress, signal});
+ *   if (!response.ok) throw await apiErrorOf(response);
+ *
+ * @param {Response} response
+ * @param {{toProblem?: (body: any, response: Response) => any}} [options] el mismo adaptador de createApiClient, para un
+ *     backend que contesta a su manera (Laravel manda {message, errors})
+ * @returns {Promise<ApiError>}
+ */
+export async function apiErrorOf(response, {toProblem = (body) => body} = {}) {
+    const problem = toProblemOrNull(toProblem, await readProblem(response), response);
+    return new ApiError({status: response.status, problem, retryAfterSeconds: retryAfterSecondsOf(response.headers.get('retry-after'))});
+}
+
+/**
  * La señal de la petición: la de quien la pidió (para cancelar) y la del tiempo máximo, juntas.
  *
  * @param {AbortSignal|undefined} signal

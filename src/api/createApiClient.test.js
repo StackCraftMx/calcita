@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {ApiError} from '@/api/ApiError.js';
-import {apiUrlOf, createApiClient, retryAfterSecondsOf} from '@/api/createApiClient.js';
+import {apiErrorOf, apiUrlOf, createApiClient, retryAfterSecondsOf} from '@/api/createApiClient.js';
 import {isNewBuildPublished} from '@/observability/publishedBuild.js';
 import {configureToolkit} from '@/toolkit/toolkitSettings.js';
 
@@ -226,4 +226,19 @@ test('un backend que ya existe: toProblem lee su error ({message, errors} de Lar
     assert.equal(error.message, 'Los datos no son válidos.');
     assert.deepEqual(error.problem.errors, {email: ['El correo ya existe.']});
     assert.deepEqual(await api.get('/customers'), [{id: 7}]);
+});
+
+test('apiErrorOf: una respuesta mala que no pasó por el cliente (la subida con avance) da el mismo ApiError', async () => {
+    const problem = {title: 'Faltan columnas', detail: 'La hoja no trae todas las columnas.', errors: {columnas_faltantes: ['CLABE']}};
+    const validation = await apiErrorOf(new Response(JSON.stringify(problem), {status: 422, headers: {'Content-Type': 'application/problem+json'}}));
+    const expired = await apiErrorOf(new Response('', {status: 401}));
+    const fromProxy = await apiErrorOf(new Response('<html>502</html>', {status: 502}));
+
+    assert.ok(validation instanceof ApiError);
+    assert.equal(validation.title, 'Faltan columnas');
+    assert.equal(validation.isValidation, true);
+    assert.deepEqual(validation.problem.errors.columnas_faltantes, ['CLABE']);
+    assert.equal(expired.isUnauthenticated, true);
+    assert.equal(fromProxy.status, 502);
+    assert.deepEqual(fromProxy.problem, {});
 });
