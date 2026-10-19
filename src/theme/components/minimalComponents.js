@@ -3,8 +3,9 @@
 // color sin contorno y una sola luz de acento).
 //
 // Las reglas:
-//   - sin bordes ni sombras: las superficies se separan por su tono, con los grises de Apple (el fondo agrupado gris y las
-//     tarjetas un escalón arriba, MINIMAL_BACKGROUND; los campos, el gris de relleno, TONAL_FILL);
+//   - sin bordes ni sombras: las superficies se separan por su tono, por omisión con los grises de Apple (MINIMAL_TONES: el
+//     fondo agrupado gris y las tarjetas un escalón arriba; los campos, el gris de relleno; lo que flota, un gris más). Cada
+//     proyecto puede pasar los suyos (createToolkitTheme minimalTones) y el minimalista se pinta con su marca;
 //   - un solo color de acento: el botón principal, lo elegido (un tinte suave de su color, sin marco) y las ligas; lo demás
 //     neutro. El botón con borde y la etiqueta con borde pasan a «tonales»: el tinte de su color, sin la raya;
 //   - sin vidrio ni degradados: superficies sólidas.
@@ -16,14 +17,43 @@ import {textSizeOf} from '@/theme/appleTracking.js';
 import {accentTextStylesOf} from '@/theme/glassSurface.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 
-/** Los fondos del minimalista: el gris agrupado de Apple y la tarjeta un escalón arriba, en claro y en oscuro. */
-export const MINIMAL_BACKGROUND = Object.freeze({
-    light: {default: '#F2F2F7', paper: '#FFFFFF'},
-    dark: {default: '#000000', paper: '#1C1C1E'},
+/**
+ * Los tonos del minimalista por omisión, los grises de Apple, en claro y en oscuro:
+ *   - default: el fondo de la página (el gris agrupado);
+ *   - paper: las tarjetas, un escalón arriba;
+ *   - fill: el relleno de campos, grupos y botones sin color (más claro que el fondo en oscuro);
+ *   - floating: lo que flota sobre el contenido (la barra de pestañas del teléfono, el aviso de versión nueva), un escalón
+ *     más oscuro que las tarjetas. Del color de las tarjetas «se perdía» sobre ellas (lo dijo el autor de la primera barra
+ *     de abajo del minimalista); así se distingue sin borde ni sombra, sobre tarjetas y sobre el fondo.
+ */
+export const MINIMAL_TONES = Object.freeze({
+    light: Object.freeze({default: '#F2F2F7', paper: '#FFFFFF', fill: 'rgba(118, 118, 128, 0.12)', floating: '#E5E5EA'}),
+    dark: Object.freeze({default: '#000000', paper: '#1C1C1E', fill: 'rgba(118, 118, 128, 0.24)', floating: '#2C2C2E'}),
 });
 
-// el gris de relleno de Apple para campos y grupos (más claro que el fondo en oscuro)
-const TONAL_FILL = Object.freeze({light: 'rgba(118, 118, 128, 0.12)', dark: 'rgba(118, 118, 128, 0.24)'});
+/** Los fondos del minimalista por omisión (los de MINIMAL_TONES): el gris agrupado de Apple y la tarjeta un escalón arriba. */
+export const MINIMAL_BACKGROUND = Object.freeze({
+    light: {default: MINIMAL_TONES.light.default, paper: MINIMAL_TONES.light.paper},
+    dark: {default: MINIMAL_TONES.dark.default, paper: MINIMAL_TONES.dark.paper},
+});
+
+/**
+ * Los tonos del minimalista con los del proyecto encima: lo que el proyecto no trae se queda con el gris de Apple.
+ *
+ * @param {{light?: object, dark?: object}} [projectTones] cualquiera de default, paper, fill y floating por modo
+ * @returns {{light: {default: string, paper: string, fill: string, floating: string}, dark: {default: string, paper: string, fill: string, floating: string}}}
+ */
+export function minimalTonesOf(projectTones = {}) {
+    return {
+        light: {...MINIMAL_TONES.light, ...projectTones.light},
+        dark: {...MINIMAL_TONES.dark, ...projectTones.dark},
+    };
+}
+
+/** Los tonos con que se armó el tema (createToolkitTheme los guarda); sin ellos, los de Apple. */
+function tonesOf(theme) {
+    return theme.toolkit?.minimalTones ?? MINIMAL_TONES;
+}
 // el tinte de lo elegido y de los controles tonales (por ciento de su color) y al pasar el cursor
 const TINT_PERCENT = Object.freeze({rest: 14, hover: 22, ring: 45});
 // las esquinas: tarjetas y controles (px)
@@ -52,7 +82,8 @@ function tintOf(theme, colorName = 'primary', percent = TINT_PERCENT.rest) {
  * @returns {object}
  */
 function tonalFillOf(theme) {
-    return lightDarkStylesOf(theme, {backgroundColor: TONAL_FILL.light}, {backgroundColor: TONAL_FILL.dark});
+    const tones = tonesOf(theme);
+    return lightDarkStylesOf(theme, {backgroundColor: tones.light.fill}, {backgroundColor: tones.dark.fill});
 }
 
 /**
@@ -65,19 +96,15 @@ function selectedTintOf(theme) {
     return {backgroundColor: tintOf(theme), ...accentTextStylesOf(theme)};
 }
 
-// lo que flota sobre el contenido en el minimalista (la barra de pestañas del teléfono, el aviso de versión nueva): el gris
-// 5 de Apple, un escalón más oscuro que las tarjetas. Del color de las tarjetas «se perdía» sobre ellas (lo dijo el autor
-// de la primera barra de abajo del minimalista); así se distingue sin borde ni sombra, sobre tarjetas y sobre el fondo
-const FLOATING_TONE = Object.freeze({light: '#E5E5EA', dark: '#2C2C2E'});
-
 /**
- * La superficie de lo que flota en el minimalista, sólida, en claro y en oscuro.
+ * La superficie de lo que flota en el minimalista, sólida, en claro y en oscuro (el tono floating; ver MINIMAL_TONES).
  *
  * @param {object} theme
  * @returns {object}
  */
 export function minimalFloatingStylesOf(theme) {
-    return lightDarkStylesOf(theme, {backgroundColor: FLOATING_TONE.light}, {backgroundColor: FLOATING_TONE.dark});
+    const tones = tonesOf(theme);
+    return lightDarkStylesOf(theme, {backgroundColor: tones.light.floating}, {backgroundColor: tones.dark.floating});
 }
 
 /**

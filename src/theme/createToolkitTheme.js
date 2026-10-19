@@ -31,7 +31,7 @@ import {mergeComponents} from '@/theme/mergeComponents.js';
 import {stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 import {trackingOf} from '@/theme/appleTracking.js';
 import {toolkitComponents} from '@/theme/toolkitComponents.js';
-import {MINIMAL_BACKGROUND, minimalComponents} from '@/theme/components/minimalComponents.js';
+import {minimalComponents, minimalTonesOf} from '@/theme/components/minimalComponents.js';
 import {createLogger} from '@/observability/logger.js';
 
 const log = createLogger('theme');
@@ -95,6 +95,12 @@ function glassSettingsOf(glass) {
  *     plano y tonal (sin bordes ni sombras: las superficies se separan por su tono; sin vidrio aunque se pida)
  * @param {'capsules'|'band'} [options.bar] la barra de arriba con vidrio o con el minimalista (TOP_BAR): por omisión en
  *     cápsulas; 'band' la franja de lado a lado
+ * @param {{light?: {default?: string, paper?: string, fill?: string, floating?: string}, dark?: {default?: string, paper?: string, fill?: string, floating?: string}}} [options.minimalTones]
+ *     los tonos del minimalista con los colores de la marca, por modo: default (el fondo de la página), paper (las tarjetas,
+ *     un escalón arriba), fill (el relleno de campos, grupos y botones sin color) y floating (la barra de pestañas del
+ *     teléfono y lo que flota). Lo que no se pase se queda con los grises de Apple (MINIMAL_TONES). OJO: con el minimalista
+ *     el fondo de la página sale de aquí y no de la paleta (sin minimalTones, los grises de Apple aunque la paleta traiga
+ *     su background)
  * @param {object} [options.components] ajustes propios de componentes (se suman; en el mismo estilo ganan los del proyecto)
  * @param {object} [options.overrides] cualquier otra cosa de createTheme (breakpoints, spacing…)
  * @returns {object} el tema de MUI
@@ -106,6 +112,7 @@ export function createToolkitTheme({
     glass = false,
     look = THEME_LOOK.standard,
     bar = TOP_BAR.capsules,
+    minimalTones = {},
     components = {},
     overrides = {},
 } = {}) {
@@ -119,10 +126,13 @@ export function createToolkitTheme({
     const frameworkComponents = isMinimal
         ? mergeComponents(toolkitComponents(), minimalComponents())
         : (glassSettings ? mergeComponents(toolkitComponents(), glassComponents({surfaces: glassSettings.surfaces})) : toolkitComponents());
-    // el minimalista separa las superficies por su tono: el fondo gris agrupado y la tarjeta un escalón arriba
+    // el minimalista separa las superficies por su tono: el fondo de la página y la tarjeta un escalón arriba (los grises de
+    // Apple o los tonos de la marca que pasó el proyecto)
+    const tones = isMinimal ? minimalTonesOf(minimalTones) : null;
     const schemes = isMinimal
         ? Object.fromEntries(Object.entries(colorSchemes).map(([mode, scheme]) => [mode, {
-            ...scheme, palette: {...scheme.palette, background: MINIMAL_BACKGROUND[mode] ?? scheme.palette?.background},
+            ...scheme,
+            palette: {...scheme.palette, background: tones[mode] ? {default: tones[mode].default, paper: tones[mode].paper} : scheme.palette?.background},
         }]))
         : colorSchemes;
     const baseTheme = createTheme({
@@ -161,7 +171,8 @@ export function createToolkitTheme({
         components: mergeComponents(frameworkComponents, components),
         // sin sombras en el minimalista: lo plano es la idea
         ...(isMinimal && {shadows: Array(SHADOW_LEVELS).fill('none')}),
-        toolkit: {glass: glassSettings, look, bar},
+        // minimalTones: los tonos con que se pintan los rellenos y lo que flota (minimalComponents los lee del tema)
+        toolkit: {glass: glassSettings, look, bar, minimalTones: tones},
         ...overrides,
     });
     return responsiveFontSizes(baseTheme);

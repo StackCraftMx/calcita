@@ -39,7 +39,7 @@ export {
 // ─── el tema (opcional): el estilo de Stackcraft, con claro / oscuro y vidrio líquido ─
 export {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 export {isAndroidDevice} from '@/theme/androidDevice.js';
-export {MINIMAL_BACKGROUND} from '@/theme/components/minimalComponents.js';
+export {MINIMAL_BACKGROUND, MINIMAL_TONES} from '@/theme/components/minimalComponents.js';
 export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 export {toolkitComponents} from '@/theme/toolkitComponents.js';
 export {mergeComponents} from '@/theme/mergeComponents.js';
