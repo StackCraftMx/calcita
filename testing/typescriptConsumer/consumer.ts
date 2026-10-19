@@ -43,6 +43,7 @@ import {
 } from '@stackcraftmx/calcita';
 import {LineChart} from '@stackcraftmx/calcita/charts';
 import {addLogSink, apiErrorOf, menuItemsWithIconsOf} from '@stackcraftmx/calcita';
+import {DESKTOP_MEDIA_QUERY, PHONE_MEDIA_QUERY} from '@stackcraftmx/calcita';
 import {EventDetails, reminderOf} from '@stackcraftmx/calcita/calendar';
 
 const amount: string = formatCurrency(1234.5);
@@ -94,6 +95,9 @@ const pairedWordmarkLayout = createElement(AppLayout, {
     wordmark: {light: createElement('img', {src: '/logo-color.svg', alt: ''}), dark: createElement('img', {src: '/logo-blanco.svg', alt: ''})},
     children: null,
 });
+// un ajuste del marco solo en escritorio, con la misma regla que usa el marco
+const desktopOnlyTheme = createToolkitTheme({components: {CalcitaAppLayout: {styleOverrides: {toolbar: {[DESKTOP_MEDIA_QUERY]: {paddingLeft: 0}}}}}});
+const phoneRule: string = PHONE_MEDIA_QUERY;
 const piecesTheme = createToolkitTheme({components: {CalcitaStatusChip: {defaultProps: {variant: 'chip'}}, CalcitaFormSection: {styleOverrides: {card: {borderRadius: 4}}}}});
 // las cápsulas de una pantalla en la barra y una cápsula suelta
 const screenCapsules = [
@@ -217,5 +221,5 @@ const withIcons = menuItemsWithIconsOf([{to: '/inicio', label: 'Inicio', icon: '
 const wrongView = createElement(LineChart, {data: [], series: [], periodLabel: '', ariaLabel: '', emptyLabel: '', defaultView: 'pie'});
 
 export {wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -24,7 +24,9 @@ export const GLASS_PANEL_GAP_PIXELS = GLASS_INSET_PIXELS;
 /**
  * Teléfono o escritorio. Teléfono: angosto (menos de 900 px, el «md» de MUI) O bajito (menos de 500 px de alto: un teléfono
  * acostado). Solo con el ancho, un iPhone Pro Max acostado (932 × 430) salía con el marco de escritorio y su menú lateral
- * no cabía (lo reportaron). Van como media queries para usarse en sx: [PHONE_MEDIA_QUERY]: {...}.
+ * no cabía (lo reportaron). Van como media queries para usarse en sx: [PHONE_MEDIA_QUERY]: {...}. Se exportan: un proyecto que
+ * ajusta una pieza del marco desde su tema (solo en escritorio o solo en el teléfono) usa la misma regla que el marco y no
+ * una copia que se le pueda desfasar.
  */
 export const PHONE_MEDIA_QUERY = '@media (max-width: 899.95px), (max-height: 499.95px)';
 export const DESKTOP_MEDIA_QUERY = '@media (min-width: 900px) and (min-height: 500px)';
