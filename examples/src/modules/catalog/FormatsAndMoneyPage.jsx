@@ -29,6 +29,7 @@ const FORMATS_EXTENSIONS = [
     {id: 'list', option: 'formatList', example: "formatList(['Ana', 'Luis', 'Bruno'])"},
     {id: 'fallback', option: 'fallback', example: "formatNumber(value, 'Sin dato')"},
     {id: 'settings', option: 'ToolkitProvider timeZone · currency', example: '<ToolkitProvider timeZone="America/Mexico_City" currency="MXN">'},
+    {id: 'hook', option: 'useFormatters()', example: 'const {formatDate, formatCurrency} = useFormatters();'},
 ];
 const MONEY_EXTENSIONS = [
     {id: 'read', option: 'Money.fromString · fromNumber · fromMinorUnits · zero', example: 'Money.fromString(order.total)'},

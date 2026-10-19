@@ -2,7 +2,8 @@
 // traductor (sin i18next) con la sintaxis de i18next; un proyecto con i18next se conecta con translateWithI18next.
 //
 // La sección de las llamadas es un ejemplo vivo (cambia con el idioma del menú de la cuenta); las demás solo enseñan su
-// código, abierto de entrada: los textos del proyecto, el proveedor y la conexión con i18next.
+// código, abierto de entrada: los textos del proyecto, el proveedor, la conexión con i18next y cómo entra Calcita en un
+// sistema que ya existe (islas, sin router).
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import Stack from '@mui/material/Stack';
@@ -19,6 +20,7 @@ const loadAppTexts = () => import('@/modules/catalog/demos/translations/appTexts
 const loadAppProviders = () => import('@/modules/catalog/demos/translations/AppProviders.tsx?demo-source');
 const I18NEXT_SOURCES = Object.freeze({js: i18nextSetup});
 const loadCalls = () => import('@/modules/catalog/demos/translations/TranslationCalls.tsx?demo-source');
+const loadLegacySystem = () => import('@/modules/catalog/demos/translations/LegacySystemSetup.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (translations.<sección>.extend.<id>)
@@ -46,6 +48,16 @@ const PROVIDER_EXTENSIONS = [
     {id: 'navigation', option: 'navigation', example: 'navigation={reactRouterNavigation}'},
     {id: 'buildId', option: 'buildId', example: 'buildId={import.meta.env.VITE_BUILD_ID}'},
     {id: 'canAccess', option: 'canAccess', example: '<AccountProvider …>{(canAccess) => <ToolkitProvider canAccess={canAccess}>…}'},
+    {id: 'nested', option: '<ToolkitProvider> dentro de otro', example: '<ToolkitProvider language="en"><InvoicePreview /></ToolkitProvider>'},
+    {id: 'componentTexts', option: 'texts · <ComponentTexts>', example: "<ServerTable texts={{count: {records_other: '{{total}} pedidos'}}} …>"},
+];
+const LEGACY_EXTENSIONS = [
+    {id: 'hash', option: 'createHashNavigation()', example: '<ToolkitProvider navigation={createHashNavigation()}>  // /app.php#/ventas'},
+    {id: 'basePath', option: 'createBrowserNavigation({basePath})', example: "navigation={createBrowserNavigation({basePath: '/portal'})}"},
+    {id: 'islands', option: 'createRoot por <div>', example: "document.querySelectorAll('[data-calcita]').forEach((element) => createRoot(element).render(…))"},
+    {id: 'formatters', option: 'useFormatters()', example: 'const {formatCurrency, formatDate} = useFormatters();'},
+    {id: 'ownTheme', option: 'su createTheme', example: "createTheme({cssVariables: {cssVarPrefix: 'portal'}})"},
+    {id: 'events', option: 'onX de cada componente', example: "onSelect={(row) => window.parent.postMessage({row}, '*')}"},
 ];
 const I18NEXT_EXTENSIONS = [
     {id: 'adapter', option: 'translateWithI18next(i18n)', example: 'const translate = translateWithI18next(i18n);'},
@@ -71,6 +83,8 @@ export const TranslationsPage = () => {
                          extensions={rowsOf('provider', PROVIDER_EXTENSIONS)} loadSource={loadAppProviders} />
             <CodeSection title={t('translations.i18next.title')} description={t('translations.i18next.description')}
                          extensions={rowsOf('i18next', I18NEXT_EXTENSIONS)} sources={I18NEXT_SOURCES} />
+            <CodeSection title={t('translations.legacy.title')} description={t('translations.legacy.description')}
+                         extensions={rowsOf('legacy', LEGACY_EXTENSIONS)} loadSource={loadLegacySystem} />
         </Stack>
     );
 };

@@ -3,7 +3,7 @@
 //     request_id; nunca correos ni nombres). Por omisión solo salen error y warn; en desarrollo se pide todo;
 //   - reportPublishedBuild anota la versión que el servidor dice que está publicada (createApiClient lo hace solo con el
 //     encabezado X-Frontend-Build); NewBuildNotice avisa «hay una versión nueva» cuando no es la de esta pestaña;
-//   - usePublishedBuildWatch se entera sin el API: vuelve a leer /version.json al abrir la app (la anclada al inicio del
+//   - usePublishedBuildWatch se entera sin el API: vuelve a leer version.json al abrir la app (la anclada al inicio del
 //     iPhone no recarga sola) y cada tanto. Si estuvo fuera 15 minutos o más se recarga sola; si no, sale el aviso.
 //     El build deja ese archivo con su versión (vea el plugin de vite.config.js de los ejemplos: version.json + VITE_BUILD_ID).
 //
@@ -27,5 +27,6 @@ export function logCancelFailed(orderId: number, status: number, requestId: stri
 
 // en la raíz de la app, una vez: vigila si ya se publicó otra versión (solo en lo construido)
 export function useAppBuildWatch() {
-    usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, buildId: import.meta.env.VITE_BUILD_ID, reloadAfterHiddenMinutes: 15});
+    // con BASE_URL: detrás de un proxy con prefijo (ASSET_URL=/ventas) el archivo vive en /ventas/version.json
+    usePublishedBuildWatch({url: import.meta.env.PROD ? `${import.meta.env.BASE_URL}version.json` : null, buildId: import.meta.env.VITE_BUILD_ID, reloadAfterHiddenMinutes: 15});
 }
