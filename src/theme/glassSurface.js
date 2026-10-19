@@ -451,24 +451,105 @@ function contrastWithWhiteOf(channels) {
 }
 
 /**
+ * Los tonos de los campos por omisión, por modo: fill (el relleno), hoverFill (con el cursor encima), border y hoverBorder
+ * (la orilla; transparente: el pozo de Apple no lleva). createToolkitTheme los pone en la paleta de cada modo
+ * (palette.field) y el proyecto los cambia con `fields` o con su paleta: blancos con borde, del tono de su marca…
+ */
+export const FIELD_TONES = Object.freeze({
+    light: Object.freeze({fill: FIELD_WELL_FILL.light.rest, hoverFill: FIELD_WELL_FILL.light.hover, border: 'transparent', hoverBorder: 'transparent'}),
+    dark: Object.freeze({fill: FIELD_WELL_FILL.dark.rest, hoverFill: FIELD_WELL_FILL.dark.hover, border: 'transparent', hoverBorder: 'transparent'}),
+});
+
+/**
+ * Los tonos de los campos del tema (palette.field, que llena createToolkitTheme; con sus variables CSS cambian solos con el
+ * modo, sin reglas de oscuro), o null si el tema no los trae (un createTheme de MUI sin Calcita).
+ *
+ * @param {object} theme
+ * @returns {{fill: string, hoverFill: string, border: string, hoverBorder: string}|null}
+ */
+export function fieldPaletteOf(theme) {
+    return paletteOf(theme).field ?? null;
+}
+
+/** La orilla de un campo: una línea por dentro (sombra inset), que no mueve el texto ni pelea con el aro del foco (outline). */
+function fieldEdgeOf(color) {
+    return `inset 0 0 0 1px ${color}`;
+}
+
+/** Las esquinas de los campos: las que pidió el proyecto (createToolkitTheme fields.radius) o las de cada estilo. */
+function fieldRadiusOf(theme, lookRadius) {
+    return theme.toolkit?.fields?.radius ?? lookRadius;
+}
+
+/**
  * El «pozo» de un campo de texto dentro del contenido (una tarjeta, un formulario agrupado), como los de Apple: un relleno
  * parejo con esquinas de 12 px, del gris de relleno de Apple («tertiary fill»): tenue en claro y más claro que la tarjeta en
  * oscuro (con negro, en oscuro se perdía). Sin vidrio adentro de la tarjeta: ahí no tiene nada que dejar
  * ver. Con el cursor encima se marca apenas; antes el relleno salía solo con el cursor y en cuadro («hovers espantosos»).
+ * Los tonos y las esquinas los puede cambiar el proyecto (createToolkitTheme fields).
+ *
+ * @param {object} theme
+ * @param {{radius?: number}} [options] las esquinas del estilo que lo pide (el minimalista las tiene más chicas)
+ * @returns {object}
+ */
+export function fieldWellStylesOf(theme, {radius = FIELD_WELL_RADIUS_PIXELS} = {}) {
+    const base = {backgroundImage: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none', borderRadius: fieldRadiusOf(theme, radius)};
+    const field = fieldPaletteOf(theme);
+    if (field) {
+        return {
+            ...base,
+            backgroundColor: field.fill,
+            boxShadow: fieldEdgeOf(field.border),
+            '&:hover': {backgroundColor: field.hoverFill, boxShadow: fieldEdgeOf(field.hoverBorder)},
+        };
+    }
+    const {light, dark} = FIELD_TONES;
+    return {
+        ...base,
+        ...lightDarkStylesOf(theme,
+            {backgroundColor: light.fill, boxShadow: fieldEdgeOf(light.border), '&:hover': {backgroundColor: light.hoverFill, boxShadow: fieldEdgeOf(light.hoverBorder)}},
+            {backgroundColor: dark.fill, boxShadow: fieldEdgeOf(dark.border), '&:hover': {backgroundColor: dark.hoverFill, boxShadow: fieldEdgeOf(dark.hoverBorder)}}),
+    };
+}
+
+/**
+ * Los tonos de los campos como variables (--calcita-field-*) para un contenedor: el renglón de FormSection las pone en sí
+ * mismo y sus campos las leen (fieldWellFromVariablesOf). OJO, trampa pagada: el renglón le gana al tema con selectores
+ * largos («html body &&& .MuiOutlinedInput-root») y una regla de oscuro anidada ahí abajo nunca aplicaba (en oscuro el
+ * campo salía con el gris de claro). En el contenedor la regla de oscuro sí aplica, y los campos heredan la variable.
  *
  * @param {object} theme
  * @returns {object}
  */
-export function fieldWellStylesOf(theme) {
+export function fieldVariablesOf(theme) {
+    const variablesOf = (tones) => ({
+        '--calcita-field-fill': tones.fill,
+        '--calcita-field-hover-fill': tones.hoverFill,
+        '--calcita-field-edge': fieldEdgeOf(tones.border),
+        '--calcita-field-hover-edge': fieldEdgeOf(tones.hoverBorder),
+    });
+    const field = fieldPaletteOf(theme);
+    if (field) {
+        return variablesOf(field);
+    }
+    return {...variablesOf(FIELD_TONES.light), ...theme.applyStyles('dark', variablesOf(FIELD_TONES.dark))};
+}
+
+/**
+ * El pozo de un campo leyendo las variables de su contenedor (fieldVariablesOf).
+ *
+ * @param {object} theme
+ * @returns {object}
+ */
+export function fieldWellFromVariablesOf(theme) {
     return {
         backgroundImage: 'none',
         backdropFilter: 'none',
         WebkitBackdropFilter: 'none',
-        boxShadow: 'none',
-        borderRadius: FIELD_WELL_RADIUS_PIXELS,
-        ...lightDarkStylesOf(theme,
-            {backgroundColor: FIELD_WELL_FILL.light.rest, '&:hover': {backgroundColor: FIELD_WELL_FILL.light.hover}},
-            {backgroundColor: FIELD_WELL_FILL.dark.rest, '&:hover': {backgroundColor: FIELD_WELL_FILL.dark.hover}}),
+        borderRadius: fieldRadiusOf(theme, FIELD_WELL_RADIUS_PIXELS),
+        backgroundColor: 'var(--calcita-field-fill)',
+        boxShadow: 'var(--calcita-field-edge)',
+        '&:hover': {backgroundColor: 'var(--calcita-field-hover-fill)', boxShadow: 'var(--calcita-field-hover-edge)'},
     };
 }
 

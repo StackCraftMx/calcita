@@ -14,7 +14,7 @@
 // Funciones puras, sin React: function (regla de la casa).
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
-import {accentTextStylesOf} from '@/theme/glassSurface.js';
+import {accentTextStylesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 
 /**
@@ -149,9 +149,9 @@ export function minimalComponents() {
         MuiButtonGroup: {defaultProps: {disableElevation: true}},
         MuiOutlinedInput: {
             styleOverrides: {
+                // el campo: los tonos de los campos del tema (por omisión, el relleno del minimalista; ver createToolkitTheme)
                 root: ({theme}) => ({
-                    ...tonalFillOf(theme),
-                    borderRadius: RADIUS_PIXELS.control,
+                    ...fieldWellStylesOf(theme, {radius: RADIUS_PIXELS.control}),
                     '&.Mui-focused': {outline: `2px solid ${tintOf(theme, 'primary', TINT_PERCENT.ring)}`},
                     '&.Mui-error': {outline: `2px solid ${tintOf(theme, 'error', TINT_PERCENT.ring)}`},
                 }),
@@ -160,7 +160,7 @@ export function minimalComponents() {
         },
         MuiFilledInput: {
             defaultProps: {disableUnderline: true},
-            styleOverrides: {root: ({theme}) => ({...tonalFillOf(theme), borderRadius: RADIUS_PIXELS.control})},
+            styleOverrides: {root: ({theme}) => fieldWellStylesOf(theme, {radius: RADIUS_PIXELS.control})},
         },
         // la etiqueta con borde también es tonal: el tinte de su color (o el gris si no lleva color)
         MuiChip: {
