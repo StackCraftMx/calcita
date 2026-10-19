@@ -32,6 +32,9 @@ const CLEAR_BUTTON_CLASS = 'calcita-clear-button';
 const CLEAR_BUTTON_SX = Object.freeze({
     [`& .${CLEAR_BUTTON_CLASS}`]: {visibility: 'hidden', color: 'text.secondary'},
     [`& .MuiInputBase-root:hover .${CLEAR_BUTTON_CLASS}, & .MuiInputBase-root.Mui-focused .${CLEAR_BUTTON_CLASS}`]: {visibility: 'visible'},
+    // un campo de búsqueda (type="search") trae la × del navegador: con la ⓧ de la casa salían dos para lo mismo (lo cachó
+    // una captura de Tareas). Se esconde la del navegador; la de la casa es la que se ve igual en todos
+    '& input[type="search"]::-webkit-search-cancel-button': {WebkitAppearance: 'none', display: 'none'},
 });
 
 /**

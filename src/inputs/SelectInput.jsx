@@ -11,6 +11,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -81,11 +82,15 @@ export default function SelectInput({
                 {/* la opción vacía solo con una: con varias, se quitan picándolas otra vez */}
                 {!multiple && <MenuItem value="" disabled>{placeholderText}</MenuItem>}
                 {options.map((option) => (
-                    <MenuItem key={option.value} value={option.value} sx={{whiteSpace: 'normal', flexDirection: 'column', alignItems: 'flex-start'}}>
-                        <Typography component="span" variant="body2">{option.label}</Typography>
-                        {option.description && (
-                            <Typography component="span" variant="caption" color="text.secondary">{option.description}</Typography>
-                        )}
+                    // la opción en renglón y su nombre con su explicación en un bloque: con la opción en columna, la palomita del
+                    // elegido (el tema la pinta al final) se bajaba a otro renglón (lo cachó una captura de Tareas)
+                    <MenuItem key={option.value} value={option.value} sx={{whiteSpace: 'normal'}}>
+                        <Box component="span" sx={{display: 'flex', flexDirection: 'column', minWidth: 0, flexGrow: 1}}>
+                            <Typography component="span" variant="body2">{option.label}</Typography>
+                            {option.description && (
+                                <Typography component="span" variant="caption" color="text.secondary">{option.description}</Typography>
+                            )}
+                        </Box>
                     </MenuItem>
                 ))}
             </TextField>
