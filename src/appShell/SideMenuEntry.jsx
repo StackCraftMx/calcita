@@ -17,6 +17,9 @@
 //     dedo) con esquina concéntrica: el radio del panel (20) menos el margen entre botón y orilla (10) da 10. Antes era una
 //     cápsula con botones redondos y se veía demasiado redondo (lo reportaron).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSideMenuEntry con defaultProps y
+// styleOverrides de sus partes: button, icon, iconPlaceholder, text, badge, expand.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -40,6 +43,16 @@ import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {accentTextStylesOf, glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenuEntry)
+const THEME_NAME = 'CalcitaSideMenuEntry';
+const EntryButton = piecePart(THEME_NAME, 'Button', ListItemButton);
+const EntryIcon = piecePart(THEME_NAME, 'Icon', ListItemIcon);
+const EntryIconPlaceholder = piecePart(THEME_NAME, 'IconPlaceholder', Box);
+const EntryText = piecePart(THEME_NAME, 'Text', ListItemText);
+const EntryBadge = piecePart(THEME_NAME, 'Badge', Chip);
+const EntryExpand = piecePart(THEME_NAME, 'Expand', Box);
 
 // las medidas del renglón, en unidades de spacing: los márgenes, el escalón de cada nivel de submenú y el espacio entre el
 // ícono y el nombre. Las hijas van más apretadas (ícono más chico, menos espacio, renglón más bajo): medido en Chrome, con
@@ -72,7 +85,9 @@ const RAIL_BUTTON_RADIUS_PIXELS = 10;
  * @param {Record<string, number>} [props.menuBadges] los conteos del servidor por badgeKey (menuBadgeOf)
  * @param {number} [props.depth]
  */
-export default function SideMenuEntry({menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0}) {
+export default function SideMenuEntry(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSideMenuEntry.defaultProps) y encima lo que llega aquí
+    const {menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const theme = useTheme();
@@ -118,8 +133,8 @@ export default function SideMenuEntry({menuItem, activeItem, collapsed, onNaviga
     const selectedStyle = mergeStyles(isGlass ? glassDropOf(theme) : {bgcolor: 'action.selected'}, activeText);
 
     const entryButton = (
-        <ListItemButton {...linkProps} selected={!hasChildren && isActive} aria-expanded={hasChildren ? (collapsed ? Boolean(flyoutAnchor) : isOpen) : undefined}
-                        sx={{
+        <EntryButton {...linkProps} selected={!hasChildren && isActive} aria-expanded={hasChildren ? (collapsed ? Boolean(flyoutAnchor) : isOpen) : undefined}
+                        ownSx={{
                             borderRadius: isRailButton ? `${RAIL_BUTTON_RADIUS_PIXELS}px` : 1.5, pl: leftPadding, pr: isChild ? CHILD_RIGHT_PADDING : ROW_RIGHT_PADDING,
                             minHeight: isRailButton ? RAIL_BUTTON_PIXELS : (isChild ? CHILD_ROW_MIN_HEIGHT_PIXELS : ROW_MIN_HEIGHT_PIXELS),
                             transition: theme.transitions.create(['background-color', 'border-radius', 'min-height']),
@@ -127,24 +142,24 @@ export default function SideMenuEntry({menuItem, activeItem, collapsed, onNaviga
                             '&.Mui-selected, &.Mui-selected:hover': selectedStyle,
                         }}>
             {(!isChild || Icon) && (
-                <ListItemIcon sx={{minWidth: 0, mr: isChild ? CHILD_ICON_GAP : ICON_GAP, color: 'inherit'}}>
+                <EntryIcon ownSx={{minWidth: 0, mr: isChild ? CHILD_ICON_GAP : ICON_GAP, color: 'inherit'}}>
                     <Badge invisible={!collapsed || !badge} color="primary" max={BADGE_MAX} badgeContent={badge?.isCount ? badge.content : undefined}
                            variant={badge?.isCount ? 'standard' : 'dot'} overlap="circular">
-                        {Icon ? <Icon sx={{fontSize: isChild ? CHILD_ICON_SIZE : ICON_SIZE}} /> : <Box sx={{width: ICON_SIZE, height: ICON_SIZE}} />}
+                        {Icon ? <Icon sx={{fontSize: isChild ? CHILD_ICON_SIZE : ICON_SIZE}} /> : <EntryIconPlaceholder ownSx={{width: ICON_SIZE, height: ICON_SIZE}} />}
                     </Badge>
-                </ListItemIcon>
+                </EntryIcon>
             )}
-            <ListItemText primary={label} sx={fadeWhenCollapsed}
+            <EntryText primary={label} ownSx={fadeWhenCollapsed}
                           slotProps={{primary: {noWrap: true, sx: {...textSizeOf(MENU_TEXT_PIXELS), fontWeight: isActive ? 600 : 400}}}} />
             {badge && (
-                <Chip label={badge.isCount && badge.content > BADGE_MAX ? `${BADGE_MAX}+` : badge.content} size="small" color="primary" sx={(theme) => ({height: 20, ...textSizeOf(MENU_BADGE_PIXELS), ml: 1, ...fadeWhenCollapsed(theme)})} />
+                <EntryBadge label={badge.isCount && badge.content > BADGE_MAX ? `${BADGE_MAX}+` : badge.content} size="small" color="primary" ownSx={(theme) => ({height: 20, ...textSizeOf(MENU_BADGE_PIXELS), ml: 1, ...fadeWhenCollapsed(theme)})} />
             )}
             {hasChildren && (
-                <Box sx={(theme) => ({display: 'flex', alignItems: 'center', ...fadeWhenCollapsed(theme)})}>
+                <EntryExpand ownSx={(theme) => ({display: 'flex', alignItems: 'center', ...fadeWhenCollapsed(theme)})}>
                     {isOpen ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
-                </Box>
+                </EntryExpand>
             )}
-        </ListItemButton>
+        </EntryButton>
     );
 
     return (

@@ -19,6 +19,9 @@
 //     opacidad y escala, lo que el navegador anima sin volver a acomodar la página: en un teléfono barato no se traba.
 // Solo se ve en el teléfono (PHONE_MEDIA_QUERY); en escritorio no ocupa nada.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMobileTabBar con defaultProps y
+// styleOverrides de sus partes: tab, tabIconPlaceholder, tabLabel, root, bar, minimized, account, sheetHeader.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useLayoutEffect, useState} from 'react';
 import Badge from '@mui/material/Badge';
@@ -46,6 +49,18 @@ import {accentTextStylesOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurf
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMobileTabBar)
+const THEME_NAME = 'CalcitaMobileTabBar';
+const TabBarTab = piecePart(THEME_NAME, 'Tab', ButtonBase);
+const TabBarTabIconPlaceholder = piecePart(THEME_NAME, 'TabIconPlaceholder', Box);
+const TabBarTabLabel = piecePart(THEME_NAME, 'TabLabel', Typography);
+const TabBarRoot = piecePart(THEME_NAME, 'Root', Box);
+const TabBarBar = piecePart(THEME_NAME, 'Bar', Box);
+const TabBarMinimized = piecePart(THEME_NAME, 'Minimized', ButtonBase);
+const TabBarAccount = piecePart(THEME_NAME, 'Account', Box);
+const TabBarSheetHeader = piecePart(THEME_NAME, 'SheetHeader', Box);
 
 // el nombre de la pestaña parado y acostado (px), lo ancho máximo de la cápsula y lo alto de la hoja de «Más»
 const TAB_LABEL_PIXELS = Object.freeze({portrait: 10, landscape: 12});
@@ -149,8 +164,8 @@ function activeTabOf(theme) {
  */
 function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPopup = false}) {
     return (
-        <ButtonBase {...linkProps} onClick={onClick} aria-haspopup={hasPopup ? 'menu' : undefined} aria-current={isActive ? 'page' : undefined}
-                    sx={(theme) => mergeStyles({
+        <TabBarTab {...linkProps} onClick={onClick} aria-haspopup={hasPopup ? 'menu' : undefined} aria-current={isActive ? 'page' : undefined}
+                    ownSx={(theme) => mergeStyles({
                         flex: '1 1 0', minWidth: 0, height: '100%', borderRadius: '999px', px: 0,
                         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.25,
                         color: 'text.primary',
@@ -158,14 +173,14 @@ function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPo
                         [PHONE_LANDSCAPE_MEDIA_QUERY]: {flexDirection: 'row', gap: 0.75},
                     }, isActive ? activeTabOf(theme) : {})}>
             <Badge invisible={!badge?.isCount} color="error" max={BADGE_MAX} overlap="circular" badgeContent={badge?.isCount ? badge.content : undefined}>
-                {Icon ? <Icon sx={{fontSize: TAB_ICON_SIZE}} /> : <Box sx={{width: TAB_ICON_SIZE, height: TAB_ICON_SIZE}} />}
+                {Icon ? <Icon sx={{fontSize: TAB_ICON_SIZE}} /> : <TabBarTabIconPlaceholder ownSx={{width: TAB_ICON_SIZE, height: TAB_ICON_SIZE}} />}
             </Badge>
-            <Typography component="span" noWrap
-                        sx={{...textSizeOf(TAB_LABEL_PIXELS.portrait), fontWeight: 500, maxWidth: '100%',
+            <TabBarTabLabel component="span" noWrap
+                        ownSx={{...textSizeOf(TAB_LABEL_PIXELS.portrait), fontWeight: 500, maxWidth: '100%',
                              [PHONE_LANDSCAPE_MEDIA_QUERY]: textSizeOf(TAB_LABEL_PIXELS.landscape)}}>
                 {label}
-            </Typography>
-        </ButtonBase>
+            </TabBarTabLabel>
+        </TabBarTab>
     );
 }
 
@@ -211,7 +226,9 @@ function useFittingTabCount(capsule, minTabPixels) {
  * @param {(keys: string[]|null) => void} [props.onPinnedTabsChange] la persona eligió sus pestañas (null: regresó a las de
  *     omisión)
  */
-export default function MobileTabBar({menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange}) {
+export default function MobileTabBar(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMobileTabBar.defaultProps) y encima lo que llega aquí
+    const {menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();
@@ -252,8 +269,8 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
 
     return (
         <>
-            <Box component="nav" aria-label={t('drawer.ariaLabel')}
-                 sx={(theme) => ({
+            <TabBarRoot component="nav" aria-label={t('drawer.ariaLabel')}
+                 ownSx={(theme) => ({
                      display: 'none',
                      [PHONE_MEDIA_QUERY]: {display: 'flex'},
                      position: 'fixed', zIndex: theme.zIndex.appBar, gap: 0.75, justifyContent: 'center',
@@ -262,8 +279,8 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                      height: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait,
                      [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                  })}>
-                <Box ref={setTabsCapsule} inert={isMinimized}
-                     sx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
+                <TabBarBar ref={setTabsCapsule} inert={isMinimized}
+                     ownSx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
                                       ...appearStylesOf(theme, !isMinimized, 'left bottom')})}>
                     {tabs.map((menuItem) => {
                         const hasChildren = (menuItem.children ?? []).length > 0;
@@ -278,19 +295,19 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                         <TabButton label={t('drawer.more')} Icon={MoreHorizRoundedIcon} isActive={moreHasActive} badge={moreBadge} hasPopup
                                    onClick={() => setIsMoreOpen(true)} />
                     )}
-                </Box>
+                </TabBarBar>
                 {/* encogida: la cápsula chica en la esquina, con la pestaña de ahorita; tocarla regresa la barra completa */}
-                <ButtonBase inert={!isMinimized} onClick={expand} aria-label={t('drawer.showTabs')} aria-expanded={false}
-                            sx={(theme) => mergeStyles({
+                <TabBarMinimized inert={!isMinimized} onClick={expand} aria-label={t('drawer.showTabs')} aria-expanded={false}
+                            ownSx={(theme) => mergeStyles({
                                 ...glassSurfaceSx(theme), position: 'absolute', left: 0, bottom: 0,
                                 width: MINIMIZED_PIXELS.portrait, height: MINIMIZED_PIXELS.portrait,
                                 [PHONE_LANDSCAPE_MEDIA_QUERY]: {width: MINIMIZED_PIXELS.landscape, height: MINIMIZED_PIXELS.landscape},
                                 ...appearStylesOf(theme, isMinimized, 'left bottom'),
                             }, accentTextStylesOf(theme))}>
                     <MinimizedIcon sx={{fontSize: TAB_ICON_SIZE}} />
-                </ButtonBase>
+                </TabBarMinimized>
                 {account && (
-                    <Box sx={(theme) => ({
+                    <TabBarAccount ownSx={(theme) => ({
                         ...glassSurfaceSx(theme), flexShrink: 0, minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait, px: 0.5, display: 'flex', alignItems: 'center',
                         justifyContent: 'center', [PHONE_LANDSCAPE_MEDIA_QUERY]: {minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                         '& .MuiButtonBase-root': {color: 'inherit'},
@@ -304,9 +321,9 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                         }}),
                     })}>
                         {account}
-                    </Box>
+                    </TabBarAccount>
                 )}
-            </Box>
+            </TabBarRoot>
 
             {submenu.menuItem && (
                 <SubmenuActionsMenu anchorElement={submenu.anchorElement} onClose={closeSubmenu} menuItem={submenu.menuItem} activeItem={activeItem}
@@ -334,9 +351,9 @@ export default function MobileTabBar({menuItems, activeItem, menuBadges, account
                                   }} />
                 ) : (
                     <>
-                        <Box sx={{display: 'flex', justifyContent: 'flex-end', px: 1.5, pt: 1, flexShrink: 0}}>
+                        <TabBarSheetHeader ownSx={{display: 'flex', justifyContent: 'flex-end', px: 1.5, pt: 1, flexShrink: 0}}>
                             <Button size="small" autoFocus={returnsFromEditor} onClick={() => setIsEditingTabs(true)}>{t('drawer.editTabs')}</Button>
-                        </Box>
+                        </TabBarSheetHeader>
                         <SideMenu menuItems={more} activeItem={activeItem} menuBadges={menuBadges} collapsed={false} showBrand={false} footer={moreFooter}
                                   onNavigate={closeMore} />
                     </>

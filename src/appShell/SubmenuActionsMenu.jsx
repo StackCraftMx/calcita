@@ -2,6 +2,9 @@
 // la pantalla abierta marcada. Lo usan el menú lateral encogido (sale a la DERECHA del ícono) y la barra de pestañas del
 // teléfono (sale ARRIBA de la pestaña): un solo lugar para los dos.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSubmenuActionsMenu con defaultProps y
+// styleOverrides de sus partes: badge.
+//
 // Genérico del paquete: function (regla de la casa).
 import Chip from '@mui/material/Chip';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -14,6 +17,11 @@ import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSubmenuActionsMenu)
+const THEME_NAME = 'CalcitaSubmenuActionsMenu';
+const SubmenuBadge = piecePart(THEME_NAME, 'Badge', Chip);
 
 /** Hacia dónde sale el menú: a la derecha del botón (menú lateral) o arriba de él (pestañas del teléfono). */
 export const SUBMENU_PLACEMENT = Object.freeze({side: 'side', above: 'above'});
@@ -42,7 +50,9 @@ const PLACEMENTS = Object.freeze({
  * @param {() => void} [props.onNavigate] al elegir una hija
  * @param {'side'|'above'} [props.placement] SUBMENU_PLACEMENT; por omisión a la derecha
  */
-export default function SubmenuActionsMenu({anchorElement, onClose, menuItem, activeItem, menuBadges, onNavigate, placement = SUBMENU_PLACEMENT.side}) {
+export default function SubmenuActionsMenu(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSubmenuActionsMenu.defaultProps) y encima lo que llega aquí
+    const {anchorElement, onClose, menuItem, activeItem, menuBadges, onNavigate, placement = SUBMENU_PLACEMENT.side} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const position = PLACEMENTS[placement] ?? PLACEMENTS[SUBMENU_PLACEMENT.side];
@@ -62,7 +72,7 @@ export default function SubmenuActionsMenu({anchorElement, onClose, menuItem, ac
                               }}>
                         {ChildIcon && <ListItemIcon><ChildIcon fontSize="small" /></ListItemIcon>}
                         <ListItemText>{menuItemLabelOf(child, t)}</ListItemText>
-                        {badge && <Chip label={badge.content} size="small" color="primary" sx={{height: 20, ml: 1.5, ...textSizeOf(BADGE_PIXELS)}} />}
+                        {badge && <SubmenuBadge label={badge.content} size="small" color="primary" ownSx={{height: 20, ml: 1.5, ...textSizeOf(BADGE_PIXELS)}} />}
                     </MenuItem>
                 );
             })}

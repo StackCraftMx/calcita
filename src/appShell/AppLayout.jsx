@@ -41,6 +41,11 @@
 //     bar: TOP_BAR.band, la franja de lado a lado. Mismo alto y mismo lugar las dos: el menú lateral y las páginas no se
 //     mueven.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaAppLayout con defaultProps y
+// styleOverrides de sus partes: skipLink, brand, brandLogo, brandText, brandName, brandCaption, titleArea, phoneTitle,
+// desktopTitle, railBrand, railLogo, collapseButton, root, scrollEdge, bar, toolbar, menuButton, spacer, tools,
+// progress, body, drawer, main, phoneSlot, content, phoneDrawer.
+//
 // Lo renderiza la app: arrow (regla de la casa).
 import {useMemo, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -83,6 +88,36 @@ import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
 import {GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppLayout)
+const THEME_NAME = 'CalcitaAppLayout';
+const LayoutSkipLink = piecePart(THEME_NAME, 'SkipLink', Link);
+const LayoutBrand = piecePart(THEME_NAME, 'Brand', ButtonBase);
+const LayoutBrandLogo = piecePart(THEME_NAME, 'BrandLogo', Box);
+const LayoutBrandText = piecePart(THEME_NAME, 'BrandText', Box);
+const LayoutBrandName = piecePart(THEME_NAME, 'BrandName', Typography);
+const LayoutBrandCaption = piecePart(THEME_NAME, 'BrandCaption', Typography);
+const LayoutTitleArea = piecePart(THEME_NAME, 'TitleArea', Box);
+const LayoutPhoneTitle = piecePart(THEME_NAME, 'PhoneTitle', Typography);
+const LayoutDesktopTitle = piecePart(THEME_NAME, 'DesktopTitle', Typography);
+const LayoutRailBrand = piecePart(THEME_NAME, 'RailBrand', ButtonBase);
+const LayoutRailLogo = piecePart(THEME_NAME, 'RailLogo', Box);
+const LayoutCollapseButton = piecePart(THEME_NAME, 'CollapseButton', IconButton);
+const LayoutRoot = piecePart(THEME_NAME, 'Root', Box);
+const LayoutScrollEdge = piecePart(THEME_NAME, 'ScrollEdge', Box);
+const LayoutBar = piecePart(THEME_NAME, 'Bar', AppBar);
+const LayoutToolbar = piecePart(THEME_NAME, 'Toolbar', Toolbar);
+const LayoutMenuButton = piecePart(THEME_NAME, 'MenuButton', IconButton);
+const LayoutSpacer = piecePart(THEME_NAME, 'Spacer', Box);
+const LayoutTools = piecePart(THEME_NAME, 'Tools', Box);
+const LayoutProgress = piecePart(THEME_NAME, 'Progress', LinearProgress);
+const LayoutBody = piecePart(THEME_NAME, 'Body', Box);
+const LayoutDrawer = piecePart(THEME_NAME, 'Drawer', Drawer);
+const LayoutMain = piecePart(THEME_NAME, 'Main', Box);
+const LayoutPhoneSlot = piecePart(THEME_NAME, 'PhoneSlot', Box);
+const LayoutContent = piecePart(THEME_NAME, 'Content', Box);
+const LayoutPhoneDrawer = piecePart(THEME_NAME, 'PhoneDrawer', Drawer);
 
 /** Los dos estilos de barra. */
 export const MENU_POSITION = Object.freeze({side: 'side', top: 'top'});
@@ -105,12 +140,12 @@ const BarGroup = ({isCapsule, sx, children}) => {
 const SkipToContentLink = () => {
     const {t} = useToolkitTranslation('layout');
     return (
-        <Link href={`#${MAIN_CONTENT_ID}`} sx={{
+        <LayoutSkipLink href={`#${MAIN_CONTENT_ID}`} ownSx={{
             position: 'absolute', left: 8, top: -48, zIndex: (theme) => theme.zIndex.tooltip + 1, bgcolor: 'background.paper',
             px: 1.5, py: 0.75, borderRadius: 1, boxShadow: 3, '&:focus': {top: 8},
         }}>
             {t('skipToContent')}
-        </Link>
+        </LayoutSkipLink>
     );
 };
 
@@ -118,19 +153,19 @@ const SkipToContentLink = () => {
 const BarBrand = ({logo, wordmark, brandName, brandCaption, homePath, sx}) => {
     const {Link: RouterLink} = useToolkitNavigation();
     return (
-        <ButtonBase component={RouterLink} to={homePath} aria-label={wordmark ? brandName : undefined}
-                    sx={[{alignItems: 'center', gap: 1.25, borderRadius: 1, flexShrink: 0, minWidth: 0, pr: 1, textAlign: 'left'}, sx]}>
+        <LayoutBrand component={RouterLink} to={homePath} aria-label={wordmark ? brandName : undefined}
+                    ownSx={[{alignItems: 'center', gap: 1.25, borderRadius: 1, flexShrink: 0, minWidth: 0, pr: 1, textAlign: 'left'}, sx]}>
             {wordmark ? <Wordmark>{wordmark}</Wordmark> : (
                 <>
-                    {logo && <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>}
-                    <Box sx={{minWidth: 0}}>
-                        <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
+                    {logo && <LayoutBrandLogo ownSx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</LayoutBrandLogo>}
+                    <LayoutBrandText ownSx={{minWidth: 0}}>
+                        <LayoutBrandName variant="subtitle2" component="span" noWrap ownSx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</LayoutBrandName>
                         {/* el renglón chico hereda el color de la barra (sobre el naranja, el gris del texto secundario no se leía) */}
-                        {brandCaption && <Typography variant="caption" component="span" noWrap sx={{display: 'block', lineHeight: 1.3, opacity: 0.8}}>{brandCaption}</Typography>}
-                    </Box>
+                        {brandCaption && <LayoutBrandCaption variant="caption" component="span" noWrap ownSx={{display: 'block', lineHeight: 1.3, opacity: 0.8}}>{brandCaption}</LayoutBrandCaption>}
+                    </LayoutBrandText>
                 </>
             )}
-        </ButtonBase>
+        </LayoutBrand>
     );
 };
 
@@ -141,15 +176,15 @@ const BarBrand = ({logo, wordmark, brandName, brandCaption, homePath, sx}) => {
 const BarTitle = ({brandName}) => {
     const {title, isTitleVisible} = usePageTitle();
     return (
-        <Box sx={{flexGrow: 1, minWidth: 0}}>
-            <Typography variant="subtitle1" component="p" noWrap sx={{display: 'block', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, fontWeight: 600}}>{title ?? brandName}</Typography>
+        <LayoutTitleArea ownSx={{flexGrow: 1, minWidth: 0}}>
+            <LayoutPhoneTitle variant="subtitle1" component="p" noWrap ownSx={{display: 'block', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, fontWeight: 600}}>{title ?? brandName}</LayoutPhoneTitle>
             <Fade in={Boolean(title) && !isTitleVisible}>
-                <Typography variant="subtitle1" component="p" noWrap
-                            sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'}, fontWeight: 600, ml: 1, pl: 2, borderLeft: '1px solid color-mix(in srgb, currentColor 30%, transparent)'}}>
+                <LayoutDesktopTitle variant="subtitle1" component="p" noWrap
+                            ownSx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'}, fontWeight: 600, ml: 1, pl: 2, borderLeft: '1px solid color-mix(in srgb, currentColor 30%, transparent)'}}>
                     {title}
-                </Typography>
+                </LayoutDesktopTitle>
             </Fade>
-        </Box>
+        </LayoutTitleArea>
     );
 };
 
@@ -158,10 +193,10 @@ const RailBrand = ({logo, brandName, homePath}) => {
     const {Link: RouterLink} = useToolkitNavigation();
     return (
         <Tooltip title={brandName} placement="right">
-            <ButtonBase component={RouterLink} to={homePath} aria-label={brandName}
-                        sx={{width: 44, height: 44, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <Box sx={{width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>
-            </ButtonBase>
+            <LayoutRailBrand component={RouterLink} to={homePath} aria-label={brandName}
+                        ownSx={{width: 44, height: 44, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <LayoutRailLogo ownSx={{width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</LayoutRailLogo>
+            </LayoutRailBrand>
         </Tooltip>
     );
 };
@@ -172,9 +207,9 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
     const label = collapsed ? t('drawer.expand') : t('drawer.collapse');
     return (
         <Tooltip title={label}>
-            <IconButton aria-label={label} aria-expanded={!collapsed} onClick={onToggle} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'inline-flex'}, color: 'inherit'}}>
+            <LayoutCollapseButton aria-label={label} aria-expanded={!collapsed} onClick={onToggle} ownSx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'inline-flex'}, color: 'inherit'}}>
                 {collapsed ? <MenuIcon /> : <MenuOpenIcon />}
-            </IconButton>
+            </LayoutCollapseButton>
         </Tooltip>
     );
 };
@@ -239,14 +274,14 @@ const AppLayoutFrame = ({
 
     return (
         <BarActionsSlotContext.Provider value={barActions}>
-        <Box sx={[{display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default'}, isGlass && ambientBackgroundOf]}>
+        <LayoutRoot ownSx={[{display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default'}, isGlass && ambientBackgroundOf]}>
             <SkipToContentLink />
             <GlassLensFilter />
 
             {/* en cápsulas, lo que pasa por debajo de la barra se desenfoca en la orilla: debajo del menú lateral, que sigue nítido */}
             {isGlass && usesBarCapsules && (
-                <Box aria-hidden="true"
-                     sx={(theme) => ({
+                <LayoutScrollEdge aria-hidden="true"
+                     ownSx={(theme) => ({
                          ...scrollEdgeStylesOf(theme), display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'},
                          position: 'fixed', top: 0, left: 0, right: 0, height: `calc(${APP_BAR_HEIGHT} + ${panelGap}px)`,
                          zIndex: theme.zIndex.drawer - 1, pointerEvents: 'none',
@@ -254,8 +289,8 @@ const AppLayoutFrame = ({
             )}
             {/* en cápsulas con vidrio la barra va transparente (color="transparent": el tema no le pone vidrio) y cada grupo
                 lleva el suyo; con el minimalista se queda del color del fondo, que tapa lo que pasa por debajo */}
-            <AppBar ref={appBarRef} position="sticky" color={isGlass && usesBarCapsules ? 'transparent' : undefined}
-                    sx={(theme) => ({
+            <LayoutBar ref={appBarRef} position="sticky" color={isGlass && usesBarCapsules ? 'transparent' : undefined}
+                    ownSx={(theme) => ({
                         pt: 'env(safe-area-inset-top)',
                         // encima del menú lateral, como en el DashboardLayout de MUI
                         zIndex: theme.zIndex.drawer + 1,
@@ -282,15 +317,15 @@ const AppLayoutFrame = ({
                         ...(usesTabBar && {[PHONE_MEDIA_QUERY]: {display: 'none'}}),
                     })}>
                 {/* a la izquierda, la ☰ queda alineada con los íconos del menú lateral (los dos a 32 px de su orilla) */}
-                <Toolbar disableGutters sx={{minHeight: {xs: APP_BAR_HEIGHT_PIXELS, sm: APP_BAR_HEIGHT_PIXELS}, gap: 1, pl: {xs: 1.5, md: isSideMenu ? 1.5 : 3}, pr: {xs: 1.5, md: 3}}}>
+                <LayoutToolbar disableGutters ownSx={{minHeight: {xs: APP_BAR_HEIGHT_PIXELS, sm: APP_BAR_HEIGHT_PIXELS}, gap: 1, pl: {xs: 1.5, md: isSideMenu ? 1.5 : 3}, pr: {xs: 1.5, md: 3}}}>
                     {/* la ☰ del teléfono va en la primera cápsula (en escritorio la de encoger el menú y el nombre). OJO: dentro de
                         una cápsula, sin el margen negativo de «orilla de inicio» de MUI (-12 px): el botón quedaba pegado a la
                         curva. Así su círculo queda concéntrico con la cápsula */}
                     <BarGroup isCapsule={usesBarCapsules}>
-                        <IconButton edge="start" aria-label={t('drawer.open')} aria-expanded={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(true)}
-                                    sx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...((isGlass || usesBarCapsules) && {ml: 0})}}>
+                        <LayoutMenuButton edge="start" aria-label={t('drawer.open')} aria-expanded={isMobileMenuOpen} onClick={() => setIsMobileMenuOpen(true)}
+                                    ownSx={{display: 'inline-flex', [DESKTOP_MEDIA_QUERY]: {display: 'none'}, color: 'inherit', ...((isGlass || usesBarCapsules) && {ml: 0})}}>
                             <MenuIcon />
-                        </IconButton>
+                        </LayoutMenuButton>
                         {isSideMenu && <CollapseMenuButton collapsed={collapsed} onToggle={toggleCollapsed} />}
                         <BarBrand logo={logo} wordmark={wordmark} brandName={brandName} brandCaption={brandCaption} homePath={homePath}
                                   sx={isSideMenu ? {display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}} : {display: 'flex'}} />
@@ -303,27 +338,27 @@ const AppLayoutFrame = ({
                             <BarGroup isCapsule={usesBarCapsules} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}}}>
                                 <TopMenu menuItems={menuItems} activeItem={activeItem} />
                             </BarGroup>
-                            <Box sx={{flexGrow: 1}} />
+                            <LayoutSpacer ownSx={{flexGrow: 1}} />
                         </>
                     )}
                     {/* las acciones de la pantalla abierta (BarActions, y las de PageHeading con cápsulas): cada grupo cae aquí,
                         antes de la cuenta. Solo en escritorio: en el teléfono flotan arriba (phoneBarActionsSlot, en el contenido) */}
-                    <Box ref={setBarActionsSlot} sx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}, alignItems: 'center', gap: 1, minWidth: 0}} />
+                    <LayoutTools ref={setBarActionsSlot} ownSx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}, alignItems: 'center', gap: 1, minWidth: 0}} />
                     <BarGroup isCapsule={usesBarCapsules}>
                         <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle} showLanguageToggle={showLanguageToggle}
                                      showColorSchemeToggle={showColorSchemeToggle} user={user} profilePath={profilePath} accountMenuItems={accountMenuItems}
                                      onSignOut={onSignOut} isSigningOut={isSigningOut} />
                     </BarGroup>
-                </Toolbar>
+                </LayoutToolbar>
                 {ribbons}
                 {/* con la barra de pestañas el aviso de versión nueva flota aparte, en su cápsula (en el teléfono esta barra no
                     se ve); sin ella, franja dentro de la barra */}
                 {!usesTabBar && <NewBuildNotice />}
                 {isNavigating && (
-                    <LinearProgress aria-label={t('navigating')} color="inherit"
-                                    sx={{position: 'absolute', bottom: 0, left: 0, right: 0, height: NAVIGATING_BAR_PIXELS}} />
+                    <LayoutProgress aria-label={t('navigating')} color="inherit"
+                                    ownSx={{position: 'absolute', bottom: 0, left: 0, right: 0, height: NAVIGATING_BAR_PIXELS}} />
                 )}
-            </AppBar>
+            </LayoutBar>
             {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
@@ -335,10 +370,10 @@ const AppLayoutFrame = ({
                               )} />
             )}
 
-            <Box sx={{display: 'flex', flexGrow: 1, minWidth: 0}}>
+            <LayoutBody ownSx={{display: 'flex', flexGrow: 1, minWidth: 0}}>
                 {isSideMenu && (
-                    <Drawer variant="permanent"
-                            sx={(theme) => ({
+                    <LayoutDrawer variant="permanent"
+                            ownSx={(theme) => ({
                                 display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'}, width: drawerWidth + panelGap, flexShrink: 0, whiteSpace: 'nowrap',
                                 transition: drawerTransitionOf(theme),
                                 '& .MuiDrawer-paper': {
@@ -369,11 +404,11 @@ const AppLayoutFrame = ({
                                                    profilePath={profilePath} accountMenuItems={accountMenuItems} onSignOut={onSignOut}
                                                    isSigningOut={isSigningOut} />
                                   ) : undefined} />
-                    </Drawer>
+                    </LayoutDrawer>
                 )}
 
-                <Box component="main" id={MAIN_CONTENT_ID} tabIndex={-1}
-                     sx={(theme) => ({
+                <LayoutMain component="main" id={MAIN_CONTENT_ID} tabIndex={-1}
+                     ownSx={(theme) => ({
                          flexGrow: 1, minWidth: 0, outline: 'none', px: {xs: 2, md: 3, lg: 4}, pt: 3, pb: 6,
                          // con la barra de pestañas abajo (teléfono): arriba, lugar para la hora y la cámara del iPhone; abajo,
                          // lugar para que la barra (que flota a GLASS_PANEL_GAP_PIXELS) no tape el final de la página
@@ -389,8 +424,8 @@ const AppLayoutFrame = ({
                         flotando. Vacío no se ve. Solo las cápsulas reciben clics: el hueco de la izquierda deja pasar el dedo
                         a lo de abajo */}
                     {usesPhoneFloatingActions && (
-                        <Box ref={setPhoneBarActionsSlot} data-phone-bar-actions=""
-                             sx={(theme) => ({
+                        <LayoutPhoneSlot ref={setPhoneBarActionsSlot} data-phone-bar-actions=""
+                             ownSx={(theme) => ({
                                  display: 'none',
                                  [PHONE_MEDIA_QUERY]: {
                                      display: 'flex', '&:empty': {display: 'none'},
@@ -400,17 +435,17 @@ const AppLayoutFrame = ({
                                  },
                              })} />
                     )}
-                    <Box sx={{maxWidth: contentMaxWidth, mx: 'auto'}}>{children}</Box>
-                </Box>
-            </Box>
+                    <LayoutContent ownSx={{maxWidth: contentMaxWidth, mx: 'auto'}}>{children}</LayoutContent>
+                </LayoutMain>
+            </LayoutBody>
 
             {/* el cajón del teléfono (los dos estilos): con el logo arriba, se cierra al elegir una pantalla */}
-            <Drawer variant="temporary" open={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} ModalProps={{keepMounted: true}}
-                    sx={{[DESKTOP_MEDIA_QUERY]: {display: 'none'}}}
+            <LayoutPhoneDrawer variant="temporary" open={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} ModalProps={{keepMounted: true}}
+                    ownSx={{[DESKTOP_MEDIA_QUERY]: {display: 'none'}}}
                     slotProps={{paper: {sx: {width: DRAWER_WIDTH_EXPANDED, boxSizing: 'border-box', pt: 'env(safe-area-inset-top)', pb: 'env(safe-area-inset-bottom)'}}}}>
                 <SideMenu {...sideMenuProps} collapsed={false} onNavigate={() => setIsMobileMenuOpen(false)} />
-            </Drawer>
-        </Box>
+            </LayoutPhoneDrawer>
+        </LayoutRoot>
         </BarActionsSlotContext.Provider>
     );
 };
@@ -454,12 +489,14 @@ const AppLayoutFrame = ({
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete (para todo el marco)
  * @param {import('react').ReactNode} props.children el contenido
  */
-export const AppLayout = ({
+export const AppLayout = (props) => {
+    // lo que el proyecto puso en su tema (components.CalcitaAppLayout.defaultProps) y encima lo que llega aquí
+    const {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
     isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, onMenuCollapse, onMobileMenuChange, onMobileTabsChange,
     texts, children,
-}) => {
+} = usePieceProps(props, THEME_NAME);
     const {appName} = useToolkitSettings();
     // un ícono ya pintado (icon) se vuelve componente aquí, una vez: las piezas del menú pintan siempre Icon
     const shownMenuItems = useMemo(() => menuItemsWithIconsOf(menuItems), [menuItems]);

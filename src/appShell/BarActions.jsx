@@ -20,6 +20,10 @@
 // del árbol y eso no se puede solo con CSS sin pintarlos dos veces (con sus estados por duplicado). Con Next, el primer
 // pintado los deja en el contenido y se mueven a su lugar al hidratar; con Vite no se nota.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarActions con defaultProps y
+// styleOverrides.group (el grupo sin cápsula); la cápsula, con CalcitaBarCapsule. El sx y el inlineSx de la pantalla siguen
+// ganando a todo.
+//
 // Genérico del paquete: function (regla de la casa).
 import {Children, useState} from 'react';
 import {createPortal} from 'react-dom';
@@ -38,6 +42,12 @@ import {
 import {DESKTOP_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import useFittingActionCount from '@/appShell/useFittingActionCount.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarActions): el grupo sin cápsula (bare, o en la
+// franja); con cápsula, la cápsula es CalcitaBarCapsule
+const THEME_NAME = 'CalcitaBarActions';
+const ActionsGroup = piecePart(THEME_NAME, 'Group', Box);
 
 // la marca de un grupo exclusivo (BarActions exclusive) y la regla que, mientras exista, esconde a los demás grupos del
 // renglón flotante del teléfono (data-phone-bar-actions lo pone AppLayout)
@@ -101,7 +111,9 @@ const PhoneFloatingCapsule = ({phoneSlot, label, sx, texts, children, ...rest}) 
  *     exclusivos): los otros se esconden, como el modo de edición del iPhone deja solo lo de lo elegido. Lo usa SelectionActions
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function BarActions({children, label, order, sx, inlineSx, bare = false, exclusive = false, texts}) {
+export default function BarActions(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaBarActions.defaultProps) y encima lo que llega aquí
+    const {children, label, order, sx, inlineSx, bare = false, exclusive = false, texts} = usePieceProps(props, THEME_NAME);
     const {slot, phoneSlot, usesCapsules} = useBarActionsSlot();
     const isDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
     // en escritorio, la barra; en el teléfono, el renglón flotante (solo existe con cápsulas)
@@ -113,7 +125,7 @@ export default function BarActions({children, label, order, sx, inlineSx, bare =
     // sin lugar: donde la pantalla las puso, en su cápsula de íconos
     if (!target) {
         if (bare) {
-            return <Box role="group" aria-label={label} sx={[{display: 'flex', alignItems: 'center'}, ...extraInlineSx]}>{children}</Box>;
+            return <ActionsGroup role="group" aria-label={label} ownSx={{display: 'flex', alignItems: 'center'}} sx={extraInlineSx}>{children}</ActionsGroup>;
         }
         return (
             <BarCapsule aria-label={label} sx={[{alignSelf: 'flex-start'}, ...extraInlineSx]}>
@@ -142,17 +154,17 @@ export default function BarActions({children, label, order, sx, inlineSx, bare =
         return (
             <>
                 {hideOthers}
-                {createPortal(<Box role="group" aria-label={label} sx={[{display: 'flex', alignItems: 'center'}, orderSx, ...extraSx]} {...exclusiveProps}>{children}</Box>, target)}
+                {createPortal(<ActionsGroup role="group" aria-label={label} ownSx={[{display: 'flex', alignItems: 'center'}, orderSx]} sx={extraSx} {...exclusiveProps}>{children}</ActionsGroup>, target)}
             </>
         );
     }
     // en la franja: botones sueltos (solo ícono) con el color de la franja (sobre el naranja de Stackcraft, el color
     // principal no se vería)
     return createPortal(
-        <Box role="group" aria-label={label}
-             sx={[{display: 'flex', alignItems: 'center', gap: 0.5, ...monochromeButtonsSxOf('inherit')}, orderSx, ...extraSx]}>
+        <ActionsGroup role="group" aria-label={label}
+                      ownSx={[{display: 'flex', alignItems: 'center', gap: 0.5, ...monochromeButtonsSxOf('inherit')}, orderSx]} sx={extraSx}>
             <InCapsule>{children}</InCapsule>
-        </Box>,
+        </ActionsGroup>,
         target,
     );
 }

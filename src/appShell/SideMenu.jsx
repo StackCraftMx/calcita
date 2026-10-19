@@ -9,6 +9,10 @@
 // Con el vidrio del tema, los títulos de sección van como se escriben («Operación») y no en mayúsculas: la guía de Liquid
 // Glass de Apple los dejó de poner en mayúsculas porque se leen mejor.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSideMenu con defaultProps y
+// styleOverrides de sus partes: scrollArrow, root, brand, brandLogo, brandText, brandName, brandCaption, railTop,
+// listArea, list, section, sectionTitle, sectionTitleText, footer, railBottom.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useRef, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -30,6 +34,25 @@ import Wordmark from '@/appShell/Wordmark.jsx';
 import {APP_BAR_HEIGHT_PIXELS} from '@/appShell/shellSizes.js';
 import SideMenuEntry from '@/appShell/SideMenuEntry.jsx';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenu)
+const THEME_NAME = 'CalcitaSideMenu';
+const MenuScrollArrow = piecePart(THEME_NAME, 'ScrollArrow', IconButton);
+const MenuRoot = piecePart(THEME_NAME, 'Root', Box);
+const MenuBrand = piecePart(THEME_NAME, 'Brand', ButtonBase);
+const MenuBrandLogo = piecePart(THEME_NAME, 'BrandLogo', Box);
+const MenuBrandText = piecePart(THEME_NAME, 'BrandText', Box);
+const MenuBrandName = piecePart(THEME_NAME, 'BrandName', Typography);
+const MenuBrandCaption = piecePart(THEME_NAME, 'BrandCaption', Typography);
+const MenuRailTop = piecePart(THEME_NAME, 'RailTop', Box);
+const MenuListArea = piecePart(THEME_NAME, 'ListArea', Box);
+const MenuList = piecePart(THEME_NAME, 'List', List);
+const MenuSection = piecePart(THEME_NAME, 'Section', Box);
+const MenuSectionTitle = piecePart(THEME_NAME, 'SectionTitle', ListSubheader);
+const MenuSectionTitleText = piecePart(THEME_NAME, 'SectionTitleText', Box);
+const MenuFooter = piecePart(THEME_NAME, 'Footer', Box);
+const MenuRailBottom = piecePart(THEME_NAME, 'RailBottom', Box);
 
 // lo alto del desvanecido en la orilla del menú que tiene más (px)
 const SCROLL_FADE_PIXELS = 28;
@@ -43,13 +66,13 @@ const SCROLL_STEP_OVERLAP_PIXELS = 44;
 function ScrollArrow({label, onClick, sx, children}) {
     return (
         <Tooltip title={label} placement="right">
-            <IconButton size="small" aria-label={label} onClick={onClick}
-                        sx={[(theme) => ({
+            <MenuScrollArrow size="small" aria-label={label} onClick={onClick}
+                        ownSx={[(theme) => ({
                             position: 'absolute', left: '50%', transform: 'translateX(-50%)', zIndex: 1, width: 32, height: 24, borderRadius: '999px',
                             ...(isGlassTheme(theme) ? glassStylesOf(theme, {isControl: true}) : {bgcolor: 'background.paper', boxShadow: 2}),
                         }), sx]}>
                 {children}
-            </IconButton>
+            </MenuScrollArrow>
         </Tooltip>
     );
 }
@@ -77,9 +100,11 @@ const SECTION_TITLE_FONT_REM = Object.freeze({solid: 0.6875, glass: 0.75});
  * @param {import('react').ReactNode} [props.railTop] arriba del menú encogido que hace de barra: la ☰ y el logo
  * @param {import('react').ReactNode} [props.railBottom] abajo de ese menú: los ajustes y la cuenta
  */
-export default function SideMenu({
+export default function SideMenu(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaSideMenu.defaultProps) y encima lo que llega aquí
+    const {
     logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, collapsed, footer, showBrand = true, onNavigate, railTop, railBottom, menuBadges,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const theme = useTheme();
@@ -116,33 +141,33 @@ export default function SideMenu({
     return (
         // OJO: flex y no height 100%: dentro de la hoja de «Más» (que solo tiene alto máximo) un 100 % no se resuelve, el menú
         // crecía sin límite y la hoja no se deslizaba (lo reportaron con el teléfono acostado)
-        <Box sx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
+        <MenuRoot ownSx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
             {showBrand && (
                 <>
-                    <ButtonBase component={RouterLink} to={homePath} onClick={onNavigate} aria-label={brandName}
-                                sx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 1.25, minHeight: APP_BAR_HEIGHT_PIXELS,
+                    <MenuBrand component={RouterLink} to={homePath} onClick={onNavigate} aria-label={brandName}
+                                ownSx={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 1.25, minHeight: APP_BAR_HEIGHT_PIXELS,
                                      pl: BRAND_LEFT_PADDING, pr: 2, flexShrink: 0}}>
                         {wordmark ? <Wordmark>{wordmark}</Wordmark> : (
                             <>
-                                <Box sx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</Box>
-                                <Box sx={(theme) => ({minWidth: 0, textAlign: 'left', ...fadeWhenCollapsed(theme)})}>
-                                    <Typography variant="subtitle2" component="span" noWrap sx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</Typography>
-                                    {brandCaption && <Typography variant="caption" component="span" color="text.secondary" noWrap sx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</Typography>}
-                                </Box>
+                                <MenuBrandLogo ownSx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</MenuBrandLogo>
+                                <MenuBrandText ownSx={(theme) => ({minWidth: 0, textAlign: 'left', ...fadeWhenCollapsed(theme)})}>
+                                    <MenuBrandName variant="subtitle2" component="span" noWrap ownSx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</MenuBrandName>
+                                    {brandCaption && <MenuBrandCaption variant="caption" component="span" color="text.secondary" noWrap ownSx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</MenuBrandCaption>}
+                                </MenuBrandText>
                             </>
                         )}
-                    </ButtonBase>
+                    </MenuBrand>
                     <Divider />
                 </>
             )}
 
-            {railTop && <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pt: 1.25, pb: 0.5, flexShrink: 0}}>{railTop}</Box>}
+            {railTop && <MenuRailTop ownSx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pt: 1.25, pb: 0.5, flexShrink: 0}}>{railTop}</MenuRailTop>}
 
             {/* la lista y sus flechas: cuando no cabe, una flecha en la orilla de donde hay más (como los menús largos de la Mac)
                 que la desliza un tramo; el desvanecido la refuerza. Sin barra de desplazamiento no se entendía que había más */}
-            <Box sx={{position: 'relative', flexGrow: 1, minHeight: 0, display: 'flex', flexDirection: 'column'}}>
-                <List ref={listRef} component="nav" aria-label={t('drawer.ariaLabel')} dense disablePadding
-                      sx={{
+            <MenuListArea ownSx={{position: 'relative', flexGrow: 1, minHeight: 0, display: 'flex', flexDirection: 'column'}}>
+                <MenuList ref={listRef} component="nav" aria-label={t('drawer.ariaLabel')} dense disablePadding
+                      ownSx={{
                           px: 1, pt: 1, pb: 2, flexGrow: 1, minHeight: 0, height: '100%', overflowY: 'auto', overflowX: 'hidden',
                           // sin barra de desplazamiento, abierto o encogido (se desliza igual con la rueda, el trackpad o el
                           // teclado, como en la Mac, donde la barra solo sale al deslizar): a la vista se veía una raya junto a
@@ -153,11 +178,11 @@ export default function SideMenu({
                           '&::-webkit-scrollbar': {display: 'none'},
                       }}>
                     {menuSectionsOf(menuItems, t).map((section, sectionIndex) => (
-                        <Box component="li" key={section.title ?? `section-${sectionIndex}`} sx={{listStyle: 'none'}}>
+                        <MenuSection component="li" key={section.title ?? `section-${sectionIndex}`} ownSx={{listStyle: 'none'}}>
                             <List dense disablePadding
                                   subheader={section.title ? (
-                                      <ListSubheader disableSticky component="div"
-                                                     sx={(theme) => ({position: 'relative', bgcolor: 'transparent', px: 1.5, pt: 1.5, lineHeight: 2, fontSize: `${sectionTitleFontRem}rem`,
+                                      <MenuSectionTitle disableSticky component="div"
+                                                     ownSx={(theme) => ({position: 'relative', bgcolor: 'transparent', px: 1.5, pt: 1.5, lineHeight: 2, fontSize: `${sectionTitleFontRem}rem`,
                                                                       fontWeight: 600, letterSpacing: isAppleStyle ? 0 : '0.08em', textTransform: isAppleStyle ? 'none' : 'uppercase',
                                                                       color: 'text.secondary', whiteSpace: 'nowrap',
                                                                       // encogido: en lugar del título, una rayita a media altura del renglón
@@ -166,22 +191,22 @@ export default function SideMenu({
                                                                           top: `calc(${theme.spacing(1.5)} + ${sectionTitleFontRem}rem)`, bgcolor: 'divider',
                                                                           opacity: collapsed ? 1 : 0, transition: theme.transitions.create('opacity'),
                                                                       }})}>
-                                          <Box component="span" sx={fadeWhenCollapsed}>{section.title}</Box>
-                                      </ListSubheader>
+                                          <MenuSectionTitleText component="span" ownSx={fadeWhenCollapsed}>{section.title}</MenuSectionTitleText>
+                                      </MenuSectionTitle>
                                   ) : null}>
                                 {section.menuItems.map((menuItem) => (
                                     <SideMenuEntry key={menuItem.to ?? menuItemLabelOf(menuItem, t)} menuItem={menuItem} activeItem={activeItem} collapsed={collapsed}
                                                    onNavigate={onNavigate} menuBadges={menuBadges} />
                                 ))}
                             </List>
-                        </Box>
+                        </MenuSection>
                     ))}
                     {/* la tarjeta de abajo va al final de lo que se desliza, no fija: en una pantalla baja (el teléfono acostado) se
                         comía el menú y solo se veía «Inicio» (lo reportaron) */}
                     {footer && (
-                        <Box component="li" sx={{listStyle: 'none', pt: 2, px: 0.5, display: collapsed ? 'none' : 'block'}}>{footer}</Box>
+                        <MenuFooter component="li" ownSx={{listStyle: 'none', pt: 2, px: 0.5, display: collapsed ? 'none' : 'block'}}>{footer}</MenuFooter>
                     )}
-                </List>
+                </MenuList>
                 {hiddenEdges.top && (
                     <ScrollArrow label={t('drawer.scrollUp')} onClick={() => scrollMenu(-1)} sx={{top: SCROLL_ARROW_INSET_PIXELS}}>
                         <KeyboardArrowUpRoundedIcon fontSize="small" />
@@ -192,9 +217,9 @@ export default function SideMenu({
                         <KeyboardArrowDownRoundedIcon fontSize="small" />
                     </ScrollArrow>
                 )}
-            </Box>
+            </MenuListArea>
 
-            {railBottom && <Box sx={{display: 'flex', justifyContent: 'center', pt: 1, pb: 1.25, flexShrink: 0, borderTop: 1, borderColor: 'divider'}}>{railBottom}</Box>}
-        </Box>
+            {railBottom && <MenuRailBottom ownSx={{display: 'flex', justifyContent: 'center', pt: 1, pb: 1.25, flexShrink: 0, borderTop: 1, borderColor: 'divider'}}>{railBottom}</MenuRailBottom>}
+        </MenuRoot>
     );
 }

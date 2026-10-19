@@ -2,6 +2,9 @@
 // submenú abre una lista debajo. Las secciones no se pintan aquí (en una fila no hay dónde); en el teléfono el menú es
 // el mismo cajón del estilo lateral, con sus secciones.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTopMenu con defaultProps y
+// styleOverrides de sus partes: link, root.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -15,6 +18,12 @@ import MenuItem from '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTopMenu)
+const THEME_NAME = 'CalcitaTopMenu';
+const TopMenuLink = piecePart(THEME_NAME, 'Link', Button);
+const TopMenuRoot = piecePart(THEME_NAME, 'Root', Box);
 
 // la entrada abierta se marca con una raya abajo, del color principal (en la barra naranja, del color del texto)
 const ACTIVE_UNDERLINE_PIXELS = 2;
@@ -38,18 +47,18 @@ function TopMenuEntry({menuItem, activeItem}) {
 
     if (!hasChildren) {
         return (
-            <Button {...menuLinkPropsOf(menuItem, RouterLink)} startIcon={Icon ? <Icon fontSize="small" /> : undefined}
-                    aria-current={isActive ? 'page' : undefined} sx={buttonSx}>
+            <TopMenuLink {...menuLinkPropsOf(menuItem, RouterLink)} startIcon={Icon ? <Icon fontSize="small" /> : undefined}
+                    aria-current={isActive ? 'page' : undefined} ownSx={buttonSx}>
                 {menuItemLabelOf(menuItem, t)}
-            </Button>
+            </TopMenuLink>
         );
     }
     return (
         <>
-            <Button onClick={(event) => setAnchorElement(event.currentTarget)} aria-haspopup="menu" aria-expanded={Boolean(anchorElement)}
-                    startIcon={Icon ? <Icon fontSize="small" /> : undefined} endIcon={<ExpandMoreIcon fontSize="small" />} sx={buttonSx}>
+            <TopMenuLink onClick={(event) => setAnchorElement(event.currentTarget)} aria-haspopup="menu" aria-expanded={Boolean(anchorElement)}
+                    startIcon={Icon ? <Icon fontSize="small" /> : undefined} endIcon={<ExpandMoreIcon fontSize="small" />} ownSx={buttonSx}>
                 {menuItemLabelOf(menuItem, t)}
-            </Button>
+            </TopMenuLink>
             <Menu anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={() => setAnchorElement(null)} slotProps={{paper: {sx: {minWidth: 220, mt: 0.5}}}}>
                 {menuItem.children.map((child) => {
                     const ChildIcon = child.Icon;
@@ -68,14 +77,16 @@ function TopMenuEntry({menuItem, activeItem}) {
 /**
  * @param {{menuItems: object[], activeItem: object|null}} props
  */
-export default function TopMenu({menuItems, activeItem}) {
+export default function TopMenu(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaTopMenu.defaultProps) y encima lo que llega aquí
+    const {menuItems, activeItem} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('layout');
     return (
-        <Box component="nav" aria-label={t('drawer.ariaLabel')}
-             sx={{display: {xs: 'none', md: 'flex'}, alignItems: 'stretch', alignSelf: 'stretch', gap: 0.5, minWidth: 0, overflowX: 'auto'}}>
+        <TopMenuRoot component="nav" aria-label={t('drawer.ariaLabel')}
+             ownSx={{display: {xs: 'none', md: 'flex'}, alignItems: 'stretch', alignSelf: 'stretch', gap: 0.5, minWidth: 0, overflowX: 'auto'}}>
             {menuItems.map((menuItem) => (
                 <TopMenuEntry key={menuItem.to ?? menuItem.href ?? menuItemLabelOf(menuItem, t)} menuItem={menuItem} activeItem={activeItem} />
             ))}
-        </Box>
+        </TopMenuRoot>
     );
 }
