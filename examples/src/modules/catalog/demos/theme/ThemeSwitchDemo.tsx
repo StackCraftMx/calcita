@@ -68,7 +68,8 @@ const ThemeSwitchDemo = () => {
     const [choice, setChoice] = useState('calcita');
     const [period, setPeriod] = useState('week');
     const [panelRadius, setPanelRadius] = useState(20);
-    const [fieldRadius, setFieldRadius] = useState(12);
+    // null: sin la variable, cada campo con sus esquinas de fábrica (en una sección de formulario, cápsula)
+    const [fieldRadius, setFieldRadius] = useState<number | null>(null);
     const [name, setName] = useState('');
 
     return (
@@ -81,8 +82,10 @@ const ThemeSwitchDemo = () => {
                             aria-label="Esquinas de los paneles" />
                 </Box>
                 <Box sx={{flex: 1}}>
-                    <Typography variant="caption" color="text.secondary">--calcita-field-radius: {fieldRadius}px</Typography>
-                    <Slider size="small" min={0} max={20} value={fieldRadius} onChange={(event, value) => setFieldRadius(value as number)}
+                    <Typography variant="caption" color="text.secondary">
+                        --calcita-field-radius: {fieldRadius === null ? 'de fábrica' : `${fieldRadius}px`}
+                    </Typography>
+                    <Slider size="small" min={0} max={20} value={fieldRadius ?? 20} onChange={(event, value) => setFieldRadius(value as number)}
                             aria-label="Esquinas de los campos" />
                 </Box>
             </Stack>
@@ -91,7 +94,7 @@ const ThemeSwitchDemo = () => {
                 <Box data-testid="theme-preview" sx={{
                     p: 2, borderRadius: 2, bgcolor: 'background.default',
                     '--calcita-panel-radius': `${panelRadius}px`,
-                    '--calcita-field-radius': `${fieldRadius}px`,
+                    ...(fieldRadius !== null && {'--calcita-field-radius': `${fieldRadius}px`}),
                 }}>
                     <Stack spacing={2}>
                         <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>

@@ -7,7 +7,7 @@ import {createTheme} from '@mui/material/styles';
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {GLASS_INSET_PIXELS, GLASS_OPACITY, PANEL_RADIUS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
-import {FIELD_TONES, fieldVariablesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
+import {FIELD_TONES, fieldVariablesOf, fieldWellFromVariablesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 
 // lo que vale una propiedad en claro y en oscuro: con lightDarkStylesOf el valor de cada modo vive en su variable
 // (--calcita-…) y la propiedad dice var(--calcita-…); la regla de oscuro solo cambia la variable
@@ -278,7 +278,9 @@ test('los campos con los tonos del proyecto (fields): blancos con borde en claro
     // el pozo lee la paleta (variables de MUI: cambian solas con el modo) y la orilla va por dentro
     assert.equal(well.backgroundColor, theme.vars.palette.field.fill);
     assert.equal(well.boxShadow, `inset 0 0 0 1px ${theme.vars.palette.field.border}`);
-    assert.equal(well.borderRadius, 8);
+    // un número va en px en todos lados (en sx se multiplicaría por el radio del tema)
+    assert.equal(well.borderRadius, '8px');
+    assert.equal(fieldWellFromVariablesOf(theme).borderRadius, '8px');
     // sin fields, el gris de Apple de siempre en los dos modos
     assert.deepEqual({...createToolkitTheme({glass: true}).colorSchemes.light.palette.field}, {...FIELD_TONES.light});
     // y también desde la paleta del proyecto, encima de fields
@@ -299,3 +301,11 @@ test('el renglón de FormSection pone los tonos en variables suyas: en oscuro ap
     assert.equal(plainVariables[darkKey]['--calcita-field-fill'], FIELD_TONES.dark.fill);
 });
 
+test('los campos de un renglón de FormSection son cápsulas de fábrica, y la variable o fields.radius las cambian', () => {
+    // de fábrica: cápsula (así se aprobaron); la variable --calcita-field-radius la cambia
+    assert.equal(fieldWellFromVariablesOf(createToolkitTheme({glass: true})).borderRadius, 'var(--calcita-field-radius, 999px)');
+    // los campos dentro de una tarjeta siguen con sus 12 px de respaldo
+    assert.equal(fieldWellStylesOf(createToolkitTheme({glass: true})).borderRadius, 'var(--calcita-field-radius, 12px)');
+    // con fields.radius en texto, tal cual
+    assert.equal(fieldWellFromVariablesOf(createToolkitTheme({fields: {radius: '0.5rem'}})).borderRadius, '0.5rem');
+});
