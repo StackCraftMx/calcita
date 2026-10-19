@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.30.0] - 2026-10-19
+
+La 0.29.0 no se publicó en npm: la 0.30.0 la incluye completa (las piezas desde el tema, abajo).
+
+### Agregado
+
+- Variables CSS para los valores globales: `--calcita-panel-radius`, `--calcita-menu-radius`, `--calcita-field-radius`,
+  `--calcita-glass-blur` y `--calcita-glass-saturate`, cada una con su valor de siempre de respaldo (sin la variable se ve
+  igual). Se ponen en CSS suelto (también en la página de un sistema que ya existe), en un contenedor o desde el tema:
+  `createToolkitTheme({cssTokens})`. `CSS_TOKENS`, `cssTokenOf` y `cssTokenDeclarationsOf` exportados.
+- Catálogo, «Tema y vidrio»: la sección «Cambie el tema en vivo», con el tema de Calcita, el de MUI tal cual y el de otro
+  sistema hecho solo con overrides (también sus campos, con `palette.field`), y las variables CSS en deslizadores.
+
 ## [0.29.0] - 2026-10-19
 
 ### Agregado
@@ -430,6 +443,7 @@ en runtime): cada trampa, arreglada.
   avisos y confirmaciones, encabezados, etiquetas, métricas, descargas a Excel, gráficas y adaptadores para
   react-router, i18next, Laravel y Next.js.
 
+[0.30.0]: https://github.com/StackCraftMx/calcita/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/StackCraftMx/calcita/compare/v0.28.0...v0.29.0
 [0.28.0]: https://github.com/StackCraftMx/calcita/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/StackCraftMx/calcita/compare/v0.26.0...v0.27.0
