@@ -46,8 +46,7 @@ import {
 import {buildTableActors, tableMachine} from '@/DataTable/tableMachine.js';
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
 import {FILTER_KINDS, isFilterActive, useTableState} from '@/DataTable/useTableState.js';
-import BarActions from '@/appShell/BarActions.jsx';
-import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
+import BarSearch from '@/appShell/BarSearch.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import SelectionActions, {SELECTION_PHONE_LAYOUT, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
@@ -95,11 +94,6 @@ const GRID_BORDER_PIXELS = 2;
 // la barra y aparezca un scroll lateral de 5 px. Lo vigila e2e/tests/upload-control.spec.js (la tabla no se desliza de lado)
 const HEIGHT_SLACK_PIXELS = 2;
 const DATA_GRID_DENSITY = 'compact';
-// ancho de la caja de búsqueda en escritorio: cabe un texto de ayuda como «Buscar por pedido, cliente o producto…».
-// OJO: con 280 se cortaba («…cliente o pro»); en el teléfono la caja toma todo el ancho
-const SEARCH_BOX_MIN_WIDTH_PIXELS = 400;
-// en la barra de la app (searchInBar) un poco más angosta: comparte el renglón con el título y las cápsulas
-const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
 // dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
 export {SELECTION_PHONE_LAYOUT};
@@ -367,8 +361,6 @@ export default function ServerTable({
     const {filters, sortOrders, page, pageSize} = tableState;
 
     // la caja de búsqueda rebota: se escribe sin latencia y al servidor va una consulta cuando se deja de teclear
-    // si la caja de búsqueda tiene el foco (en la barra, con el foco se estira)
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [searchDraft, setSearchDraft] = useDebouncedFilter(
         searchField ? filters[searchField] : '',
         (value) => searchField && tableState.setFilter(searchField, value),
@@ -538,71 +530,14 @@ export default function ServerTable({
     const countText = countLabel ? countLabel(total) : t('count.records', {count: total, total: formattedTotal});
 
     const searchText = searchPlaceholder ?? t('search.placeholder');
-    // en la barra, chica cuando no se usa: ni tiene el foco ni tiene texto
-    const isSearchCompact = searchInBar && collapseSearchInBar && !isSearchFocused && !searchDraft;
-    const searchBox = searchField && (
-        <TextField
-            type="search"
-            size="small"
-            value={searchDraft}
-            onChange={(event) => setSearchDraft(event.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            // Escape borra lo escrito y suelta la caja (en la barra, regresa a la lupa)
-            onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                    setSearchDraft('');
-                    event.currentTarget.querySelector('input')?.blur();
-                }
-            }}
-            placeholder={searchText}
-            sx={{minWidth: {xs: 0, md: SEARCH_BOX_MIN_WIDTH_PIXELS}}}
-            slotProps={{
-                input: {startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" /></InputAdornment>},
-                htmlInput: {'aria-label': searchText},
-            }}
-        />
-    );
 
     return (
         <ComponentTexts namespace="table" texts={texts}>
         <TableFilterContext value={tableFilterValue}>
             <Stack direction={{xs: 'column', md: 'row'}} spacing={2} sx={{mb: 1.5, alignItems: {md: 'center'}}}>
-                {searchBox && !searchInBar && searchBox}
-                {/* en la barra: el buscador ya es su propia cápsula (bare), del alto y la forma de las demás y más angosto.
-                    OJO: la barra es un Paper y el tema le pone al campo el radio de «campo dentro de tarjeta», con el lente
-                    (body[data-glass-lens] .MuiPaper-root …) aún más específica: por eso las tres clases (con menos salía con
-                    esquinas de 12 px y no en cápsula; medido en Chrome) */}
-                {/* sin usar se encoge a la lupa (collapseSearchInBar), como el buscador de las ventanas de macOS; al picarla o
-                    llegar con Tab se estira, y con texto se queda abierta. La lupa no atrapa el clic: lo deja pasar a la caja,
-                    que es la que se enfoca (si no, picar la lupa no hacía nada) */}
-                {searchBox && searchInBar && (
-                    <BarActions label={searchText} bare order={0}
-                                sx={(theme) => ({
-                                    // en el teléfono flota arriba junto a las demás cápsulas. Su lugar SIEMPRE ocupa lo libre del
-                                    // renglón y la caja va pegada a la derecha: así se abre de derecha a izquierda y regresa igual
-                                    // (el ancho pasa de 48 px a 100 % con transición). OJO: antes el lugar brincaba de golpe
-                                    // (flex-grow no se anima) y la caja crecía de izquierda a derecha; se veía muy mal. El hueco de
-                                    // la izquierda deja pasar el dedo a lo de abajo; solo la caja lo recibe
-                                    [PHONE_MEDIA_QUERY]: {
-                                        flexGrow: 1, minWidth: 0, justifyContent: 'flex-end', pointerEvents: 'none',
-                                        '& .MuiTextField-root': {pointerEvents: 'auto'},
-                                    },
-                                    '& .MuiTextField-root': {
-                                        width: isSearchCompact ? BAR_CAPSULE_HEIGHT_PIXELS : SEARCH_IN_BAR_WIDTH_PIXELS,
-                                        minWidth: 0,
-                                        transition: theme.transitions.create('width', {duration: theme.transitions.duration.short}),
-                                        '@media (prefers-reduced-motion: reduce)': {transition: 'none'},
-                                        [PHONE_MEDIA_QUERY]: {width: isSearchCompact ? BAR_CAPSULE_HEIGHT_PIXELS : '100%'},
-                                    },
-                                    '& .MuiFormControl-root .MuiInputBase-root.MuiOutlinedInput-root': {
-                                        height: BAR_CAPSULE_HEIGHT_PIXELS, borderRadius: '999px', cursor: isSearchCompact ? 'pointer' : 'text',
-                                    },
-                                    '& .MuiInputAdornment-root': {pointerEvents: 'none'},
-                                    '& input::placeholder': {opacity: isSearchCompact ? 0 : undefined},
-                                })}>
-                        {searchBox}
-                    </BarActions>
+                {/* la búsqueda: aquí o arriba en la barra de la app (BarSearch: se encoge a la lupa sin usar) */}
+                {searchField && (
+                    <BarSearch value={searchDraft} onChange={setSearchDraft} placeholder={searchText} inBar={searchInBar} collapsible={collapseSearchInBar} />
                 )}
                 {/* con elegidos, sus acciones ocupan el lugar del conteo (en el teléfono con barra de pestañas, flotan). Sus
                     textos son los de la tabla: así el `texts` de ServerTable también los cambia */}

@@ -6,6 +6,8 @@
 //   - teléfono con vidrio, o minimalista con cápsulas (usesMobileTabBar), según phoneLayout (SELECTION_PHONE_LAYOUT):
 //       top (por omisión): arriba, en la barra flotante, «5 elegidos ✕» y las acciones como íconos en su propia cápsula,
 //         como Apple separa los grupos; las que no caben, al «⋯» (BarActions);
+//       en los dos, mientras hay algo elegido, el renglón de arriba queda solo para lo elegido (BarActions exclusive): las
+//         demás cápsulas de la pantalla y la lupa se esconden, como el modo de edición del iPhone;
 //       split: como iOS en modo de edición (Fotos, Mail, Archivos): arriba «5 elegidos ✕» y abajo, encima de las pestañas,
 //         una cápsula fija con las acciones, donde llega el pulgar. Mientras se ve, pide su alto al marco
 //         (FLOATING_BOTTOM_SPACE_CSS_VARIABLE) para no tapar el final de la página.
@@ -148,7 +150,7 @@ export default function SelectionActions({countText, actions = [], onClear, phon
             {row}
             {/* arriba: con las demás cápsulas flotantes de la pantalla (BarActions), antes que ellas. Sin label en BarActions:
                 el nombre ya lo lleva la cápsula (dos grupos anidados con el mismo nombre se leen dos veces) */}
-            <BarActions bare order={-2} sx={PHONE_ONLY_SX} inlineSx={PHONE_ONLY_SX}>
+            <BarActions bare exclusive order={-2} sx={PHONE_ONLY_SX} inlineSx={PHONE_ONLY_SX}>
                 <BarCapsule aria-label={t('selection.summaryLabel')} sx={{pl: 2}}>
                     <Typography variant="body2" role="status" aria-live="polite" sx={{fontWeight: 600, whiteSpace: 'nowrap', mr: 0.5}}>
                         {countText}
@@ -157,7 +159,7 @@ export default function SelectionActions({countText, actions = [], onClear, phon
                 </BarCapsule>
             </BarActions>
             {phoneLayout === SELECTION_PHONE_LAYOUT.top && actions.length > 0 && (
-                <BarActions label={t('selection.actionsLabel')} order={-1} sx={PHONE_ONLY_SX} inlineSx={PHONE_ONLY_SX}>
+                <BarActions label={t('selection.actionsLabel')} exclusive order={-1} sx={PHONE_ONLY_SX} inlineSx={PHONE_ONLY_SX}>
                     {actions.map((action) => (
                         <BarActionButton key={action.key} label={action.label} icon={action.icon} color={action.color}
                                          disabled={isDisabledOf(action)} onClick={() => runAction(action)} />
