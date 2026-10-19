@@ -19,7 +19,7 @@ test('el vidrio mezcla el color del tema con la opacidad pedida y desenfoca lo d
     const surface = glassSurfaceOf('var(--mui-palette-background-paper)', {opacity: 0.8});
 
     assert.equal(surface.backgroundColor, 'color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent)');
-    assert.match(surface.backdropFilter, /blur\(20px\)/);
+    assert.match(surface.backdropFilter, /blur\(var\(--calcita-glass-blur, 20px\)\)/);
     assert.equal(surface.WebkitBackdropFilter, surface.backdropFilter);
 });
 
@@ -66,7 +66,7 @@ test('en oscuro el vidrio se aclara un poco sobre su color, para distinguirse de
 test('el material del contenido esmerila sin el brillo del borde y es más transparente que el vidrio (0.8 - 0.15)', () => {
     const material = materialSurfaceOf('#ffffff', {opacity: 0.8});
 
-    assert.match(material.backdropFilter, /blur\(20px\)/);
+    assert.match(material.backdropFilter, /blur\(var\(--calcita-glass-blur, 20px\)\)/);
     assert.equal(material.backgroundImage, 'none');
     assert.doesNotMatch(material.boxShadow, /inset/);
     assert.equal(material.backgroundColor, 'color-mix(in srgb, #ffffff 65%, transparent)');

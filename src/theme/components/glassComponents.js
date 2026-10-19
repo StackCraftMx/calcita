@@ -19,7 +19,7 @@
 //
 // Funciones puras, sin React: function (regla de la casa).
 import {
-    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, GLASS_MENU_RADIUS_PIXELS, GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, glassDropOf, glassOpacityOf,
+    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf, glassDropOf, glassOpacityOf,
     canvasFieldStylesOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, whiteLabelFillOf,
     insideContentSelectorOf, materialStylesOf, solidFallbackOf,
 } from '@/theme/glassSurface.js';
@@ -27,6 +27,7 @@ import {mergeStyles} from '@/theme/mergeComponents.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
+import {cssTokenOf} from '@/theme/cssTokens.js';
 
 // los renglones de un menú quedan a 4 px del borde, con la esquina del menú menos ese margen
 const MENU_ROW_INSET_PIXELS = 4;
@@ -82,6 +83,10 @@ const PROMINENT_GLASS_OPACITY = 1;
 // los campos: la esquina dentro de una tarjeta, el gris del relleno (por ciento del color del texto) y qué tan fuerte es el
 // aro al escribir
 const FIELD_RADIUS_PIXELS = 12;
+// las esquinas como variables CSS que el proyecto cambia de un jalón (cssTokens.js), con el valor de siempre de respaldo
+const FIELD_RADIUS = cssTokenOf('fieldRadius', `${FIELD_RADIUS_PIXELS}px`);
+// los renglones de un menú van a MENU_ROW_INSET_PIXELS de su orilla: su esquina es la del menú menos eso (nunca menos de 0)
+const MENU_ROW_RADIUS = `max(0px, calc(${MENU_RADIUS} - ${MENU_ROW_INSET_PIXELS}px))`;
 const FIELD_RING_PERCENT = 40;
 const FIELD_RING_PIXELS = Object.freeze({focused: 3, error: 2});
 // el botoncito del combo box (px)
@@ -293,7 +298,7 @@ function floatingDrawerOf(anchor) {
         top: {top: inset, left: inset, right: inset, maxHeight: fullLength, ...centeredSheet},
         bottom: {bottom: inset, left: inset, right: inset, maxHeight: fullLength, ...centeredSheet},
     };
-    return {...placementByAnchor[anchor], borderRadius: GLASS_PANEL_RADIUS_PIXELS};
+    return {...placementByAnchor[anchor], borderRadius: PANEL_RADIUS};
 }
 
 /**
@@ -321,7 +326,7 @@ export function glassComponents({surfaces = false} = {}) {
                 styleOverrides: {
                     root: ({theme}) => ({
                         ...contentMaterialOf(theme),
-                        '&, &:first-of-type, &:last-of-type': {borderRadius: GLASS_MENU_RADIUS_PIXELS},
+                        '&, &:first-of-type, &:last-of-type': {borderRadius: MENU_RADIUS},
                         '&::before': {display: 'none'},
                         '&, &.Mui-expanded': {margin: `0 0 ${GLASS_INSET_PIXELS}px`},
                         '&:last-of-type, &.Mui-expanded:last-of-type': {marginBottom: 0},
@@ -372,7 +377,7 @@ export function glassComponents({surfaces = false} = {}) {
         },
         MuiPopover: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: GLASS_MENU_RADIUS_PIXELS}),
+                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
             },
         },
         // los renglones de un menú: concéntricos con el menú, y el elegido (la opción actual de una lista) con su palomita
@@ -382,7 +387,7 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({theme}) => ({
                     marginInline: MENU_ROW_INSET_PIXELS,
-                    borderRadius: GLASS_MENU_RADIUS_PIXELS - MENU_ROW_INSET_PIXELS,
+                    borderRadius: MENU_ROW_RADIUS,
                     '&.Mui-selected': {backgroundColor: 'transparent'},
                     '&.Mui-selected:hover': {backgroundColor: paletteOf(theme).action.hover},
                     // con el teclado encima, el renglón elegido sí se marca: si no, no se ve dónde está el foco
@@ -401,8 +406,8 @@ export function glassComponents({surfaces = false} = {}) {
         // al final; abierto, el ⌄ no gira (en Apple se queda igual)
         MuiAutocomplete: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: GLASS_MENU_RADIUS_PIXELS}),
-                option: {marginInline: MENU_ROW_INSET_PIXELS, borderRadius: GLASS_MENU_RADIUS_PIXELS - MENU_ROW_INSET_PIXELS},
+                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
+                option: {marginInline: MENU_ROW_INSET_PIXELS, borderRadius: MENU_ROW_RADIUS},
                 popupIndicator: ({theme}) => ({
                         width: COMBO_BUTTON_PIXELS,
                         height: COMBO_BUTTON_PIXELS,
@@ -442,7 +447,7 @@ export function glassComponents({surfaces = false} = {}) {
         // el calendario de MUI X (/date-pickers) en escritorio; en el teléfono sale en un diálogo (MuiDialog)
         MuiPickerPopper: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: GLASS_MENU_RADIUS_PIXELS}),
+                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
             },
         },
         // la tabla (MUI X Data Grid): el menú de cada columna y los paneles de filtros y columnas
@@ -457,8 +462,8 @@ export function glassComponents({surfaces = false} = {}) {
                 ...(surfaces && {
                     root: {'&.MuiDataGrid-root': {'--DataGrid-t-color-background-base': 'transparent', '--DataGrid-t-header-background-base': 'transparent'}},
                 }),
-                panelContent: ({theme}) => ({...glassStylesOf(theme), borderRadius: GLASS_MENU_RADIUS_PIXELS}),
-                menu: ({theme}) => ({'& .MuiPaper-root': {...glassStylesOf(theme), borderRadius: GLASS_MENU_RADIUS_PIXELS}}),
+                panelContent: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
+                menu: ({theme}) => ({'& .MuiPaper-root': {...glassStylesOf(theme), borderRadius: MENU_RADIUS}}),
             },
         },
         // los cajones: de vidrio; los que salen encima del contenido flotan separados de la orilla (Adopting Liquid Glass:
@@ -473,7 +478,7 @@ export function glassComponents({surfaces = false} = {}) {
         },
         MuiDialog: {
             styleOverrides: {
-                paper: ({ownerState, theme}) => (ownerState.fullScreen ? {} : {...glassStylesOf(theme), borderRadius: GLASS_PANEL_RADIUS_PIXELS}),
+                paper: ({ownerState, theme}) => (ownerState.fullScreen ? {} : {...glassStylesOf(theme), borderRadius: PANEL_RADIUS}),
                 // la hoja de lectura (ContentDialog) deja la barra de arriba a la vista para no perder dónde se está: sin
                 // desenfoque detrás, o la barra se volvía ilegible
                 backdrop: ({ownerState}) => (ownerState.fullScreen
@@ -502,7 +507,7 @@ export function glassComponents({surfaces = false} = {}) {
         },
         MuiSnackbarContent: {
             styleOverrides: {
-                root: ({theme}) => ({...darkGlassOf(paletteOf(theme).SnackbarContent?.bg ?? paletteOf(theme).grey[900]), borderRadius: GLASS_MENU_RADIUS_PIXELS}),
+                root: ({theme}) => ({...darkGlassOf(paletteOf(theme).SnackbarContent?.bg ?? paletteOf(theme).grey[900]), borderRadius: MENU_RADIUS}),
             },
         },
         MuiFab: {
@@ -606,7 +611,7 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({ownerState, theme}) => {
                     // acostado es una cápsula; de pie, una tarjetita con esquinas de menú (una cápsula de pie se veía como óvalo)
-                    const borderRadius = ownerState.orientation === 'vertical' ? GLASS_MENU_RADIUS_PIXELS : PILL_RADIUS;
+                    const borderRadius = ownerState.orientation === 'vertical' ? MENU_RADIUS : PILL_RADIUS;
                     if (ownerState.variant !== 'outlined') {
                         return {borderRadius};
                     }
@@ -728,7 +733,7 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({ownerState, theme}) => ({
                     ...canvasFieldStylesOf(theme),
-                    borderRadius: ownerState.type === 'search' ? PILL_RADIUS : FIELD_RADIUS_PIXELS,
+                    borderRadius: ownerState.type === 'search' ? PILL_RADIUS : FIELD_RADIUS,
                     '& .MuiOutlinedInput-notchedOutline': {borderColor: 'transparent'},
                     '&:hover .MuiOutlinedInput-notchedOutline, &.Mui-focused .MuiOutlinedInput-notchedOutline, &.Mui-error .MuiOutlinedInput-notchedOutline': {
                         borderColor: 'transparent',
@@ -760,7 +765,7 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({theme}) => ({
                     ...canvasFieldStylesOf(theme),
-                    borderRadius: FIELD_RADIUS_PIXELS,
+                    borderRadius: FIELD_RADIUS,
                     '& .MuiPickersOutlinedInput-notchedOutline': {borderColor: 'transparent'},
                     '&:hover .MuiPickersOutlinedInput-notchedOutline, &.Mui-focused .MuiPickersOutlinedInput-notchedOutline, &.Mui-error .MuiPickersOutlinedInput-notchedOutline': {
                         borderColor: 'transparent',
@@ -877,7 +882,7 @@ export function glassComponents({surfaces = false} = {}) {
                 vertical: ({theme}) => ({
                     paddingRight: theme.spacing(1),
                     '& .MuiTab-root': {
-                        minHeight: 40, borderRadius: GLASS_MENU_RADIUS_PIXELS, alignItems: 'flex-start', marginBlock: 3, paddingInline: theme.spacing(2),
+                        minHeight: 40, borderRadius: MENU_RADIUS, alignItems: 'flex-start', marginBlock: 3, paddingInline: theme.spacing(2),
                     },
                     '& .MuiTab-root.Mui-focusVisible': {outlineOffset: 2},
                     '& .MuiTab-root.Mui-selected': {...glassDropOf(theme), color: paletteOf(theme).text.primary},

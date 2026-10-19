@@ -101,10 +101,10 @@ const CASES = [
         title: 'Productos', description: 'Todo el catálogo', breadcrumbs: [{label: 'Inicio', to: '/'}, {label: 'Catálogos'}, {label: 'Productos'}], actions: 'Nuevo',
     })), 'Todo el catálogo'],
     ['FontSizeToggle (antes de montar reserva su lugar)', h(FontSizeToggle), ''],
-    ['createToolkitTheme con vidrio líquido', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS}, 'contenido'), 'blur(20px)', TOOLKIT_THEME_WITH_GLASS],
+    ['createToolkitTheme con vidrio líquido', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS}, 'contenido'), '--calcita-glass-blur, 20px', TOOLKIT_THEME_WITH_GLASS],
     // sin vidrio en el tema, GlassPanel es una tarjeta con sombra; con vidrio, desenfoca
     ['GlassPanel sin vidrio', h(GlassPanel, null, 'controles del mapa'), 'controles del mapa'],
-    ['GlassPanel con vidrio', h(GlassPanel, null, 'controles del mapa'), 'blur(20px)', TOOLKIT_THEME_WITH_GLASS],
+    ['GlassPanel con vidrio', h(GlassPanel, null, 'controles del mapa'), '--calcita-glass-blur, 20px', TOOLKIT_THEME_WITH_GLASS],
     // el lente: los dos filtros SVG van en la página solo con el vidrio en el tema
     ['GlassLensFilter con vidrio', h(GlassLensFilter), 'toolkit-glass-lens-panel', TOOLKIT_THEME_WITH_GLASS],
     // el formulario de Apple: dentro de una FormSection el campo es un renglón (etiqueta a la izquierda)

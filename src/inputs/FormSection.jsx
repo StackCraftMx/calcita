@@ -37,7 +37,7 @@ import Typography from '@mui/material/Typography';
 import {styled, useThemeProps} from '@mui/material/styles';
 
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
-import {GLASS_PANEL_RADIUS_PIXELS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
+import {PANEL_RADIUS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
 
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
@@ -119,7 +119,7 @@ const FormSectionTitle = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Ti
 
 // la tarjeta: la línea de arriba de cada renglón, desde donde empieza el texto (la del primero la recorta la tarjeta)
 const FormSectionCard = styled(Paper, {name: SECTION_THEME_NAME, slot: 'Card'})(({theme}) => ({
-    borderRadius: `${GLASS_PANEL_RADIUS_PIXELS}px`,
+    borderRadius: PANEL_RADIUS,
     overflow: 'hidden',
     [`& .${FORM_ROW_CLASS}::before`]: {
         content: '""', position: 'absolute', top: 0, right: 0, left: theme.spacing(2), height: '1px',

@@ -43,6 +43,7 @@ export {MINIMAL_BACKGROUND, MINIMAL_TONES} from '@/theme/components/minimalCompo
 export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 export {toolkitComponents} from '@/theme/toolkitComponents.js';
 export {mergeComponents} from '@/theme/mergeComponents.js';
+export {CSS_TOKENS, cssTokenDeclarationsOf, cssTokenOf} from '@/theme/cssTokens.js';
 export {
     GLASS_INSET_PIXELS, GLASS_MENU_RADIUS_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassDropOf, glassStylesOf, glassSurfaceOf,
     FIELD_TONES, accentTextStylesOf, canvasFieldStylesOf, fieldPaletteOf, fieldWellStylesOf, fixedBackgroundLayerOf, isGlassTheme, materialBackgroundOf, materialStylesOf, materialSurfaceOf,

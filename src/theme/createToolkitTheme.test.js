@@ -5,7 +5,7 @@ import {test} from 'node:test';
 import {createTheme} from '@mui/material/styles';
 
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
-import {GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {GLASS_INSET_PIXELS, GLASS_OPACITY, PANEL_RADIUS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {FIELD_TONES, fieldVariablesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 
@@ -71,7 +71,7 @@ test('los ajustes de vidrio se suman a los normales: la barra fija es vidrio neu
     assert.equal(valueOf(appBar, 'color'), theme.vars.palette.text.primary);
     assert.match(valueOf(appBar, 'backgroundColor'), new RegExp(`^color-mix\\(in srgb, ${theme.vars.palette.background.paper.replace(/[()]/g, '\\$&')} 60%`));
     assert.equal(appBar.borderBottom, 'none');
-    assert.match(appBar.backdropFilter, /blur\(20px\)/);
+    assert.match(appBar.backdropFilter, /blur\(var\(--calcita-glass-blur, 20px\)\)/);
 });
 
 test('un diálogo a pantalla completa se queda sólido: es para leer', () => {
@@ -90,7 +90,7 @@ test('las tarjetas del contenido se quedan sólidas salvo que el proyecto pida g
 
     assert.equal(floatingOnly.components.MuiPaper, undefined);
     assert.equal(withSurfaces.toolkit.glass.surfaces, true);
-    assert.match(outlinedCard.backdropFilter, /blur\(20px\)/);
+    assert.match(outlinedCard.backdropFilter, /blur\(var\(--calcita-glass-blur, 20px\)\)/);
     assert.equal(outlinedCard.borderColor, 'transparent');
     assert.deepEqual(elevatedPaper, {});
 });
@@ -100,7 +100,7 @@ test('con glass: {surfaces: true} el contenido lleva material: esmerilado, sin e
     const card = theme.components.MuiCard.styleOverrides.root({theme, ownerState: {}});
     const popover = theme.components.MuiPopover.styleOverrides.paper({theme, ownerState: {}});
 
-    assert.match(valueOf(card, 'backdropFilter'), /blur\(20px\)/);
+    assert.match(valueOf(card, 'backdropFilter'), /blur\(var\(--calcita-glass-blur, 20px\)\)/);
     assert.equal(valueOf(card, 'backgroundImage'), 'none');
     assert.doesNotMatch(valueOf(card, 'boxShadow'), /inset/);
     // lo que flota sí lleva el brillo del vidrio
@@ -136,7 +136,7 @@ test('los cajones que salen encima flotan separados de la orilla; el fijo del me
     const permanent = paperOf({variant: 'permanent', anchor: 'left'});
 
     assert.equal(bottomSheet.bottom, `${GLASS_INSET_PIXELS}px`);
-    assert.equal(bottomSheet.borderRadius, GLASS_PANEL_RADIUS_PIXELS);
+    assert.equal(bottomSheet.borderRadius, PANEL_RADIUS);
     assert.equal(permanent.bottom, undefined);
 });
 
