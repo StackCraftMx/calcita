@@ -18,12 +18,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {CartesianGrid, Line, LineChart as RechartsLineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 
-import {formatNumber} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ChartTooltip from '@/ui/metrics/ChartTooltip.jsx';
-import TableToggle from '@/ui/metrics/TableToggle.jsx';
+import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
-    AXIS_COLOR, AXIS_TEXT, ChartLegend, ChartTable, GRID_COLOR, ReferenceCaption, highestValueOf, resolvedSeriesOf, valueAxisWidthOf,
+    ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
 
 // el grueso de la línea y el tamaño de su punto (px): se ven en el teléfono sin tapar a la vecina
@@ -45,14 +45,23 @@ const ACTIVE_DOT_RADIUS_PIXELS = 5;
  * @param {(row: any) => void} [props.onSelect] recibe el renglón de data del periodo que se picó
  * @param {(row: any) => import('react').ReactNode} [props.renderTooltip] lo que dice el globo de un periodo; por omisión su
  *     nombre y el valor de cada serie
+ * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
+ * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
 export default function LineChart({
-    data, series, periodLabel, ariaLabel, emptyLabel, height = 220, formatValue = formatNumber, referenceLine, onSelect, renderTooltip, texts,
+    data, series, periodLabel, ariaLabel, emptyLabel, height = 220, formatValue: formatValueProp, referenceLine, onSelect, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
 }) {
     const {t} = useToolkitTranslation('common', texts);
-    const [asTable, setAsTable] = useState(false);
-    const drawnSeries = resolvedSeriesOf(series);
+    const {formatNumber} = useFormatters();
+    const formatValue = formatValueProp ?? formatNumber;
+    const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
+    const toggleView = () => {
+        setAsTable(!asTable);
+        onViewChange?.(asTable ? CHART_VIEW.chart : CHART_VIEW.table);
+    };
+    const colors = useChartColors();
+    const drawnSeries = resolvedSeriesOf(series, colors.palette);
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!data.length) {
@@ -76,7 +85,7 @@ export default function LineChart({
 
     return (
         <Box>
-            <TableToggle asTable={asTable} onToggle={() => setAsTable((current) => !current)} texts={texts} />
+            <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
             {asTable ? (
                 <ChartTable data={data} series={drawnSeries} periodLabel={periodLabel} formatValue={formatValue} height={height} />
             ) : (
@@ -86,14 +95,14 @@ export default function LineChart({
                             la versión 2) */}
                         <RechartsLineChart data={data} margin={{top: 8, right: 12, bottom: 0, left: -8}}
                                            onClick={onSelect ? (state) => selectPeriodAt(state?.activeIndex) : undefined}>
-                            <CartesianGrid vertical={false} stroke={GRID_COLOR} />
-                            <XAxis dataKey="label" tick={AXIS_TEXT} tickLine={false} axisLine={{stroke: GRID_COLOR}}
+                            <CartesianGrid vertical={false} stroke={colors.grid} />
+                            <XAxis dataKey="label" tick={colors.axisText} tickLine={false} axisLine={{stroke: colors.grid}}
                                    interval="preserveStartEnd" minTickGap={12} />
-                            <YAxis allowDecimals={false} tick={AXIS_TEXT} tickLine={false} axisLine={false}
+                            <YAxis allowDecimals={false} tick={colors.axisText} tickLine={false} axisLine={false}
                                    width={valueAxisWidthOf(highestValue, formatValue)} tickFormatter={(value) => formatValue(value)} />
-                            <Tooltip cursor={{stroke: GRID_COLOR}} content={<ChartTooltip render={tooltipOf} />} />
+                            <Tooltip cursor={{stroke: colors.grid}} content={<ChartTooltip render={tooltipOf} />} />
                             {referenceLine && (
-                                <ReferenceLine y={referenceLine.value} ifOverflow="extendDomain" stroke={AXIS_COLOR} strokeDasharray="4 4" />
+                                <ReferenceLine y={referenceLine.value} ifOverflow="extendDomain" stroke={colors.axis} strokeDasharray="4 4" />
                             )}
                             {drawnSeries.map((item) => (
                                 <Line key={item.key} type="monotone" dataKey={item.key} name={item.label} stroke={item.color}

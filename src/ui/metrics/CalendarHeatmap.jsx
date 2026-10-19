@@ -26,9 +26,9 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import {formatDate, formatMonthShortName, formatNumber, formatWeekdayShortName} from '@/formatting.js';
+import {useFormatters} from '@/toolkit/useFormatters.js';
 import {HEATMAP_LEVELS, calendarWeeksOf, levelOf} from '@/ui/metrics/heatmapScale.js';
-import TableToggle from '@/ui/metrics/TableToggle.jsx';
+import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 
 // cuadros de 12 px en teléfono (el calendario se desliza) y de 16 px desde md, donde el panel ocupa todo el ancho
 const CELL_PIXELS = {xs: 12, md: 16};
@@ -67,10 +67,18 @@ function levelFill(theme, tone, level) {
  * @param {import('react').ReactNode} [props.summary] renglón de resumen arriba del calendario
  * @param {string} [props.emptyLabel] qué decir si ningún día tiene actividad
  * @param {'primary'|'info'|'success'|'warning'|'error'} [props.tone]
+ * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
+ * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CalendarHeatmap({startsOn, endsOn, days, ariaLabel, valueLabel, describeValue, summary, emptyLabel, tone = 'primary'}) {
-    const {t} = useToolkitTranslation('common');
-    const [asTable, setAsTable] = useState(false);
+export default function CalendarHeatmap({startsOn, endsOn, days, ariaLabel, valueLabel, describeValue, summary, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange}) {
+    const {t} = useToolkitTranslation('common', texts);
+    const {formatDate, formatMonthShortName, formatNumber, formatWeekdayShortName} = useFormatters();
+    const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
+    const toggleView = () => {
+        setAsTable(!asTable);
+        onViewChange?.(asTable ? CHART_VIEW.chart : CHART_VIEW.table);
+    };
 
     const {weeks, monthMarks, thresholds} = useMemo(() => calendarWeeksOf({startsOn, endsOn, days}), [startsOn, endsOn, days]);
     const activeDays = days.filter((day) => day.value > 0);
@@ -82,7 +90,7 @@ export default function CalendarHeatmap({startsOn, endsOn, days, ariaLabel, valu
                     {activeDays.length ? summary : emptyLabel}
                 </Typography>
                 <Box sx={{flexShrink: 0}}>
-                    <TableToggle asTable={asTable} onToggle={() => setAsTable((current) => !current)} />
+                    <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
                 </Box>
             </Stack>
 

@@ -10,7 +10,7 @@
 //
 // Lo que trae, con su porqué:
 //   - variables CSS y los dos modos: ColorSchemeToggle cambia de modo sin volver a pintar, y las gráficas leen sus colores
-//     de las variables (var(--mui-palette-text-primary)); sin ellas su texto se quedaba negro en oscuro.
+//     del tema (theme.vars): con variables cambian solas al cambiar de modo, sin ellas se quedarían con las del arranque.
 //   - colorSchemeSelector 'class': el modo lo elige la persona con el botón (con 'media' solo mandaría el sistema
 //     operativo y el botón no haría nada). Con Next.js va con <InitColorSchemeScript attribute="class" />.
 //   - letra base de 16 px: con menos, el iPhone hace zoom al entrar a un campo. body1 16 px y body2 15 px en el teléfono;

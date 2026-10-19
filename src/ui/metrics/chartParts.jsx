@@ -8,7 +8,11 @@
 //     vista de tabla;
 //   - ejes y rejilla tenues, que den contexto sin competir con los datos.
 //
+// Los colores salen del tema (useChartColors), nunca escritos como var(--mui-…): un proyecto con su propio prefijo de
+// variables (cssVarPrefix) o sin variables CSS se quedaba con ejes y texto sin color.
+//
 // Genérico del paquete: function (regla de la casa).
+import {useMemo} from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -16,11 +20,11 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import {useTheme} from '@mui/material/styles';
 
-export const AXIS_COLOR = 'var(--mui-palette-text-secondary)';
+import {paletteOf} from '@/theme/components/paletteOf.js';
+
 const AXIS_FONT_PIXELS = 12;
-export const AXIS_TEXT = {fill: AXIS_COLOR, fontSize: AXIS_FONT_PIXELS};
-export const GRID_COLOR = 'var(--mui-palette-divider)';
 // ancho del eje de valores: nunca menos que esto, más lo que pida su número más largo
 const AXIS_MINIMUM_WIDTH_PIXELS = 48;
 const AXIS_PADDING_PIXELS = 16;
@@ -35,6 +39,25 @@ const SWATCH_PIXELS = 20;
 export const CHART_SERIES_TONES = Object.freeze(['primary', 'info', 'success', 'warning', 'error', 'secondary']);
 /** El trazo de cada serie de líneas, en orden (continuo, rayado, punteado): así no se distinguen solo por el color. */
 export const CHART_LINE_DASHES = Object.freeze(['0', '6 4', '2 3']);
+
+/**
+ * Los colores de las gráficas, leídos del tema: con variables CSS salen como var(--su-prefijo-palette-…) y sirven en claro y
+ * en oscuro sin volver a pintar; sin ellas, el color de la paleta.
+ *
+ * @returns {{palette: object, axis: string, axisText: {fill: string, fontSize: number}, grid: string, text: string, muted: string, hover: string}}
+ */
+export function useChartColors() {
+    const palette = paletteOf(useTheme());
+    return useMemo(() => ({
+        palette,
+        axis: palette.text.secondary,
+        axisText: {fill: palette.text.secondary, fontSize: AXIS_FONT_PIXELS},
+        grid: palette.divider,
+        text: palette.text.primary,
+        muted: palette.text.secondary,
+        hover: palette.action.hover,
+    }), [palette]);
+}
 
 /**
  * Ancho del eje de valores para que quepa su número más largo.
@@ -52,15 +75,16 @@ export function valueAxisWidthOf(highestValue, formatValue) {
  * Las series con su color y su trazo resueltos (lo que la pantalla no dijo, por su lugar en la lista).
  *
  * @param {Array<{key: string, label: string, tone?: string, dash?: string}>} series
+ * @param {object} palette la del tema (useChartColors().palette)
  * @returns {Array<{key: string, label: string, tone: string, color: string, dash: string}>}
  */
-export function resolvedSeriesOf(series) {
+export function resolvedSeriesOf(series, palette) {
     return series.map((item, index) => {
         const tone = item.tone ?? CHART_SERIES_TONES[index % CHART_SERIES_TONES.length];
         return {
             ...item,
             tone,
-            color: `var(--mui-palette-${tone}-main)`,
+            color: (palette[tone] ?? palette.primary).main,
             dash: item.dash ?? CHART_LINE_DASHES[index % CHART_LINE_DASHES.length],
         };
     });
