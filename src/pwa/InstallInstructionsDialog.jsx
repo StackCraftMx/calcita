@@ -38,9 +38,10 @@ export function variantHasInstructions(variant) {
  * @param {string|null} props.variant una de INSTALL_VARIANT (useInstallPrompt)
  * @param {boolean} props.open
  * @param {() => void} props.onClose
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallInstructionsDialog({variant, open, onClose}) {
-    const {t} = useToolkitTranslation('common');
+export default function InstallInstructionsDialog({variant, open, onClose, texts}) {
+    const {t} = useToolkitTranslation('common', texts);
     const steps = STEPS_BY_VARIANT[variant];
     if (!steps) {
         return null;

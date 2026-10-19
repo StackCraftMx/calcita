@@ -36,7 +36,8 @@ function readDismissed() {
 }
 
 /**
- * @returns {{variant: string|null, isInstalled: boolean, dismissed: boolean, dismiss: () => void, promptInstall: () => Promise<void>}}
+ * @returns {{variant: string|null, isInstalled: boolean, dismissed: boolean, dismiss: () => void, promptInstall: () => Promise<'accepted'|'dismissed'|null>}}
+ *     promptInstall regresa lo que contestó la persona al diálogo del navegador (null: ya no había diálogo)
  *   variant: una de INSTALL_VARIANT o null (nada que ofrecer). NO toma en cuenta el «Ahora no»: la invitación sí lo respeta,
  *   pero la entrada del menú de la cuenta no, porque ahí la persona la busca a propósito.
  */
@@ -74,12 +75,13 @@ export function useInstallPrompt() {
     // dice el botón de la invitación).
     const promptInstall = useCallback(async () => {
         if (!deferredPrompt) {
-            return;
+            return null;
         }
         deferredPrompt.prompt();
         const {outcome} = await deferredPrompt.userChoice;
         log.info('respuesta al diálogo de instalar', {outcome});
         setDeferredPrompt(null);
+        return outcome;
     }, [deferredPrompt]);
 
     const dismiss = useCallback(() => {
