@@ -4,10 +4,16 @@
 transparente famoso por doblar la luz, y eso es lo que define al vidrio líquido: su lente.
 
 Arranca un proyecto sin copiar y volver a probar lo de siempre: el marco de la app con menú y permisos, tabla de servidor,
-diálogos de confirmación, avisos, descargas, formularios, formatos de número y fecha, errores RFC 9457, reportes en Excel
-y el tema con vidrio líquido, interpretado componente por componente según la guía de Apple.
+diálogos de confirmación, avisos, descargas, formularios, formatos de número y fecha, errores RFC 9457, reportes en Excel,
+la cuenta completa, mapa, calendario, tablero kanban, bandeja tipo correo y el tema con vidrio líquido, interpretado
+componente por componente según la guía de Apple.
 
-JavaScript con sus tipos generados: se usa igual desde un proyecto en TypeScript.
+JavaScript con sus tipos generados: se usa igual desde un proyecto en TypeScript. Sirve para un proyecto nuevo y también
+para meterlo por pedazos en un sistema que ya existe (ver «En un sistema que ya existe»).
+
+> **Versiones:** Calcita está hecha y probada con **MUI 7** (Material 7.3, MUI X 8), React 19 y react-router 7. MUI 9 ya
+> existe, pero cambia piezas que Calcita usa: todavía no está soportado. Con MUI 9 en el proyecto, quédese en MUI 7 por
+> ahora.
 
 ## Arrancar un proyecto con el CLI
 
@@ -47,9 +53,11 @@ El CLI nunca pisa un archivo que ya existe. Sus plantillas son los archivos tal 
 
 ```bash
 pnpm add @stackcraftmx/calcita @mui/material @mui/icons-material @emotion/react @emotion/styled xstate @xstate/react sonner
+pnpm add formik yup     # solo si usa /forms o /account
 ```
 
-Con npm es igual, con `npm install` en lugar de `pnpm add`.
+Con npm es igual, con `npm install` en lugar de `pnpm add`. Desde la 0.25, formik y yup los pone el proyecto: Calcita usa
+la versión que ya tenga, no se casa con una.
 
 ```jsx
 import {ThemeProvider, createTheme} from '@mui/material/styles';
@@ -73,7 +81,8 @@ Sin nada más, todo sale en español, con la zona horaria del navegador, montos 
 
 | Prop | Para qué | Por omisión |
 |---|---|---|
-| `language`, `onLanguageChange` | idioma activo (`es` o `en`) y a quién avisar cuando se cambia | `es` |
+| `language`, `onLanguageChange` | idioma activo y a quién avisar cuando se cambia | `es` |
+| `languages` | los idiomas que ofrece la app, con su nombre y su locale (`{code: 'pt', label: 'Português', locale: 'pt-BR'}`); sus traducciones van en `texts` | español e inglés |
 | `texts` | cambiar textos del paquete, por idioma: `{es: {common: {actions: {back: 'Volver'}}}}` | los del paquete |
 | `translate` | un traductor propio, por ejemplo i18next | ninguno |
 | `timeZone` | zona en que se pintan las horas | la del navegador |
@@ -82,6 +91,12 @@ Sin nada más, todo sale en español, con la zona horaria del navegador, montos 
 | `navigation` | el router: `{useNavigate, useLocation, Link}` | la del navegador |
 | `canAccess` | quién ve qué (menú, rutas, botones): la regla del proyecto, normalmente `createAccessChecker(...)` | solo lo que no tiene regla |
 | `buildId` | la compilación del front que corre en la pestaña, para el aviso de versión nueva | ninguna (sin aviso) |
+| `fileTypes` | tipos de archivo propios para las descargas (su ícono y su color), además de Excel, CSV y PDF | los de la casa |
+
+Un `ToolkitProvider` dentro de otro (una parte de la app en otro idioma, una vista previa) toma del de afuera lo que no le
+digan, y lo de adentro usa el suyo: el más cercano. No le cambia nada al resto de la app. Dentro de un componente,
+`useFormatters()` da los formatos (`formatDate`, `formatCurrency`…) con el idioma, la zona y la moneda del proveedor más
+cercano; los sueltos usan los del proveedor de la raíz.
 
 Con react-router y i18next:
 
@@ -141,7 +156,7 @@ export default defineConfig({
 });
 
 // en la raíz de la app, una vez (en desarrollo no hay archivo: sin url no hace nada)
-usePublishedBuildWatch({url: import.meta.env.PROD ? '/version.json' : null, buildId: import.meta.env.VITE_BUILD_ID});
+usePublishedBuildWatch({url: import.meta.env.PROD ? `${import.meta.env.BASE_URL}version.json` : null, buildId: import.meta.env.VITE_BUILD_ID});
 // opciones: checkEveryMinutes (5), reloadAfterHiddenMinutes (15; null = nunca recarga sola), onReload
 ```
 
@@ -153,12 +168,12 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 
 | Importar de | Trae | Pide además |
 |---|---|---|
-| `@stackcraftmx/calcita` | proveedor, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos, fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja, la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) y la bandeja tipo correo (`InboxLayout`, `MessageList`, `MessageView`) | — |
+| `@stackcraftmx/calcita` | proveedor, marco de la app, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos (`useFormatters`), fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja, la navegación sin router (`createBrowserNavigation`, `createHashNavigation`), la búsqueda de la barra (`BarSearch`), el menú «⋯» (`ActionsMenu`), las acciones de lo elegido (`SelectionActions`), la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) y la bandeja tipo correo (`InboxLayout`, `MessageList` con selección, `MessageView` con la conversación) | — |
 | `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs` |
-| `@stackcraftmx/calcita/forms` | campos de formik (texto, lista, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo; `Formik`, `Form` y `Yup` vienen con el paquete | — |
-| `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, y `yupResolver` | `react-hook-form`, `@hookform/resolvers` |
+| `@stackcraftmx/calcita/forms` | campos de formik (texto, lista de una o varias opciones, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo | `formik`, `yup` |
+| `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, su formulario por pasos y `yupResolver` | `react-hook-form`, `@hookform/resolvers` (y `yup` si valida con yup) |
 | `@stackcraftmx/calcita/date-pickers` | la fecha con el DatePicker de MUI X (`DateInput`, `FormDateField`); viaja `AAAA-MM-DD` | `@mui/x-date-pickers` 8, `dayjs` |
-| `@stackcraftmx/calcita/charts` | barras y columnas con vista de tabla | `recharts` |
+| `@stackcraftmx/calcita/charts` | barras, columnas y líneas (una serie o varias), cada una con su vista de tabla, y `ChartTooltip` para las propias | `recharts` |
 | `@stackcraftmx/calcita/timeline` | línea de tiempo por grupos | `@mui/lab` |
 | `@stackcraftmx/calcita/excel` | reporte en Excel (Resumen y Datos) y CSV | `exceljs`, que se le pasa al llamarlo |
 | `@stackcraftmx/calcita/react-router` | el adaptador de navegación | `react-router` |
@@ -168,11 +183,11 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
 | `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
-| `@stackcraftmx/calcita/account` | la cuenta completa: `SignInScreen` (con el segundo paso), `ForgotPasswordScreen`, `ResetPasswordScreen`, `ProfileScreen`, `AccountSecuritySection`, `AccountProvider` y `createRestAccountConnector` | `@simplewebauthn/browser` 14 |
+| `@stackcraftmx/calcita/account` | la cuenta completa: `SignInScreen` (con el segundo paso), `ForgotPasswordScreen`, `ResetPasswordScreen`, `ProfileScreen` (con campos y pestañas propias), `AccountSecuritySection`, `AccountProvider` y `createRestAccountConnector` | `@simplewebauthn/browser` 14, `formik`, `yup` |
 | `@stackcraftmx/calcita/account-demo` | `createDemoAccountConnector`: la cuenta en el navegador, sin backend (y los códigos TOTP) | — |
 | `@stackcraftmx/calcita/maps` | `MapView`: mapa con marcadores del color del tema, el elegido con su globo, se acomoda solo; en oscuro, mosaicos oscuros | `leaflet`, `react-leaflet` 5 |
-| `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
-| `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope y tarjetas que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
+| `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no. `EventDetails`: el detalle de una cita (lugar, liga de la reunión, invitados con su respuesta, recordatorio, notas) | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
+| `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope (y que se encogen, como un congelador) y tarjetas de producto (etiquetas, responsables, fecha, pendientes, terminar) que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
 
 ## El tema
 
@@ -187,7 +202,7 @@ const theme = createToolkitTheme({colorSchemes: {light: {palette: {primary: {mai
 const theme = createToolkitTheme({components: {MuiCard: {…}}});        // se SUMA a los ajustes del framework
 ```
 
-El vidrio es la versión en CSS del Liquid Glass de Apple, poco transparente (80 %). Va en lo que flota sobre el
+El vidrio es la versión en CSS del Liquid Glass de Apple (60 % de opacidad por omisión). Va en lo que flota sobre el
 contenido y en los controles, como pide su guía:
 
 - la barra y el menú lateral, que en escritorio flotan a 8 px de la orilla;
@@ -198,8 +213,10 @@ contenido y en los controles, como pide su guía:
 - un lienzo con manchas tenues de color, para que el vidrio tenga algo que desenfocar.
 
 Las tarjetas del contenido se quedan sólidas, para que el texto largo se lea, salvo que el proyecto las pida de vidrio.
-Todo se pinta sólido si la persona pidió en su equipo «Reducir transparencia» o «Aumentar contraste». No trae refracción
-(la lupa que deforma lo de atrás): en la web solo sale con filtros que hoy funcionan nada más en Chrome.
+Todo se pinta sólido si la persona pidió en su equipo «Reducir transparencia» o «Aumentar contraste». La refracción (el
+lente que dobla lo de atrás en la orilla del vidrio) sale en Chrome y sus parientes (Edge, Brave, Arc) con
+`GlassLensFilter`, que `AppLayout` y `AuthLayout` ya ponen; Safari y Firefox no pintan ese filtro y ahí el vidrio se queda
+esmerilado.
 
 ```js
 const theme = createToolkitTheme({glass: {opacity: 0.7}});            // más transparente (0 a 1)
@@ -296,10 +313,82 @@ const menuItems = composeMenu(import.meta.glob('@/modules/*/menu.js', {eager: tr
 En cada pantalla, `PageHeading` pone el título, la descripción y los botones, y arma las migas solo desde el menú
 (Inicio › Sección › Pantalla). `PageHeader` es el encabezado centrado de una portada y `DetailHeader` el de un registro.
 
-La misma regla protege las rutas (`withAccess(access, routes)` de `/react-router`: quien no puede ve «sin permiso») y
+La misma regla protege las rutas (`withAccess(access, routes)` de `/react-router`: quien no puede ve «sin permiso», o la
+página propia que se pase en `{fallback}`) y
 los botones (`<Can access={…}>`, `useCan`). El framework no sabe de roles: RBAC por permisos o roles y ABAC por políticas
 con nombre o reglas escritas ahí mismo, como cada proyecto las necesite. Lo que se pinta no protege nada: el backend
-vuelve a revisar cada petición. `ErrorPage` trae las pantallas de 404, 403 y 500.
+vuelve a revisar cada petición. `ErrorPage` trae las pantallas de 404, 403 y 500, y se extiende sin tocarla: botones
+propios junto a los de la casa (`extraActions`) o en su lugar (`actions`), algo debajo del texto (`children`), otro ícono y
+`onGoHome`.
+
+El marco avisa cuando la persona encoge el menú (`onMenuCollapse`), abre el menú del teléfono (`onMobileMenuChange`) o elige
+sus pestañas (`onMobileTabsChange`), para guardar esas preferencias en el servidor del proyecto si se quiere; sus textos se
+cambian con `texts`.
+
+## Eventos y textos de cada componente
+
+Cada componente de la casa avisa hacia afuera todo lo que pasa adentro (`onSelect`, `onChange`, `onViewChange`,
+`onMenuCollapse`, `onCardComplete`, `onDatesChange`…) y nunca llama un servidor propio: el proyecto decide qué hacer. Así se
+mide, se guarda una preferencia en el servidor del proyecto o se conecta un sistema viejo sin tocar Calcita.
+
+Cada texto también se cambia desde afuera: el componente recibe `texts` con la forma de su namespace en los textos del
+paquete (`src/locales/es.js`), y `ComponentTexts` los cambia para todo lo que va adentro (un módulo con su propio
+vocabulario):
+
+```jsx
+<ServerTable texts={{count: {records_one: '{{total}} pedido', records_other: '{{total}} pedidos'}}} … />
+
+<ComponentTexts namespace="table" texts={{emptyState: {title: 'Sin pedidos'}}}>
+    <OrdersModule />
+</ComponentTexts>
+```
+
+## En un sistema que ya existe
+
+Calcita entra por pedazos en un sistema hecho en PHP, JSP o .NET, sin reescribirlo: cada pedazo es una «isla» de React en
+un `<div>` de la página vieja, con su propio `ToolkitProvider`.
+
+- **Sin router:** `createHashNavigation()` pone las pantallas después del `#` (`/app.php#/ventas`): cambiar de pantalla no
+  recarga, atrás y adelante funcionan y recargar no le pide nada nuevo al servidor viejo. Con la app bajo un prefijo y sin
+  router, `createBrowserNavigation({basePath: '/portal'})`.
+- **Su tema de MUI tal cual:** Calcita lee los colores del tema, con o sin variables CSS y con el prefijo que traiga
+  (`cssVarPrefix`).
+- **Varias islas, cada una con lo suyo:** dos islas pueden ir en idiomas y monedas distintas; `useFormatters()` escribe con
+  los de su isla.
+- **Un backend que contesta a su manera:** `createApiClient({toProblem, mapResponse})` convierte sus errores a RFC 9457
+  (Laravel manda `{message, errors}`) y desenvuelve sus respuestas (`{data: …}`); `onError` recibe cada error en un lugar.
+
+```jsx
+const hashNavigation = createHashNavigation();       // una vez, fuera de los componentes
+
+document.querySelectorAll('[data-calcita="sales"]').forEach((element) => {
+    createRoot(element).render(
+        <ThemeProvider theme={legacyTheme}>
+            <ToolkitProvider language={element.lang || 'es'} navigation={hashNavigation}>
+                <SalesOfTheDay onOpen={() => element.dispatchEvent(new CustomEvent('calcita:open-sales', {bubbles: true}))} />
+            </ToolkitProvider>
+        </ThemeProvider>,
+    );
+});
+```
+
+## Detrás de un proxy con prefijo
+
+Para publicar la app en una ruta y no en un subdominio (`miempresa.com/ventas/`), el prefijo se da una vez al construir,
+`ASSET_URL=/ventas`, la misma línea del `.env` del servidor. El proyecto que arma `calcita new` ya lo trae:
+
+1. `vite.config.js`: `base` con el prefijo; Vite se lo pone a sus archivos y a las rutas de `index.html`;
+2. el router con el mismo prefijo (`createBrowserRouter(routes, {basename})`): las pantallas siguen escribiendo sus rutas
+   desde la raíz;
+3. lo de `public/` y `version.json` con `import.meta.env.BASE_URL` (una dirección escrita desde la raíz se rompe detrás del
+   proxy) y el manifiesto con rutas relativas;
+4. el servidor: cada dirección bajo el prefijo que no sea un archivo regresa su `index.html`.
+
+```nginx
+location /ventas/ {
+    try_files $uri $uri/ /ventas/index.html;
+}
+```
 
 ## La petición de la casa
 
@@ -488,7 +577,7 @@ menú, diccionarios) no lleva marca, así que también corre en los componentes 
 ## Formularios
 
 Cada campo tiene su vista suelta en la puerta principal (`TextInput`, `SelectInput`, `NumberInput`, `CatalogInput`,
-`ColorInput`; sirven sin formulario) y su conexión: a formik en `/forms` y a react-hook-form en `/react-hook-form`, con
+`ColorInput`; sirven sin formulario; `SelectInput` y `CatalogInput` aceptan varias opciones con `multiple`) y su conexión: a formik en `/forms` y a react-hook-form en `/react-hook-form`, con
 los mismos nombres. Cambiar de librería es cambiar el import.
 
 ```jsx
@@ -507,9 +596,9 @@ import {Form, Formik, FormNumberField, FormProblemAlert, FormTextField, SubmitBu
 </Formik>
 ```
 
-formik y yup vienen con el paquete: se importan de `@stackcraftmx/calcita/forms` y no de `formik` / `yup` directo (con
-otra versión en el proyecto, los campos no encontrarían el formulario). `FormWizard` parte un formulario en pasos, con
-pasos opcionales; los ejemplos traen uno completo.
+formik y yup los instala el proyecto (`pnpm add formik yup`); `Formik`, `Form` y `Yup` también se pueden importar de
+`@stackcraftmx/calcita/forms`, que es la misma copia. `FormWizard` parte un formulario en pasos, con pasos opcionales (hay
+uno para formik y otro para react-hook-form); los ejemplos traen los dos.
 
 Para que el formulario se vea como los de Apple (Ajustes, la hoja «Nuevo evento» de Calendario), los campos van dentro de
 una `FormSection`: cada uno se vuelve un renglón, con la etiqueta a la izquierda y el valor a la derecha, sin la caja de
