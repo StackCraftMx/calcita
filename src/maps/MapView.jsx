@@ -14,6 +14,9 @@
 //
 // OJO, Next.js: Leaflet usa window al cargarse; en Next se importa con next/dynamic y ssr: false.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMapView con defaultProps y
+// styleOverrides de sus partes: popupText, root.
+//
 // Genérico del paquete: function (regla de la casa).
 import 'leaflet/dist/leaflet.css';
 import {useEffect, useMemo, useRef} from 'react';
@@ -25,6 +28,12 @@ import {useTheme} from '@mui/material/styles';
 
 import {MAP_PIN_SIZE, boundsOfMarkers, mapPinHtmlOf} from '@/maps/mapMarkers.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMapView)
+const THEME_NAME = 'CalcitaMapView';
+const MapPopupText = piecePart(THEME_NAME, 'PopupText', Typography);
+const MapRoot = piecePart(THEME_NAME, 'Root', Box);
 
 /** Los mosaicos de OpenStreetMap con su crédito (lo pide su política de uso). */
 export const OPEN_STREET_MAP_TILES = Object.freeze({
@@ -95,7 +104,7 @@ function DefaultPopupContent({marker}) {
     return (
         <>
             <Typography variant="subtitle2" component="p">{marker.title}</Typography>
-            {marker.description && <Typography variant="body2" color="text.secondary" component="p" sx={{m: 0}}>{marker.description}</Typography>}
+            {marker.description && <MapPopupText variant="body2" color="text.secondary" component="p" ownSx={{m: 0}}>{marker.description}</MapPopupText>}
         </>
     );
 }
@@ -115,10 +124,12 @@ function DefaultPopupContent({marker}) {
  * @param {import('react').ReactNode} [props.children] capas propias de react-leaflet (Circle, Polygon, GeoJSON…)
  * @param {object} [props.mapProps] lo demás de MapContainer de react-leaflet (scrollWheelZoom, minZoom…)
  */
-export default function MapView({
+export default function MapView(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMapView.defaultProps) y encima lo que llega aquí
+    const {
     markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES, renderPopup, onMapClick,
     children, mapProps,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const theme = useTheme();
     const palette = paletteOf(theme);
     const markerRefs = useRef(new Map());
@@ -134,7 +145,7 @@ export default function MapView({
     };
 
     return (
-        <Box role="region" aria-label={ariaLabel} sx={(currentTheme) => ({
+        <MapRoot role="region" aria-label={ariaLabel} ownSx={(currentTheme) => ({
             height, borderRadius: 3, overflow: 'hidden', position: 'relative', zIndex: 0,
             '& .leaflet-container': {height: '100%', width: '100%', fontFamily: 'inherit', bgcolor: 'action.hover'},
             '& .leaflet-bar': {border: 0, borderRadius: '10px', overflow: 'hidden', boxShadow: currentTheme.shadows[2]},
@@ -162,6 +173,6 @@ export default function MapView({
                     </Marker>
                 ))}
             </MapContainer>
-        </Box>
+        </MapRoot>
     );
 }

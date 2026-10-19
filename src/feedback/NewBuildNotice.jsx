@@ -13,6 +13,9 @@
 //     doble, la curva cortaba el texto y el botón se salía por la orilla (lo reportaron).
 // Sin compilación nueva no pinta nada ni ocupa lugar.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaNewBuildNotice con defaultProps y
+// styleOverrides de sus partes: floating, icon, message, reloadButton, banner.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Alert from '@mui/material/Alert';
@@ -26,6 +29,15 @@ import {GLASS_PANEL_GAP_PIXELS, aboveMobileTabBarOf} from '@/appShell/shellSizes
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaNewBuildNotice)
+const THEME_NAME = 'CalcitaNewBuildNotice';
+const NoticeFloating = piecePart(THEME_NAME, 'Floating', Box);
+const NoticeIcon = piecePart(THEME_NAME, 'Icon', RefreshRoundedIcon);
+const NoticeMessage = piecePart(THEME_NAME, 'Message', Typography);
+const NoticeReloadButton = piecePart(THEME_NAME, 'ReloadButton', Button);
+const NoticeBanner = piecePart(THEME_NAME, 'Banner', Alert);
 
 /** Las formas del aviso: franja (dentro de la barra del proyecto) o cápsula flotante (la del marco con vidrio). */
 export const NEW_BUILD_NOTICE_VARIANT = Object.freeze({ribbon: 'ribbon', floating: 'floating'});
@@ -86,7 +98,9 @@ function floatingSxOf(theme) {
  * @param {'ribbon'|'floating'} [props.variant] franja o cápsula flotante (NEW_BUILD_NOTICE_VARIANT); por omisión franja
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function NewBuildNotice({message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts}) {
+export default function NewBuildNotice(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaNewBuildNotice.defaultProps) y encima lo que llega aquí
+    const {message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const isNewBuildPublished = useNewBuildPublished();
 
@@ -100,23 +114,23 @@ export default function NewBuildNotice({message, reloadLabel, onReload = reloadP
     if (variant === NEW_BUILD_NOTICE_VARIANT.floating) {
         // el texto largo va para el lector de pantalla; a la vista, el corto (una cápsula de un renglón)
         return (
-            <Box role="status" aria-live="polite" aria-label={message ?? t('newBuild.message')} sx={floatingSxOf}>
-                <RefreshRoundedIcon fontSize="small" sx={{color: 'text.secondary'}} />
-                <Typography variant="body2" noWrap sx={{fontWeight: 500, minWidth: 0}}>{message ?? t('newBuild.short')}</Typography>
-                <Button size="small" variant="contained" onClick={onReload} sx={{flexShrink: 0}}>{buttonLabel}</Button>
-            </Box>
+            <NoticeFloating role="status" aria-live="polite" aria-label={message ?? t('newBuild.message')} ownSx={floatingSxOf}>
+                <NoticeIcon fontSize="small" ownSx={{color: 'text.secondary'}} />
+                <NoticeMessage variant="body2" noWrap ownSx={{fontWeight: 500, minWidth: 0}}>{message ?? t('newBuild.short')}</NoticeMessage>
+                <NoticeReloadButton size="small" variant="contained" onClick={onReload} ownSx={{flexShrink: 0}}>{buttonLabel}</NoticeReloadButton>
+            </NoticeFloating>
         );
     }
 
     return (
-        <Alert severity="warning" square role="status" aria-live="polite"
-               sx={{py: 0, px: {xs: 2, md: 3}, alignItems: 'center'}}
+        <NoticeBanner severity="warning" square role="status" aria-live="polite"
+               ownSx={{py: 0, px: {xs: 2, md: 3}, alignItems: 'center'}}
                action={(
-                   <Button size="small" variant="outlined" color="inherit" onClick={onReload} sx={{flexShrink: 0}}>
+                   <NoticeReloadButton size="small" variant="outlined" color="inherit" onClick={onReload} ownSx={{flexShrink: 0}}>
                        {buttonLabel}
-                   </Button>
+                   </NoticeReloadButton>
                )}>
             {message ?? t('newBuild.message')}
-        </Alert>
+        </NoticeBanner>
     );
 }

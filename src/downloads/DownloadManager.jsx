@@ -13,6 +13,10 @@
 // pantalla. Los avisos (sonner) salen abajo a la izquierda, así que el panel va a la derecha.
 // Con el vidrio del tema (createToolkitTheme({glass: true})) el panel es de vidrio: flota sobre la pantalla.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDownloadManager con defaultProps y
+// styleOverrides de sus partes: doneIcon, failedIcon, canceledIcon, cancelButton, progress, cancelIcon, item, itemText,
+// itemStatus, itemActions, panel, header, title, list.
+//
 // Genérico del paquete: function (regla de la casa).
 import {Fragment, useEffect, useRef, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -42,6 +46,24 @@ import {DOWNLOAD_STATUS} from '@/downloads/downloadsMachine.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {piecePart} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDownloadManager)
+const THEME_NAME = 'CalcitaDownloadManager';
+const DownloadsDoneIcon = piecePart(THEME_NAME, 'DoneIcon', CheckCircleIcon);
+const DownloadsFailedIcon = piecePart(THEME_NAME, 'FailedIcon', ErrorOutlineIcon);
+const DownloadsCanceledIcon = piecePart(THEME_NAME, 'CanceledIcon', BlockOutlinedIcon);
+const DownloadsCancelButton = piecePart(THEME_NAME, 'CancelButton', IconButton);
+const DownloadsProgress = piecePart(THEME_NAME, 'Progress', CircularProgress);
+const DownloadsCancelIcon = piecePart(THEME_NAME, 'CancelIcon', CloseIcon);
+const DownloadsItem = piecePart(THEME_NAME, 'Item', ListItem);
+const DownloadsItemText = piecePart(THEME_NAME, 'ItemText', Box);
+const DownloadsItemStatus = piecePart(THEME_NAME, 'ItemStatus', Typography);
+const DownloadsItemActions = piecePart(THEME_NAME, 'ItemActions', Box);
+const DownloadsPanel = piecePart(THEME_NAME, 'Panel', Paper);
+const DownloadsHeader = piecePart(THEME_NAME, 'Header', Stack);
+const DownloadsTitle = piecePart(THEME_NAME, 'Title', Typography);
+const DownloadsList = piecePart(THEME_NAME, 'List', List);
 
 // cuánto se queda el panel después de que TODAS las descargas terminaron bien
 const AUTO_DISMISS_MILLISECONDS = 5000;
@@ -122,30 +144,30 @@ function DownloadStatusIndicator({download, displayName}) {
     const {t} = useToolkitTranslation('common');
 
     if (download.status === DOWNLOAD_STATUS.completed) {
-        return <CheckCircleIcon sx={{color: 'success.main'}} aria-label={t('downloads.completedOf', {name: displayName})} />;
+        return <DownloadsDoneIcon ownSx={{color: 'success.main'}} aria-label={t('downloads.completedOf', {name: displayName})} />;
     }
     if (download.status === DOWNLOAD_STATUS.failed) {
-        return <ErrorOutlineIcon sx={{color: 'error.main'}} aria-label={t('downloads.failedOf', {name: displayName})} />;
+        return <DownloadsFailedIcon ownSx={{color: 'error.main'}} aria-label={t('downloads.failedOf', {name: displayName})} />;
     }
     if (download.status === DOWNLOAD_STATUS.canceled) {
-        return <BlockOutlinedIcon sx={{color: 'text.disabled'}} aria-label={t('downloads.canceledOf', {name: displayName})} />;
+        return <DownloadsCanceledIcon ownSx={{color: 'text.disabled'}} aria-label={t('downloads.canceledOf', {name: displayName})} />;
     }
 
     const hasKnownSize = Boolean(download.totalBytes);
     // el anillo y, encima, la X para cancelar: como en Drive, un solo lugar para ver y detener
     return (
         <Tooltip title={t('downloads.cancel')}>
-            <IconButton size="small" aria-label={t('downloads.cancelOf', {name: displayName})} onClick={() => cancelDownload(download.id)}
-                        sx={{position: 'relative', width: PROGRESS_RING_PIXELS + 10, height: PROGRESS_RING_PIXELS + 10}}>
-                <CircularProgress
+            <DownloadsCancelButton size="small" aria-label={t('downloads.cancelOf', {name: displayName})} onClick={() => cancelDownload(download.id)}
+                        ownSx={{position: 'relative', width: PROGRESS_RING_PIXELS + 10, height: PROGRESS_RING_PIXELS + 10}}>
+                <DownloadsProgress
                     size={PROGRESS_RING_PIXELS}
                     thickness={4}
                     variant={hasKnownSize ? 'determinate' : 'indeterminate'}
                     value={hasKnownSize ? Math.min(100, (download.loadedBytes * 100) / download.totalBytes) : undefined}
-                    sx={{position: 'absolute'}}
+                    ownSx={{position: 'absolute'}}
                 />
-                <CloseIcon sx={{fontSize: 12}} />
-            </IconButton>
+                <DownloadsCancelIcon ownSx={{fontSize: 12}} />
+            </DownloadsCancelButton>
         </Tooltip>
     );
 }
@@ -164,21 +186,21 @@ function DownloadRow({download}) {
 
     return (
         // minWidth 0: sin él un nombre largo empuja el renglón y la lista enseña una barra horizontal
-        <ListItem disableGutters sx={{gap: 1.5, px: 2, py: 1, minWidth: 0}}>
+        <DownloadsItem disableGutters ownSx={{gap: 1.5, px: 2, py: 1, minWidth: 0}}>
             <Icon fontSize="small" sx={{color, flexShrink: 0}} />
-            <Box sx={{minWidth: 0, flex: 1}}>
+            <DownloadsItemText ownSx={{minWidth: 0, flex: 1}}>
                 <Tooltip title={displayName}>
                     <Typography variant="body2" noWrap>{displayName}</Typography>
                 </Tooltip>
-                <Typography variant="caption" component="p" noWrap={!isFailed}
-                            sx={{color: isFailed ? 'error.main' : 'text.secondary'}}>
+                <DownloadsItemStatus variant="caption" component="p" noWrap={!isFailed}
+                            ownSx={{color: isFailed ? 'error.main' : 'text.secondary'}}>
                     {detailTextOf(download, t, formatFileSize)}
-                </Typography>
-            </Box>
-            <Box sx={{flexShrink: 0, display: 'flex', alignItems: 'center'}}>
+                </DownloadsItemStatus>
+            </DownloadsItemText>
+            <DownloadsItemActions ownSx={{flexShrink: 0, display: 'flex', alignItems: 'center'}}>
                 <DownloadStatusIndicator download={download} displayName={displayName} />
-            </Box>
-        </ListItem>
+            </DownloadsItemActions>
+        </DownloadsItem>
     );
 }
 
@@ -215,11 +237,11 @@ export default function DownloadManager({texts} = {}) {
     return (
         <ComponentTexts namespace="common" texts={texts}>
             <Slide direction="up" in={downloads.length > 0} mountOnEnter unmountOnExit>
-                <Paper
+                <DownloadsPanel
                     elevation={8}
                     role="region"
                     aria-label={t('downloads.title')}
-                    sx={[{
+                    ownSx={[{
                         position: 'fixed',
                         right: (theme) => theme.spacing(SCREEN_EDGE_SPACING),
                         bottom: 0,
@@ -231,10 +253,10 @@ export default function DownloadManager({texts} = {}) {
                         zIndex: (theme) => theme.zIndex.snackbar,
                     }, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
                 >
-                    <Stack direction="row" sx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
-                        <Typography variant="subtitle2" component="h2" noWrap sx={{flex: 1}} aria-live="polite">
+                    <DownloadsHeader direction="row" ownSx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
+                        <DownloadsTitle variant="subtitle2" component="h2" noWrap ownSx={{flex: 1}} aria-live="polite">
                             {summaryTextOf(downloads, t)}
-                        </Typography>
+                        </DownloadsTitle>
                         <Tooltip title={isExpanded ? t('downloads.collapse') : t('downloads.expand')}>
                             <IconButton size="small" aria-expanded={isExpanded}
                                         aria-label={isExpanded ? t('downloads.collapse') : t('downloads.expand')}
@@ -250,20 +272,20 @@ export default function DownloadManager({texts} = {}) {
                                 </IconButton>
                             </Tooltip>
                         )}
-                    </Stack>
+                    </DownloadsHeader>
                     <Collapse in={isExpanded}>
                         <Divider />
                         {/* OJO: overflowY auto también prende el scroll horizontal ante 1 px de más; se apaga explícito */}
-                        <List dense disablePadding sx={{maxHeight: LIST_MAX_HEIGHT, overflowY: 'auto', overflowX: 'hidden'}}>
+                        <DownloadsList dense disablePadding ownSx={{maxHeight: LIST_MAX_HEIGHT, overflowY: 'auto', overflowX: 'hidden'}}>
                             {downloads.map((download, index) => (
                                 <Fragment key={download.id}>
                                     {index > 0 && <Divider component="li" />}
                                     <DownloadRow download={download} />
                                 </Fragment>
                             ))}
-                        </List>
+                        </DownloadsList>
                     </Collapse>
-                </Paper>
+                </DownloadsPanel>
             </Slide>
         </ComponentTexts>
     );

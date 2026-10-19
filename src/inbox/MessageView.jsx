@@ -9,6 +9,10 @@
 // Todo hacia afuera: onAttachmentClick al picar un archivo (descargarlo, verlo), onExpand al abrir un mensaje anterior (para
 // marcarlo como leído), renderBody, footer y texts.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMessageView con defaultProps y
+// styleOverrides de sus partes: header, headerText, recipients, body, empty, labels, attachments, divider, collapsed,
+// collapsedAvatar, collapsedText, collapsedSender, collapsedDate.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
@@ -25,6 +29,23 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {inboxDateOf} from '@/inbox/inboxDates.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageView)
+const THEME_NAME = 'CalcitaMessageView';
+const MessageHeaderPart = piecePart(THEME_NAME, 'Header', Stack);
+const MessageHeaderText = piecePart(THEME_NAME, 'HeaderText', Box);
+const MessageRecipients = piecePart(THEME_NAME, 'Recipients', Stack);
+const MessageBodyPart = piecePart(THEME_NAME, 'Body', Typography);
+const MessageEmpty = piecePart(THEME_NAME, 'Empty', Typography);
+const MessageLabels = piecePart(THEME_NAME, 'Labels', Stack);
+const MessageAttachments = piecePart(THEME_NAME, 'Attachments', Stack);
+const MessageDivider = piecePart(THEME_NAME, 'Divider', Divider);
+const MessageCollapsed = piecePart(THEME_NAME, 'Collapsed', ButtonBase);
+const MessageCollapsedAvatar = piecePart(THEME_NAME, 'CollapsedAvatar', Avatar);
+const MessageCollapsedText = piecePart(THEME_NAME, 'CollapsedText', Box);
+const MessageCollapsedSender = piecePart(THEME_NAME, 'CollapsedSender', Typography);
+const MessageCollapsedDate = piecePart(THEME_NAME, 'CollapsedDate', Typography);
 
 const PREVIEW_LENGTH = 90;
 
@@ -32,9 +53,9 @@ const PREVIEW_LENGTH = 90;
 function MessageHeader({entry, t}) {
     const {formatDateTime} = useFormatters();
     return (
-        <Stack direction="row" spacing={1.5} sx={{alignItems: 'center'}}>
+        <MessageHeaderPart direction="row" spacing={1.5} ownSx={{alignItems: 'center'}}>
             <Avatar>{initialsOf(entry.from.name)}</Avatar>
-            <Box sx={{minWidth: 0, flex: 1}}>
+            <MessageHeaderText ownSx={{minWidth: 0, flex: 1}}>
                 <Typography variant="subtitle2" component="p" noWrap>
                     {entry.from.name} <Typography component="span" variant="body2" color="text.secondary">&lt;{entry.from.email}&gt;</Typography>
                 </Typography>
@@ -42,8 +63,8 @@ function MessageHeader({entry, t}) {
                 {entry.cc?.length > 0 && <Typography variant="caption" color="text.secondary" component="p">{t('cc', {cc: entry.cc.join(', ')})}</Typography>}
                 {/* la fecha debajo y no a la derecha: en el teléfono apretaba el «Para» a dos renglones */}
                 <Typography variant="caption" color="text.secondary" component="p">{formatDateTime(entry.receivedAt)}</Typography>
-            </Box>
-        </Stack>
+            </MessageHeaderText>
+        </MessageHeaderPart>
     );
 }
 
@@ -53,16 +74,16 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
         <Stack spacing={2}>
             <MessageHeader entry={entry} t={t} />
             {entry.attachments?.length > 0 && (
-                <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: 'wrap'}} aria-label={t('attachments')} role="group">
+                <MessageRecipients direction="row" spacing={1} useFlexGap ownSx={{flexWrap: 'wrap'}} aria-label={t('attachments')} role="group">
                     {entry.attachments.map((attachment) => (
                         <Chip key={attachment.name} icon={<AttachFileRoundedIcon />} variant="outlined"
                               label={attachment.size ? `${attachment.name} · ${attachment.size}` : attachment.name}
                               {...(onAttachmentClick && {onClick: () => onAttachmentClick(attachment, entry), 'aria-label': t('openAttachment', {name: attachment.name})})} />
                     ))}
-                </Stack>
+                </MessageRecipients>
             )}
             {renderBody ? renderBody(entry) : (
-                <Typography variant="body1" component="div" sx={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere'}}>{entry.body}</Typography>
+                <MessageBodyPart variant="body1" component="div" ownSx={{whiteSpace: 'pre-wrap', overflowWrap: 'anywhere'}}>{entry.body}</MessageBodyPart>
             )}
         </Stack>
     );
@@ -80,14 +101,16 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
  * @param {(message: any) => import('react').ReactNode} [props.renderBody] el texto a su manera (HTML ya limpio por el proyecto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
  */
-export default function MessageView({message, actions, footer, onAttachmentClick, onExpand, renderBody, texts}) {
+export default function MessageView(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMessageView.defaultProps) y encima lo que llega aquí
+    const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('inbox', texts);
     const formatters = useFormatters();
     // los mensajes anteriores que la persona abrió (empiezan encogidos), de qué conversación: al cambiar de mensaje se olvidan
     const [expanded, setExpanded] = useState({messageId: null, ids: []});
 
     if (!message) {
-        return <Typography variant="body2" color="text.secondary" sx={{p: 4, textAlign: 'center'}}>{t('noMessageSelected')}</Typography>;
+        return <MessageEmpty variant="body2" color="text.secondary" ownSx={{p: 4, textAlign: 'center'}}>{t('noMessageSelected')}</MessageEmpty>;
     }
 
     const expandedIds = expanded.messageId === message.id ? expanded.ids : [];
@@ -98,16 +121,16 @@ export default function MessageView({message, actions, footer, onAttachmentClick
 
     return (
         <Stack spacing={2} component="article" aria-label={message.subject}>
-            {actions && <Stack direction="row" spacing={0.5} useFlexGap sx={{flexWrap: 'wrap', alignItems: 'center'}}>{actions}</Stack>}
+            {actions && <MessageLabels direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap', alignItems: 'center'}}>{actions}</MessageLabels>}
             <Box>
                 <Typography variant="h5" component="h2">{message.subject}</Typography>
                 {message.labels?.length > 0 && (
-                    <Stack direction="row" spacing={0.5} useFlexGap sx={{flexWrap: 'wrap', mt: 1}}>
+                    <MessageAttachments direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap', mt: 1}}>
                         {message.labels.map((rawLabel) => {
                             const label = tagOf(rawLabel);
                             return <Chip key={label.label} size="small" variant="outlined" color={label.color} label={label.label} />;
                         })}
-                    </Stack>
+                    </MessageAttachments>
                 )}
             </Box>
             {message.thread?.length > 0 && (
@@ -117,18 +140,18 @@ export default function MessageView({message, actions, footer, onAttachmentClick
             {message.thread?.map((entry) => (expandedIds.includes(entry.id) ? (
                 <Box key={entry.id}>
                     <MessageBody entry={entry} t={t} onAttachmentClick={onAttachmentClick} renderBody={renderBody} />
-                    <Divider sx={{mt: 2}} />
+                    <MessageDivider ownSx={{mt: 2}} />
                 </Box>
             ) : (
-                <ButtonBase key={entry.id} onClick={() => expand(entry.id)} aria-label={t('expandMessage', {name: entry.from.name, date: inboxDateOf(entry.receivedAt, new Date(), formatters)})}
-                            sx={{justifyContent: 'flex-start', textAlign: 'left', borderRadius: 2, p: 1, mx: -1, gap: 1.5, '&:hover': {bgcolor: 'action.hover'}}}>
-                    <Avatar sx={{width: 32, height: 32, fontSize: 13}}>{initialsOf(entry.from.name)}</Avatar>
-                    <Box sx={{minWidth: 0, flex: 1}}>
-                        <Typography variant="body2" sx={{fontWeight: 600}} noWrap>{entry.from.name}</Typography>
+                <MessageCollapsed key={entry.id} onClick={() => expand(entry.id)} aria-label={t('expandMessage', {name: entry.from.name, date: inboxDateOf(entry.receivedAt, new Date(), formatters)})}
+                            ownSx={{justifyContent: 'flex-start', textAlign: 'left', borderRadius: 2, p: 1, mx: -1, gap: 1.5, '&:hover': {bgcolor: 'action.hover'}}}>
+                    <MessageCollapsedAvatar ownSx={{width: 32, height: 32, fontSize: 13}}>{initialsOf(entry.from.name)}</MessageCollapsedAvatar>
+                    <MessageCollapsedText ownSx={{minWidth: 0, flex: 1}}>
+                        <MessageCollapsedSender variant="body2" ownSx={{fontWeight: 600}} noWrap>{entry.from.name}</MessageCollapsedSender>
                         <Typography variant="body2" color="text.secondary" noWrap>{entry.body.replace(/\s+/g, ' ').slice(0, PREVIEW_LENGTH)}</Typography>
-                    </Box>
-                    <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt, new Date(), formatters)}</Typography>
-                </ButtonBase>
+                    </MessageCollapsedText>
+                    <MessageCollapsedDate variant="caption" color="text.secondary" ownSx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt, new Date(), formatters)}</MessageCollapsedDate>
+                </MessageCollapsed>
             )))}
             {message.thread?.length > 0 && <Divider />}
             <MessageBody entry={message} t={t} onAttachmentClick={onAttachmentClick} renderBody={renderBody} />

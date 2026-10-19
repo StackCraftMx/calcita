@@ -8,6 +8,10 @@
 //   - «⋯» de cada mensaje con las acciones que dé la pantalla (messageActions);
 //   - renderMessage para pintar lo de adentro de cada renglón a su manera, y texts para cualquier texto.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMessageList con defaultProps y
+// styleOverrides de sus partes: empty, selectedAvatar, item, actions, starButton, itemButton, avatarSlot, avatarButton,
+// avatar, body, text, topRow, unreadDot, sender, threadCount, date, subject, labels.
+//
 // Genérico del paquete: function (regla de la casa).
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -31,6 +35,28 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageList)
+const THEME_NAME = 'CalcitaMessageList';
+const MessagesEmpty = piecePart(THEME_NAME, 'Empty', Typography);
+const MessagesSelectedAvatar = piecePart(THEME_NAME, 'SelectedAvatar', Avatar);
+const MessagesItem = piecePart(THEME_NAME, 'Item', ListItem);
+const MessagesActions = piecePart(THEME_NAME, 'Actions', Stack);
+const MessagesStarButton = piecePart(THEME_NAME, 'StarButton', IconButton);
+const MessagesItemButton = piecePart(THEME_NAME, 'ItemButton', ListItemButton);
+const MessagesAvatarSlot = piecePart(THEME_NAME, 'AvatarSlot', ListItemAvatar);
+const MessagesAvatarButton = piecePart(THEME_NAME, 'AvatarButton', ButtonBase);
+const MessagesAvatar = piecePart(THEME_NAME, 'Avatar', Avatar);
+const MessagesBody = piecePart(THEME_NAME, 'Body', Box);
+const MessagesText = piecePart(THEME_NAME, 'Text', Box);
+const MessagesTopRow = piecePart(THEME_NAME, 'TopRow', Stack);
+const MessagesUnreadDot = piecePart(THEME_NAME, 'UnreadDot', Box);
+const MessagesSender = piecePart(THEME_NAME, 'Sender', Typography);
+const MessagesThreadCount = piecePart(THEME_NAME, 'ThreadCount', Typography);
+const MessagesDate = piecePart(THEME_NAME, 'Date', Typography);
+const MessagesSubject = piecePart(THEME_NAME, 'Subject', Typography);
+const MessagesLabels = piecePart(THEME_NAME, 'Labels', Stack);
 
 const UNREAD_DOT_PIXELS = 8;
 const AVATAR_PIXELS = 40;
@@ -51,14 +77,16 @@ const AVATAR_PIXELS = 40;
  * @param {string} [props.emptyText] ya traducido; por omisión el del paquete
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
  */
-export default function MessageList({
+export default function MessageList(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaMessageList.defaultProps) y encima lo que llega aquí
+    const {
     messages, selectedId = null, onSelect, onToggleStar, selectedIds = [], onSelectionChange, messageActions, renderMessage, emptyText, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('inbox', texts);
     const formatters = useFormatters();
 
     if (messages.length === 0) {
-        return <Typography variant="body2" color="text.secondary" sx={{p: 3, textAlign: 'center'}}>{emptyText ?? t('empty')}</Typography>;
+        return <MessagesEmpty variant="body2" color="text.secondary" ownSx={{p: 3, textAlign: 'center'}}>{emptyText ?? t('empty')}</MessagesEmpty>;
     }
 
     const toggleSelected = (messageId, isChecked) => {
@@ -70,73 +98,73 @@ export default function MessageList({
             {messages.map((message) => {
                 const weight = message.isUnread ? 700 : 400;
                 const isChecked = selectedIds.includes(message.id);
-                const avatar = <Avatar sx={{width: AVATAR_PIXELS, height: AVATAR_PIXELS}}>{initialsOf(message.from.name)}</Avatar>;
+                const avatar = <MessagesSelectedAvatar ownSx={{width: AVATAR_PIXELS, height: AVATAR_PIXELS}}>{initialsOf(message.from.name)}</MessagesSelectedAvatar>;
                 return (
-                    <ListItem key={message.id} disablePadding secondaryAction={(onToggleStar || messageActions) && (
-                        <Stack direction="row" sx={{alignItems: 'center'}}>
+                    <MessagesItem key={message.id} disablePadding secondaryAction={(onToggleStar || messageActions) && (
+                        <MessagesActions direction="row" ownSx={{alignItems: 'center'}}>
                             {onToggleStar && (
-                                <IconButton size="small" onClick={() => onToggleStar(message.id)} aria-pressed={Boolean(message.isStarred)}
-                                            aria-label={message.isStarred ? t('unstar') : t('star')} sx={{color: message.isStarred ? 'warning.main' : 'text.secondary'}}>
+                                <MessagesStarButton size="small" onClick={() => onToggleStar(message.id)} aria-pressed={Boolean(message.isStarred)}
+                                            aria-label={message.isStarred ? t('unstar') : t('star')} ownSx={{color: message.isStarred ? 'warning.main' : 'text.secondary'}}>
                                     {message.isStarred ? <StarRoundedIcon fontSize="small" /> : <StarBorderRoundedIcon fontSize="small" />}
-                                </IconButton>
+                                </MessagesStarButton>
                             )}
                             {messageActions && <ActionsMenu label={t('messageActions', {subject: message.subject})} actions={messageActions(message)} />}
-                        </Stack>
-                    )} sx={{'& .MuiListItemSecondaryAction-root': {right: 4}}}>
-                        <ListItemButton selected={message.id === selectedId || isChecked} onClick={() => onSelect(message.id)} alignItems="flex-start"
-                                        sx={{borderRadius: 2, pr: onToggleStar && messageActions ? 10 : 6}}>
-                            <ListItemAvatar sx={{mt: 0.5}}>
+                        </MessagesActions>
+                    )} ownSx={{'& .MuiListItemSecondaryAction-root': {right: 4}}}>
+                        <MessagesItemButton selected={message.id === selectedId || isChecked} onClick={() => onSelect(message.id)} alignItems="flex-start"
+                                        ownSx={{borderRadius: 2, pr: onToggleStar && messageActions ? 10 : 6}}>
+                            <MessagesAvatarSlot ownSx={{mt: 0.5}}>
                                 {/* elegir: el monograma es la casilla (el clic no abre el mensaje). Un botón con papel de casilla y
                                     no el Checkbox de MUI: el tema le pinta a la casilla marcada un cuadro blanco detrás de su dibujo
                                     y la palomita salía como un cuadro */}
                                 {onSelectionChange ? (
-                                    <ButtonBase role="checkbox" aria-checked={isChecked} aria-label={t('select', {subject: message.subject})}
-                                                sx={{borderRadius: '50%'}}
+                                    <MessagesAvatarButton role="checkbox" aria-checked={isChecked} aria-label={t('select', {subject: message.subject})}
+                                                ownSx={{borderRadius: '50%'}}
                                                 onClick={(event) => {
                                                     event.stopPropagation();
                                                     toggleSelected(message.id, !isChecked);
                                                 }}>
                                         {isChecked ? (
-                                            <Avatar sx={{width: AVATAR_PIXELS, height: AVATAR_PIXELS, bgcolor: 'primary.main', color: 'primary.contrastText'}}>
+                                            <MessagesAvatar ownSx={{width: AVATAR_PIXELS, height: AVATAR_PIXELS, bgcolor: 'primary.main', color: 'primary.contrastText'}}>
                                                 <CheckRoundedIcon />
-                                            </Avatar>
+                                            </MessagesAvatar>
                                         ) : avatar}
-                                    </ButtonBase>
+                                    </MessagesAvatarButton>
                                 ) : avatar}
-                            </ListItemAvatar>
-                            {renderMessage ? <Box sx={{minWidth: 0, flex: 1}}>{renderMessage(message)}</Box> : (
-                                <Box sx={{minWidth: 0, flex: 1}}>
-                                    <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                            </MessagesAvatarSlot>
+                            {renderMessage ? <MessagesBody ownSx={{minWidth: 0, flex: 1}}>{renderMessage(message)}</MessagesBody> : (
+                                <MessagesText ownSx={{minWidth: 0, flex: 1}}>
+                                    <MessagesTopRow direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                                         {message.isUnread && (
-                                            <Box component="span" aria-label={t('unread')} sx={{width: UNREAD_DOT_PIXELS, height: UNREAD_DOT_PIXELS, borderRadius: '50%', bgcolor: 'primary.main', flexShrink: 0}} />
+                                            <MessagesUnreadDot component="span" aria-label={t('unread')} ownSx={{width: UNREAD_DOT_PIXELS, height: UNREAD_DOT_PIXELS, borderRadius: '50%', bgcolor: 'primary.main', flexShrink: 0}} />
                                         )}
-                                        <Typography variant="body2" noWrap sx={{fontWeight: weight, flex: 1}}>
+                                        <MessagesSender variant="body2" noWrap ownSx={{fontWeight: weight, flex: 1}}>
                                             {message.from.name}
                                             {message.threadCount > 1 && (
-                                                <Typography component="span" variant="caption" color="text.secondary" sx={{ml: 0.5}} aria-label={t('threadCount', {count: message.threadCount})}>
+                                                <MessagesThreadCount component="span" variant="caption" color="text.secondary" ownSx={{ml: 0.5}} aria-label={t('threadCount', {count: message.threadCount})}>
                                                     ({message.threadCount})
-                                                </Typography>
+                                                </MessagesThreadCount>
                                             )}
-                                        </Typography>
+                                        </MessagesSender>
                                         {message.hasAttachments && <AttachFileRoundedIcon fontSize="inherit" color="action" aria-label={t('attachments')} />}
-                                        <Typography variant="caption" color="text.secondary" sx={{flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
+                                        <MessagesDate variant="caption" color="text.secondary" ownSx={{flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
                                             {inboxDateOf(message.receivedAt, new Date(), formatters)}
-                                        </Typography>
-                                    </Stack>
-                                    <Typography variant="body2" noWrap sx={{fontWeight: weight}}>{message.subject}</Typography>
+                                        </MessagesDate>
+                                    </MessagesTopRow>
+                                    <MessagesSubject variant="body2" noWrap ownSx={{fontWeight: weight}}>{message.subject}</MessagesSubject>
                                     <Typography variant="body2" color="text.secondary" noWrap>{message.preview}</Typography>
                                     {message.labels?.length > 0 && (
-                                        <Stack direction="row" spacing={0.5} useFlexGap sx={{flexWrap: 'wrap', mt: 0.5}}>
+                                        <MessagesLabels direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap', mt: 0.5}}>
                                             {message.labels.map((rawLabel) => {
                                                 const label = tagOf(rawLabel);
                                                 return <Chip key={label.label} size="small" variant="outlined" color={label.color} label={label.label} />;
                                             })}
-                                        </Stack>
+                                        </MessagesLabels>
                                     )}
-                                </Box>
+                                </MessagesText>
                             )}
-                        </ListItemButton>
-                    </ListItem>
+                        </MessagesItemButton>
+                    </MessagesItem>
                 );
             })}
         </List>

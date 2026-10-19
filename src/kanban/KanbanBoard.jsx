@@ -24,6 +24,11 @@
 //     onColumnCollapse avisa cada cambio (para guardarlo si la pantalla quiere);
 //   - texts para cualquier texto (la forma de `kanban` en los textos del paquete).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaKanbanBoard con defaultProps y
+// styleOverrides de sus partes: completeButton, tags, titleRow, doneIcon, cardTitle, meta, due, dueIcon, dueText,
+// checklist, checklistIcon, comments, commentsIcon, attachments, attachmentsIcon, assignees, root, collapsedColumn,
+// collapsedTitle, hidden, column, columnHeader, columnTitle, quickAdd, dropZone, card, cardActions, cardContent, empty.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import {DragDropContext, Draggable, Droppable} from '@hello-pangea/dnd';
@@ -53,6 +58,39 @@ import {DUE_STATUS, dueStatusOf, tagOf, todayIsoDateOf} from '@/kanban/kanbanCar
 import {cardsOfColumn, isOverLimit} from '@/kanban/kanbanMoves.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaKanbanBoard)
+const THEME_NAME = 'CalcitaKanbanBoard';
+const KanbanCompleteButton = piecePart(THEME_NAME, 'CompleteButton', IconButton);
+const KanbanTags = piecePart(THEME_NAME, 'Tags', Stack);
+const KanbanTitleRow = piecePart(THEME_NAME, 'TitleRow', Stack);
+const KanbanDoneIcon = piecePart(THEME_NAME, 'DoneIcon', CheckCircleRoundedIcon);
+const KanbanCardTitle = piecePart(THEME_NAME, 'CardTitle', Typography);
+const KanbanMeta = piecePart(THEME_NAME, 'Meta', Stack);
+const KanbanDue = piecePart(THEME_NAME, 'Due', Stack);
+const KanbanDueIcon = piecePart(THEME_NAME, 'DueIcon', EventOutlinedIcon);
+const KanbanDueText = piecePart(THEME_NAME, 'DueText', Typography);
+const KanbanChecklist = piecePart(THEME_NAME, 'Checklist', Stack);
+const KanbanChecklistIcon = piecePart(THEME_NAME, 'ChecklistIcon', CheckBoxOutlinedIcon);
+const KanbanComments = piecePart(THEME_NAME, 'Comments', Stack);
+const KanbanCommentsIcon = piecePart(THEME_NAME, 'CommentsIcon', ChatBubbleOutlineRoundedIcon);
+const KanbanAttachments = piecePart(THEME_NAME, 'Attachments', Stack);
+const KanbanAttachmentsIcon = piecePart(THEME_NAME, 'AttachmentsIcon', AttachFileRoundedIcon);
+const KanbanAssignees = piecePart(THEME_NAME, 'Assignees', AvatarGroup);
+const KanbanRoot = piecePart(THEME_NAME, 'Root', Box);
+const KanbanCollapsedColumn = piecePart(THEME_NAME, 'CollapsedColumn', Paper);
+const KanbanCollapsedTitle = piecePart(THEME_NAME, 'CollapsedTitle', Typography);
+const KanbanHidden = piecePart(THEME_NAME, 'Hidden', Box);
+const KanbanColumn = piecePart(THEME_NAME, 'Column', Paper);
+const KanbanColumnHeader = piecePart(THEME_NAME, 'ColumnHeader', Stack);
+const KanbanColumnTitle = piecePart(THEME_NAME, 'ColumnTitle', Typography);
+const KanbanQuickAdd = piecePart(THEME_NAME, 'QuickAdd', Box);
+const KanbanDropZone = piecePart(THEME_NAME, 'DropZone', Stack);
+const KanbanCard = piecePart(THEME_NAME, 'Card', Paper);
+const KanbanCardActions = piecePart(THEME_NAME, 'CardActions', Box);
+const KanbanCardContent = piecePart(THEME_NAME, 'CardContent', Box);
+const KanbanEmpty = piecePart(THEME_NAME, 'Empty', Typography);
 
 // las columnas se reparten el ancho, sin bajar de este mínimo; si no caben, el tablero desliza de lado.
 // OJO: con el teclado, la librería solo mueve una tarjeta a columnas que se ven COMPLETAS: con columnas fijas de 300 px la
@@ -77,13 +115,13 @@ function CompleteButton({card, t, onComplete}) {
     const label = card.completed ? t('reopen', {title: card.title}) : t('complete', {title: card.title});
     return (
         <Tooltip title={label}>
-            <IconButton size="small" aria-label={label} aria-pressed={Boolean(card.completed)} sx={{m: -0.5, color: card.completed ? 'success.main' : 'text.secondary'}}
+            <KanbanCompleteButton size="small" aria-label={label} aria-pressed={Boolean(card.completed)} ownSx={{m: -0.5, color: card.completed ? 'success.main' : 'text.secondary'}}
                         onClick={(event) => {
                             event.stopPropagation();
                             onComplete(card, !card.completed);
                         }}>
                 {card.completed ? <CheckCircleRoundedIcon fontSize="small" /> : <RadioButtonUncheckedRoundedIcon fontSize="small" />}
-            </IconButton>
+            </KanbanCompleteButton>
         </Tooltip>
     );
 }
@@ -113,59 +151,59 @@ function DefaultCard({card, t, today, onComplete}) {
     return (
         <Stack spacing={0.75}>
             {card.tags?.length > 0 && (
-                <Stack direction="row" spacing={0.5} useFlexGap sx={{flexWrap: 'wrap'}}>
+                <KanbanTags direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap'}}>
                     {card.tags.map((rawTag) => {
                         const tag = tagOf(rawTag);
                         return <Chip key={tag.label} label={tag.label} size="small" color={tag.color} variant={tag.color === 'default' ? 'filled' : 'outlined'} />;
                     })}
-                </Stack>
+                </KanbanTags>
             )}
-            <Stack direction="row" spacing={1} sx={{alignItems: 'flex-start'}}>
+            <KanbanTitleRow direction="row" spacing={1} ownSx={{alignItems: 'flex-start'}}>
                 {onComplete && <CompleteButton card={card} t={t} onComplete={onComplete} />}
                 {!onComplete && card.completed && (
-                    <CheckCircleRoundedIcon fontSize="small" sx={{color: 'success.main'}} titleAccess={t('completed')} />
+                    <KanbanDoneIcon fontSize="small" ownSx={{color: 'success.main'}} titleAccess={t('completed')} />
                 )}
-                <Typography variant="subtitle2" component="p" sx={{color: card.completed ? 'text.secondary' : undefined}}>{card.title}</Typography>
-            </Stack>
+                <KanbanCardTitle variant="subtitle2" component="p" ownSx={{color: card.completed ? 'text.secondary' : undefined}}>{card.title}</KanbanCardTitle>
+            </KanbanTitleRow>
             {card.description && <Typography variant="body2" color="text.secondary">{card.description}</Typography>}
             {hasFooter && (
-                <Stack direction="row" spacing={1.25} useFlexGap sx={{alignItems: 'center', flexWrap: 'wrap', color: 'text.secondary'}}>
+                <KanbanMeta direction="row" spacing={1.25} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap', color: 'text.secondary'}}>
                     {dueStatus && (
-                        <Stack direction="row" spacing={0.5} sx={{alignItems: 'center', color: DUE_COLOR[dueStatus]}}>
-                            <EventOutlinedIcon sx={{fontSize: 16}} />
-                            <Typography variant="caption" sx={{fontWeight: dueStatus === DUE_STATUS.upcoming ? 400 : 600}}>{dueText}</Typography>
-                        </Stack>
+                        <KanbanDue direction="row" spacing={0.5} ownSx={{alignItems: 'center', color: DUE_COLOR[dueStatus]}}>
+                            <KanbanDueIcon ownSx={{fontSize: 16}} />
+                            <KanbanDueText variant="caption" ownSx={{fontWeight: dueStatus === DUE_STATUS.upcoming ? 400 : 600}}>{dueText}</KanbanDueText>
+                        </KanbanDue>
                     )}
                     {card.checklist?.total > 0 && (
-                        <Stack direction="row" spacing={0.5} sx={{alignItems: 'center'}}
+                        <KanbanChecklist direction="row" spacing={0.5} ownSx={{alignItems: 'center'}}
                                aria-label={t('checklist', {done: card.checklist.done, total: card.checklist.total})}>
-                            <CheckBoxOutlinedIcon sx={{fontSize: 16}} />
+                            <KanbanChecklistIcon ownSx={{fontSize: 16}} />
                             <Typography variant="caption" aria-hidden="true">{card.checklist.done}/{card.checklist.total}</Typography>
-                        </Stack>
+                        </KanbanChecklist>
                     )}
                     {card.comments > 0 && (
-                        <Stack direction="row" spacing={0.5} sx={{alignItems: 'center'}} aria-label={t('comments', {count: card.comments})}>
-                            <ChatBubbleOutlineRoundedIcon sx={{fontSize: 16}} />
+                        <KanbanComments direction="row" spacing={0.5} ownSx={{alignItems: 'center'}} aria-label={t('comments', {count: card.comments})}>
+                            <KanbanCommentsIcon ownSx={{fontSize: 16}} />
                             <Typography variant="caption" aria-hidden="true">{card.comments}</Typography>
-                        </Stack>
+                        </KanbanComments>
                     )}
                     {card.attachments > 0 && (
-                        <Stack direction="row" spacing={0.5} sx={{alignItems: 'center'}} aria-label={t('attachments', {count: card.attachments})}>
-                            <AttachFileRoundedIcon sx={{fontSize: 16}} />
+                        <KanbanAttachments direction="row" spacing={0.5} ownSx={{alignItems: 'center'}} aria-label={t('attachments', {count: card.attachments})}>
+                            <KanbanAttachmentsIcon ownSx={{fontSize: 16}} />
                             <Typography variant="caption" aria-hidden="true">{card.attachments}</Typography>
-                        </Stack>
+                        </KanbanAttachments>
                     )}
                     {card.assignees?.length > 0 && (
-                        <AvatarGroup max={MAX_VISIBLE_ASSIGNEES} sx={{ml: 'auto', '& .MuiAvatar-root': {width: ASSIGNEE_AVATAR_PIXELS, height: ASSIGNEE_AVATAR_PIXELS, fontSize: 11}}}
+                        <KanbanAssignees max={MAX_VISIBLE_ASSIGNEES} ownSx={{ml: 'auto', '& .MuiAvatar-root': {width: ASSIGNEE_AVATAR_PIXELS, height: ASSIGNEE_AVATAR_PIXELS, fontSize: 11}}}
                                      aria-label={t('assignees', {names: card.assignees.map((person) => person.name).join(', ')})}>
                             {card.assignees.map((person) => (
                                 <Tooltip key={person.id} title={person.name}>
                                     <Avatar alt={person.name} src={person.avatarUrl}>{initialsOf(person.name)}</Avatar>
                                 </Tooltip>
                             ))}
-                        </AvatarGroup>
+                        </KanbanAssignees>
                     )}
-                </Stack>
+                </KanbanMeta>
             )}
         </Stack>
     );
@@ -221,9 +259,11 @@ function QuickAdd({columnTitle, onAdd, onClose, t}) {
  * @param {string} props.ariaLabel ya traducido
  * @param {object} [props.texts] los textos que cambian, con la forma de `kanban` en los textos del paquete
  */
-export default function KanbanBoard({
+export default function KanbanBoard(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaKanbanBoard.defaultProps) y encima lo que llega aquí
+    const {
     columns, cards, onMove, renderCard, onCardClick, onAddCard, cardActions, columnActions, onCardComplete, onColumnCollapse, ariaLabel, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('kanban', texts);
     // la columna donde se está escribiendo una tarjeta nueva
     const [addingColumnId, setAddingColumnId] = useState(null);
@@ -268,7 +308,7 @@ export default function KanbanBoard({
 
     return (
         <DragDropContext onDragStart={announceStart} onDragUpdate={announceUpdate} onDragEnd={finishMove} dragHandleUsageInstructions={t('instructions')}>
-            <Box role="region" aria-label={ariaLabel} sx={{
+            <KanbanRoot role="region" aria-label={ariaLabel} ownSx={{
                 display: 'flex', gap: 2, overflowX: 'auto', pb: 1, scrollSnapType: 'x proximity', alignItems: 'flex-start',
             }}>
                 {columns.map((column) => {
@@ -283,9 +323,9 @@ export default function KanbanBoard({
                         return (
                             <Droppable key={column.id} droppableId={column.id}>
                                 {(droppableProvided, droppableSnapshot) => (
-                                    <Paper ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} variant="outlined" component="section"
+                                    <KanbanCollapsedColumn ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} variant="outlined" component="section"
                                            aria-label={column.title}
-                                           sx={{
+                                           ownSx={{
                                                flex: '0 0 auto', width: COLLAPSED_COLUMN_WIDTH_PIXELS, py: 1, borderRadius: 3, display: 'flex',
                                                flexDirection: 'column', alignItems: 'center', gap: 1, minHeight: EMPTY_COLUMN_MIN_HEIGHT * 2,
                                                bgcolor: droppableSnapshot.isDraggingOver ? 'action.hover' : undefined,
@@ -297,21 +337,21 @@ export default function KanbanBoard({
                                             </IconButton>
                                         </Tooltip>
                                         <Chip size="small" label={count} color={isOver ? 'warning' : 'default'} />
-                                        <Typography variant="subtitle2" component="h3" sx={{writingMode: 'vertical-rl', whiteSpace: 'nowrap'}}>
+                                        <KanbanCollapsedTitle variant="subtitle2" component="h3" ownSx={{writingMode: 'vertical-rl', whiteSpace: 'nowrap'}}>
                                             {column.title}
-                                        </Typography>
+                                        </KanbanCollapsedTitle>
                                         {/* el lugar de la tarjeta que se arrastra; encogida no la enseña */}
-                                        <Box sx={{display: 'none'}}>{droppableProvided.placeholder}</Box>
-                                    </Paper>
+                                        <KanbanHidden ownSx={{display: 'none'}}>{droppableProvided.placeholder}</KanbanHidden>
+                                    </KanbanCollapsedColumn>
                                 )}
                             </Droppable>
                         );
                     }
                     return (
-                        <Paper key={column.id} variant="outlined" component="section" aria-label={column.title}
-                               sx={{flex: '1 1 0', minWidth: COLUMN_MIN_WIDTH_PIXELS, p: 1.5, scrollSnapAlign: 'start', borderRadius: 3}}>
-                            <Stack direction="row" spacing={0.5} sx={{alignItems: 'center', mb: 1.5, px: 0.5}}>
-                                <Typography variant="subtitle2" component="h3" sx={{flexGrow: 1, minWidth: 0}}>{column.title}</Typography>
+                        <KanbanColumn key={column.id} variant="outlined" component="section" aria-label={column.title}
+                               ownSx={{flex: '1 1 0', minWidth: COLUMN_MIN_WIDTH_PIXELS, p: 1.5, scrollSnapAlign: 'start', borderRadius: 3}}>
+                            <KanbanColumnHeader direction="row" spacing={0.5} ownSx={{alignItems: 'center', mb: 1.5, px: 0.5}}>
+                                <KanbanColumnTitle variant="subtitle2" component="h3" ownSx={{flexGrow: 1, minWidth: 0}}>{column.title}</KanbanColumnTitle>
                                 <Chip size="small" label={count} color={isOver ? 'warning' : 'default'}
                                       title={isOver ? t('overLimit', {limit: column.limit}) : undefined} />
                                 {onAddCard && (
@@ -330,54 +370,54 @@ export default function KanbanBoard({
                                         </IconButton>
                                     </Tooltip>
                                 )}
-                            </Stack>
+                            </KanbanColumnHeader>
                             {addingColumnId === column.id && (
-                                <Box sx={{mb: 1}}>
+                                <KanbanQuickAdd ownSx={{mb: 1}}>
                                     <QuickAdd columnTitle={column.title} t={t} onClose={() => setAddingColumnId(null)}
                                               onAdd={(title) => onAddCard({columnId: column.id, title})} />
-                                </Box>
+                                </KanbanQuickAdd>
                             )}
                             <Droppable droppableId={column.id}>
                                 {(droppableProvided, droppableSnapshot) => (
-                                    <Stack ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} spacing={1}
-                                           sx={{
+                                    <KanbanDropZone ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} spacing={1}
+                                           ownSx={{
                                                minHeight: EMPTY_COLUMN_MIN_HEIGHT, borderRadius: 2, transition: 'background-color 160ms',
                                                bgcolor: droppableSnapshot.isDraggingOver ? 'action.hover' : 'transparent',
                                            }}>
                                         {columnCards.map((card, index) => (
                                             <Draggable key={card.id} draggableId={card.id} index={index}>
                                                 {(draggableProvided, draggableSnapshot) => (
-                                                    <Paper ref={draggableProvided.innerRef} {...draggableProvided.draggableProps} {...draggableProvided.dragHandleProps}
+                                                    <KanbanCard ref={draggableProvided.innerRef} {...draggableProvided.draggableProps} {...draggableProvided.dragHandleProps}
                                                            elevation={draggableSnapshot.isDragging ? 8 : 1}
                                                            onClick={onCardClick ? () => onCardClick(card.id) : undefined}
-                                                           sx={{p: 1.5, borderRadius: 2, cursor: 'grab', position: 'relative', '&:focus-visible': {outline: 2, outlineColor: 'primary.main'}}}>
+                                                           ownSx={{p: 1.5, borderRadius: 2, cursor: 'grab', position: 'relative', '&:focus-visible': {outline: 2, outlineColor: 'primary.main'}}}>
                                                         {/* el «⋯» arriba a la derecha; el contenido le deja su lugar */}
                                                         {cardActions && (
-                                                            <Box sx={{position: 'absolute', top: 4, right: 4}}>
+                                                            <KanbanCardActions ownSx={{position: 'absolute', top: 4, right: 4}}>
                                                                 <ActionsMenu label={t('cardActions', {title: card.title})} actions={cardActions(card)} />
-                                                            </Box>
+                                                            </KanbanCardActions>
                                                         )}
-                                                        <Box sx={cardActions ? {pr: 3} : undefined}>
+                                                        <KanbanCardContent ownSx={cardActions ? {pr: 3} : undefined}>
                                                             {renderCard ? renderCard(card) : <DefaultCard card={card} t={t} today={today} onComplete={onCardComplete} />}
-                                                        </Box>
-                                                    </Paper>
+                                                        </KanbanCardContent>
+                                                    </KanbanCard>
                                                 )}
                                             </Draggable>
                                         ))}
                                         {droppableProvided.placeholder}
                                         {/* vacía de verdad, o con tarjetas que el filtro de la pantalla esconde (no se dice «sin tarjetas») */}
                                         {columnCards.length === 0 && !droppableSnapshot.isDraggingOver && addingColumnId !== column.id && (
-                                            <Typography variant="caption" color="text.secondary" sx={{textAlign: 'center', py: 3}}>
+                                            <KanbanEmpty variant="caption" color="text.secondary" ownSx={{textAlign: 'center', py: 3}}>
                                                 {total > 0 ? t('emptyFiltered') : t('empty')}
-                                            </Typography>
+                                            </KanbanEmpty>
                                         )}
-                                    </Stack>
+                                    </KanbanDropZone>
                                 )}
                             </Droppable>
-                        </Paper>
+                        </KanbanColumn>
                     );
                 })}
-            </Box>
+            </KanbanRoot>
         </DragDropContext>
     );
 }

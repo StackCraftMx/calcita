@@ -16,6 +16,9 @@
 //
 // Mobile primero: en el teléfono no hay arrastrar; el botón es el camino y los botones se apilan a lo ancho.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFileDropzone con defaultProps y
+// styleOverrides de sus partes: root, fileArea, fileChip, hint, actions, limits, extra.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useRef, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -36,6 +39,17 @@ import ModalWaiting from '@/feedback/ModalWaiting.jsx';
 import {toastError} from '@/feedback/toast.jsx';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, matchesAccept, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
+import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFileDropzone)
+const THEME_NAME = 'CalcitaFileDropzone';
+const DropzoneRoot = piecePart(THEME_NAME, 'Root', Paper);
+const DropzoneFileArea = piecePart(THEME_NAME, 'FileArea', Box);
+const DropzoneFileChip = piecePart(THEME_NAME, 'FileChip', Chip);
+const DropzoneHint = piecePart(THEME_NAME, 'Hint', Typography);
+const DropzoneActions = piecePart(THEME_NAME, 'Actions', Stack);
+const DropzoneLimits = piecePart(THEME_NAME, 'Limits', Typography);
+const DropzoneExtra = piecePart(THEME_NAME, 'Extra', Box);
 
 // el ícono según el tipo del archivo elegido, con el mismo color que el panel de descargas
 const FILE_APPEARANCES = [
@@ -63,10 +77,12 @@ const DEFAULT_FILE_APPEARANCE = {Icon: InsertDriveFileOutlinedIcon, color: 'acti
  * @param {object} [props.sx] ajustes del recuadro
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FileDropzone({
+export default function FileDropzone(props) {
+    // lo que el proyecto puso en su tema (components.CalcitaFileDropzone.defaultProps) y encima lo que llega aquí
+    const {
     value = null, onChange, accept, maxSize, hint, buttonLabel, disabled = false, busy = false, busyModal = false, onReject, actions,
     children, sx, texts,
-}) {
+} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {formatFileSize} = useFormatters();
     const inputRef = useRef(null);
@@ -117,7 +133,7 @@ export default function FileDropzone({
         : null;
 
     return (
-        <Paper
+        <DropzoneRoot
             variant="outlined"
             aria-busy={busy}
             onDragOver={(event) => {
@@ -130,7 +146,7 @@ export default function FileDropzone({
                 setIsDragging(false);
                 pick(event.dataTransfer.files?.[0]);
             }}
-            sx={{
+            ownSx={{
                 p: {xs: 3, sm: 5},
                 textAlign: 'center',
                 borderStyle: 'dashed',
@@ -145,31 +161,31 @@ export default function FileDropzone({
             <input ref={inputRef} type="file" accept={resolvedAccept} hidden disabled={isLocked} aria-label={hintText}
                    onChange={(event) => pick(event.target.files?.[0])} />
             {value ? (
-                <Box sx={{mb: 2}}>
-                    <Chip
+                <DropzoneFileArea ownSx={{mb: 2}}>
+                    <DropzoneFileChip
                         icon={<appearance.Icon fontSize="small" color={appearance.color} />}
                         label={`${value.name} · ${formatFileSize(value.size)}`}
                         variant="outlined"
                         onDelete={isLocked ? undefined : () => onChange(null)}
                         deleteIcon={<CancelIcon aria-label={t('upload.remove', {name: value.name})} />}
-                        sx={{maxWidth: '100%', height: 'auto', py: 0.5, '& .MuiChip-label': {whiteSpace: 'normal', overflowWrap: 'anywhere'}}}
+                        ownSx={{maxWidth: '100%', height: 'auto', py: 0.5, '& .MuiChip-label': {whiteSpace: 'normal', overflowWrap: 'anywhere'}}}
                     />
-                </Box>
+                </DropzoneFileArea>
             ) : (
-                <Typography variant="body1" sx={{mb: 2, overflowWrap: 'anywhere'}}>{hintText}</Typography>
+                <DropzoneHint variant="body1" ownSx={{mb: 2, overflowWrap: 'anywhere'}}>{hintText}</DropzoneHint>
             )}
-            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{justifyContent: 'center', alignItems: {xs: 'stretch', sm: 'center'}}}>
+            <DropzoneActions direction={{xs: 'column', sm: 'row'}} spacing={2} ownSx={{justifyContent: 'center', alignItems: {xs: 'stretch', sm: 'center'}}}>
                 <Button variant="outlined" onClick={openPicker} disabled={isLocked}>{buttonLabel ?? t('upload.choose')}</Button>
                 {actions}
-            </Stack>
+            </DropzoneActions>
             {/* el límite, discreto, solo si hay límite */}
             {maxBytes && (
-                <Typography variant="caption" color="text.secondary" sx={{display: 'block', mt: 1.5}}>
+                <DropzoneLimits variant="caption" color="text.secondary" ownSx={{display: 'block', mt: 1.5}}>
                     {t('upload.maxSizeHint', {max: formatFileSize(maxBytes)})}
-                </Typography>
+                </DropzoneLimits>
             )}
-            {children && <Box sx={{mt: 3, textAlign: 'left'}}>{children}</Box>}
+            {children && <DropzoneExtra ownSx={{mt: 3, textAlign: 'left'}}>{children}</DropzoneExtra>}
             {busyModal && <ModalWaiting open={busy} title={busyModal.title} text={busyModal.text} />}
-        </Paper>
+        </DropzoneRoot>
     );
 }
