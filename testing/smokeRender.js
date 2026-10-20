@@ -111,6 +111,8 @@ const CASES = [
     ['GlassLensFilter con vidrio', h(GlassLensFilter), 'toolkit-glass-lens-panel', TOOLKIT_THEME_WITH_GLASS],
     // el formulario de Apple: dentro de una FormSection el campo es un renglón (etiqueta a la izquierda)
     ['FormSection con un campo como renglón', h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'calcita-form-row'],
+    // lo que la pantalla pasa en slotProps se suma a los adornos de la casa: antes se perdía el tope de caracteres
+    ['TextInput con el tope de la pantalla', h(TextInput, {label: 'Nombre o RFC', value: 'María', onChange: () => {}, slotProps: {htmlInput: {maxLength: 200}}}), 'maxLength="200"'],
     // el contenido lleva material (más transparente que el vidrio: 0.7 - 0.15), no el vidrio de los controles
     ['SectionCard con glass.surfaces y opacidad 0.7', h(SectionCard, {title: 'Resumen'}, 'texto'), '55%, transparent)', TOOLKIT_THEME_WITH_GLASS_SURFACES],
     // el template: entrar, perfil y permisos

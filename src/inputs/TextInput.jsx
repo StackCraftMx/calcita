@@ -55,7 +55,8 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error] el error a enseñar (undefined = sin error)
  * @param {string} [props.type] 'password' agrega el ojo
- * @param {string} [props.helperText] ayuda fija; el error la reemplaza
+ * @param {string} [props.helperText] ayuda fija; el error la reemplaza. Por omisión el campo deja su renglón vacío para que
+ *     no brinque al salir un error; con helperText="" no lo deja (un campo con botones al lado en el mismo renglón)
  * @param {string} [props.placeholder] ya traducido; el ejemplo de qué escribir (se va al escribir)
  * @param {import('react').ReactNode} [props.startAdornment]
  * @param {import('react').ReactNode} [props.endAdornment] adorno al final (en contraseñas manda el ojo)
@@ -140,8 +141,12 @@ export default function TextInput(props) {
                 helperText={errorText ?? helperText}
                 fullWidth
                 size="small"
+                // OJO: lo que el proyecto pasó en slotProps (htmlInput: {maxLength}) se suma a los adornos de la casa. Antes se
+                // pisaba entero y el tope de caracteres de una pantalla se perdía sin avisar
                 slotProps={{
+                    ...textFieldProps.slotProps,
                     input: {
+                        ...textFieldProps.slotProps?.input,
                         startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined,
                         endAdornment,
                     },
