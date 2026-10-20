@@ -83,6 +83,8 @@ const CASES = [
     ['ConfirmDialog abierto', h(ConfirmDialog, {open: true, title: '¿Cancelar el pedido 15?', onConfirm: () => {}, onClose: () => {}}), ''],
     ['ModalWaiting', h(ModalWaiting, {open: true}), ''],
     ['CalendarHeatmap', h(CalendarHeatmap, {startsOn: '2027-01-04', endsOn: '2027-01-31', days: [{date: '2027-01-05', value: 3}], ariaLabel: 'Actividad', valueLabel: 'Pedidos', describeValue: (value) => `${value} pedidos`}), 'Actividad'],
+    // sin fechas ni descripción: el último año hasta hoy y el número solo en el globo (antes tronaba)
+    ['CalendarHeatmap sin fechas', h(CalendarHeatmap, {days: [], ariaLabel: 'Actividad', valueLabel: 'Pedidos', emptyLabel: 'Sin pedidos este año'}), 'Sin pedidos este año'],
     ['LanguageToggle', h(LanguageToggle), 'EN'],
     // con tres idiomas del proyecto: el botón dice el de ahora y abre el menú; portugués sin traducciones cae al español
     ['LanguageToggle con tres idiomas', h(ToolkitProvider, {language: 'pt', languages: [...DEFAULT_LANGUAGES, {code: 'pt', label: 'Português', locale: 'pt-BR'}]},
@@ -201,14 +203,33 @@ const CASES = [
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
 ];
 
+// los avisos de Calcita (una opción que una pieza no conoce): ningún caso debe dar uno, porque cada caso usa las opciones como
+// las documenta la pieza
+const CALCITA_WARNING_PREFIX = 'Calcita · ';
+const calcitaWarnings = [];
+const originalWarn = console.warn;
+console.warn = (message, ...rest) => {
+    if (typeof message === 'string' && message.startsWith(CALCITA_WARNING_PREFIX)) {
+        calcitaWarnings.push(message);
+        return;
+    }
+    originalWarn(message, ...rest);
+};
+
 const defaultTheme = createTheme();
 let failures = 0;
 for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
     try {
+        const warningsBefore = calcitaWarnings.length;
         const html = renderToString(h(ThemeProvider, {theme: caseTheme}, h(ToolkitProvider, {appName: 'Tienda', texts: PROJECT_TEXTS, timeZone: 'America/Mexico_City'}, element)));
         if (expectedText && !html.includes(expectedText)) {
             failures += 1;
             console.log(`FALLA  ${name}: no sale «${expectedText}»`);
+            continue;
+        }
+        if (calcitaWarnings.length > warningsBefore) {
+            failures += 1;
+            console.log(`FALLA  ${name}: ${calcitaWarnings.slice(warningsBefore).join(' | ')}`);
             continue;
         }
         console.log(`OK     ${name}`);
@@ -216,6 +237,18 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         failures += 1;
         console.log(`TRUENA ${name}: ${error.message.split('\n')[0]}`);
     }
+}
+
+// una opción que la pieza no conoce se avisa también desde dist/ (el build deja process.env.NODE_ENV para el empaquetador de
+// la app: Vite o Next lo cambian por su valor y en producción el aviso desaparece)
+const warningsBeforeUnknown = calcitaWarnings.length;
+renderToString(h(ThemeProvider, {theme: defaultTheme}, h(MetricCard, {label: 'Pedidos', value: '1', countNoun: 'pedido'})));
+const unknownWarning = calcitaWarnings.slice(warningsBeforeUnknown).join(' | ');
+if (unknownWarning.includes('MetricCard no conoce la opción «countNoun»')) {
+    console.log('OK     avisa la opción que una pieza no conoce');
+} else {
+    failures += 1;
+    console.log(`FALLA  opción desconocida: se esperaba el aviso de countNoun y salió «${unknownWarning}»`);
 }
 
 // los formatos sin componente usan la configuración del proveedor de la raíz: zona de México, pesos y español (el de adentro,
