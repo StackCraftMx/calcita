@@ -38,6 +38,7 @@ import {styled, useThemeProps} from '@mui/material/styles';
 
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
 import {PANEL_RADIUS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
@@ -141,7 +142,8 @@ const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'F
  */
 export function FormRow(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormRow.defaultProps) y encima lo que llega aquí
-    const {label, htmlFor, labelId, children} = useThemeProps({props, name: ROW_THEME_NAME});
+    const {label, htmlFor, labelId, children, ...unknownProps} = useThemeProps({props, name: ROW_THEME_NAME});
+    warnUnknownProps(ROW_THEME_NAME, unknownProps);
     return (
         <FormRowRoot className={FORM_ROW_CLASS}>
             <FormRowLabel component="label" id={labelId} htmlFor={htmlFor} variant="body1">
@@ -162,7 +164,8 @@ export function FormRow(props) {
  */
 export default function FormSection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormSection.defaultProps) y encima lo que llega aquí
-    const {title, footer, children} = useThemeProps({props, name: SECTION_THEME_NAME});
+    const {title, footer, children, ...unknownProps} = useThemeProps({props, name: SECTION_THEME_NAME});
+    warnUnknownProps(SECTION_THEME_NAME, unknownProps);
     const titleId = useId();
     return (
         <FormSectionContext value>

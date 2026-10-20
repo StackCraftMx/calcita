@@ -27,6 +27,7 @@ import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInScreen)
 const THEME_NAME = 'CalcitaSignInScreen';
@@ -45,7 +46,8 @@ const SignInAlert = piecePart(THEME_NAME, 'Alert', Alert);
  */
 export default function SignInScreen(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInScreen.defaultProps) y encima lo que llega aquí
-    const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts} = usePieceProps(props, THEME_NAME);
+    const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {connector, session, refreshSession} = useAccount();
     const {useNavigate, useLocation} = useToolkitNavigation();

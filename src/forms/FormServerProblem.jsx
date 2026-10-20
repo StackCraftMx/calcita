@@ -11,11 +11,13 @@ import {useFormikContext} from 'formik';
 
 import {splitServerFieldErrors} from '@/forms/serverProblemFields.js';
 import {fieldErrorsOf} from '@/problems.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {{error: (Error & {problem?: object})|null}} props el error del contexto de la máquina (null = sin error)
  */
-export default function FormServerProblem({error}) {
+export default function FormServerProblem({error, ...unknownProps}) {
+    warnUnknownProps('FormServerProblem', unknownProps);
     const {setFieldError, setFieldTouched, values} = useFormikContext();
 
     useEffect(() => {

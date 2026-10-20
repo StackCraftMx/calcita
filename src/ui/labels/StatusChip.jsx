@@ -18,6 +18,7 @@ import {styled, useThemeProps} from '@mui/material/styles';
 import {labelOf, lookup, shortLabelOf} from '@/dictionaries/dictionaries.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema (theme.components.CalcitaStatusChip)
 const THEME_NAME = 'CalcitaStatusChip';
@@ -68,7 +69,8 @@ const StatusChipChip = styled(Chip, {name: THEME_NAME, slot: 'Chip'})({});
  */
 export default function StatusChip(props) {
     // lo que el proyecto puso en su tema (components.CalcitaStatusChip.defaultProps) y encima lo que llega aquí
-    const {dictionary, value, variant = 'dot', short = false, suffix, tooltip: customTooltip, sx} = useThemeProps({props, name: THEME_NAME});
+    const {dictionary, value, variant = 'dot', short = false, suffix, tooltip: customTooltip, sx, ...unknownProps} = useThemeProps({props, name: THEME_NAME});
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('dictionaries');
     const dictionaryEntry = lookup(dictionary, value);
     const fullLabel = labelOf(dictionaryEntry, t);

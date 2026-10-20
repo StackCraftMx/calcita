@@ -18,6 +18,16 @@ export const DEFAULT_LANGUAGE = 'es';
 // la moneda de los montos (código ISO 4217) cuando el proyecto no dice otra
 export const DEFAULT_CURRENCY = 'MXN';
 
+/**
+ * Cómo se escribe la hora: de 24 horas («15:10», la de omisión) o de 12 con a.m. y p.m. («3:10 p.m.»). Son los valores de
+ * `hourCycle` de Intl, por eso se ven así.
+ */
+export const HOUR_CYCLE = Object.freeze({
+    twentyFourHours: 'h23',
+    twelveHours: 'h12',
+});
+export const DEFAULT_HOUR_CYCLE = HOUR_CYCLE.twentyFourHours;
+
 const PACKAGE_TEXTS_BY_LANGUAGE = Object.freeze({es, en});
 
 /**
@@ -51,6 +61,8 @@ let currentSettings = Object.freeze({
     translate: null,
     timeZone: browserTimeZone(),
     currency: DEFAULT_CURRENCY,
+    // la hora de 24 o de 12 horas (HOUR_CYCLE)
+    hourCycle: DEFAULT_HOUR_CYCLE,
     appName: '',
     // la compilación del front que corre en esta pestaña ('' en desarrollo): con ella se sabe si hay una versión nueva
     buildId: '',
@@ -62,7 +74,7 @@ let currentSettings = Object.freeze({
  * Cambia la configuración que leen las funciones del paquete. La llama ToolkitProvider; un proyecto sin React (o una
  * prueba) la puede llamar directo.
  *
- * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, appName?: string, buildId?: string, languages?: Array<{code: string, label: string, locale?: string}>}} settings
+ * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, hourCycle?: 'h23'|'h12', appName?: string, buildId?: string, languages?: Array<{code: string, label: string, locale?: string}>}} settings
  * @returns {void}
  */
 export function configureToolkit(settings) {
@@ -72,7 +84,7 @@ export function configureToolkit(settings) {
 /**
  * La configuración vigente.
  *
- * @returns {{language: string, texts: object, translate: Function|null, timeZone: string, currency: string, appName: string, buildId: string, languages: Array<{code: string, label: string, locale?: string}>}}
+ * @returns {{language: string, texts: object, translate: Function|null, timeZone: string, currency: string, hourCycle: 'h23'|'h12', appName: string, buildId: string, languages: Array<{code: string, label: string, locale?: string}>}}
  */
 export function toolkitSettings() {
     return currentSettings;

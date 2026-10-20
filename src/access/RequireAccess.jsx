@@ -8,6 +8,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {useCan} from '@/access/useCan.js';
 import ErrorPage, {ERROR_PAGE_KIND} from '@/ui/layout/ErrorPage.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -15,7 +16,8 @@ import ErrorPage, {ERROR_PAGE_KIND} from '@/ui/layout/ErrorPage.jsx';
  * @param {import('react').ReactNode} props.children
  * @param {import('react').ReactNode} [props.fallback] lo que se ve sin permiso; por omisión la página de 403
  */
-export default function RequireAccess({access, children, fallback}) {
+export default function RequireAccess({access, children, fallback, ...unknownProps}) {
+    warnUnknownProps('RequireAccess', unknownProps);
     if (useCan(access)) {
         return children;
     }

@@ -59,6 +59,7 @@ import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaServerTable)
 const THEME_NAME = 'CalcitaServerTable';
@@ -374,7 +375,9 @@ export default function ServerTable(props) {
     onLoadError,
     gridProps,
     texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t, language} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
     const theme = useTheme();

@@ -32,6 +32,7 @@ import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSessionsCard)
 const THEME_NAME = 'CalcitaSessionsCard';
@@ -83,7 +84,8 @@ function SessionRow({session}) {
  */
 export default function SessionsCard(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSessionsCard.defaultProps) y encima lo que llega aquí
-    const {sessions, error = null, onCloseOthers, onClosed, texts} = usePieceProps(props, THEME_NAME);
+    const {sessions, error = null, onCloseOthers, onClosed, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const othersCount = (sessions ?? []).filter((session) => !session.isCurrent).length;
     const confirmation = useConfirmAction({

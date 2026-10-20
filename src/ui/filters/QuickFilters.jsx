@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaQuickFilters)
 const THEME_NAME = 'CalcitaQuickFilters';
@@ -72,7 +73,8 @@ function compactCount(count) {
  */
 export default function QuickFilters(props) {
     // lo que el proyecto puso en su tema (components.CalcitaQuickFilters.defaultProps) y encima lo que llega aquí
-    const {value, onChange, options = [], caption, ariaLabel, extra, texts} = usePieceProps(props, THEME_NAME);
+    const {value, onChange, options = [], caption, ariaLabel, extra, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const activeChip = useRef(null);
     const isFirstRender = useRef(true);

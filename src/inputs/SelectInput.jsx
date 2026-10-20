@@ -22,6 +22,7 @@ import Typography from '@mui/material/Typography';
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSelectInput)
 const THEME_NAME = 'CalcitaSelectInput';
@@ -48,7 +49,9 @@ export default function SelectInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
     const {
     name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'select'}-${generatedId}`;

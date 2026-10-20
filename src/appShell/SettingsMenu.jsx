@@ -18,6 +18,7 @@ import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
 import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
 import MenuLinks from '@/appShell/MenuLinks.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSettingsMenu)
 const THEME_NAME = 'CalcitaSettingsMenu';
@@ -33,7 +34,8 @@ const SettingsDivider = piecePart(THEME_NAME, 'Divider', Divider);
  */
 export default function SettingsMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSettingsMenu.defaultProps) y encima lo que llega aquí
-    const {showFontSize = true, showLanguage = true, showColorScheme = true, extraSettings, menuLinks = []} = usePieceProps(props, THEME_NAME);
+    const {showFontSize = true, showLanguage = true, showColorScheme = true, extraSettings, menuLinks = [], ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const [anchorElement, setAnchorElement] = useState(null);
     // hacia arriba si la barra está abajo (teléfono con vidrio)

@@ -25,6 +25,7 @@ import Typography from '@mui/material/Typography';
 import {groupStateOf, withPermission, withPermissionGroup} from '@/access/permissionGroups.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPermissionMatrix)
 const THEME_NAME = 'CalcitaPermissionMatrix';
@@ -98,7 +99,8 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
  */
 export default function PermissionMatrix(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPermissionMatrix.defaultProps) y encima lo que llega aquí
-    const {groups, value, onChange, readOnly = false, texts} = usePieceProps(props, THEME_NAME);
+    const {groups, value, onChange, readOnly = false, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const isReadOnly = readOnly || !onChange;
     return (
         <ComponentTexts namespace="access" texts={texts}>

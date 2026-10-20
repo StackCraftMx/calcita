@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // lo que caben los separadores y el punto además de los dígitos
 const SEPARATORS_ROOM = 6;
@@ -40,7 +41,9 @@ const SEPARATORS_ROOM = 6;
 export default function NumberInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
     disabled = false, inputRef, texts,
+    ...unknownProps
 }) {
+    warnUnknownProps('NumberInput', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'number'}-${generatedId}`;

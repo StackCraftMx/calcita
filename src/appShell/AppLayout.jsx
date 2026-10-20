@@ -89,6 +89,7 @@ import {PANEL_RADIUS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} fro
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppLayout)
 const THEME_NAME = 'CalcitaAppLayout';
@@ -497,7 +498,9 @@ export const AppLayout = (props) => {
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
     isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, onMenuCollapse, onMobileMenuChange, onMobileTabsChange,
     texts, children,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {appName} = useToolkitSettings();
     // un ícono ya pintado (icon) se vuelve componente aquí, una vez: las piezas del menú pintan siempre Icon
     const shownMenuItems = useMemo(() => menuItemsWithIconsOf(menuItems), [menuItems]);

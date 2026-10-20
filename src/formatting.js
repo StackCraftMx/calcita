@@ -16,7 +16,7 @@
 //
 // Funciones puras, no renderizan: function (regla de la casa).
 import {parseInstant, parsePlainDate} from '@/dates.js';
-import {intlLocaleOf, toolkitSettings} from '@/toolkit/toolkitSettings.js';
+import {DEFAULT_HOUR_CYCLE, HOUR_CYCLE, intlLocaleOf, toolkitSettings} from '@/toolkit/toolkitSettings.js';
 
 const formatterCache = new Map();
 
@@ -24,7 +24,7 @@ const formatterCache = new Map();
  * Los formatos con la configuración que da settingsOf (se lee en cada llamada: si cambia el idioma, el siguiente formato ya
  * sale en el nuevo).
  *
- * @param {() => {language: string, languages?: Array<{code: string, locale?: string}>, timeZone: string, currency: string}} settingsOf
+ * @param {() => {language: string, languages?: Array<{code: string, locale?: string}>, timeZone: string, currency: string, hourCycle?: 'h23'|'h12'}} settingsOf
  */
 export function formattersOf(settingsOf) {
     function cachedFormatter(kind, options, createFormatter) {
@@ -35,6 +35,14 @@ export function formattersOf(settingsOf) {
             formatterCache.set(cacheKey, createFormatter(locale, options));
         }
         return formatterCache.get(cacheKey);
+    }
+
+    // La hora en Intl según HOUR_CYCLE del proveedor. Con 12 horas la hora va sin cero al frente («3:10 p.m.», como la escribe
+    // la gente); con 24 va con dos cifras («07:00») para que las columnas de horas queden parejas.
+    function hourOptions() {
+        const hourCycle = settingsOf().hourCycle ?? DEFAULT_HOUR_CYCLE;
+        const hour = hourCycle === HOUR_CYCLE.twelveHours ? 'numeric' : '2-digit';
+        return {hour, minute: '2-digit', hourCycle};
     }
 
     /**
@@ -129,7 +137,8 @@ export function formattersOf(settingsOf) {
     }
 
     /**
-     * Fecha y hora de un instante ISO en la zona del negocio.
+     * Fecha y hora de un instante ISO en la zona del negocio: "19 oct 2026, 15:10" (o "3:10 p.m." con
+     * HOUR_CYCLE.twelveHours en ToolkitProvider).
      *
      * @param {string|null|undefined} value instante ISO con desfase
      * @param {{fallback?: string}} [options]
@@ -142,7 +151,7 @@ export function formattersOf(settingsOf) {
         }
         const options = {
             timeZone: settingsOf().timeZone,
-            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+            day: 'numeric', month: 'short', year: 'numeric', ...hourOptions(),
         };
         const formatter = cachedFormatter('dateTime', options, (locale, formatOptions) => new Intl.DateTimeFormat(locale, formatOptions));
         return formatter.format(instant);
@@ -174,7 +183,7 @@ export function formattersOf(settingsOf) {
     }
 
     /**
-     * Solo la hora (24 h) de un instante ISO en la zona del negocio: "07:00".
+     * Solo la hora de un instante ISO en la zona del negocio: "07:00" (o "7:00 a.m." con HOUR_CYCLE.twelveHours).
      *
      * Existe aparte de formatDateTime porque las pantallas escriben "16 ago 2026 · 07:00" con punto medio, y Intl une
      * fecha y hora con coma: se arma formatDate + formatTime.
@@ -188,7 +197,7 @@ export function formattersOf(settingsOf) {
         if (!instant) {
             return fallback;
         }
-        const formatter = cachedFormatter('time', {timeZone: settingsOf().timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23'},
+        const formatter = cachedFormatter('time', {timeZone: settingsOf().timeZone, ...hourOptions()},
             (locale, options) => new Intl.DateTimeFormat(locale, options));
         return formatter.format(instant);
     }

@@ -25,6 +25,7 @@ import SessionsCard from '@/security/SessionsCard.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAccountSecurity)
 const THEME_NAME = 'CalcitaAccountSecurity';
@@ -42,7 +43,8 @@ const LOADING_HEIGHT_PIXELS = 220;
  */
 export default function AccountSecuritySection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAccountSecurity.defaultProps) y encima lo que llega aquí
-    const {showPasswordChange = true, texts} = usePieceProps(props, THEME_NAME);
+    const {showPasswordChange = true, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('account', texts);
     const {connector, session} = useAccount();
     const [security, setSecurity] = useState(null);

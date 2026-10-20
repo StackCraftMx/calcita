@@ -31,6 +31,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import {DESKTOP_MEDIA_QUERY, PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInboxLayout)
 const THEME_NAME = 'CalcitaInboxLayout';
@@ -94,7 +95,9 @@ export default function InboxLayout(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInboxLayout.defaultProps) y encima lo que llega aquí
     const {
     folders, labels = [], selectedFolderId, onSelectFolder, toolbar, list, detail, isDetailOpen = false, onCloseDetail, foldersHeader, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
 
     return (

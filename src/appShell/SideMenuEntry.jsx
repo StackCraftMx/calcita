@@ -44,6 +44,7 @@ import {accentTextStylesOf, glassDropOf, isGlassTheme} from '@/theme/glassSurfac
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenuEntry)
 const THEME_NAME = 'CalcitaSideMenuEntry';
@@ -87,7 +88,8 @@ const RAIL_BUTTON_RADIUS_PIXELS = 10;
  */
 export default function SideMenuEntry(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSideMenuEntry.defaultProps) y encima lo que llega aquí
-    const {menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0} = usePieceProps(props, THEME_NAME);
+    const {menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const theme = useTheme();

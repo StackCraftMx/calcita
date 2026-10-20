@@ -6,6 +6,7 @@
 //
 // Proveedor y hooks genéricos del paquete: function (regla de la casa).
 import {createContext, useContext, useEffect, useMemo, useState} from 'react';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const PageTitleContext = createContext({
     title: null,
@@ -17,7 +18,8 @@ const PageTitleContext = createContext({
 /**
  * @param {{children: import('react').ReactNode}} props
  */
-export function PageTitleProvider({children}) {
+export function PageTitleProvider({children, ...unknownProps}) {
+    warnUnknownProps('PageTitleProvider', unknownProps);
     const [title, setTitle] = useState(null);
     const [isTitleVisible, setTitleVisible] = useState(true);
     const value = useMemo(() => ({title, setTitle, isTitleVisible, setTitleVisible}), [title, isTitleVisible]);

@@ -19,6 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActionsMenu)
 const THEME_NAME = 'CalcitaActionsMenu';
@@ -34,7 +35,8 @@ const ActionsItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
  */
 export default function ActionsMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActionsMenu.defaultProps) y encima lo que llega aquí
-    const {label, actions, icon, size = 'small'} = usePieceProps(props, THEME_NAME);
+    const {label, actions, icon, size = 'small', ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const [anchor, setAnchor] = useState(null);
     if (!actions?.length) {
         return null;

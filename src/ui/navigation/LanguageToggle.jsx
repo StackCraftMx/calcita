@@ -22,6 +22,7 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLanguageToggle)
 const THEME_NAME = 'CalcitaLanguageToggle';
@@ -38,7 +39,8 @@ export const LANGUAGES = Object.freeze(DEFAULT_LANGUAGES.map((entry) => entry.co
  */
 export default function LanguageToggle(props) {
     // lo que el proyecto puso en su tema (components.CalcitaLanguageToggle.defaultProps) y encima lo que llega aquí
-    const {inverted = false, onChange, texts} = usePieceProps(props, THEME_NAME);
+    const {inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t, language, changeLanguage} = useToolkitTranslation('common', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const [menuAnchor, setMenuAnchor] = useState(null);

@@ -20,7 +20,9 @@ export {ToolkitProvider} from '@/toolkit/ToolkitProvider.jsx';
 export {useToolkitNavigation, useToolkitSettings} from '@/toolkit/toolkitContext.js';
 export {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 export {default as ComponentTexts} from '@/toolkit/ComponentTexts.jsx';
-export {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, configureToolkit, toolkitSettings, translateToolkit} from '@/toolkit/toolkitSettings.js';
+export {
+    DEFAULT_CURRENCY, DEFAULT_HOUR_CYCLE, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, HOUR_CYCLE, configureToolkit, toolkitSettings, translateToolkit,
+} from '@/toolkit/toolkitSettings.js';
 export {browserNavigation, createBrowserNavigation} from '@/toolkit/browserNavigation.js';
 export {createHashNavigation} from '@/toolkit/hashNavigation.js';
 export {default as toolkitTextsEs} from '@/locales/es.js';

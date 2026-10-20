@@ -24,6 +24,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFilterChips)
 const THEME_NAME = 'CalcitaFilterChips';
@@ -42,7 +43,8 @@ const ChipsClearButton = piecePart(THEME_NAME, 'ClearButton', Button);
  */
 export default function FilterChips(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFilterChips.defaultProps) y encima lo que llega aquí
-    const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts} = usePieceProps(props, THEME_NAME);
+    const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const chips = chipConfig
         .filter((chipDeclaration) => chipDeclaration.isActive(filters[chipDeclaration.key]))

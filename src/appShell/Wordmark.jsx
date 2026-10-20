@@ -15,6 +15,7 @@
 import {isValidElement} from 'react';
 import Box from '@mui/material/Box';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaWordmark)
 const THEME_NAME = 'CalcitaWordmark';
@@ -42,7 +43,8 @@ export function isWordmarkPair(wordmark) {
  */
 export default function Wordmark(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWordmark.defaultProps) y encima lo que llega aquí
-    const {children} = usePieceProps(props, THEME_NAME);
+    const {children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     return (
         <WordmarkRoot ownSx={{
             height: WORDMARK_HEIGHT_PIXELS, display: 'flex', alignItems: 'center', flex: '0 0 auto',

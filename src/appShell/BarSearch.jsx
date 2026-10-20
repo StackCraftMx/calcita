@@ -20,6 +20,7 @@ import BarActions from '@/appShell/BarActions.jsx';
 import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarSearch)
 const THEME_NAME = 'CalcitaBarSearch';
@@ -46,7 +47,8 @@ const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
  */
 export default function BarSearch(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarSearch.defaultProps) y encima lo que llega aquí
-    const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef} = usePieceProps(props, THEME_NAME);
+    const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const [isFocused, setIsFocused] = useState(false);
     // en la barra, chica cuando no se usa: ni tiene el foco ni tiene texto
     const isCompact = inBar && collapsible && !isFocused && !value;

@@ -37,6 +37,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {TIMELINE_EMPHASIS, timelineDotOf} from '@/ui/timeline/timelineDot.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaGroupedTimeline)
 const THEME_NAME = 'CalcitaGroupedTimeline';
@@ -80,7 +81,8 @@ const ALTERNATE_TIMELINE = {m: 0, px: 0, py: 0.5};
  */
 export default function GroupedTimeline(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGroupedTimeline.defaultProps) y encima lo que llega aquí
-    const {groups, onGroupToggle} = usePieceProps(props, THEME_NAME);
+    const {groups, onGroupToggle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
     const isWide = useMediaQuery(theme.breakpoints.up('md'));
     // llaves de los grupos plegables que el usuario tiene abiertos; arrancan como dice defaultExpanded

@@ -23,6 +23,7 @@ import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDateRangeFilter)
 const THEME_NAME = 'CalcitaDateRangeFilter';
@@ -40,7 +41,8 @@ const RangeActions = piecePart(THEME_NAME, 'Actions', Stack);
  */
 export default function DateRangeFilter(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDateRangeFilter.defaultProps) y encima lo que llega aquí
-    const {from = '', to = '', onChange, label, texts} = usePieceProps(props, THEME_NAME);
+    const {from = '', to = '', onChange, label, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const {formatDate} = useFormatters();
     const [anchorElement, setAnchorElement] = useState(null);

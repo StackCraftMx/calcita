@@ -21,6 +21,7 @@ import Typography from '@mui/material/Typography';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMultiSelectFilter)
 const THEME_NAME = 'CalcitaMultiSelectFilter';
@@ -38,7 +39,8 @@ const SEARCHABLE_FROM_OPTIONS = 8;
  */
 export default function MultiSelectColumnFilter(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMultiSelectFilter.defaultProps) y encima lo que llega aquí
-    const {value = [], onChange, options = [], renderOption} = usePieceProps(props, THEME_NAME);
+    const {value = [], onChange, options = [], renderOption, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table');
     const {formatNumber} = useFormatters();
     const [searchText, setSearchText] = useState('');

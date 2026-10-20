@@ -16,6 +16,7 @@ import {missingConnectorFunctionsOf} from '@/account/accountConnector.js';
 import {createAccessChecker} from '@/access/accessRules.js';
 import ErrorPage, {ERROR_PAGE_KIND} from '@/ui/layout/ErrorPage.jsx';
 import FullPageLoader from '@/ui/layout/FullPageLoader.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const AccountContext = createContext(null);
 // lo que se sabe antes de la primera respuesta: ni dentro ni fuera
@@ -31,7 +32,8 @@ const NOT_LOADED = undefined;
  * @param {(canAccess: (access: object|null|undefined) => boolean) => import('react').ReactNode} props.children recibe la
  *     regla de permisos de la sesión
  */
-export default function AccountProvider({connector, refreshKey, initialSession = NOT_LOADED, children}) {
+export default function AccountProvider({connector, refreshKey, initialSession = NOT_LOADED, children, ...unknownProps}) {
+    warnUnknownProps('AccountProvider', unknownProps);
     // guard clause: un conector incompleto es un error de quien lo escribió; se avisa al arrancar y no al picar un botón
     const missingFunctions = missingConnectorFunctionsOf(connector);
     if (missingFunctions.length > 0) {

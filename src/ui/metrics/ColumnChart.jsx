@@ -32,6 +32,7 @@ import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColumnChart)
 const THEME_NAME = 'CalcitaColumnChart';
@@ -68,7 +69,9 @@ export default function ColumnChart(props) {
     const {
     data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue: formatValueProp,
     referenceLine, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {formatNumber} = useFormatters();
     const formatValue = formatValueProp ?? formatNumber;

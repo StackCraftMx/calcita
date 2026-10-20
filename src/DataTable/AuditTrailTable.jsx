@@ -18,6 +18,7 @@ import {FILTER_KINDS} from '@/DataTable/useTableState.js';
 import {labelOf, lookup} from '@/dictionaries/dictionaries.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import StatusChip from '@/ui/labels/StatusChip.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // OJO: constantes de módulo; objetos nuevos en cada render reinician el estado de la tabla
 const AUDIT_FILTER_DEFAULTS = {event: []};
@@ -40,7 +41,9 @@ const AUDIT_FILTER_KINDS = {event: FILTER_KINDS.multiSelect};
 export default function AuditTrailTable({
     subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], ariaLabel, maxGridHeight = null, refreshToken,
     eventSuffixOf = null, texts,
+    ...unknownProps
 }) {
+    warnUnknownProps('AuditTrailTable', unknownProps);
     const {t} = useToolkitTranslation(['table', 'dictionaries'], texts);
     const {formatDateTime} = useFormatters();
 

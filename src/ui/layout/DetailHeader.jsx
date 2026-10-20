@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDetailHeader)
 const THEME_NAME = 'CalcitaDetailHeader';
@@ -37,7 +38,8 @@ const DetailActions = piecePart(THEME_NAME, 'Actions', Stack);
  */
 export default function DetailHeader(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDetailHeader.defaultProps) y encima lo que llega aquí
-    const {title, eyebrow, badges, actions, documentTitle} = usePieceProps(props, THEME_NAME);
+    const {title, eyebrow, badges, actions, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(title, titleRef);
     return (

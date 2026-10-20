@@ -18,6 +18,7 @@ import {textSizeOf} from '@/theme/appleTracking.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSubmenuActionsMenu)
 const THEME_NAME = 'CalcitaSubmenuActionsMenu';
@@ -52,7 +53,8 @@ const PLACEMENTS = Object.freeze({
  */
 export default function SubmenuActionsMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSubmenuActionsMenu.defaultProps) y encima lo que llega aquí
-    const {anchorElement, onClose, menuItem, activeItem, menuBadges, onNavigate, placement = SUBMENU_PLACEMENT.side} = usePieceProps(props, THEME_NAME);
+    const {anchorElement, onClose, menuItem, activeItem, menuBadges, onNavigate, placement = SUBMENU_PLACEMENT.side, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const position = PLACEMENTS[placement] ?? PLACEMENTS[SUBMENU_PLACEMENT.side];

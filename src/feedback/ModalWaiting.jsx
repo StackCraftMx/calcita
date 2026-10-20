@@ -16,6 +16,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaModalWaiting)
 const THEME_NAME = 'CalcitaModalWaiting';
@@ -33,7 +34,8 @@ const WaitingText = piecePart(THEME_NAME, 'Text', DialogContentText);
  */
 export default function ModalWaiting(props) {
     // lo que el proyecto puso en su tema (components.CalcitaModalWaiting.defaultProps) y encima lo que llega aquí
-    const {open, title, text, texts} = usePieceProps(props, THEME_NAME);
+    const {open, title, text, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
     return (

@@ -44,6 +44,7 @@ import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSelectionActions)
 const THEME_NAME = 'CalcitaSelectionActions';
@@ -110,7 +111,8 @@ function bottomCapsuleSxOf(theme) {
  */
 export default function SelectionActions(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectionActions.defaultProps) y encima lo que llega aquí
-    const {countText, actions = [], onClear, phoneLayout = SELECTION_PHONE_LAYOUT.top, texts, sx} = usePieceProps(props, THEME_NAME);
+    const {countText, actions = [], onClear, phoneLayout = SELECTION_PHONE_LAYOUT.top, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
     const {t} = useToolkitTranslation('common', texts);
     const [runningActionKey, setRunningActionKey] = useState(null);

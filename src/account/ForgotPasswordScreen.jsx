@@ -9,6 +9,7 @@ import {AuthLayout} from '@/appShell/AuthLayout.jsx';
 import ForgotPasswordForm from '@/forms/auth/ForgotPasswordForm.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -19,7 +20,8 @@ import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
  * @param {boolean} [props.showColorSchemeToggle]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts}) {
+export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts, ...unknownProps}) {
+    warnUnknownProps('ForgotPasswordScreen', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {connector} = useAccount();
 

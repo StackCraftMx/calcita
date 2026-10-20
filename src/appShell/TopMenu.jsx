@@ -19,6 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTopMenu)
 const THEME_NAME = 'CalcitaTopMenu';
@@ -79,7 +80,8 @@ function TopMenuEntry({menuItem, activeItem}) {
  */
 export default function TopMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTopMenu.defaultProps) y encima lo que llega aquí
-    const {menuItems, activeItem} = usePieceProps(props, THEME_NAME);
+    const {menuItems, activeItem, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     return (
         <TopMenuRoot component="nav" aria-label={t('drawer.ariaLabel')}

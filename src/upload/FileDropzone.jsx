@@ -40,6 +40,7 @@ import {toastError} from '@/feedback/toast.jsx';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, matchesAccept, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFileDropzone)
 const THEME_NAME = 'CalcitaFileDropzone';
@@ -82,7 +83,9 @@ export default function FileDropzone(props) {
     const {
     value = null, onChange, accept, maxSize, hint, buttonLabel, disabled = false, busy = false, busyModal = false, onReject, actions,
     children, sx, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {formatFileSize} = useFormatters();
     const inputRef = useRef(null);

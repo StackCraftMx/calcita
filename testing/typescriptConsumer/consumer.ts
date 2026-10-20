@@ -44,6 +44,7 @@ import {
 import {LineChart} from '@stackcraftmx/calcita/charts';
 import {addLogSink, apiErrorOf, menuItemsWithIconsOf} from '@stackcraftmx/calcita';
 import {DESKTOP_MEDIA_QUERY, PHONE_MEDIA_QUERY} from '@stackcraftmx/calcita';
+import {CalendarHeatmap, DEFAULT_HOUR_CYCLE, HOUR_CYCLE} from '@stackcraftmx/calcita';
 import {EventDetails, reminderOf} from '@stackcraftmx/calcita/calendar';
 
 const amount: string = formatCurrency(1234.5);
@@ -220,6 +221,13 @@ const withIcons = menuItemsWithIconsOf([{to: '/inicio', label: 'Inicio', icon: '
 // @ts-expect-error la vista de una gráfica es 'chart' o 'table'
 const wrongView = createElement(LineChart, {data: [], series: [], periodLabel: '', ariaLabel: '', emptyLabel: '', defaultView: 'pie'});
 
-export {wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+// lo de la 0.32: la hora de 12 horas con a.m. y p.m., y el calendario sin fechas (el último año hasta hoy)
+const twelveHourIsland = createElement(ToolkitProvider, {hourCycle: HOUR_CYCLE.twelveHours, children: 'isla'});
+const defaultHourCycle: 'h23' | 'h12' = DEFAULT_HOUR_CYCLE;
+const lastYearHeatmap = createElement(CalendarHeatmap, {days: [], ariaLabel: 'Actividad', valueLabel: 'Pedidos'});
+// @ts-expect-error la hora es 'h23' o 'h12'
+const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', children: 'isla'});
+
+export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

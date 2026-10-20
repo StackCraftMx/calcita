@@ -15,6 +15,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import {MultiSelectColumnFilter, SortableFilterHeader, TextColumnFilter} from '@/DataTable/ColumnFilters';
 import {useTableFilter} from '@/DataTable/filterContext.js';
 import {FILTER_KINDS, isFilterActive} from '@/DataTable/useTableState.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /** Cuántos valores tiene puestos esta columna (lo que muestra el badge). */
 function activeCountOf(kind, value) {
@@ -124,9 +125,13 @@ function DetailCell({row, onOpen, ariaLabelOf}) {
  * Columna de acción al final de la fila: un icono que abre el detalle (la ruta propia del renglón). Un icono y no la
  * fila entera a propósito: la fila como botón se dispara al seleccionar texto y no se ve que se puede abrir.
  *
+ * El globo del icono se cambia con los textos de la tabla (ServerTable texts={{detail: {tooltip: '…'}}}), no aquí.
+ *
  * @param {{onOpen: (row: any) => void, ariaLabelOf?: (row: any) => string}} declaration ariaLabelOf ya traducido
  */
-export function detailColumn({onOpen, ariaLabelOf}) {
+export function detailColumn({onOpen, ariaLabelOf, ...unknownOptions}) {
+    // un nombre que no existe (label, tooltip) se perdía sin decir nada: se avisa mientras se programa
+    warnUnknownProps('detailColumn', unknownOptions);
     return {
         field: '__detail',
         headerName: '',

@@ -24,6 +24,7 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppearanceSettings)
 const THEME_NAME = 'CalcitaAppearanceSettings';
@@ -92,7 +93,9 @@ export default function AppearanceSettings(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAppearanceSettings.defaultProps) y encima lo que llega aquí
     const {
     showFontSize = true, showLanguage = true, showColorScheme = true, onFontSizeChange, onColorSchemeChange, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t, language, changeLanguage} = useToolkitTranslation('layout', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
     const {level, setLevel, levels} = useFontSize();

@@ -6,11 +6,13 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import TextField from '@mui/material/TextField';
 
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {{value: string, onChange: (value: string) => void, label?: string}} props label ya traducido
  */
-export default function TextColumnFilter({value, onChange, label}) {
+export default function TextColumnFilter({value, onChange, label, ...unknownProps}) {
+    warnUnknownProps('TextColumnFilter', unknownProps);
     const {t} = useToolkitTranslation('table');
     const [draft, setDraft] = useDebouncedFilter(value, onChange);
 

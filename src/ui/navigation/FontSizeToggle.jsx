@@ -16,6 +16,7 @@ import FormatSizeIcon from '@mui/icons-material/FormatSize';
 
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFontSizeToggle)
 const THEME_NAME = 'CalcitaFontSizeToggle';
@@ -29,7 +30,8 @@ const FontSizeButton = piecePart(THEME_NAME, 'Button', IconButton);
  */
 export default function FontSizeToggle(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFontSizeToggle.defaultProps) y encima lo que llega aquí
-    const {size = 'small', onChange, texts} = usePieceProps(props, THEME_NAME);
+    const {size = 'small', onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {level, setLevel, isMounted, levels} = useFontSize();
     const [anchorElement, setAnchorElement] = useState(null);

@@ -16,6 +16,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 import {DEFAULT_PASSWORD_POLICY, passwordChecksOf} from '@/auth/passwordRules.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPasswordChecklist)
 const THEME_NAME = 'CalcitaPasswordChecklist';
@@ -38,7 +39,8 @@ const SCREEN_READER_ONLY_SX = {
  */
 export default function PasswordChecklist(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPasswordChecklist.defaultProps) y encima lo que llega aquí
-    const {password, policy = DEFAULT_PASSWORD_POLICY, id, texts} = usePieceProps(props, THEME_NAME);
+    const {password, policy = DEFAULT_PASSWORD_POLICY, id, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     return (
         <Box id={id}>

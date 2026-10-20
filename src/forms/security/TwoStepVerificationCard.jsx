@@ -56,6 +56,7 @@ import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTwoStepVerification)
 const THEME_NAME = 'CalcitaTwoStepVerification';
@@ -257,7 +258,8 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  */
 export default function TwoStepVerificationCard(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTwoStepVerification.defaultProps) y encima lo que llega aquí
-    const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts} = usePieceProps(props, THEME_NAME);
+    const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
     // qué diálogo está abierto: uno a la vez

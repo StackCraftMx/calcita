@@ -23,6 +23,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaConfirmDialog)
 const THEME_NAME = 'CalcitaConfirmDialog';
@@ -50,7 +51,9 @@ export default function ConfirmDialog(props) {
     const {
     open, title, description, confirmLabel, cancelLabel, tone = 'primary',
     isPending = false, isConfirmDisabled = false, errorMessage = null, onConfirm, onClose, children, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     // ids propios: una pantalla puede tener varios diálogos montados y los aria-* no deben apuntar al de otro
     const dialogId = useId();

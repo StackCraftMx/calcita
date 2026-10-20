@@ -13,13 +13,15 @@ import MenuItem from '@mui/material/MenuItem';
 import {menuItemLabelOf} from '@/appShell/menuItemText.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
  * @param {Array<{to?: string, href?: string, onClick?: Function, label?: string, labelKey?: string, Icon?: import('react').ElementType, icon?: import('react').ReactNode}>} props.links
  * @param {() => void} props.onClose cierra el menú al elegir
  */
-export default function MenuLinks({links, onClose}) {
+export default function MenuLinks({links, onClose, ...unknownProps}) {
+    warnUnknownProps('MenuLinks', unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     return links.map((menuLink) => {

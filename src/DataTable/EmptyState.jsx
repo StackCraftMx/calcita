@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEmptyState)
 const THEME_NAME = 'CalcitaEmptyState';
@@ -32,7 +33,8 @@ const EmptyIcon = piecePart(THEME_NAME, 'Icon', Box);
  */
 export default function EmptyState(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEmptyState.defaultProps) y encima lo que llega aquí
-    const {filtered = false, label, onClearFilters, texts} = usePieceProps(props, THEME_NAME);
+    const {filtered = false, label, onClearFilters, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const Icon = filtered ? FilterListOffIcon : InboxOutlinedIcon;
 

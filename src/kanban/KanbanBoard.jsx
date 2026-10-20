@@ -59,6 +59,7 @@ import {cardsOfColumn, isOverLimit} from '@/kanban/kanbanMoves.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaKanbanBoard)
 const THEME_NAME = 'CalcitaKanbanBoard';
@@ -263,7 +264,9 @@ export default function KanbanBoard(props) {
     // lo que el proyecto puso en su tema (components.CalcitaKanbanBoard.defaultProps) y encima lo que llega aquí
     const {
     columns, cards, onMove, renderCard, onCardClick, onAddCard, cardActions, columnActions, onCardComplete, onColumnCollapse, ariaLabel, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('kanban', texts);
     // la columna donde se está escribiendo una tarjeta nueva
     const [addingColumnId, setAddingColumnId] = useState(null);

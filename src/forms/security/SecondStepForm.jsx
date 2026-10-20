@@ -38,6 +38,7 @@ import {
 } from '@/forms/security/securityRules.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSecondStepForm)
 const THEME_NAME = 'CalcitaSecondStepForm';
@@ -74,7 +75,8 @@ function isOutOfAttempts(error) {
  */
 export default function SecondStepForm(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSecondStepForm.defaultProps) y encima lo que llega aquí
-    const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts} = usePieceProps(props, THEME_NAME);
+    const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const hasApp = methods.includes(SECOND_STEP_METHOD.totp);
     const hasRecovery = methods.includes(SECOND_STEP_METHOD.recoveryCode);

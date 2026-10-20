@@ -20,6 +20,7 @@ import AccountMenu from '@/appShell/AccountMenu.jsx';
 import SettingsMenu from '@/appShell/SettingsMenu.jsx';
 import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaHeaderTools)
 const THEME_NAME = 'CalcitaHeaderTools';
@@ -45,7 +46,9 @@ export default function HeaderTools(props) {
     const {
     headerActions, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, user, profilePath, accountMenuItems, onSignOut, isSigningOut,
     accountSettings, vertical = false,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const hasAppearance = showFontSizeToggle || showLanguageToggle || showColorSchemeToggle;
     const settings = hasAppearance || accountSettings ? (
         <>

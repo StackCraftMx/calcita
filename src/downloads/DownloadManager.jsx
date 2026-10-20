@@ -47,6 +47,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDownloadManager)
 const THEME_NAME = 'CalcitaDownloadManager';
@@ -208,7 +209,8 @@ function DownloadRow({download}) {
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function DownloadManager({texts} = {}) {
+export default function DownloadManager({texts, ...unknownProps} = {}) {
+    warnUnknownProps('DownloadManager', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const downloads = useSelector(downloadsActor, (snapshot) => snapshot.context.downloads);
     const [isExpanded, setIsExpanded] = useState(true);

@@ -35,6 +35,7 @@ import {APP_BAR_HEIGHT_PIXELS} from '@/appShell/shellSizes.js';
 import SideMenuEntry from '@/appShell/SideMenuEntry.jsx';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenu)
 const THEME_NAME = 'CalcitaSideMenu';
@@ -105,7 +106,9 @@ export default function SideMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSideMenu.defaultProps) y encima lo que llega aquí
     const {
     logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, collapsed, footer, showBrand = true, onNavigate, railTop, railBottom, menuBadges,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const theme = useTheme();

@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageHeader)
 const THEME_NAME = 'CalcitaPageHeader';
@@ -33,7 +34,8 @@ const HeaderAction = piecePart(THEME_NAME, 'Action', Box);
  */
 export default function PageHeader(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeader.defaultProps) y encima lo que llega aquí
-    const {title, eyebrow, subtitle, action, documentTitle} = usePieceProps(props, THEME_NAME);
+    const {title, eyebrow, subtitle, action, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(title, titleRef);
     return (

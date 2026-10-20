@@ -29,6 +29,7 @@ import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLineChart)
 const THEME_NAME = 'CalcitaLineChart';
@@ -61,7 +62,9 @@ export default function LineChart(props) {
     // lo que el proyecto puso en su tema (components.CalcitaLineChart.defaultProps) y encima lo que llega aquí
     const {
     data, series, periodLabel, ariaLabel, emptyLabel, height = 220, formatValue: formatValueProp, referenceLine, onSelect, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {formatNumber} = useFormatters();
     const formatValue = formatValueProp ?? formatNumber;

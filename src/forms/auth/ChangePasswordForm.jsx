@@ -22,6 +22,7 @@ import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -31,7 +32,8 @@ import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
  * @param {object} [props.policy] las reglas de la nueva; por omisión DEFAULT_PASSWORD_POLICY
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY, texts}) {
+export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY, texts, ...unknownProps}) {
+    warnUnknownProps('ChangePasswordForm', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const [isDone, setIsDone] = useState(false);
     const schema = useMemo(() => Yup.object({

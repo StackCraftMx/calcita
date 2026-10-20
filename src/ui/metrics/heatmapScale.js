@@ -14,6 +14,8 @@
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 const DAYS_PER_WEEK = 7;
+// Intl en inglés de Canadá escribe la fecha como AAAA-MM-DD: así sale «hoy» en la zona del negocio sin armar el texto a mano
+const PLAIN_DATE_LOCALE = 'en-CA';
 
 /** Nivel 0 = sin actividad; 1 a 4 = el tono cada vez más lleno. */
 export const HEATMAP_LEVELS = [0, 1, 2, 3, 4];
@@ -68,6 +70,34 @@ function utcDayOf(plainDate) {
 /** milisegundos UTC → "2026-08-16". */
 function plainDateOf(utcMilliseconds) {
     return new Date(utcMilliseconds).toISOString().slice(0, 10);
+}
+
+/**
+ * El día de hoy (AAAA-MM-DD) en la zona del negocio: en la noche de México, en UTC ya es mañana.
+ *
+ * @param {string} timeZone zona de Intl ('America/Mexico_City')
+ * @param {Date} [now]
+ * @returns {string}
+ */
+export function todayInZone(timeZone, now = new Date()) {
+    return new Intl.DateTimeFormat(PLAIN_DATE_LOCALE, {timeZone, year: 'numeric', month: '2-digit', day: '2-digit'}).format(now);
+}
+
+/**
+ * El rango del calendario con lo que falte: sin endsOn termina hoy y sin startsOn abarca el último año (desde el día
+ * siguiente al mismo de hace un año). OJO: antes, sin las dos fechas el calendario tronaba al abrir la pantalla.
+ *
+ * @param {{startsOn?: string, endsOn?: string, today: string}} range fechas de calendario AAAA-MM-DD
+ * @returns {{startsOn: string, endsOn: string}}
+ */
+export function calendarRangeOf({startsOn, endsOn, today}) {
+    const lastDay = endsOn ?? today;
+    if (startsOn) {
+        return {startsOn, endsOn: lastDay};
+    }
+    const [year, month, day] = lastDay.split('-').map(Number);
+    // Date.UTC acomoda solo el día que se pasa del mes (31 + 1 → día 1 del siguiente; 29 de febrero → 1 de marzo)
+    return {startsOn: plainDateOf(Date.UTC(year - 1, month - 1, day + 1)), endsOn: lastDay};
 }
 
 /**

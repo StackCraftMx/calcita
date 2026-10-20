@@ -28,6 +28,7 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import CopyButton from '@/ui/actions/CopyButton.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaRecoveryCodesDialog)
 const THEME_NAME = 'CalcitaRecoveryCodesDialog';
@@ -56,7 +57,8 @@ function todayText() {
  */
 export default function RecoveryCodesDialog(props) {
     // lo que el proyecto puso en su tema (components.CalcitaRecoveryCodesDialog.defaultProps) y encima lo que llega aquí
-    const {codes, account = '', onClose, onCodesSaved, texts} = usePieceProps(props, THEME_NAME);
+    const {codes, account = '', onClose, onCodesSaved, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {appName} = useToolkitSettings();
     const [isSaved, setIsSaved] = useState(false);

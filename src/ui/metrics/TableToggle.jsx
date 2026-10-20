@@ -11,6 +11,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTableToggle)
 const THEME_NAME = 'CalcitaTableToggle';
@@ -26,7 +27,8 @@ export const CHART_VIEW = Object.freeze({chart: 'chart', table: 'table'});
  */
 export default function TableToggle(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTableToggle.defaultProps) y encima lo que llega aquí
-    const {asTable, onToggle, texts} = usePieceProps(props, THEME_NAME);
+    const {asTable, onToggle, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
     return (

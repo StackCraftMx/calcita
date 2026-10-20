@@ -30,6 +30,7 @@ import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaNewBuildNotice)
 const THEME_NAME = 'CalcitaNewBuildNotice';
@@ -100,7 +101,8 @@ function floatingSxOf(theme) {
  */
 export default function NewBuildNotice(props) {
     // lo que el proyecto puso en su tema (components.CalcitaNewBuildNotice.defaultProps) y encima lo que llega aquí
-    const {message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts} = usePieceProps(props, THEME_NAME);
+    const {message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const isNewBuildPublished = useNewBuildPublished();
 

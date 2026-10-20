@@ -33,6 +33,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActivityLog)
 const THEME_NAME = 'CalcitaActivityLog';
@@ -79,7 +80,8 @@ const LOADING_HEIGHT_PIXELS = 160;
  */
 export default function ActivityLog(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActivityLog.defaultProps) y encima lo que llega aquí
-    const {events, error = null, texts} = usePieceProps(props, THEME_NAME);
+    const {events, error = null, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
 

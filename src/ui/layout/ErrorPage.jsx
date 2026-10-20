@@ -27,6 +27,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SystemUpdateAltRoundedIcon from '@mui/icons-material/SystemUpdateAltRounded';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaErrorPage)
 const THEME_NAME = 'CalcitaErrorPage';
@@ -65,7 +66,9 @@ export default function ErrorPage(props) {
     // lo que el proyecto puso en su tema (components.CalcitaErrorPage.defaultProps) y encima lo que llega aquí
     const {
     kind, title, text, homePath = '/', onRetry, onGoHome, extraActions, actions, icon, children, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('errorPage', texts);
     const {Link} = useToolkitNavigation();
     const look = ERROR_PAGE_LOOK[kind] ?? ERROR_PAGE_LOOK[ERROR_PAGE_KIND.serverError];

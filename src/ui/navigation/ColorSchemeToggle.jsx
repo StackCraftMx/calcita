@@ -23,6 +23,7 @@ import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 
 import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColorSchemeToggle)
 const THEME_NAME = 'CalcitaColorSchemeToggle';
@@ -37,7 +38,8 @@ const SchemeButton = piecePart(THEME_NAME, 'Button', IconButton);
  */
 export default function ColorSchemeToggle(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorSchemeToggle.defaultProps) y encima lo que llega aquí
-    const {size = 'small', inverted = false, onChange, texts} = usePieceProps(props, THEME_NAME);
+    const {size = 'small', inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {mode, systemMode, setMode} = useColorScheme();
 
