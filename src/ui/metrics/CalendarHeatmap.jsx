@@ -30,10 +30,12 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
-import {HEATMAP_LEVELS, calendarWeeksOf, levelOf} from '@/ui/metrics/heatmapScale.js';
+import {HEATMAP_LEVELS, calendarRangeOf, calendarWeeksOf, levelOf, todayInZone} from '@/ui/metrics/heatmapScale.js';
 import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCalendarHeatmap)
 const THEME_NAME = 'CalcitaCalendarHeatmap';
@@ -61,6 +63,8 @@ const GAP_PIXELS = 3;
 const LABELED_WEEKDAYS = new Set([1, 3, 5]);
 // porcentaje del tono en cada nivel; el nivel 0 es el gris de "hover" del tema
 const LEVEL_TONE_PERCENT = {1: 30, 2: 55, 3: 78, 4: 100};
+// sin días: el calendario vacío (una lista fija para que no se vuelvan a contar las semanas en cada render)
+const NO_DAYS = Object.freeze([]);
 
 /**
  * Relleno de un nivel con los colores del tema.
@@ -81,13 +85,14 @@ function levelFill(theme, tone, level) {
 
 /**
  * @param {object} props
- * @param {string} props.startsOn primer día del rango ("2025-09-16"), fecha de calendario
- * @param {string} props.endsOn último día del rango ("2026-09-15")
- * @param {Array<{date: string, value: number, detail?: string}>} props.days solo los días con actividad; el resto vale
+ * @param {string} [props.startsOn] primer día del rango ("2025-09-16"), fecha de calendario; sin él, un año antes de endsOn
+ * @param {string} [props.endsOn] último día del rango ("2026-09-15"); sin él, hoy en la zona del proveedor
+ * @param {Array<{date: string, value: number, detail?: string}>} [props.days] solo los días con actividad; el resto vale
  *     0
  * @param {string} props.ariaLabel qué muestra el calendario, ya traducido
  * @param {string} props.valueLabel encabezado de la columna de valor en la tabla ("Registros leídos")
- * @param {(value: number) => string} props.describeValue el valor en palabras para el tooltip ("120 registros leídos")
+ * @param {(value: number) => string} [props.describeValue] el valor en palabras para el tooltip ("120 registros leídos");
+ *     sin ella, solo el número
  * @param {import('react').ReactNode} [props.summary] renglón de resumen arriba del calendario
  * @param {string} [props.emptyLabel] qué decir si ningún día tiene actividad
  * @param {'primary'|'info'|'success'|'warning'|'error'} [props.tone]
@@ -97,7 +102,8 @@ function levelFill(theme, tone, level) {
  */
 export default function CalendarHeatmap(props) {
     // lo que el proyecto puso en su tema (components.CalcitaCalendarHeatmap.defaultProps) y encima lo que llega aquí
-    const {startsOn, endsOn, days, ariaLabel, valueLabel, describeValue, summary, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange} = usePieceProps(props, THEME_NAME);
+    const {startsOn, endsOn, days = NO_DAYS, ariaLabel, valueLabel, describeValue, summary, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {formatDate, formatMonthShortName, formatNumber, formatWeekdayShortName} = useFormatters();
     const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
@@ -106,7 +112,12 @@ export default function CalendarHeatmap(props) {
         onViewChange?.(asTable ? CHART_VIEW.chart : CHART_VIEW.table);
     };
 
-    const {weeks, monthMarks, thresholds} = useMemo(() => calendarWeeksOf({startsOn, endsOn, days}), [startsOn, endsOn, days]);
+    const {timeZone} = useToolkitSettings();
+    const {weeks, monthMarks, thresholds} = useMemo(
+        () => calendarWeeksOf({...calendarRangeOf({startsOn, endsOn, today: todayInZone(timeZone)}), days}),
+        [startsOn, endsOn, days, timeZone]);
+    // el valor en palabras del globo de cada día; sin la del proyecto, el número solo
+    const describe = describeValue ?? formatNumber;
     const activeDays = days.filter((day) => day.value > 0);
 
     return (
@@ -181,7 +192,7 @@ export default function CalendarHeatmap(props) {
                                     const level = levelOf(day.value, thresholds);
                                     return (
                                         <Tooltip key={day.date} arrow disableInteractive
-                                                 title={`${formatDate(day.date)}: ${describeValue(day.value)}${day.detail ? ` · ${day.detail}` : ''}`}>
+                                                 title={`${formatDate(day.date)}: ${describe(day.value)}${day.detail ? ` · ${day.detail}` : ''}`}>
                                             <HeatmapCell ownSx={(theme) => ({width: CELL_PIXELS, height: CELL_PIXELS, borderRadius: '3px', bgcolor: levelFill(theme, tone, level)})} />
                                         </Tooltip>
                                     );

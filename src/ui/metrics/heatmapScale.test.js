@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {calendarWeeksOf, levelOf, quantileThresholds} from '@/ui/metrics/heatmapScale.js';
+import {calendarRangeOf, calendarWeeksOf, levelOf, quantileThresholds, todayInZone} from '@/ui/metrics/heatmapScale.js';
 
 test('los niveles se cortan por cuartiles de los días con actividad y el cero es su propio nivel', () => {
     // ocho días con lecturas de 120 a 960 y un día sin nada
@@ -41,4 +41,20 @@ test('el mes se rotula en la semana donde cae su día 1 y un año completo son 5
     assert.equal(monthMarks.filter((month) => month !== null).length, 12);
     // 2025-10-01 cae en la semana del lunes 29 de septiembre, la tercera del calendario
     assert.equal(monthMarks[2], 10);
+});
+
+test('sin fechas el calendario abarca el último año hasta hoy; con una sola, la otra se completa', () => {
+    // antes, sin startsOn ni endsOn el calendario tronaba al abrir la pantalla
+    assert.deepEqual(calendarRangeOf({today: '2026-10-19'}), {startsOn: '2025-10-20', endsOn: '2026-10-19'});
+    assert.deepEqual(calendarRangeOf({endsOn: '2026-09-15', today: '2026-10-19'}), {startsOn: '2025-09-16', endsOn: '2026-09-15'});
+    assert.deepEqual(calendarRangeOf({startsOn: '2026-01-01', today: '2026-10-19'}), {startsOn: '2026-01-01', endsOn: '2026-10-19'});
+    // el 28 de febrero de un año bisiesto: el año empieza el 1 de marzo del anterior
+    assert.deepEqual(calendarRangeOf({today: '2028-02-28'}), {startsOn: '2027-03-01', endsOn: '2028-02-28'});
+});
+
+test('hoy es el de la zona del negocio, no el de UTC', () => {
+    // las 11 de la noche del 19 en México ya son las 5 de la mañana del 20 en UTC
+    const night = new Date('2026-10-20T05:00:00Z');
+    assert.equal(todayInZone('America/Mexico_City', night), '2026-10-19');
+    assert.equal(todayInZone('UTC', night), '2026-10-20');
 });
