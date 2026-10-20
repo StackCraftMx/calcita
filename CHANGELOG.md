@@ -4,6 +4,13 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.32.2] - 2026-10-19
+
+### Corregido
+
+- `SessionsCard`: cada sesión era un `<li>` dentro del `<li>` de la lista (HTML no válido; React lo marcaba en la consola
+  mientras se programa). Ahora el renglón va como `div` dentro de su `<li>`.
+
 ## [0.32.1] - 2026-10-19
 
 ### Corregido
