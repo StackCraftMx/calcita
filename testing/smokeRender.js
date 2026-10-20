@@ -253,6 +253,19 @@ if (unknownWarning.includes('MetricCard no conoce la opción «countNoun»')) {
     console.log(`FALLA  opción desconocida: se esperaba el aviso de countNoun y salió «${unknownWarning}»`);
 }
 
+// las sesiones son una lista válida: un <li> nunca dentro de otro (cada renglón era otro <li> adentro del de la lista)
+const sessionsHtml = renderToString(h(ThemeProvider, {theme: defaultTheme}, h(SessionsCard, {
+    sessions: [{id: 's1', browser: 'Chrome', platform: 'macOS', startedAt: '2026-10-17T15:00:00Z', isCurrent: true},
+        {id: 's2', browser: 'Safari', platform: 'iOS', startedAt: '2026-10-16T09:30:00Z'}],
+    onCloseOthers: async () => 1,
+})));
+if (/<li[^>]*>(?:(?!<\/li>)[\s\S])*?<li/.test(sessionsHtml)) {
+    failures += 1;
+    console.log('FALLA  SessionsCard: un <li> dentro de otro');
+} else {
+    console.log('OK     SessionsCard sin <li> dentro de otro');
+}
+
 // los formatos sin componente usan la configuración del proveedor de la raíz: zona de México, pesos y español (el de adentro,
 // en inglés, ya no se la cambia)
 const looseFormats = `${formatDate('2027-01-05T18:00:00Z')} · ${formatCurrency(1234.5)}`;

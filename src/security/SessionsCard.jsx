@@ -61,7 +61,9 @@ function SessionRow({session}) {
     }
 
     return (
-        <SessionsItem disableGutters alignItems="flex-start" ownSx={{gap: 1}}>
+        // component="div": el <li> lo pone la lista de afuera (con su divisor); un ListItem es otro <li> y un <li> dentro de
+        // otro no es HTML válido (React lo marcaba en consola)
+        <SessionsItem component="div" disableGutters alignItems="flex-start" ownSx={{gap: 1}}>
             <SessionsItemIcon ownSx={{minWidth: 36, mt: 0.5}}><DeviceIcon /></SessionsItemIcon>
             <ListItemText primary={(
                 <SessionsItemHeader direction="row" spacing={1} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
