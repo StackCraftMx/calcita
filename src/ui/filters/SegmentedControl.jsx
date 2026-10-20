@@ -19,6 +19,7 @@ import {styled, useThemeProps} from '@mui/material/styles';
 import {glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // con vidrio, el alto de cada opción: con el margen de la tira (3 px arriba y abajo) da los 40 px de un campo
 // el aire de la fila para la sombra, en unidades de spacing (4 px)
@@ -93,7 +94,8 @@ const SegmentedControlRoot = styled(ToggleButtonGroup, {name: THEME_NAME, slot: 
  */
 export default function SegmentedControl(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSegmentedControl.defaultProps) y encima lo que llega aquí
-    const {options, value, onChange, ariaLabel} = useThemeProps({props, name: THEME_NAME});
+    const {options, value, onChange, ariaLabel, ...unknownProps} = useThemeProps({props, name: THEME_NAME});
+    warnUnknownProps(THEME_NAME, unknownProps);
     return (
         // la fila deja 4 px arriba y abajo para que la sombra no se corte (ScrollableRow, py 0.5); el margen negativo los
         // devuelve: el control mide sus 40 px y se alinea con los campos de junto (quedaba 4 px más arriba)

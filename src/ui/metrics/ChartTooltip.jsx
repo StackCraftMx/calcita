@@ -29,6 +29,8 @@ const CHART_TOOLTIP_OPACITY = 0.92;
  */
 export default function ChartTooltip(props) {
     // lo que el proyecto puso en su tema (components.CalcitaChartTooltip.defaultProps) y encima lo que llega aquí
+    // OJO: sin aviso de opciones desconocidas (warnUnknownProps) a propósito: recharts le pasa al globo todas las suyas
+    // (offset, wrapperStyle, coordinate…) y el aviso salía con unas veinte opciones que el globo no necesita
     const {active, payload, render} = usePieceProps(props, THEME_NAME);
     // guard clause: Recharts lo monta siempre; solo se pinta sobre una barra
     if (!active || !payload?.length) {

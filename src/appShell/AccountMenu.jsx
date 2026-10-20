@@ -27,6 +27,7 @@ import MenuLinks from '@/appShell/MenuLinks.jsx';
 import {MONOGRAM_GRAY, WHITE_LABEL} from '@/theme/components/glassComponents.js';
 import {isGlassTheme} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAccountMenu)
 const THEME_NAME = 'CalcitaAccountMenu';
@@ -47,7 +48,8 @@ const AccountSettings = piecePart(THEME_NAME, 'Settings', Box);
  */
 export default function AccountMenu(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAccountMenu.defaultProps) y encima lo que llega aquí
-    const {user, profilePath, accountMenuItems = [], onSignOut, isSigningOut = false, settings} = usePieceProps(props, THEME_NAME);
+    const {user, profilePath, accountMenuItems = [], onSignOut, isSigningOut = false, settings, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const [anchorElement, setAnchorElement] = useState(null);
     const closeMenu = () => setAnchorElement(null);

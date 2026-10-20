@@ -42,6 +42,7 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SegmentedControl from '@/ui/filters/SegmentedControl.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEventCalendar)
 const THEME_NAME = 'CalcitaEventCalendar';
@@ -126,7 +127,9 @@ export default function EventCalendar(props) {
     const {
     events, initialView = CALENDAR_VIEW.month, views = Object.values(CALENDAR_VIEW), onEventClick, onDateSelect, onEventChange, height = 'auto', ariaLabel,
     onDatesChange, onViewChange, renderEvent, fullCalendarProps, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
     const palette = paletteOf(theme);
     const {t} = useToolkitTranslation('calendar', texts);

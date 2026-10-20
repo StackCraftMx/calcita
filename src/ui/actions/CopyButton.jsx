@@ -10,6 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import CheckIcon from '@mui/icons-material/CheckRounded';
 import CopyIcon from '@mui/icons-material/ContentCopyOutlined';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // cuánto se queda la palomita de «copiado»
 const COPIED_FEEDBACK_MILLISECONDS = 2000;
@@ -22,7 +23,8 @@ const COPIED_FEEDBACK_MILLISECONDS = 2000;
  * @param {() => void} [props.onCopied]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CopyButton({value, label, size = 'small', onCopied, texts}) {
+export default function CopyButton({value, label, size = 'small', onCopied, texts, ...unknownProps}) {
+    warnUnknownProps('CopyButton', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const [isCopied, setIsCopied] = useState(false);
     const buttonLabel = label ?? t('form.copy');

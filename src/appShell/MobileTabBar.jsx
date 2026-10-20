@@ -50,6 +50,7 @@ import {mergeStyles} from '@/theme/mergeComponents.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMobileTabBar)
 const THEME_NAME = 'CalcitaMobileTabBar';
@@ -228,7 +229,8 @@ function useFittingTabCount(capsule, minTabPixels) {
  */
 export default function MobileTabBar(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMobileTabBar.defaultProps) y encima lo que llega aquí
-    const {menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange} = usePieceProps(props, THEME_NAME);
+    const {menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();

@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import AuditTrailTable from '@/DataTable/AuditTrailTable.jsx';
 import ContentDialog from '@/ui/layout/ContentDialog.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAuditTrailDialog)
 const THEME_NAME = 'CalcitaAuditTrailDialog';
@@ -39,7 +40,9 @@ export default function AuditTrailDialog(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAuditTrailDialog.defaultProps) y encima lo que llega aquí
     const {
     open, onClose, title, subtitle, subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], header = null, eventSuffixOf = null,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     return (
         <ContentDialog open={open} onClose={onClose} title={title}>
             {subtitle && (

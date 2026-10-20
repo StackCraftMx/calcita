@@ -31,6 +31,7 @@ import {menuBreadcrumbsOf} from '@/navigation/appMenu.js';
 import PageBreadcrumbs from '@/ui/navigation/PageBreadcrumbs.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageHeading)
 const THEME_NAME = 'CalcitaPageHeading';
@@ -55,7 +56,8 @@ const MIN_BREADCRUMBS = 2;
  */
 export default function PageHeading(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeading.defaultProps) y encima lo que llega aquí
-    const {title, description, breadcrumbs, actions, documentTitle, texts} = usePieceProps(props, THEME_NAME);
+    const {title, description, breadcrumbs, actions, documentTitle, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();

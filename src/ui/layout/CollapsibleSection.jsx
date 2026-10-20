@@ -26,6 +26,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCollapsibleSection)
 const THEME_NAME = 'CalcitaCollapsibleSection';
@@ -60,7 +61,8 @@ const HEADER_SX = {
  */
 export default function CollapsibleSection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaCollapsibleSection.defaultProps) y encima lo que llega aquí
-    const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children} = usePieceProps(props, THEME_NAME);
+    const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const changeExpanded = (nextIsExpanded) => {
         setIsExpanded(nextIsExpanded);

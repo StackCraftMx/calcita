@@ -16,6 +16,7 @@ import {textSizeOf} from '@/theme/appleTracking.js';
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageBreadcrumbs)
 const THEME_NAME = 'CalcitaPageBreadcrumbs';
@@ -30,7 +31,8 @@ const BreadcrumbsCurrent = piecePart(THEME_NAME, 'Current', Typography);
  */
 export default function PageBreadcrumbs(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageBreadcrumbs.defaultProps) y encima lo que llega aquí
-    const {items, texts} = usePieceProps(props, THEME_NAME);
+    const {items, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     if (items.length === 0) {

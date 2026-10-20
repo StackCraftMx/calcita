@@ -18,6 +18,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaWizardLayout)
 const THEME_NAME = 'CalcitaWizardLayout';
@@ -46,7 +47,9 @@ export default function WizardLayout(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
     steps, activeIndex, skippedKeys, isSubmitting = false, onBack, onNext, onSkip, submitButton, problemAlert, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const activeStep = steps[activeIndex];
     const isLastStep = activeIndex === steps.length - 1;

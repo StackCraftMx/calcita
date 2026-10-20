@@ -22,6 +22,7 @@ import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaProfileHeader)
 const THEME_NAME = 'CalcitaProfileHeader';
@@ -66,7 +67,8 @@ const coverOf = (theme) => {
  */
 export default function ProfileHeader(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileHeader.defaultProps) y encima lo que llega aquí
-    const {name, email, subtitle, avatarUrl, chips = [], actions} = usePieceProps(props, THEME_NAME);
+    const {name, email, subtitle, avatarUrl, chips = [], actions, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(name, titleRef);
 

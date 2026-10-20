@@ -29,6 +29,7 @@ import {getIn, useFormikContext} from 'formik';
 import FormProblemAlert from '@/forms/FormProblemAlert.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
 import WizardLayout from '@/inputs/WizardLayout.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * El primer paso que tiene un campo con error; -1 si ninguno.
@@ -52,7 +53,8 @@ function firstStepWithErrorOf(steps, errors) {
  * @param {string} props.submitLabel ya traducido: el botón del último paso
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function FormWizard({steps, submitLabel, texts}) {
+export default function FormWizard({steps, submitLabel, texts, ...unknownProps}) {
+    warnUnknownProps('FormWizard', unknownProps);
     const {validateForm, setFieldTouched, setFieldValue, initialValues, errors, isSubmitting} = useFormikContext();
     const [activeIndex, setActiveIndex] = useState(0);
     const [skippedKeys, setSkippedKeys] = useState(() => new Set());

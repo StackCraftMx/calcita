@@ -20,6 +20,7 @@ import FormTextField from '@/forms/FormTextField.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -28,7 +29,8 @@ import {Yup} from '@/forms/validation.js';
  * @param {string} [props.signInPath] la liga para regresar a iniciar sesión
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function ForgotPasswordForm({onSubmit, signInPath, texts}) {
+export default function ForgotPasswordForm({onSubmit, signInPath, texts, ...unknownProps}) {
+    warnUnknownProps('ForgotPasswordForm', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     const [sentToEmail, setSentToEmail] = useState(null);

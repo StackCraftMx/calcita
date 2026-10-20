@@ -19,6 +19,7 @@ import {enUS, esES} from '@mui/x-date-pickers/locales';
 
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /** Cómo viaja una fecha de calendario. */
 export const CALENDAR_DATE_FORMAT = 'YYYY-MM-DD';
@@ -61,7 +62,9 @@ function pickerValueOf(calendarDate) {
 export default function DateInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
     openTo = 'day', disabled = false, inputRef, texts,
+    ...unknownProps
 }) {
+    warnUnknownProps('DateInput', unknownProps);
     const {t, language} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'date'}-${generatedId}`;

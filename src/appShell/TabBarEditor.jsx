@@ -25,6 +25,7 @@ import {menuItemLabelOf} from '@/appShell/menuItemText.js';
 import {PINNABLE_TAB_LIMIT, menuItemKeyOf} from '@/navigation/appMenu.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTabBarEditor)
 const THEME_NAME = 'CalcitaTabBarEditor';
@@ -44,7 +45,8 @@ const EditorFooter = piecePart(THEME_NAME, 'Footer', Box);
  */
 export default function TabBarEditor(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTabBarEditor.defaultProps) y encima lo que llega aquí
-    const {menuItems, pinnedKeys, onDone, onReset} = usePieceProps(props, THEME_NAME);
+    const {menuItems, pinnedKeys, onDone, onReset, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const [chosenKeys, setChosenKeys] = useState(pinnedKeys);
     const isFull = chosenKeys.length >= PINNABLE_TAB_LIMIT;

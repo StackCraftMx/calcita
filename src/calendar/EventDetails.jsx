@@ -33,6 +33,7 @@ import {REMINDER_UNIT, isOpenableMeetingUrl, reminderOf} from '@/calendar/calend
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEventDetails)
 const THEME_NAME = 'CalcitaEventDetails';
@@ -79,7 +80,8 @@ function DetailRow({Icon, label, children}) {
  */
 export default function EventDetails(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEventDetails.defaultProps) y encima lo que llega aquí
-    const {event, actions, titleId, texts} = usePieceProps(props, THEME_NAME);
+    const {event, actions, titleId, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('calendar', texts);
     const {formatDate, formatTime} = useFormatters();
     const isWholeDay = event.allDay || WHOLE_DAY_PATTERN.test(event.start);

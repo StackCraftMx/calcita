@@ -27,6 +27,7 @@ import {useFormContext} from 'react-hook-form';
 import FormProblemAlert from '@/hookForm/FormProblemAlert.jsx';
 import SubmitButton from '@/hookForm/SubmitButton.jsx';
 import WizardLayout from '@/inputs/WizardLayout.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -39,7 +40,8 @@ import WizardLayout from '@/inputs/WizardLayout.jsx';
  * @param {string} props.submitLabel ya traducido: el botón del último paso
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function FormWizard({steps, submitLabel, texts}) {
+export default function FormWizard({steps, submitLabel, texts, ...unknownProps}) {
+    warnUnknownProps('FormWizard', unknownProps);
     const {trigger, resetField, getFieldState, formState} = useFormContext();
     const {isSubmitting, submitCount} = formState;
     const [activeIndex, setActiveIndex] = useState(0);

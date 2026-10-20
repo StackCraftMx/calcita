@@ -29,6 +29,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaContentDialog)
 const THEME_NAME = 'CalcitaContentDialog';
@@ -105,7 +106,8 @@ function SlideUp(props) {
  */
 export default function ContentDialog(props) {
     // lo que el proyecto puso en su tema (components.CalcitaContentDialog.defaultProps) y encima lo que llega aquí
-    const {open, onClose, title, children, texts} = usePieceProps(props, THEME_NAME);
+    const {open, onClose, title, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const titleId = useId();
 

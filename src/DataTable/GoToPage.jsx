@@ -20,6 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaGoToPage)
 const THEME_NAME = 'CalcitaGoToPage';
@@ -48,7 +49,8 @@ function filterPages(pageNumbers, {inputValue}) {
  */
 export default function GoToPage(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGoToPage.defaultProps) y encima lo que llega aquí
-    const {page, pageCount, onChange, texts} = usePieceProps(props, THEME_NAME);
+    const {page, pageCount, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
 

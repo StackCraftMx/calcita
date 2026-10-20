@@ -27,6 +27,7 @@ import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInForm)
 const THEME_NAME = 'CalcitaSignInForm';
@@ -49,7 +50,8 @@ function RememberMeField({label}) {
  */
 export default function SignInForm(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInForm.defaultProps) y encima lo que llega aquí
-    const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts} = usePieceProps(props, THEME_NAME);
+    const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
     // el esquema se arma al pintar y no al importar: yup toma sus mensajes al armarlo (buildYupLocale ya corrió)

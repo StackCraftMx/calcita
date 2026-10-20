@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const MAX_VISIBLE_OPTIONS = 100;
 
@@ -48,7 +49,9 @@ function plainTextOf(text) {
 export default function CatalogInput({
     name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
     multiple = false, texts,
+    ...unknownProps
 }) {
+    warnUnknownProps('CatalogInput', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'catalog'}-${generatedId}`;

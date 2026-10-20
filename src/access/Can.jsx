@@ -6,6 +6,7 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import {useCan} from '@/access/useCan.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -13,6 +14,7 @@ import {useCan} from '@/access/useCan.js';
  * @param {import('react').ReactNode} props.children
  * @param {import('react').ReactNode} [props.fallback] lo que se pinta si no puede; por omisión nada
  */
-export default function Can({access, children, fallback = null}) {
+export default function Can({access, children, fallback = null, ...unknownProps}) {
+    warnUnknownProps('Can', unknownProps);
     return useCan(access) ? children : fallback;
 }

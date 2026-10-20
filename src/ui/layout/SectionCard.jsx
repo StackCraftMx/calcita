@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSectionCard)
 const THEME_NAME = 'CalcitaSectionCard';
@@ -26,7 +27,8 @@ const SectionTitle = piecePart(THEME_NAME, 'Title', Typography);
  */
 export default function SectionCard(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSectionCard.defaultProps) y encima lo que llega aquí
-    const {title, action, children} = usePieceProps(props, THEME_NAME);
+    const {title, action, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     return (
         <SectionRoot component="section" variant="outlined" ownSx={{p: {xs: 2, md: 2.5}, minWidth: 0}}>
             <SectionHeader ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1.5}}>

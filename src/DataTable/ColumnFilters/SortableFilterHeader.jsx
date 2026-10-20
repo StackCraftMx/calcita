@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 
 import HeaderFilterPopover from '@/DataTable/ColumnFilters/HeaderFilterPopover.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSortableFilterHeader)
 const THEME_NAME = 'CalcitaSortableFilterHeader';
@@ -41,7 +42,9 @@ export default function SortableFilterHeader(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSortableFilterHeader.defaultProps) y encima lo que llega aquí
     const {
     label, sortable = true, sortEntry, onSort, onClearSort, filterable = true, activeCount, onClear, children,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table');
     const title = <SortableTitle variant="caption" ownSx={{fontWeight: 700, whiteSpace: 'nowrap'}}>{label}</SortableTitle>;
 

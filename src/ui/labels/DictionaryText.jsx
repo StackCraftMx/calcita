@@ -5,11 +5,13 @@
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 
 import {labelOf, lookup} from '@/dictionaries/dictionaries.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {{dictionary: Record<string, object>, value: string|null|undefined}} props
  */
-export default function DictionaryText({dictionary, value}) {
+export default function DictionaryText({dictionary, value, ...unknownProps}) {
+    warnUnknownProps('DictionaryText', unknownProps);
     const {t} = useToolkitTranslation('dictionaries');
     return labelOf(lookup(dictionary, value), t);
 }

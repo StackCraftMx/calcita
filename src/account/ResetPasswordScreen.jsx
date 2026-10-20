@@ -15,6 +15,7 @@ import {AuthLayout} from '@/appShell/AuthLayout.jsx';
 import ChangePasswordForm from '@/forms/auth/ChangePasswordForm.jsx';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -29,7 +30,9 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  */
 export default function ResetPasswordScreen({
     signInPath, forgotPasswordPath, tokenParam = 'token', logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts,
+    ...unknownProps
 }) {
+    warnUnknownProps('ResetPasswordScreen', unknownProps);
     const {t} = useToolkitTranslation('account', texts);
     const {connector} = useAccount();
     const {useLocation, Link} = useToolkitNavigation();

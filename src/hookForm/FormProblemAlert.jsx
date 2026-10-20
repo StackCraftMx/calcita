@@ -7,6 +7,7 @@
 import {useFormContext, useFormState} from 'react-hook-form';
 import Alert from '@mui/material/Alert';
 import {piecePart} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaFormProblemAlert): el estilo del proyecto va
 // después del de MUI y el sx de la pantalla al final
@@ -16,7 +17,8 @@ const ProblemAlert = piecePart(THEME_NAME, 'Root', Alert);
 /**
  * @param {{control?: object, sx?: object}} props control: el de useForm, si la pantalla no usa FormProvider
  */
-export default function FormProblemAlert({control, sx}) {
+export default function FormProblemAlert({control, sx, ...unknownProps}) {
+    warnUnknownProps('FormProblemAlert', unknownProps);
     const formContext = useFormContext();
     const {errors} = useFormState({control: control ?? formContext?.control});
     const message = errors.root?.server?.message;

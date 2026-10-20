@@ -17,6 +17,7 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const COPIED_FEEDBACK_MILLISECONDS = 2000;
 const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -30,7 +31,8 @@ const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
  * @param {(isRevealed: boolean) => void} [props.onRevealChange] se destapó o se tapó (para registrar quién vio el secreto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function SecretField({value, label, helperText = ' ', onCopied, onRevealChange, texts}) {
+export default function SecretField({value, label, helperText = ' ', onCopied, onRevealChange, texts, ...unknownProps}) {
+    warnUnknownProps('SecretField', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `secret-${generatedId}`;

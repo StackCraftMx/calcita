@@ -42,6 +42,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ProfileHeader from '@/ui/layout/ProfileHeader.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaProfileScreen)
 const THEME_NAME = 'CalcitaProfileScreen';
@@ -132,7 +133,9 @@ export default function ProfileScreen(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileScreen.defaultProps) y encima lo que llega aquí
     const {
     showColorScheme = true, extraFields, extraTabs = [], hiddenTabs = [], onTabChange, onProfileSaved, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('account', texts);
     const {session} = useAccount();
     const {useNavigate, useLocation} = useToolkitNavigation();

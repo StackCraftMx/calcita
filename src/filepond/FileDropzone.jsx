@@ -53,6 +53,7 @@ import {accentTextStylesOf} from '@/theme/glassSurface.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPondDropzone)
 const THEME_NAME = 'CalcitaPondDropzone';
@@ -199,7 +200,9 @@ export default function FileDropzone(props) {
     value = null, onChange, accept, maxSize, multiple = false, maxFiles, maxTotalSize, name, hint, buttonLabel, disabled = false,
     busy = false, busyModal = false, autoReject = true, validate = null, server = null, instantUpload = false, apiRef = null,
     onProcessProgress, onReject, actions, children, sx, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {formatFileSize} = useFormatters();
     const generatedId = useId();

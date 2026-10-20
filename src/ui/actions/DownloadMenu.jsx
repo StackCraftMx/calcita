@@ -34,6 +34,7 @@ import {useFileTypes} from '@/downloads/fileTypes.js';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDownloadMenu)
 const THEME_NAME = 'CalcitaDownloadMenu';
@@ -72,7 +73,9 @@ export default function DownloadMenu(props) {
     const {
     formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, onFailed, onCanceled, variant = 'button', ariaLabel,
     onChooseFormat, icon: ButtonIcon = FileDownloadOutlinedIcon,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common');
     const fileTypes = useFileTypes();
     // de dónde sale el menú de formatos: del botón, o (desde el «⋯» del teléfono, que se cierra) de donde estaba el renglón

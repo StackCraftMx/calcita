@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallInstructions)
 const THEME_NAME = 'CalcitaInstallInstructions';
@@ -50,7 +51,8 @@ export function variantHasInstructions(variant) {
  */
 export default function InstallInstructionsDialog(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallInstructions.defaultProps) y encima lo que llega aquí
-    const {variant, open, onClose, texts} = usePieceProps(props, THEME_NAME);
+    const {variant, open, onClose, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const steps = STEPS_BY_VARIANT[variant];
     if (!steps) {

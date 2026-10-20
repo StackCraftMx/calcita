@@ -20,6 +20,7 @@ import Stack from '@mui/material/Stack';
 
 import {rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPeriodRangeSelector)
 const THEME_NAME = 'CalcitaPeriodRangeSelector';
@@ -71,7 +72,8 @@ function PeriodSelect({id, label, value, options, onChange}) {
  */
 export default function PeriodRangeSelector(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPeriodRangeSelector.defaultProps) y encima lo que llega aquí
-    const {id, options, from, to, fromLabel, toLabel, onChange} = usePieceProps(props, THEME_NAME);
+    const {id, options, from, to, fromLabel, toLabel, onChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const endOptions = rangeEndOptionsOf(options, from);
 
     return (

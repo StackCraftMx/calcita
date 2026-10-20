@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import {FormRow} from '@/inputs/FormSection.jsx';
 import {useIsInsideFormSection} from '@/inputs/formLayoutContext.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -19,7 +20,8 @@ import {useIsInsideFormSection} from '@/inputs/formLayoutContext.js';
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {import('react').ReactNode} props.children el campo
  */
-export default function FieldFrame({inputId, labelId, label, children}) {
+export default function FieldFrame({inputId, labelId, label, children, ...unknownProps}) {
+    warnUnknownProps('FieldFrame', unknownProps);
     const isRow = useIsInsideFormSection();
 
     if (isRow) {

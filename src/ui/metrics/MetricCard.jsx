@@ -31,6 +31,7 @@ import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import RemoveIcon from '@mui/icons-material/Remove';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const TONES = ['info', 'success', 'warning', 'error'];
 
@@ -98,7 +99,9 @@ export default function MetricCard(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMetricCard.defaultProps) y encima lo que llega aquí
     const {
         label, value, caption, tone = 'info', valueColor, isLoading = false, to, trend, icon, children, onClick, texts,
+        ...unknownProps
     } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     // el enlace del router que conectó el proyecto (ToolkitProvider)
     const {Link} = useToolkitNavigation();
     const paletteTone = TONES.includes(tone) ? tone : 'info';

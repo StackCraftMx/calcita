@@ -29,6 +29,7 @@ import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
 import ColorSchemeToggle from '@/ui/navigation/ColorSchemeToggle.jsx';
 import LanguageToggle from '@/ui/navigation/LanguageToggle.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAuthLayout)
 const THEME_NAME = 'CalcitaAuthLayout';
@@ -69,7 +70,8 @@ const cardSurfaceOf = (theme) => (isGlassTheme(theme)
  */
 export const AuthLayout = (props) => {
     // lo que el proyecto puso en su tema (components.CalcitaAuthLayout.defaultProps) y encima lo que llega aquí
-    const {logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true} = usePieceProps(props, THEME_NAME);
+    const {logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {appName} = useToolkitSettings();
     return (
         <AuthRoot ownSx={[{minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default'},

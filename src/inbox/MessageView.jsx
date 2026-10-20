@@ -30,6 +30,7 @@ import {inboxDateOf} from '@/inbox/inboxDates.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageView)
 const THEME_NAME = 'CalcitaMessageView';
@@ -103,7 +104,8 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
  */
 export default function MessageView(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageView.defaultProps) y encima lo que llega aquí
-    const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts} = usePieceProps(props, THEME_NAME);
+    const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
     const formatters = useFormatters();
     // los mensajes anteriores que la persona abrió (empiezan encogidos), de qué conversación: al cambiar de mensaje se olvidan

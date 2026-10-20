@@ -27,6 +27,7 @@ import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {BAR_MIN_POINT_SIZE, barLabelValueOf} from '@/ui/metrics/barListLabels.js';
 import {useChartColors} from '@/ui/metrics/chartParts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarList)
 const THEME_NAME = 'CalcitaBarList';
@@ -60,7 +61,8 @@ function ValueLabel({x, y, width, height, value, colors, formatNumber}) {
  */
 export default function BarList(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarList.defaultProps) y encima lo que llega aquí
-    const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange} = usePieceProps(props, THEME_NAME);
+    const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
     const toggleView = () => {
         setAsTable(!asTable);

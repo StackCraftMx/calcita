@@ -36,6 +36,7 @@ import {tagOf} from '@/ui/labels/tagOf.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageList)
 const THEME_NAME = 'CalcitaMessageList';
@@ -81,7 +82,9 @@ export default function MessageList(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageList.defaultProps) y encima lo que llega aquí
     const {
     messages, selectedId = null, onSelect, onToggleStar, selectedIds = [], onSelectionChange, messageActions, renderMessage, emptyText, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
     const formatters = useFormatters();
 

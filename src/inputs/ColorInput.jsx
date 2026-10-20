@@ -22,6 +22,7 @@ import {translateValidationMessage} from '@/forms/validationMessages.js';
 import {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColorInput)
 const THEME_NAME = 'CalcitaColorInput';
@@ -55,7 +56,9 @@ export default function ColorInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorInput.defaultProps) y encima lo que llega aquí
     const {
     name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, texts,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `${name ?? 'color'}-${generatedId}`;

@@ -29,6 +29,7 @@ import {useTheme} from '@mui/material/styles';
 import {MAP_PIN_SIZE, boundsOfMarkers, mapPinHtmlOf} from '@/maps/mapMarkers.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMapView)
 const THEME_NAME = 'CalcitaMapView';
@@ -129,7 +130,9 @@ export default function MapView(props) {
     const {
     markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES, renderPopup, onMapClick,
     children, mapProps,
+    ...unknownProps
 } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
     const palette = paletteOf(theme);
     const markerRefs = useRef(new Map());

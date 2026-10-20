@@ -13,6 +13,7 @@
 import {useContext, useMemo} from 'react';
 
 import {ComponentTextsContext} from '@/toolkit/componentTextsContext.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -20,7 +21,8 @@ import {ComponentTextsContext} from '@/toolkit/componentTextsContext.js';
  * @param {object} [props.texts] los textos que cambian, con la forma de ese namespace
  * @param {import('react').ReactNode} props.children
  */
-export default function ComponentTexts({namespace, texts, children}) {
+export default function ComponentTexts({namespace, texts, children, ...unknownProps}) {
+    warnUnknownProps('ComponentTexts', unknownProps);
     const parent = useContext(ComponentTextsContext);
     const layer = useMemo(() => ({namespace, texts, parent}), [namespace, texts, parent]);
 

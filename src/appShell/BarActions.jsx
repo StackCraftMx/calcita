@@ -43,6 +43,7 @@ import {DESKTOP_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import useFittingActionCount from '@/appShell/useFittingActionCount.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarActions): el grupo sin cápsula (bare, o en la
 // franja); con cápsula, la cápsula es CalcitaBarCapsule
@@ -113,7 +114,8 @@ const PhoneFloatingCapsule = ({phoneSlot, label, sx, texts, children, ...rest}) 
  */
 export default function BarActions(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarActions.defaultProps) y encima lo que llega aquí
-    const {children, label, order, sx, inlineSx, bare = false, exclusive = false, texts} = usePieceProps(props, THEME_NAME);
+    const {children, label, order, sx, inlineSx, bare = false, exclusive = false, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {slot, phoneSlot, usesCapsules} = useBarActionsSlot();
     const isDesktop = useMediaQuery(DESKTOP_MEDIA_QUERY);
     // en escritorio, la barra; en el teléfono, el renglón flotante (solo existe con cápsulas)

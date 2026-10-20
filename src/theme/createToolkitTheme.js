@@ -35,6 +35,7 @@ import {minimalComponents, minimalTonesOf} from '@/theme/components/minimalCompo
 import {FIELD_TONES} from '@/theme/glassSurface.js';
 import {cssTokenDeclarationsOf} from '@/theme/cssTokens.js';
 import {createLogger} from '@/observability/logger.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 const log = createLogger('theme');
 // el aviso de las tarjetas de vidrio sale una vez por pestaña: el tema se vuelve a armar cada vez que cambia algo (un
@@ -135,7 +136,10 @@ export function createToolkitTheme({
     cssTokens = {},
     components = {},
     overrides = {},
+    ...unknownOptions
 } = {}) {
+    // una opción con otro nombre (glassBar en lugar de bar) se perdía sin decir nada: se avisa mientras se programa
+    warnUnknownProps('createToolkitTheme', unknownOptions);
     // un nombre mal escrito dejaría la franja sin avisar: mejor que truene al armar el tema
     if (!Object.values(TOP_BAR).includes(bar)) {
         throw new RangeError(`createToolkitTheme: bar es '${TOP_BAR.capsules}' o '${TOP_BAR.band}' (llegó ${bar}).`);

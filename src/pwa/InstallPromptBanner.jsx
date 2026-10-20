@@ -26,6 +26,7 @@ import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallPromptBanner)
 const THEME_NAME = 'CalcitaInstallPromptBanner';
@@ -46,7 +47,8 @@ const TAB_BAR_GAP_PIXELS = 8;
  */
 export default function InstallPromptBanner(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallPromptBanner.defaultProps) y encima lo que llega aquí
-    const {message, onInstallChoice, onShowSteps, onDismiss, texts} = usePieceProps(props, THEME_NAME);
+    const {message, onInstallChoice, onShowSteps, onDismiss, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {variant, dismissed, promptInstall, dismiss} = useInstallPrompt();
     const [stepsOpen, setStepsOpen] = useState(false);

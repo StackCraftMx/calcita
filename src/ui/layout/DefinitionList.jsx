@@ -13,6 +13,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDefinitionList)
 const THEME_NAME = 'CalcitaDefinitionList';
@@ -30,7 +31,8 @@ const DefinitionValue = piecePart(THEME_NAME, 'Value', Typography);
  */
 export default function DefinitionList(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDefinitionList.defaultProps) y encima lo que llega aquí
-    const {entries, layout = 'columns', labelWidth = 150} = usePieceProps(props, THEME_NAME);
+    const {entries, layout = 'columns', labelWidth = 150, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const isStacked = layout === 'stacked';
 
     return (
