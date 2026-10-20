@@ -87,6 +87,7 @@ Sin nada más, todo sale en español, con la zona horaria del navegador, montos 
 | `translate` | un traductor propio, por ejemplo i18next | ninguno |
 | `timeZone` | zona en que se pintan las horas | la del navegador |
 | `currency` | moneda de los montos (ISO 4217) | `MXN` |
+| `hourCycle` | la hora de 24 horas («15:10») o de 12 con a.m. y p.m. («3:10 p.m.»): `HOUR_CYCLE.twentyFourHours` o `HOUR_CYCLE.twelveHours` | 24 horas |
 | `appName` | nombre en el título de la pestaña | ninguno |
 | `navigation` | el router: `{useNavigate, useLocation, Link}` | la del navegador |
 | `canAccess` | quién ve qué (menú, rutas, botones): la regla del proyecto, normalmente `createAccessChecker(...)` | solo lo que no tiene regla |
@@ -517,6 +518,12 @@ vocabulario):
     <OrdersModule />
 </ComponentTexts>
 ```
+
+Una opción que la pieza no conoce no se pierde en silencio: mientras se programa, la consola avisa una vez por pieza y opción
+(`Calcita · ServerTable no conoce la opción «countNoun» y no la usa…`). Sirve sobre todo al pasar pantallas de un sistema que
+ya existe, donde las opciones traen otros nombres (`countNoun` es `countLabel`; el `label` de la columna de detalle es
+`ariaLabelOf`). En producción no avisa: Vite y Next cambian `process.env.NODE_ENV` al construir la app, y una página sin
+empaquetador se toma como producción.
 
 ## En un sistema que ya existe
 
