@@ -4,6 +4,23 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.32.0] - 2026-10-19
+
+### Agregado
+
+- `ToolkitProvider hourCycle`: la hora de 24 horas («15:10», como antes y por omisión) o de 12 con a.m. y p.m. («3:10 p.m.»),
+  con `HOUR_CYCLE.twentyFourHours` o `HOUR_CYCLE.twelveHours`. La usan `formatDateTime`, `formatTime` y `useFormatters()`.
+  Antes la hora era siempre de 24 horas y un sistema que ya existía no podía conservar la suya.
+- Aviso en la consola, mientras se programa, cuando una pieza recibe una opción que no conoce (`Calcita · ServerTable no
+  conoce la opción «countNoun» y no la usa…`): en las piezas con nombre en el tema, los componentes que leen sus opciones,
+  `detailColumn` y `createToolkitTheme`. Una vez por pieza y opción; en producción no avisa. Salió de pasar las pantallas de
+  un sistema que ya existía: opciones con otro nombre se perdían en silencio y la pantalla salía sin esos textos.
+
+### Corregido
+
+- `CalendarHeatmap` ya no truena sin `startsOn` y `endsOn`: sin ellos abarca el último año hasta hoy (en la zona del
+  proveedor), y sin `describeValue` el globo de cada día dice solo el número. `days` también se puede omitir.
+
 ## [0.31.0] - 2026-10-19
 
 ### Agregado
