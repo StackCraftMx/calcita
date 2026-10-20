@@ -4,6 +4,16 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.32.1] - 2026-10-19
+
+### Corregido
+
+- `TextInput` respeta lo que la pantalla pasa en `slotProps` (por ejemplo `htmlInput: {maxLength}`): se pisaba con los
+  adornos de la casa y el tope de caracteres se perdía sin avisar. Salió al pasar a Calcita la búsqueda de un sistema que ya
+  existía.
+- `TextInput` documenta `helperText=""`: sin él, el campo deja su renglón vacío abajo (para que no brinque al salir un error)
+  y un botón al lado en el mismo renglón queda más abajo que la caja.
+
 ## [0.32.0] - 2026-10-19
 
 ### Agregado
