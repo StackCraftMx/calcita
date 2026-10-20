@@ -18,7 +18,8 @@ import {allowOnlyUnrestricted} from '@/access/accessRules.js';
 import {browserNavigation} from '@/toolkit/browserNavigation.js';
 import {ToolkitContext} from '@/toolkit/toolkitContext.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
-import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, configureToolkit} from '@/toolkit/toolkitSettings.js';
+import {DEFAULT_CURRENCY, DEFAULT_HOUR_CYCLE, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, configureToolkit} from '@/toolkit/toolkitSettings.js';
+import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 /**
  * @param {object} props
@@ -34,6 +35,8 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, 
  *     proyecto (por ejemplo i18next); undefined deja el texto del paquete
  * @param {string} [props.timeZone] zona de las fechas (por omisión la del navegador)
  * @param {string} [props.currency] moneda de los montos, código ISO 4217 (por omisión MXN)
+ * @param {'h23'|'h12'} [props.hourCycle] la hora de 24 horas («15:10», por omisión) o de 12 con a.m. y p.m. («3:10 p.m.»):
+ *     HOUR_CYCLE.twentyFourHours o HOUR_CYCLE.twelveHours
  * @param {string} [props.appName] nombre de la aplicación para el título de la pestaña
  * @param {object} [props.navigation] {useNavigate, useLocation, Link}; por omisión la del navegador
  * @param {string} [props.buildId] la compilación del front que corre en esta pestaña; con ella NewBuildNotice sabe si el
@@ -44,8 +47,11 @@ import {DEFAULT_CURRENCY, DEFAULT_LANGUAGE, DEFAULT_LANGUAGES, browserTimeZone, 
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes, children,
+    language, languages, onLanguageChange, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
+    children,
+    ...unknownProps
 }) => {
+    warnUnknownProps('ToolkitProvider', unknownProps);
     // el proveedor de afuera, si este va dentro de otro: de él sale lo que este no diga
     const parent = useContext(ToolkitContext);
     const settings = useMemo(() => ({
@@ -56,12 +62,14 @@ export const ToolkitProvider = ({
         translate: translate ?? parent?.translate ?? null,
         timeZone: timeZone ?? parent?.timeZone ?? browserTimeZone(),
         currency: currency ?? parent?.currency ?? DEFAULT_CURRENCY,
+        hourCycle: hourCycle ?? parent?.hourCycle ?? DEFAULT_HOUR_CYCLE,
         appName: appName ?? parent?.appName ?? '',
         navigation: navigation ?? parent?.navigation ?? browserNavigation,
         buildId: buildId ?? parent?.buildId ?? '',
         canAccess: canAccess ?? parent?.canAccess ?? allowOnlyUnrestricted,
         fileTypes: fileTypes ?? parent?.fileTypes ?? null,
-    }), [parent, language, languages, onLanguageChange, texts, translate, timeZone, currency, appName, navigation, buildId, canAccess, fileTypes]);
+    }), [parent, language, languages, onLanguageChange, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
+        fileTypes]);
 
     // solo el de la raíz: un proveedor de adentro le cambiaba el idioma y la zona a las funciones sueltas de toda la app.
     // OJO: se configura durante el render (no en un efecto) para que los formatos y avisos que se llaman en este mismo
@@ -69,7 +77,7 @@ export const ToolkitProvider = ({
     if (!parent) {
         configureToolkit({
             language: settings.language, texts: settings.texts, translate: settings.translate, timeZone: settings.timeZone, currency: settings.currency,
-            appName: settings.appName, buildId: settings.buildId, languages: settings.languages,
+            hourCycle: settings.hourCycle, appName: settings.appName, buildId: settings.buildId, languages: settings.languages,
         });
     }
 
