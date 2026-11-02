@@ -15,6 +15,7 @@ import DateTimeField from '@/modules/catalog/demos/dates/DateTimeField.tsx';
 import FormikDates from '@/modules/catalog/demos/dates/FormikDates.tsx';
 import HookFormDates from '@/modules/catalog/demos/dates/HookFormDates.tsx';
 import MonthField from '@/modules/catalog/demos/dates/MonthField.tsx';
+import PublishWindow from '@/modules/catalog/demos/dates/PublishWindow.tsx';
 import TimeField from '@/modules/catalog/demos/dates/TimeField.tsx';
 import CountdownField from '@/modules/catalog/demos/dates/CountdownField.tsx';
 
@@ -24,6 +25,7 @@ const loadTime = () => import('@/modules/catalog/demos/dates/TimeField.tsx?demo-
 const loadMonth = () => import('@/modules/catalog/demos/dates/MonthField.tsx?demo-source');
 const loadFormik = () => import('@/modules/catalog/demos/dates/FormikDates.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/dates/HookFormDates.tsx?demo-source');
+const loadPublishWindow = () => import('@/modules/catalog/demos/dates/PublishWindow.tsx?demo-source');
 const loadCountdown = () => import('@/modules/catalog/demos/dates/CountdownField.tsx?demo-source');
 
 // lo que aceptan los cuatro campos por igual
@@ -42,7 +44,7 @@ const DATE_EXTENSIONS = [
 ];
 const DATE_TIME_EXTENSIONS = [
     {id: 'limits', option: 'minDateTime · maxDateTime · disableFuture · disablePast', example: 'minDateTime={order.created_at} disablePast'},
-    {id: 'minutesStep', option: 'minutesStep', example: 'minutesStep={15}'},
+    {id: 'minutesStep', option: 'minutesStep', example: 'minutesStep={15}  // por omisión, de uno en uno'},
     {id: 'timeZone', option: 'timeZone', example: 'timeZone={branch.time_zone}  // America/Tijuana'},
     {id: 'zoneLabel', option: 'showTimeZone · timeZoneLabel', example: 'timeZoneLabel="Hora de la sucursal"'},
     {id: 'hourCycle', option: 'ToolkitProvider hourCycle', example: '<ToolkitProvider hourCycle={HOUR_CYCLE.twelveHours}>'},
@@ -50,7 +52,7 @@ const DATE_TIME_EXTENSIONS = [
 ];
 const TIME_EXTENSIONS = [
     {id: 'limits', option: 'minTime · maxTime', example: 'minTime={opensAt} maxTime="22:00"'},
-    {id: 'minutesStep', option: 'minutesStep', example: 'minutesStep={30}'},
+    {id: 'minutesStep', option: 'minutesStep', example: 'minutesStep={30}  // por omisión, de uno en uno'},
     {id: 'hourCycle', option: 'ToolkitProvider hourCycle', example: '<ToolkitProvider hourCycle={HOUR_CYCLE.twelveHours}>'},
     ...SHARED_EXTENSIONS,
 ];
@@ -64,6 +66,13 @@ const FORMIK_EXTENSIONS = [
 ];
 const HOOK_FORM_EXTENSIONS = [
     {id: 'controller', option: 'Controller', example: '<Controller name="pickupAt" control={form.control} render={({field, fieldState}) => <DateTimeInput … />} />'},
+];
+
+const PUBLISH_WINDOW_EXTENSIONS = [
+    {id: 'fromNow', option: 'minimumMinutesFromNow', example: 'minimumMinutesFromNow={settings.publish_lead_minutes}'},
+    {id: 'afterStart', option: 'minDateTime · instantPlusMinutes', example: 'minDateTime={instantPlusMinutes(values.startsAt, 30)}'},
+    {id: 'rules', option: 'minutesFromNowRule · minutesAfterRule', example: "endsAt: Yup.string().test(minutesAfterRule('startsAt', 30))"},
+    {id: 'clock', option: 'useCurrentMinute · earliestInstantFromNow', example: 'const minute = useCurrentMinute(true);'},
 ];
 
 const COUNTDOWN_EXTENSIONS = [
@@ -93,6 +102,8 @@ export const DatesPage = () => {
                          extensions={rowsOf('formik', FORMIK_EXTENSIONS)} Demo={FormikDates} loadSource={loadFormik} />
             <DemoSection title={t('dates.hookForm.title')} description={t('dates.hookForm.description')}
                          extensions={rowsOf('hookForm', HOOK_FORM_EXTENSIONS)} Demo={HookFormDates} loadSource={loadHookForm} />
+            <DemoSection title={t('dates.publishWindow.title')} description={t('dates.publishWindow.description')}
+                         extensions={rowsOf('publishWindow', PUBLISH_WINDOW_EXTENSIONS)} Demo={PublishWindow} loadSource={loadPublishWindow} />
             <DemoSection title={t('dates.countdown.title')} description={t('dates.countdown.description')}
                          extensions={rowsOf('countdown', COUNTDOWN_EXTENSIONS)} Demo={CountdownField} loadSource={loadCountdown} />
         </Stack>

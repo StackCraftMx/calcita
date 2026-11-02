@@ -1134,7 +1134,7 @@ export const catalogPageTexts = {
                     description: 'Un momento que pasa una vez (un envío programado, una cita). Viaja en UTC y se ve en la zona del proyecto, con el nombre de la zona abajo para que nadie dude en qué hora está escribiendo. Cambie una de las dos y vea la otra.',
                     extend: {
                         limits: 'Desde y hasta qué momento se puede elegir, o solo pasados o solo futuros.',
-                        minutesStep: 'De cuánto en cuánto van los minutos (15 para citas de cuarto de hora).',
+                        minutesStep: 'Por omisión los minutos van de uno en uno; minutesStep los cambia (15 para citas de cuarto de hora).',
                         timeZone: 'Otra zona que la del proyecto, solo en ese campo (la de una sucursal). El momento que viaja es el mismo.',
                         zoneLabel: 'Quitar el nombre de la zona o poner uno propio.',
                         hourCycle: 'De 24 horas (por omisión) o con a. m. y p. m., para toda la app.',
@@ -1148,7 +1148,7 @@ export const catalogPageTexts = {
                     description: 'Una hora del día sin fecha (el horario de una sucursal, la hora de una cita en un día ya elegido). Viaja «HH:mm» de 24 horas aunque en pantalla se vea con a. m. y p. m. No tiene zona.',
                     extend: {
                         limits: 'Desde y hasta qué hora se puede elegir; el límite puede ser el valor de otro campo.',
-                        minutesStep: 'De cuánto en cuánto van los minutos.',
+                        minutesStep: 'Por omisión los minutos van de uno en uno; minutesStep los cambia (30 para turnos de media hora).',
                         hourCycle: 'De 24 horas (por omisión) o con a. m. y p. m., para toda la app.',
                         helperText: 'La ayuda de abajo y el error (el de yup o un texto ya traducido).',
                         pickerProps: 'Lo demás del selector de MUI X que aquí no tiene nombre: horas que no se pueden elegir, piezas propias.',
@@ -1180,9 +1180,19 @@ export const catalogPageTexts = {
                         controller: 'Cada campo dentro de su Controller: el valor, el cambio, la salida del campo, la referencia y el error.',
                     },
                 },
+                publishWindow: {
+                    title: '7. Publicar con anticipación',
+                    description: 'Algo que se publica con anticipación y dura un mínimo (una subasta, una oferta): empieza al menos 5 minutos después de ahora y termina al menos 30 minutos después del inicio. El mínimo del inicio se recorre solo con el reloj y, si el inicio alcanza al fin, el fin se recorre con él. Yup lo revisa al guardar y el servidor otra vez.',
+                    extend: {
+                        fromNow: 'Al menos tantos minutos después de ahora; el mínimo se recorre cada minuto mientras la pantalla está abierta.',
+                        afterStart: 'El fin, al menos tantos minutos después del inicio: el mínimo del fin sale del inicio.',
+                        rules: 'Las mismas reglas en yup, con su mensaje en el idioma activo; la hora se toma al revisar.',
+                        clock: 'Para armar una regla propia: el minuto de ahora que se actualiza solo, y «ahora + N minutos» sin segundos.',
+                    },
+                },
                 countdown: {
-                    title: '7. Cuenta regresiva',
-                    description: 'Cuánto falta para un momento (el cierre de una subasta, el inicio de una cita), segundo a segundo, y lo que dice al llegar a cero. La primera vuelve a empezar con su botón.',
+                    title: '8. Cuenta regresiva',
+                    description: 'Cuánto falta para un momento (el cierre de una subasta, el inicio de una cita), segundo a segundo, y lo que dice al llegar a cero. La primera cierra en 2 minutos; «Cerrar en 10 segundos» deja ver el cierre.',
                     extend: {
                         until: 'El momento: un instante en texto, un Date o milisegundos.',
                         onComplete: 'Avisar al llegar a cero (una vez) y lo que dice entonces.',
@@ -3055,7 +3065,7 @@ export const catalogPageTexts = {
                     description: 'A moment that happens once (a scheduled send, an appointment). It travels in UTC and is shown in the project time zone, with the zone name below so nobody wonders which time they are typing. Change one of the two and look at the other.',
                     extend: {
                         limits: 'From and until which moment can be picked, or only past or only future moments.',
-                        minutesStep: 'The step of the minutes (15 for quarter-hour appointments).',
+                        minutesStep: 'Minutes go one by one by default; minutesStep changes it (15 for quarter-hour appointments).',
                         timeZone: 'Another time zone than the project one, only in that field (a branch). The moment that travels is the same.',
                         zoneLabel: 'Hide the zone name or set your own.',
                         hourCycle: '24 hours (the default) or a.m. and p.m., for the whole app.',
@@ -3069,7 +3079,7 @@ export const catalogPageTexts = {
                     description: 'A time of day with no date (a branch opening hours, the time of an appointment on a day already picked). It travels as 24-hour «HH:mm» even when the screen shows a.m. and p.m. It has no time zone.',
                     extend: {
                         limits: 'From and until which time can be picked; the limit can be the value of another field.',
-                        minutesStep: 'The step of the minutes.',
+                        minutesStep: 'Minutes go one by one by default; minutesStep changes it (30 for half-hour shifts).',
                         hourCycle: '24 hours (the default) or a.m. and p.m., for the whole app.',
                         helperText: 'The help below and the error (the one from yup or an already translated text).',
                         pickerProps: 'Anything else of the MUI X picker that has no name here: hours that cannot be picked, your own pieces.',
@@ -3101,9 +3111,19 @@ export const catalogPageTexts = {
                         controller: 'Each field inside its Controller: the value, the change, leaving the field, the reference and the error.',
                     },
                 },
+                publishWindow: {
+                    title: '7. Publish ahead of time',
+                    description: 'Something published ahead of time that lasts a minimum (an auction, an offer): it starts at least 5 minutes from now and ends at least 30 minutes after the start. The start minimum moves with the clock and, if the start reaches the end, the end moves along. Yup checks it on save and the server again.',
+                    extend: {
+                        fromNow: 'At least that many minutes from now; the minimum moves every minute while the screen is open.',
+                        afterStart: 'The end, at least that many minutes after the start: the end minimum comes from the start.',
+                        rules: 'The same rules in yup, with their message in the active language; the time is taken when checking.',
+                        clock: 'To build your own rule: the current minute that updates itself, and «now + N minutes» without seconds.',
+                    },
+                },
                 countdown: {
-                    title: '7. Countdown',
-                    description: 'How long until a moment (an auction closing, an appointment start), second by second, and what it says at zero. The first one starts again with its button.',
+                    title: '8. Countdown',
+                    description: 'How long until a moment (an auction closing, an appointment start), second by second, and what it says at zero. The first one closes in 2 minutes; «Close in 10 seconds» shows the closing.',
                     extend: {
                         until: 'The moment: an instant as text, a Date or milliseconds.',
                         onComplete: 'Know when it reaches zero (once) and what it says then.',

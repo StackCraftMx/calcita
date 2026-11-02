@@ -12,9 +12,9 @@ const TimeField = () => {
     return (
         <Stack spacing={2} sx={{maxWidth: 360}}>
             {/* 1. De media en media hora */}
-            <TimeInput label="Abre a las" value={opensAt} onChange={setOpensAt} minutesStep={30} />
+            <TimeInput label="Abre a las" value={opensAt} onChange={setOpensAt} />
             {/* 2. No puede cerrar antes de abrir: el límite es la otra hora */}
-            <TimeInput label="Cierra a las" value={closesAt} onChange={setClosesAt} minTime={opensAt} minutesStep={30} />
+            <TimeInput label="Cierra a las" value={closesAt} onChange={setClosesAt} minTime={opensAt} />
             {/* 3. Lo que viaja al servidor */}
             <Typography variant="body2" color="text.secondary">Viaja: «{opensAt}» a «{closesAt}»</Typography>
         </Stack>
