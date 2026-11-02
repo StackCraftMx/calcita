@@ -1027,8 +1027,22 @@ export const catalogPageTexts = {
                         theme: 'Su estilo desde el tema del proyecto, parte por parte, como las piezas de MUI.',
                     },
                 },
+                fileUpload: {
+                    title: '4. El cargador mini: sube al elegir',
+                    description: 'Para una lista de documentos: cada uno se sube en cuanto se elige, en su renglón, con su estado (Por cargar, Subiendo, Procesando, Cargado, No se cargó), «Cargar» que ya cargado dice «Sustituir», y abajo el avance con la velocidad y lo que falta. Al formulario llega solo el id que da el servidor. Pruebe con un archivo vacío o que no sea PDF.',
+                    extend: {
+                        upload: 'Su subida (uploadWithProgress, axios o su cliente) con la señal para cancelar, el avance y una llave por archivo; idOf dice qué guardar de la respuesta.',
+                        saved: 'El que ya estaba subido (al editar): se ve su nombre, «Cargado» y «Sustituir».',
+                        download: 'Bajar el que ya subió, por el panel de descargas.',
+                        actions: 'Lo del negocio junto al estado (Aprobado, Falta información).',
+                        events: 'En qué va cada renglón y cada cosa que pasa, para contar «2 de 3» o avisar.',
+                        limits: 'Qué acepta y cuánto pesa, revisado antes de subir; limitsText lo dice en palabras sobre el botón.',
+                        forms: 'El mismo cargador conectado a formik o a react-hook-form por name (Yup.string().required() pide el documento).',
+                        theme: 'Sus partes en el tema: root, fileName, status, button, helper.',
+                    },
+                },
                 attachments: {
-                    title: '4. Varios archivos, como en un correo',
+                    title: '5. Varios archivos, como en un correo',
                     description: '«Adjuntar» y cada archivo en su chip con su ×; abajo, cuántos van y cuánto pesan contra el tope. Uno con el mismo nombre reemplaza al que estaba. Pruebe a pasar de 5 archivos o de 5 MB entre todos.',
                     extend: {
                         limits: 'Cuántos como máximo y cuánto pueden pesar todos juntos.',
@@ -1045,7 +1059,7 @@ export const catalogPageTexts = {
                     },
                 },
                 image: {
-                    title: '5. Una imagen con su vista previa',
+                    title: '6. Una imagen con su vista previa',
                     description: 'La foto de una persona (círculo, con sus iniciales mientras no hay foto) o la de un producto (recuadro). Se pica la vista previa o el botón, o se suelta la imagen encima; la vista previa se pinta sin subir nada.',
                     extend: {
                         shape: 'Círculo o recuadro, y su tamaño.',
@@ -1061,7 +1075,7 @@ export const catalogPageTexts = {
                     },
                 },
                 template: {
-                    title: '6. Descargar la plantilla',
+                    title: '7. Descargar la plantilla',
                     description: 'El formato que el archivo debe seguir, junto al cargador. Un archivo fijo baja con un enlace; si lo da el API, sale en el panel de descargas con su avance.',
                     extend: {
                         href: 'Un archivo fijo de su proyecto y con qué nombre se guarda.',
@@ -1071,7 +1085,7 @@ export const catalogPageTexts = {
                     },
                 },
                 ownPicker: {
-                    title: '7. Un cargador propio',
+                    title: '8. Un cargador propio',
                     description: 'Cuando el diseño pide otra cosa (una tarjeta, un botón en la barra), la misma revisión, los mismos avisos y soltar encima, con lo que usted pinte. Pruebe a soltar una imagen en la tarjeta.',
                     extend: {
                         hook: 'Las reglas de siempre y qué hacer con lo que pasa; lo que no pasa se avisa solo.',
@@ -2958,8 +2972,22 @@ export const catalogPageTexts = {
                         theme: 'Its style from the project theme, part by part, like the MUI pieces.',
                     },
                 },
+                fileUpload: {
+                    title: '4. The mini uploader: uploads on choose',
+                    description: 'For a list of documents: each one uploads as soon as it is chosen, in its row, with its status (Pending, Uploading, Processing, Uploaded, Not uploaded), «Upload» that becomes «Replace», and below the progress with speed and time left. The form only gets the id the server gives. Try an empty file or one that is not a PDF.',
+                    extend: {
+                        upload: 'Your upload (uploadWithProgress, axios or your client) with the signal to cancel, the progress and a key per file; idOf says what to keep from the response.',
+                        saved: 'The one already uploaded (when editing): its name, «Uploaded» and «Replace».',
+                        download: 'Download the uploaded one, through the downloads panel.',
+                        actions: 'Business things next to the status (Approved, Missing information).',
+                        events: 'What each row is doing and everything that happens, to count «2 of 3» or notify.',
+                        limits: 'What it accepts and how much it weighs, checked before uploading; limitsText says it in words on the button.',
+                        forms: 'The same uploader connected to formik or react-hook-form by name (Yup.string().required() asks for the document).',
+                        theme: 'Its parts in the theme: root, fileName, status, button, helper.',
+                    },
+                },
                 attachments: {
-                    title: '4. Several files, like in an email',
+                    title: '5. Several files, like in an email',
                     description: '«Attach» and each file in its chip with its ×; below, how many there are and how much they weigh against the limit. One with the same name replaces the one that was there. Try going over 5 files or 5 MB together.',
                     extend: {
                         limits: 'How many at most and how much they may weigh together.',
@@ -2976,7 +3004,7 @@ export const catalogPageTexts = {
                     },
                 },
                 image: {
-                    title: '5. An image with its preview',
+                    title: '6. An image with its preview',
                     description: 'The photo of a person (circle, with their initials while there is no photo) or of a product (square). Press the preview or the button, or drop the image on it; the preview is drawn without uploading anything.',
                     extend: {
                         shape: 'Circle or square, and its size.',
@@ -2992,7 +3020,7 @@ export const catalogPageTexts = {
                     },
                 },
                 template: {
-                    title: '6. Download the template',
+                    title: '7. Download the template',
                     description: 'The format the file must follow, next to the uploader. A fixed file downloads with a link; if the API gives it, it shows in the downloads panel with its progress.',
                     extend: {
                         href: 'A fixed file of your project and the name it is saved with.',
@@ -3002,7 +3030,7 @@ export const catalogPageTexts = {
                     },
                 },
                 ownPicker: {
-                    title: '7. Your own uploader',
+                    title: '8. Your own uploader',
                     description: 'When the design asks for something else (a card, a button in the bar), the same checks, the same notices and dropping on it, with whatever you draw. Try dropping an image on the card.',
                     extend: {
                         hook: 'The usual rules and what to do with what passes; what does not pass is reported by itself.',
