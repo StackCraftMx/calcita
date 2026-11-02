@@ -85,7 +85,10 @@ export const mailTexts = {
                     label: 'Ninguna conversación tiene esta etiqueta.',
                 },
             },
-            snooze: {title: 'Posponer hasta…', laterToday: 'Más tarde hoy', tomorrow: 'Mañana', nextWeek: 'La semana que entra'},
+            snooze: {
+                title: 'Posponer hasta…', laterToday: 'Más tarde hoy', tomorrow: 'Mañana', nextWeek: 'La semana que entra',
+                pickLabel: 'Otro día y hora', pick: 'Posponer', cancel: 'Cancelar',
+            },
             confirmDeleteForever: {
                 title_one: '¿Borrar para siempre {{count}} conversación?',
                 title_other: '¿Borrar para siempre {{count}} conversaciones?',
@@ -213,7 +216,10 @@ export const mailTexts = {
                     label: 'No conversation has this label.',
                 },
             },
-            snooze: {title: 'Snooze until…', laterToday: 'Later today', tomorrow: 'Tomorrow', nextWeek: 'Next week'},
+            snooze: {
+                title: 'Snooze until…', laterToday: 'Later today', tomorrow: 'Tomorrow', nextWeek: 'Next week',
+                pickLabel: 'Another day and time', pick: 'Snooze', cancel: 'Cancel',
+            },
             confirmDeleteForever: {
                 title_one: 'Delete {{count}} conversation forever?',
                 title_other: 'Delete {{count}} conversations forever?',

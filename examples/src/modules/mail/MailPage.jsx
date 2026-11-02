@@ -59,6 +59,7 @@ import {
     ActionsMenu, BarActionButton, BarSearch, ConfirmDialog, InboxLayout, MessageList, MessageView, PageHeading, SelectionActions, formatDateTime,
     formatNumber, toastInfo, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
+import {DateTimeInput} from '@stackcraftmx/calcita/date-pickers';
 
 import {ComposeDialog} from '@/modules/mail/ComposeDialog.jsx';
 import {
@@ -103,6 +104,8 @@ export const MailPage = () => {
     const [draft, setDraft] = useState(null);
     // las conversaciones que se van a posponer (abre la ventana de hasta cuándo)
     const [snoozing, setSnoozing] = useState(null);
+    // el día y la hora elegidos a mano en «Posponer hasta…» ('' = ninguno)
+    const [pickedSnoozeUntil, setPickedSnoozeUntil] = useState('');
     const [labelsAnchor, setLabelsAnchor] = useState(null);
     const [showsShortcuts, setShowsShortcuts] = useState(false);
     const searchInput = useRef(null);
@@ -168,6 +171,15 @@ export const MailPage = () => {
         } catch (error) {
             toastProblem(error);
         }
+    };
+    // posponer lo que está en la ventana hasta un instante (una opción de la lista o el elegido a mano)
+    const closeSnooze = () => {
+        setSnoozing(null);
+        setPickedSnoozeUntil('');
+    };
+    const snoozeUntil = (until) => {
+        changeWithUndo(snoozing, {snoozedUntil: until}, t('done.snooze', {count: snoozing.length, date: formatDateTime(until)}));
+        closeSnooze();
     };
     // borrar: a la papelera (se deshace) o, desde la papelera y spam, para siempre (con confirmación antes)
     const deleteForeverAction = useConfirmAction({
@@ -383,19 +395,26 @@ export const MailPage = () => {
 
             {/* posponer: hasta cuándo (más tarde hoy solo si aún es temprano). Ventana y no menú: se abre igual desde el «⋯», desde
                 lo elegido o desde la conversación, también en el teléfono */}
-            <Dialog open={Boolean(snoozing)} onClose={() => setSnoozing(null)} maxWidth="xs" fullWidth aria-labelledby="mail-snooze-title">
+            <Dialog open={Boolean(snoozing)} onClose={closeSnooze} maxWidth="xs" fullWidth aria-labelledby="mail-snooze-title">
                 <DialogTitle id="mail-snooze-title">{t('snooze.title')}</DialogTitle>
                 <List>
                     {snoozing && snoozeOptionsOf(new Date()).map((option) => (
-                        <ListItemButton key={option.key} onClick={() => {
-                            changeWithUndo(snoozing, {snoozedUntil: option.until}, t('done.snooze', {count: snoozing.length, date: formatDateTime(option.until)}));
-                            setSnoozing(null);
-                        }}>
+                        <ListItemButton key={option.key} onClick={() => snoozeUntil(option.until)}>
                             <ListItemIcon><SnoozeOutlinedIcon /></ListItemIcon>
                             <ListItemText primary={t(`snooze.${option.key}`)} secondary={formatDateTime(option.until)} />
                         </ListItemButton>
                     ))}
                 </List>
+                {/* o el día y la hora que la persona quiera, como en Gmail: viaja como instante en UTC, igual que las de arriba */}
+                <DialogContent dividers>
+                    <DateTimeInput label={t('snooze.pickLabel')} value={pickedSnoozeUntil} onChange={setPickedSnoozeUntil} disablePast minutesStep={15} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeSnooze}>{t('snooze.cancel')}</Button>
+                    <Button variant="contained" disabled={!(Date.parse(pickedSnoozeUntil) > Date.now())} onClick={() => snoozeUntil(pickedSnoozeUntil)}>
+                        {t('snooze.pick')}
+                    </Button>
+                </DialogActions>
             </Dialog>
             {/* etiquetas de la conversación abierta: cada una se pone o se quita */}
             <Menu anchorEl={labelsAnchor} open={Boolean(labelsAnchor && openConversation)} onClose={() => setLabelsAnchor(null)}>
