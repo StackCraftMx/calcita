@@ -28,7 +28,8 @@ const moduleRouteGroups = Object.entries(ROUTE_MODULES)
 // las pantallas sin el marco (entrar…)
 const publicRoutes = Object.values(ROUTE_MODULES).flatMap((routeModule) => routeModule.publicRoutes ?? []);
 
-export const appRouter = createBrowserRouter([
+/** Las rutas de la app: el router del navegador (abajo) y el de memoria de las pruebas de pantalla (src/testing). */
+export const appRoutes = [
     {
         path: APP_PATHS.home,
         element: <AppProviders />,
@@ -46,6 +47,8 @@ export const appRouter = createBrowserRouter([
             },
         ]),
     },
+];
+
 // detrás de un proxy con prefijo (ASSET_URL), el router lo quita al leer la dirección y lo pone en cada liga: las pantallas
 // siguen escribiendo sus rutas desde la raíz ('/contacts')
-], {basename: ROUTER_BASENAME});
+export const appRouter = createBrowserRouter(appRoutes, {basename: ROUTER_BASENAME});

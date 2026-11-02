@@ -20,6 +20,9 @@ export const DEMO_USER = Object.freeze({
     id: 'user-demo', name: 'Ana Martínez Ruiz', email: 'ana.martinez@ejemplo.com', subtitle: 'Administración', phone: '',
 });
 
+/** Dónde recuerda la demostración la sesión en este navegador (con el nombre de la app, para no chocar con otra). */
+export const DEMO_SESSION_STORAGE_KEY = '__APP_SLUG__:session';
+
 /** Sin dirección del API, la app trabaja con la demostración. */
 export const USES_DEMO_ACCOUNT = !import.meta.env.VITE_API_URL;
 
@@ -27,8 +30,7 @@ export const accountConnector = USES_DEMO_ACCOUNT
     ? createDemoAccountConnector({
         user: DEMO_USER,
         labels: ['Administración'],
-        // la sesión de la demostración se recuerda en este navegador, con el nombre de la app para no chocar con otra
-        storageKey: '__APP_SLUG__:session',
+        storageKey: DEMO_SESSION_STORAGE_KEY,
         issuer: '__APP_TITLE__',
         // el QR que escanea la app autenticadora
         toQrImageUrl: (otpauthUrl) => QRCode.toDataURL(otpauthUrl, {margin: 1}),

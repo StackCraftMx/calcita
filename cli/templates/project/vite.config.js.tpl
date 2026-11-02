@@ -50,4 +50,16 @@ export default defineConfig({
         dedupe: SINGLE_COPY_PACKAGES,
     },
     build: {chunkSizeWarningLimit: LARGEST_CHUNK_KILOBYTES},
+    // Las pruebas de pantalla (pnpm test, src/**/*.test.jsx): jsdom hace de navegador y src/testing/setup.js lo prepara.
+    // Toman todo lo de arriba (el alias @/, React, import.meta.glob de los módulos): una prueba carga los archivos igual que
+    // el build, sin una segunda configuración que se desfase
+    test: {
+        environment: 'jsdom',
+        setupFiles: ['./src/testing/setup.js'],
+        // una prueba de pantalla abre la app completa (rutas lazy, servidor de mentira con su demora): unos segundos
+        testTimeout: 30_000,
+        // OJO: Calcita pasa por Vite como la app. Si no, Node la carga aparte y le da OTRA copia del router y de MUI: sus
+        // pantallas no encuentran el router de la app («useRouteError must be used within a data router»)
+        server: {deps: {inline: ['@stackcraftmx/calcita']}},
+    },
 });

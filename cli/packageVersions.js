@@ -5,9 +5,18 @@
 import {readFile} from 'node:fs/promises';
 
 // Lo que el paquete no usa, así que no está en sus devDependencies: i18next (su adaptador recibe la instancia del proyecto;
-// versión con más de dos semanas publicada al escogerla, pnpm espera un día antes de instalar una recién salida) y qrcode
-// (el QR de la cuenta de demostración; la misma versión que usan los ejemplos)
-const VERSIONS_NOT_IN_PACKAGE = Object.freeze({i18next: '26.4.2', qrcode: '1.5.4'});
+// versión con más de dos semanas publicada al escogerla, pnpm espera un día antes de instalar una recién salida), qrcode
+// (el QR de la cuenta de demostración; la misma versión que usan los ejemplos) y las pruebas de pantalla del proyecto
+// (Vitest con jsdom y Testing Library), en las versiones que ya se probaron juntas con el mismo Vite 7 y React 19
+const VERSIONS_NOT_IN_PACKAGE = Object.freeze({
+    i18next: '26.4.2',
+    qrcode: '1.5.4',
+    vitest: '5.0.3',
+    jsdom: '30.1.2',
+    '@testing-library/dom': '10.4.2',
+    '@testing-library/react': '16.3.3',
+    '@testing-library/user-event': '14.6.7',
+});
 
 /**
  * El package.json de Calcita (el del CLI que corre). OJO: por ruta de archivo y no con import: el CLI se publica tal cual,
