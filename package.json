@@ -1,6 +1,6 @@
 {
     "name": "@stackcraftmx/calcita",
-    "version": "0.37.0",
+    "version": "0.38.0",
     "description": "Componentes y utilidades de React con MUI para arrancar proyectos rápido: tabla de servidor, diálogos, avisos, descargas, formularios, formatos y reportes en Excel.",
     "license": "FSL-1.1-MIT",
     "author": "calcifux",
@@ -95,6 +95,10 @@
             "types": "./dist/types/mexico.d.ts",
             "import": "./dist/mexico.js"
         },
+        "./rich-text": {
+            "types": "./dist/types/rich-text.d.ts",
+            "import": "./dist/rich-text.js"
+        },
         "./filepond": {
             "types": "./dist/types/filepond.d.ts",
             "import": "./dist/filepond.js"
@@ -168,6 +172,11 @@
         "@mui/x-data-grid": "^8.0.0",
         "@mui/x-date-pickers": "^8.0.0",
         "@simplewebauthn/browser": "^14.0.0",
+        "@tiptap/extension-text-align": "^3.0.0",
+        "@tiptap/extensions": "^3.0.0",
+        "@tiptap/pm": "^3.0.0",
+        "@tiptap/react": "^3.0.0",
+        "@tiptap/starter-kit": "^3.0.0",
         "@xstate/react": "^6.0.0",
         "dayjs": "^1.11.0",
         "filepond": "^4.32.0",
@@ -227,6 +236,21 @@
         "@simplewebauthn/browser": {
             "optional": true
         },
+        "@tiptap/extension-text-align": {
+            "optional": true
+        },
+        "@tiptap/extensions": {
+            "optional": true
+        },
+        "@tiptap/pm": {
+            "optional": true
+        },
+        "@tiptap/react": {
+            "optional": true
+        },
+        "@tiptap/starter-kit": {
+            "optional": true
+        },
         "dayjs": {
             "optional": true
         },
@@ -242,10 +266,10 @@
         "formik": {
             "optional": true
         },
-        "leaflet": {
+        "jsrsasign": {
             "optional": true
         },
-        "jsrsasign": {
+        "leaflet": {
             "optional": true
         },
         "next": {
@@ -293,6 +317,11 @@
         "@mui/x-data-grid": "8.29.3",
         "@mui/x-date-pickers": "8.29.4",
         "@simplewebauthn/browser": "14.0.0",
+        "@tiptap/extension-text-align": "3.32.0",
+        "@tiptap/extensions": "3.32.0",
+        "@tiptap/pm": "3.32.0",
+        "@tiptap/react": "3.32.0",
+        "@tiptap/starter-kit": "3.32.0",
         "@types/leaflet": "1.9.22",
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",

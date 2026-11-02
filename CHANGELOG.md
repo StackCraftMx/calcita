@@ -4,6 +4,17 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.38.0] - 2026-11-02
+
+### Agregado
+
+- Puerta nueva `/rich-text` con Tiptap 3: `RichTextEditor` (estilo, negrita, cursiva, subrayado, tachado, listas, cita,
+  código, ligas seguras, alineación, quitar el formato, deshacer y rehacer; `maxLength` con contador; `features` para elegir
+  los botones; `toolbarActions`, `onEditorReady` y `extensions` para lo demás), `FormRichTextField` (formik) y `RichTextView`
+  (enseña el HTML guardado sin dejar pasar `<script>`, `onclick` ni ligas `javascript:`). Viaja HTML; vacío es `''`.
+- `linkUrlOf`, `isSafeLinkUrl` y `normalizedHtmlOf`: qué liga se acepta (https, http, mailto, tel) y el texto vacío.
+- Ejemplos: página «Texto con formato» en Hecho en Calcita; la descripción de las tareas con el editor.
+
 ## [0.37.0] - 2026-11-01
 
 ### Agregado
