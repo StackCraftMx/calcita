@@ -497,6 +497,39 @@ export default Object.freeze({
             "detail": "The link or record expired or was already used."
         }
     },
+    "richText": {
+        "toolbar": {
+            "label": "Text formatting",
+            "textStyle": "Text style",
+            "paragraph": "Text",
+            "heading2": "Heading",
+            "heading3": "Subheading",
+            "bold": "Bold",
+            "italic": "Italic",
+            "underline": "Underline",
+            "strike": "Strikethrough",
+            "bulletList": "Bulleted list",
+            "orderedList": "Numbered list",
+            "blockquote": "Quote",
+            "codeBlock": "Code",
+            "link": "Link",
+            "align": {
+                "left": "Align left",
+                "center": "Center",
+                "right": "Align right"
+            },
+            "clear": "Clear formatting",
+            "undo": "Undo",
+            "redo": "Redo"
+        },
+        "linkDialog": {
+            "url": "Link address",
+            "save": "Set the link",
+            "remove": "Remove the link",
+            "invalid": "Type a web address (https://…), an email (mailto:…) or a phone (tel:…)."
+        },
+        "counter": "{{count}} of {{max}} characters"
+    },
     "mexico": {
         "efirma": {
             "certificate": "Certificate (.cer)",

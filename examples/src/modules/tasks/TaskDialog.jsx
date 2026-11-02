@@ -1,5 +1,5 @@
-// La ventana para editar una tarea: título, descripción, responsables, prioridad, fecha límite, etiquetas y su lista de
-// pendientes. Formik con los campos de la casa (varias personas y varias etiquetas con `multiple`); si el servidor rechaza un
+// La ventana para editar una tarea: título, descripción con formato (FormRichTextField, de /rich-text), responsables,
+// prioridad, fecha límite, etiquetas y su lista de pendientes. Formik con los campos de la casa (varias personas y varias etiquetas con `multiple`); si el servidor rechaza un
 // campo (422), el error sale en su campo (applyServerProblem). Al guardar regresa el tablero como quedó.
 //
 // Lo renderiza la app: arrow (regla de la casa).
@@ -20,9 +20,16 @@ import {FormDateField} from '@stackcraftmx/calcita/date-pickers';
 import {
     Form, FormCatalogField, FormProblemAlert, FormSelectField, FormTextField, Formik, SubmitButton, Yup, applyServerProblem, useFormikContext,
 } from '@stackcraftmx/calcita/forms';
+import {FormRichTextField, RICH_TEXT_FEATURE} from '@stackcraftmx/calcita/rich-text';
 
 import {TASK_PRIORITIES, saveTask} from '@/modules/tasks/tasksApi.js';
 
+// la descripción: lo que sirve en una tarea (sin títulos ni código) y su tope
+const DESCRIPTION_FEATURES = Object.freeze([
+    RICH_TEXT_FEATURE.bold, RICH_TEXT_FEATURE.italic, RICH_TEXT_FEATURE.underline, RICH_TEXT_FEATURE.bulletList, RICH_TEXT_FEATURE.orderedList,
+    RICH_TEXT_FEATURE.link, RICH_TEXT_FEATURE.clear, RICH_TEXT_FEATURE.history,
+]);
+const DESCRIPTION_MAX_LENGTH = 2000;
 const TITLE_MAX_LENGTH = 120;
 // las etiquetas que se ofrecen (en el servidor de verdad vendrían del catálogo del equipo)
 const TAG_OPTIONS = Object.freeze(['Almacén', 'Clientes', 'Entregas', 'Equipo', 'Precios', 'Reportes', 'Sucursales'].map((tag) => ({code: tag, label: tag})));
@@ -111,8 +118,11 @@ export const TaskDialog = ({task, people, onClose, onSaved}) => {
                             <FormProblemAlert />
                             <FormSection>
                                 <FormTextField name="title" label={t('dialog.taskTitle')} />
-                                <FormTextField name="description" label={t('dialog.description')} multiline minRows={2} />
                             </FormSection>
+                            {/* la descripción con formato (Tiptap): negritas, listas y ligas; viaja HTML. Fuera de la sección: es un
+                                campo alto y va con su etiqueta arriba */}
+                            <FormRichTextField name="description" label={t('dialog.description')} placeholder={t('dialog.descriptionPlaceholder')}
+                                               features={DESCRIPTION_FEATURES} maxLength={DESCRIPTION_MAX_LENGTH} minHeight={96} />
                             <FormSection>
                                 <FormCatalogField name="assigneeIds" label={t('dialog.assignees')} multiple placeholder={t('dialog.assigneesPlaceholder')}
                                                   options={people.map((person) => ({code: person.id, label: person.name}))} formatLabel={(option) => option.label} />

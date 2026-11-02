@@ -47,7 +47,9 @@ let nextChecklistNumber = 20;
 // el título de las tarjetas de ejemplo viene en los dos idiomas; el de las que crea la persona, como lo escribió
 let tasks = [
     {id: 'task-11', columnId: 'icebox', title: {es: 'Programa de lealtad para mayoreo', en: 'Wholesale loyalty program'}, tags: ['Clientes'],
-        priority: TASK_PRIORITIES.low, assigneeIds: [], dueDate: '', checklist: [], comments: 1, attachments: 0, description: ''},
+        priority: TASK_PRIORITIES.low, assigneeIds: [], dueDate: '', checklist: [], comments: 1, attachments: 0,
+        // la descripción viaja como HTML del editor con formato (RichTextEditor)
+        description: '<p>Ideas para <strong>clientes de mayoreo</strong>:</p><ul><li><p>Descuento por volumen al mes</p></li><li><p>Entrega sin costo desde 20 piezas</p></li></ul><p>Ver la <a href="https://www.example.com/lealtad" target="_blank" rel="noopener noreferrer nofollow">propuesta de ejemplo</a>.</p>'},
     {id: 'task-12', columnId: 'icebox', title: {es: 'Abrir sucursal en León', en: 'Open a branch in León'}, tags: ['Sucursales'],
         priority: TASK_PRIORITIES.low, assigneeIds: [], dueDate: '', checklist: [], comments: 0, attachments: 2, description: ''},
     {id: 'task-1', columnId: 'todo', title: {es: 'Cotizar la remodelación de San Pedro', en: 'Quote the San Pedro remodeling'}, tags: ['Sucursales'],

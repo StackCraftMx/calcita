@@ -1192,6 +1192,47 @@ export const catalogPageTexts = {
                     },
                 },
             },
+            richText: {
+                title: 'Texto con formato',
+                description: 'Un editor de texto con su barra (con Tiptap) para notas, avisos y descripciones, y la vista que enseña lo guardado sin dejar pasar código. Viaja HTML. Cada sección trae para qué sirve, el código mínimo y una tabla con lo que acepta.',
+                editor: {
+                    title: '1. El editor',
+                    description: 'Estilo, negrita, cursiva, subrayado, tachado, listas, cita, código, ligas, alineación, quitar el formato y deshacer. Las ligas solo con https, http, mailto o tel: un dominio suelto se completa con https://.',
+                    extend: {
+                        value: 'El HTML que viaja; vacío es texto vacío, para que required() funcione.',
+                        limits: 'El tope de caracteres (con su contador) y el alto mínimo.',
+                        texts: 'La etiqueta, el texto de ejemplo, la ayuda y el error.',
+                        links: 'Las funciones que deciden si una liga se acepta.',
+                        theme: 'Su estilo desde el tema del proyecto, parte por parte.',
+                    },
+                },
+                view: {
+                    title: '2. Enseñar lo guardado sin riesgo',
+                    description: 'La vista pasa el HTML por el mismo esquema del editor: el script, el onclick y la liga javascript: del ejemplo no llegan a la página.',
+                    extend: {
+                        value: 'El HTML guardado.',
+                        features: 'Qué deja pasar: lo mismo que su editor, con sus extensiones.',
+                    },
+                },
+                formik: {
+                    title: '3. En un formulario',
+                    description: 'El campo de formik se conecta por su nombre; con react-hook-form, el editor va en un Controller. Pique «Guardar» vacío para ver el error.',
+                    extend: {
+                        field: 'El editor conectado a formik.',
+                        hookForm: 'Con react-hook-form, dentro de un Controller.',
+                    },
+                },
+                custom: {
+                    title: '4. Un editor a la medida',
+                    description: 'Solo los botones que pide la pantalla y uno propio que usa el editor de Tiptap: aquí, «Insertar la fecha».',
+                    extend: {
+                        features: 'Qué botones trae; lo que no se pide tampoco entra al texto.',
+                        actions: 'Botones suyos al final de la barra.',
+                        editor: 'El editor de Tiptap, para lo que la barra no trae.',
+                        extensions: 'Extensiones de Tiptap suyas: menciones, tablas…',
+                    },
+                },
+            },
             mexico: {
                 title: 'México: claves, e.firma y facturas',
                 description: 'El RFC, la CURP y la CLABE con su dígito verificador; la factura electrónica (CFDI) leída del XML y la e.firma, con su certificado leído y su llave abierta en el navegador. Son estándares del SAT, RENAPO y Banxico. Calcita revisa la forma y lee los archivos; quien dice si existen es el SAT o el banco, del lado del servidor.',
@@ -3069,6 +3110,47 @@ export const catalogPageTexts = {
                         look: 'Without seconds, bigger or with your style.',
                         render: 'Draw it your way with the parts (days, hours, minutes, seconds).',
                         hook: 'Just the parts, to build yours; and the function without React.',
+                    },
+                },
+            },
+            richText: {
+                title: 'Rich text',
+                description: 'A text editor with its toolbar (with Tiptap) for notes, announcements and descriptions, and the view that shows what was saved without letting code through. It travels as HTML. Each section says what it is for, shows the minimal code and has a table with everything it accepts.',
+                editor: {
+                    title: '1. The editor',
+                    description: 'Style, bold, italic, underline, strikethrough, lists, quote, code, links, alignment, clear formatting and undo. Links only with https, http, mailto or tel: a bare domain gets https://.',
+                    extend: {
+                        value: 'The HTML that travels; empty is an empty text, so required() works.',
+                        limits: 'The character limit (with its counter) and the minimum height.',
+                        texts: 'The label, the placeholder, the help and the error.',
+                        links: 'The functions that decide whether a link is accepted.',
+                        theme: 'Its style from the project theme, part by part.',
+                    },
+                },
+                view: {
+                    title: '2. Showing what was saved, safely',
+                    description: 'The view passes the HTML through the same editor schema: the script, the onclick and the javascript: link of the example do not reach the page.',
+                    extend: {
+                        value: 'The saved HTML.',
+                        features: 'What it lets through: the same as your editor, with its extensions.',
+                    },
+                },
+                formik: {
+                    title: '3. In a form',
+                    description: 'The formik field connects by its name; with react-hook-form, the editor goes in a Controller. Press «Guardar» empty to see the error.',
+                    extend: {
+                        field: 'The editor connected to formik.',
+                        hookForm: 'With react-hook-form, inside a Controller.',
+                    },
+                },
+                custom: {
+                    title: '4. A tailored editor',
+                    description: 'Only the buttons the screen asks for and one of its own that uses the Tiptap editor: here, «Insertar la fecha».',
+                    extend: {
+                        features: 'Which buttons it has; what is not asked for does not enter the text either.',
+                        actions: 'Your own buttons at the end of the bar.',
+                        editor: 'The Tiptap editor, for what the bar does not have.',
+                        extensions: 'Your own Tiptap extensions: mentions, tables…',
                     },
                 },
             },

@@ -187,6 +187,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/filepond` | `FileDropzone` con FilePond: el mismo uso que la de la puerta principal, más varios archivos, avance por archivo y `createPondServer` | `filepond`, `react-filepond`, `filepond-plugin-file-validate-type`, `filepond-plugin-file-validate-size` |
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
+| `@stackcraftmx/calcita/rich-text` | el editor de texto con formato (`RichTextEditor`, `FormRichTextField`) y la vista que enseña lo guardado sin dejar pasar código (`RichTextView`); viaja HTML | `@tiptap/react`, `@tiptap/pm`, `@tiptap/starter-kit`, `@tiptap/extensions`, `@tiptap/extension-text-align` (3) |
 | `@stackcraftmx/calcita/mexico` | RFC, CURP y CLABE con su dígito verificador y sus reglas de yup; la e.firma (`EfirmaFields`: el .cer leído y la llave abierta en el navegador) y la factura (`readCfdi`, `CfdiSummary`) | `jsrsasign` |
 | `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
 | `@stackcraftmx/calcita/account` | la cuenta completa: `SignInScreen` (con el segundo paso), `ForgotPasswordScreen`, `ResetPasswordScreen`, `ProfileScreen` (con campos y pestañas propias), `AccountSecuritySection`, `AccountProvider` y `createRestAccountConnector` | `@simplewebauthn/browser` 14, `formik`, `yup` |
@@ -385,6 +386,8 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
 | `CalcitaScrollableRow` | `root` |
+| `CalcitaRichTextEditor` | `root`, `toolbar`, `content`, `footer` |
+| `CalcitaRichTextView` | `root` |
 | `CalcitaSecondStepForm` | `actions` |
 | `CalcitaSectionCard` | `root`, `header`, `title` |
 | `CalcitaSegmentedControl` | `root` |
@@ -932,6 +935,25 @@ import {AttachmentsInput, FileInput} from '@stackcraftmx/calcita';
 </TermsAcceptanceDialog>
 <Countdown until={auction.closes_at} onComplete={reloadAuction} completedText="Cerrada" />
 ```
+
+## Texto con formato
+
+`@stackcraftmx/calcita/rich-text` trae el editor con Tiptap: estilo (texto, título, subtítulo), negrita, cursiva,
+subrayado, tachado, listas, cita, código, ligas, alineación, quitar el formato y deshacer, con contador si hay `maxLength`.
+Viaja HTML; vacío es `''` (así `required()` funciona). Las ligas solo con https, http, mailto o tel (un dominio suelto se
+completa con https://). `RichTextView` enseña lo guardado pasándolo por el mismo esquema del editor: un `<script>`, un
+`onclick` o una liga `javascript:` no llegan a la página.
+
+```jsx
+import {FormRichTextField, RICH_TEXT_FEATURE, RichTextView} from '@stackcraftmx/calcita/rich-text';
+
+<FormRichTextField name="notes" label="Notas" maxLength={2000}
+                   features={[RICH_TEXT_FEATURE.bold, RICH_TEXT_FEATURE.bulletList, RICH_TEXT_FEATURE.link]} />
+<RichTextView value={order.notes} />
+```
+
+Para lo que la barra no trae: `toolbarActions` (botones propios), `onEditorReady` (el editor de Tiptap) y `extensions`
+(extensiones de Tiptap del proyecto). Pesa unos 420 kB (134 kB comprimido) y solo se baja en las pantallas que lo usan.
 
 ## México: RFC, CURP, CLABE, e.firma y facturas
 

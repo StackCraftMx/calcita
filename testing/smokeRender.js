@@ -26,6 +26,7 @@ import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
 import {CfdiSummary, EfirmaFields, readCfdi} from '@stackcraftmx/calcita/mexico';
+import {RichTextEditor, RichTextView} from '@stackcraftmx/calcita/rich-text';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
 import {AccountProvider, ProfileScreen, ResetPasswordScreen, SignInScreen} from '@stackcraftmx/calcita/account';
@@ -154,6 +155,9 @@ const CASES = [
         cfdi: readCfdi('<cfdi:Comprobante Version="4.0" Total="1160.00" Moneda="MXN" TipoDeComprobante="I"><cfdi:Emisor Rfc="AAA010101AAA" Nombre="EMISOR"/><cfdi:Receptor Rfc="XAXX010101000" Nombre="RECEPTOR"/><tfd:TimbreFiscalDigital UUID="6f2d1c8e-12ab-4cd3-9e0f-0123456789ab"/></cfdi:Comprobante>'),
     }), '6F2D1C8E-12AB-4CD3-9E0F-0123456789AB'],
     ['EfirmaFields vacío con su botón de revisar', h(EfirmaFields, {onChange: () => {}, onVerifyKey: async () => {}}), 'Revisar la e.firma'],
+    // el editor se arma en el navegador (immediatelyRender false): en el servidor sale su marco con la etiqueta
+    ['RichTextEditor en el servidor con su etiqueta', h(RichTextEditor, {label: 'Notas del pedido', value: '<p>Hola</p>', onChange: () => {}, maxLength: 100}), 'Notas del pedido'],
+    ['RichTextView en el servidor no truena', h(RichTextView, {value: '<p onclick="x()">Hola</p><script>x()</script>'}), ''],
     ['TemplateDownloadButton con su API', h(TemplateDownloadButton, {request: async () => ({blob: new Blob(['a']), fileName: 'plantilla.csv'}), format: 'csv'}), 'Descargar la plantilla'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
     // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)

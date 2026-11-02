@@ -497,6 +497,39 @@ export default Object.freeze({
             "detail": "El enlace o el registro venció o ya se usó."
         }
     },
+    "richText": {
+        "toolbar": {
+            "label": "Formato del texto",
+            "textStyle": "Estilo del texto",
+            "paragraph": "Texto",
+            "heading2": "Título",
+            "heading3": "Subtítulo",
+            "bold": "Negrita",
+            "italic": "Cursiva",
+            "underline": "Subrayado",
+            "strike": "Tachado",
+            "bulletList": "Lista con viñetas",
+            "orderedList": "Lista numerada",
+            "blockquote": "Cita",
+            "codeBlock": "Código",
+            "link": "Liga",
+            "align": {
+                "left": "Alinear a la izquierda",
+                "center": "Centrar",
+                "right": "Alinear a la derecha"
+            },
+            "clear": "Quitar el formato",
+            "undo": "Deshacer",
+            "redo": "Rehacer"
+        },
+        "linkDialog": {
+            "url": "Dirección de la liga",
+            "save": "Poner la liga",
+            "remove": "Quitar la liga",
+            "invalid": "Escriba una dirección web (https://…), un correo (mailto:…) o un teléfono (tel:…)."
+        },
+        "counter": "{{count}} de {{max}} caracteres"
+    },
     "mexico": {
         "efirma": {
             "certificate": "Certificado (.cer)",
