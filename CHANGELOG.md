@@ -4,6 +4,30 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.39.0] - 2026-11-02
+
+### Agregado
+
+- `DateTimeInput` con `minimumMinutesFromNow`: «al menos N minutos después de ahora» (publicar con anticipación), con un
+  mínimo que se recorre solo con el reloj mientras la pantalla está abierta (`useCurrentMinute`).
+- `instantPlusMinutes`, `earliestInstantFromNow` y `latestInstantOf` para armar mínimos (el fin, al menos N minutos después
+  del inicio), y las reglas de yup `minutesFromNowRule` y `minutesAfterRule` con sus mensajes en español e inglés.
+- Ejemplos: «Publicar con anticipación» en Fechas y horas; posponer correo a mano, al menos 5 minutos después de ahora (el
+  servidor de mentira lo vuelve a revisar).
+
+### Cambiado
+
+- `DateTimeInput` y `TimeInput`: los minutos van de uno en uno (MUI X los trae de 5 en 5); `minutesStep` los sigue
+  cambiando.
+
+### Arreglado
+
+- Con vidrio, las columnas de horas y minutos heredaban la palomita de los menús: tapaba el número y lo corría. Ahora el
+  elegido va como el día elegido del calendario, centrado y sin palomita; en oscuro ya no sale el número negro sobre el
+  naranja (también en el minimalista).
+- Ejemplo de la cuenta regresiva: la subasta cerraba en 8 segundos y al llegar a la sección ya decía «Cerrada»; ahora
+  cierra en 2 minutos, con «Cerrar en 10 segundos» para ver el cierre, y la oferta y sus cajas traen segundos.
+
 ## [0.38.0] - 2026-11-02
 
 ### Agregado
