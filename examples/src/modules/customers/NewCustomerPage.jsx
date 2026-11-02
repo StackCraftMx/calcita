@@ -3,6 +3,7 @@
 // Lo que se ve aquí:
 //   - FormTextField, FormSelectField, FormNumberField (miles y decimales; al formulario llega '50000.00', listo para
 //     Money), FormCatalogField (se busca por clave o nombre) y FormDateField (de /date-pickers; viaja 'AAAA-MM-DD');
+//   - FormMaskedField: el teléfono se ve con espacios y viaja con sus 10 dígitos;
 //   - FormFileField: la constancia fiscal del tamaño de un campo (PDF de hasta 2 MB; se puede soltar encima);
 //   - varias opciones con `multiple`: los días en la lista (cada elegido con su palomita) y los estados en el catálogo (cada
 //     uno con su etiqueta y su ×); al formulario y al servidor llegan como listas;
@@ -16,11 +17,11 @@
 import {useMemo, useState} from 'react';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import {FormSection, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {FormSection, INPUT_MASK, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {FormDateField} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Form, Formik, FormCatalogField, FormFileField, FormNumberField, FormProblemAlert, FormSelectField, FormTextField, SubmitButton,
-    applyServerProblem,
+    Form, Formik, FormCatalogField, FormFileField, FormMaskedField, FormNumberField, FormProblemAlert, FormSelectField, FormTextField,
+    SubmitButton, applyServerProblem,
 } from '@stackcraftmx/calcita/forms';
 
 import {customerTypeOptionsOf, deliveryDayOptionsOf} from '@/modules/customers/customerDictionaries.js';
@@ -67,8 +68,9 @@ export const NewCustomerPage = () => {
                                 <FormTextField name="name" label={t('form.name')} placeholder={t('form.namePlaceholder')} autoComplete="off" />
                                 <FormTextField name="email" label={t('form.email')} type="email" placeholder={t('form.emailPlaceholder')} helperText={t('form.emailHelp')}
                                                normalizeOnBlur={normalizedEmailOf} autoComplete="off" />
-                                <FormTextField name="phone" label={t('form.phone')} placeholder={t('form.phonePlaceholder')} helperText={t('form.phoneHelp')} inputMode="numeric"
-                                               autoComplete="off" />
+                                {/* con máscara: se ve «555 123 4567» y al servidor llegan los 10 dígitos */}
+                                <FormMaskedField name="phone" mask={INPUT_MASK.phone} label={t('form.phone')} placeholder={t('form.phonePlaceholder')}
+                                                 helperText={t('form.phoneHelp')} autoComplete="off" />
                                 </FormSection>
                                 <FormSection title={t('form.sections.credit')}>
                                 <FormSelectField name="customer_type" label={t('form.customerType')} options={customerTypeOptionsOf(t)} />

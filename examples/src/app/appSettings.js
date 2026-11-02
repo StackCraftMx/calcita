@@ -34,3 +34,12 @@ export const APP_LANGUAGES = Object.freeze({spanish: 'es', english: 'en'});
 export const APP_FILE_TYPES = Object.freeze({
     json: Object.freeze({Icon: DataObjectOutlinedIcon, color: 'secondary.main'}),
 });
+
+/**
+ * El aviso de cookies (CookieNotice): sale hasta que se acepta ESTA versión en el navegador; al cambiar la política se sube
+ * la versión y vuelve a salir. La política es un PDF de ejemplo (public/docs) que se abre en el visor (PdfViewerDialog).
+ */
+export const COOKIE_POLICY_VERSION = '2026-11';
+export const COOKIE_CONSENT_STORAGE_KEY = 'calcita-examples:cookieConsent';
+export const PRIVACY_NOTICE_PDF_URL = publicUrlOf('docs/aviso-de-privacidad-ejemplo.pdf');
+

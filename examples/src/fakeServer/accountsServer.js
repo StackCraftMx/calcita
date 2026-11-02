@@ -10,7 +10,7 @@
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
 import {ApiError} from '@/fakeServer/ApiError.js';
-import {ABILITIES, fakeProfiles, fakeUsers} from '@/fakeServer/fakeAccounts.js';
+import {ABILITIES, CURRENT_TERMS_VERSION, fakeProfiles, fakeUsers} from '@/fakeServer/fakeAccounts.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {inServerLanguage, serverTextOf} from '@/fakeServer/serverMessages.js';
 import {recordAccountEvent, startSecondStepIfNeeded} from '@/fakeServer/securityServer.js';
@@ -57,7 +57,29 @@ export async function getSession() {
         profile: {key: profile.key, name: inServerLanguage(profile.names)},
         abilities: [...profile.abilities],
         roles: [profile.key],
+        // los términos: la versión vigente y la que aceptó esta persona (si no son la misma, la app los pide)
+        terms: {current: CURRENT_TERMS_VERSION, accepted: user.termsVersion},
     };
+}
+
+/**
+ * Aceptar los términos (POST auth/terms): queda quién aceptó qué versión y cuándo. Solo se acepta la vigente: una versión
+ * vieja (otra pestaña abierta desde antes) contesta 409.
+ *
+ * @param {{version: string}} acceptance
+ * @returns {Promise<{version: string, acceptedAt: string}>}
+ */
+export async function acceptTerms({version}) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
+    const user = fakeUsers.find((candidate) => candidate.id === signedInUserIdOf());
+    if (!user) {
+        throw new ApiError({status: HTTP_STATUS.unauthorized, problem: {title: serverTextOf('accounts.signedOut')}});
+    }
+    if (version !== CURRENT_TERMS_VERSION) {
+        throw new ApiError({status: HTTP_STATUS.conflict, problem: {title: serverTextOf('accounts.termsOutdated')}});
+    }
+    user.termsVersion = version;
+    return {version, acceptedAt: new Date().toISOString()};
 }
 
 /**

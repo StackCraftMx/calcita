@@ -72,6 +72,8 @@ const SERVER_TEXTS = Object.freeze({
         },
         accounts: {
             store: 'Tienda de ejemplo',
+            signedOut: 'Su sesión ya terminó: vuelva a entrar.',
+            termsOutdated: 'Hay una versión más nueva de los términos: recargue la página para leerla.',
             signInFailedTitle: 'No pudimos iniciar su sesión',
             signInFailed: 'El correo o la contraseña no son correctos.',
             nameRequired: 'Escriba su nombre.',
@@ -136,6 +138,7 @@ const SERVER_TEXTS = Object.freeze({
             amountRequired: 'Escriba cuánto necesita.',
             amountTooHigh: 'Se presta hasta {{multiple}} veces el ingreso mensual: {{max}}.',
             termInvalid: 'Elija un plazo de la lista.',
+            clabeInvalid: 'La CLABE lleva 18 dígitos.',
             colorInvalid: 'Escriba el color como #RRGGBB.',
             received: 'Recibimos su solicitud con el folio {{folio}}.',
         },
@@ -208,6 +211,8 @@ const SERVER_TEXTS = Object.freeze({
         },
         accounts: {
             store: 'Sample store',
+            signedOut: 'Your session already ended: sign in again.',
+            termsOutdated: 'There is a newer version of the terms: reload the page to read it.',
             signInFailedTitle: 'We could not sign you in',
             signInFailed: 'The email or the password is not correct.',
             nameRequired: 'Enter your name.',
@@ -272,6 +277,7 @@ const SERVER_TEXTS = Object.freeze({
             amountRequired: 'Enter how much you need.',
             amountTooHigh: 'We lend up to {{multiple}} times the monthly income: {{max}}.',
             termInvalid: 'Choose a term from the list.',
+            clabeInvalid: 'The CLABE has 18 digits.',
             colorInvalid: 'Write the color as #RRGGBB.',
             received: 'We received your request with folio {{folio}}.',
         },

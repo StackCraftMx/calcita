@@ -1,7 +1,8 @@
 // El marco de las pantallas con sesión: AppLayout del framework (la barra con el logo, el menú lateral por secciones,
 // como las plantillas de MUI) con el menú compuesto con el menu.js de cada módulo y la persona de la sesión.
 //
-// Sin sesión no se entra: lleva a iniciar sesión, y de regreso a la pantalla que se quería abrir (?next=).
+// Sin sesión no se entra: lleva a iniciar sesión, y de regreso a la pantalla que se quería abrir (?next=). Con sesión, si hay
+// términos de uso nuevos que la persona no ha aceptado, se le piden antes de seguir (TermsAcceptanceDialog; no acepta = sale).
 //
 // Lo que se agrega sin tocar el framework: el estilo y «Instalar la app» en el menú de la cuenta (accountSettings), «Entrar con otro
 // perfil» en el menú de la cuenta (accountMenuItems) y la tarjeta de abajo del menú (sidebarFooter).
@@ -14,14 +15,18 @@ import {useMemo, useState} from 'react';
 import {Navigate, Outlet, useLocation, useNavigate} from 'react-router';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import SwitchAccountOutlinedIcon from '@mui/icons-material/SwitchAccountOutlined';
-import {AppLayout, InstallAppSetting, composeMenu, useAccessChecker, useToolkitTranslation, useMenuBadges} from '@stackcraftmx/calcita';
+import {
+    AppLayout, InstallAppSetting, TermsAcceptanceDialog, composeMenu, toastSuccess, useAccessChecker, useMenuBadges, useToolkitTranslation,
+} from '@stackcraftmx/calcita';
 import {useAccount} from '@stackcraftmx/calcita/account';
 import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
 
 import {GlassModeSetting} from '@/app/GlassModeSetting.jsx';
 import {fetchMenuBadges} from '@/app/menuBadgesApi.js';
+import {acceptTerms} from '@/app/termsApi.js';
 import {APP_PATHS, publicUrlOf} from '@/core';
 
 // cada módulo declara su entrada en su menu.js (orden, permiso, sección, texto e ícono)
@@ -41,9 +46,21 @@ const SidebarCard = () => {
     );
 };
 
+// el texto de los términos de ejemplo, párrafo por párrafo (shellTexts.js)
+const TERMS_PARAGRAPHS = Object.freeze(['intro', 'use', 'data', 'security', 'changes', 'closing']);
+
+const TermsText = () => {
+    const {t} = useToolkitTranslation('shell');
+    return (
+        <Stack spacing={2}>
+            {TERMS_PARAGRAPHS.map((paragraph) => <Typography key={paragraph} variant="body2">{t(`legal.terms.${paragraph}`)}</Typography>)}
+        </Stack>
+    );
+};
+
 export const AppShell = () => {
     const {t} = useToolkitTranslation('shell');
-    const {session, signOut} = useAccount();
+    const {session, signOut, refreshSession} = useAccount();
     const {pathname, search} = useLocation();
     const navigate = useNavigate();
     const canAccess = useAccessChecker();
@@ -67,11 +84,25 @@ export const AppShell = () => {
         return <Navigate to={`${APP_PATHS.signIn}?next=${encodeURIComponent(`${pathname}${search}`)}`} replace />;
     }
 
+    // los términos de uso: si la versión vigente no es la que aceptó, se piden antes de seguir (no acepta = sale)
+    const termsPending = Boolean(session.terms) && session.terms.accepted !== session.terms.current;
+
     return (
-        <AppLayout logo={<Logo />} brandName={t('title')} brandCaption={t('caption')} menuItems={menuItems} user={session.user}
-                   profilePath={APP_PATHS.profile} accountMenuItems={accountMenuItems} onSignOut={leave} isSigningOut={isSigningOut}
-                   isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<><GlassModeSetting /><InstallAppSetting /></>} sidebarFooter={<SidebarCard />}>
-            <Outlet />
-        </AppLayout>
+        <>
+            <AppLayout logo={<Logo />} brandName={t('title')} brandCaption={t('caption')} menuItems={menuItems} user={session.user}
+                       profilePath={APP_PATHS.profile} accountMenuItems={accountMenuItems} onSignOut={leave} isSigningOut={isSigningOut}
+                       isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<><GlassModeSetting /><InstallAppSetting /></>}
+                       sidebarFooter={<SidebarCard />}>
+                <Outlet />
+            </AppLayout>
+            <TermsAcceptanceDialog open={termsPending} version={session.terms?.current} title={t('legal.termsTitle')} onDecline={leave}
+                                   onAccept={async ({version}) => {
+                                       await acceptTerms({version});
+                                       await refreshSession();
+                                       toastSuccess(t('legal.termsAccepted', {version}));
+                                   }}>
+                <TermsText />
+            </TermsAcceptanceDialog>
+        </>
     );
 };
