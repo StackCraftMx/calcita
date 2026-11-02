@@ -41,6 +41,7 @@ import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettin
 
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 
 import WebOutlinedIcon from '@mui/icons-material/WebOutlined';
 
@@ -95,6 +96,7 @@ export function buildMenuItems() {
             {to: BUILT_IN_PATHS.downloads, labelKey: 'catalog:nav.downloads', Icon: DownloadOutlinedIcon},
             {to: BUILT_IN_PATHS.excelReports, labelKey: 'catalog:nav.excelReports', Icon: GridOnOutlinedIcon},
             {to: BUILT_IN_PATHS.uploads, labelKey: 'catalog:nav.uploads', Icon: CloudUploadOutlinedIcon},
+            {to: BUILT_IN_PATHS.legal, labelKey: 'catalog:nav.legal', Icon: GavelOutlinedIcon},
             {to: BUILT_IN_PATHS.charts, labelKey: 'catalog:nav.charts', Icon: BarChartOutlinedIcon},
             {to: BUILT_IN_PATHS.maps, labelKey: 'catalog:nav.maps', Icon: MapOutlinedIcon},
             {to: BUILT_IN_PATHS.calendar, labelKey: 'catalog:nav.calendar', Icon: CalendarMonthOutlinedIcon},

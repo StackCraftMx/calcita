@@ -28,6 +28,7 @@ const pages = [
     {path: BUILT_IN_PATHS.formats, lazy: async () => ({Component: (await import('@/modules/catalog/FormatsAndMoneyPage.jsx')).FormatsAndMoneyPage})},
     {path: BUILT_IN_PATHS.excelReports, lazy: async () => ({Component: (await import('@/modules/catalog/ExcelReportsPage.jsx')).ExcelReportsPage})},
     {path: BUILT_IN_PATHS.dates, lazy: async () => ({Component: (await import('@/modules/catalog/DatesPage.jsx')).DatesPage})},
+    {path: BUILT_IN_PATHS.legal, lazy: async () => ({Component: (await import('@/modules/catalog/LegalPage.jsx')).LegalPage})},
     {path: BUILT_IN_PATHS.uploads, lazy: async () => ({Component: (await import('@/modules/catalog/FileUploadsPage.jsx')).FileUploadsPage})},
     {path: BUILT_IN_PATHS.permissions, lazy: async () => ({Component: (await import('@/modules/catalog/PermissionsPage.jsx')).PermissionsPage})},
     {path: BUILT_IN_PATHS.forms, lazy: async () => ({Component: (await import('@/modules/catalog/FormsPage.jsx')).FormsPage})},

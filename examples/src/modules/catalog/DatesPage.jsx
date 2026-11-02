@@ -1,5 +1,5 @@
 // Hecho en Calcita · fechas y horas: la fecha, la fecha con hora (un instante en UTC, rotulado con su zona), la hora del día
-// y el mes, sueltos y en un formulario de formik o de react-hook-form.
+// y el mes, sueltos y en un formulario de formik o de react-hook-form; y la cuenta regresiva hasta un momento.
 //
 // Cada sección dice para qué sirve en una línea, enseña el código mínimo (JS y TS, para copiar) y trae su tabla «Cómo se
 // extiende».
@@ -16,6 +16,7 @@ import FormikDates from '@/modules/catalog/demos/dates/FormikDates.tsx';
 import HookFormDates from '@/modules/catalog/demos/dates/HookFormDates.tsx';
 import MonthField from '@/modules/catalog/demos/dates/MonthField.tsx';
 import TimeField from '@/modules/catalog/demos/dates/TimeField.tsx';
+import CountdownField from '@/modules/catalog/demos/dates/CountdownField.tsx';
 
 const loadDate = () => import('@/modules/catalog/demos/dates/DateField.tsx?demo-source');
 const loadDateTime = () => import('@/modules/catalog/demos/dates/DateTimeField.tsx?demo-source');
@@ -23,6 +24,7 @@ const loadTime = () => import('@/modules/catalog/demos/dates/TimeField.tsx?demo-
 const loadMonth = () => import('@/modules/catalog/demos/dates/MonthField.tsx?demo-source');
 const loadFormik = () => import('@/modules/catalog/demos/dates/FormikDates.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/dates/HookFormDates.tsx?demo-source');
+const loadCountdown = () => import('@/modules/catalog/demos/dates/CountdownField.tsx?demo-source');
 
 // lo que aceptan los cuatro campos por igual
 const SHARED_EXTENSIONS = [
@@ -64,6 +66,14 @@ const HOOK_FORM_EXTENSIONS = [
     {id: 'controller', option: 'Controller', example: '<Controller name="pickupAt" control={form.control} render={({field, fieldState}) => <DateTimeInput … />} />'},
 ];
 
+const COUNTDOWN_EXTENSIONS = [
+    {id: 'until', option: 'until', example: 'until={auction.closes_at}  // instante, Date o milisegundos'},
+    {id: 'onComplete', option: 'onComplete · completedText', example: 'onComplete={reloadAuction} completedText="Cerrada"'},
+    {id: 'look', option: 'showSeconds · variant · sx', example: 'showSeconds={false} variant="h6"'},
+    {id: 'render', option: 'children(parts)', example: '{({days, hours, minutes}) => <MyClock … />}'},
+    {id: 'hook', option: 'useCountdown · countdownPartsOf', example: 'const {parts, isOver} = useCountdown(closesAt, {onComplete});'},
+];
+
 export const DatesPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `dates.${section}`, extensions);
@@ -83,6 +93,8 @@ export const DatesPage = () => {
                          extensions={rowsOf('formik', FORMIK_EXTENSIONS)} Demo={FormikDates} loadSource={loadFormik} />
             <DemoSection title={t('dates.hookForm.title')} description={t('dates.hookForm.description')}
                          extensions={rowsOf('hookForm', HOOK_FORM_EXTENSIONS)} Demo={HookFormDates} loadSource={loadHookForm} />
+            <DemoSection title={t('dates.countdown.title')} description={t('dates.countdown.description')}
+                         extensions={rowsOf('countdown', COUNTDOWN_EXTENSIONS)} Demo={CountdownField} loadSource={loadCountdown} />
         </Stack>
     );
 };
