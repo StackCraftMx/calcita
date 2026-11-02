@@ -65,7 +65,21 @@ export default function NumberInput({
                 fullWidth
                 error={Boolean(errorText)}
                 helperText={errorText ?? helperText}
-                onFocus={() => setIsTyping(true)}
+                onFocus={(event) => {
+                    const input = event.target;
+                    // OJO: al entrar, el texto cambia («50,000.00» → «50,000») y el navegador pierde lo seleccionado; al entrar
+                    // con Tab estaba todo seleccionado y lo tecleado se pegaba al final (50,000,100,000). Si estaba todo
+                    // seleccionado, se vuelve a seleccionar ya pintado; con un clic (el cursor en un lugar) no se toca
+                    const wasAllSelected = input.value.length > 0 && input.selectionStart === 0 && input.selectionEnd === input.value.length;
+                    setIsTyping(true);
+                    if (wasAllSelected) {
+                        requestAnimationFrame(() => {
+                            if (document.activeElement === input) {
+                                input.select();
+                            }
+                        });
+                    }
+                }}
                 onChange={(event) => onChange(cleanNumberText(event.target.value, decimals, allowNegative))}
                 onBlur={() => {
                     setIsTyping(false);
