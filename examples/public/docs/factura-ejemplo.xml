@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Factura de mentira para los ejemplos de Calcita: sin sello real, RFC de pruebas del SAT, folio fiscal inventado. -->
+<cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/4" xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" Version="4.0"
+    Serie="F" Folio="2048" Fecha="2026-10-30T09:40:00" SubTotal="12500.00" Moneda="MXN" Total="14500.00" TipoDeComprobante="I"
+    Exportacion="01" MetodoPago="PPD" FormaPago="99" LugarExpedicion="64000">
+  <cfdi:Emisor Rfc="EKU9003173C9" Nombre="PROVEEDOR DE EJEMPLO" RegimenFiscal="601"/>
+  <cfdi:Receptor Rfc="AAA010101AAA" Nombre="TIENDA DE EJEMPLO" DomicilioFiscalReceptor="64000" RegimenFiscalReceptor="601" UsoCFDI="G01"/>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="56101500" Cantidad="10" ClaveUnidad="H87" Descripcion="Silla de oficina" ValorUnitario="950.00" Importe="9500.00" ObjetoImp="02"/>
+    <cfdi:Concepto ClaveProdServ="56101700" Cantidad="2" ClaveUnidad="H87" Descripcion="Escritorio de madera" ValorUnitario="1500.00" Importe="3000.00" ObjetoImp="02"/>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="2000.00"/>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital Version="1.1" UUID="9a1b2c3d-4e5f-4a6b-8c7d-0e1f2a3b4c5d" FechaTimbrado="2026-10-30T09:41:12" RfcProvCertif="SAT970701NN3"/>
+  </cfdi:Complemento>
+</cfdi:Comprobante>

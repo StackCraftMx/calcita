@@ -497,7 +497,67 @@ export default Object.freeze({
             "detail": "The link or record expired or was already used."
         }
     },
+    "mexico": {
+        "efirma": {
+            "certificate": "Certificate (.cer)",
+            "certificateHelp": "The e.firma .cer file: it is read here, without uploading it.",
+            "privateKey": "Private key (.key)",
+            "privateKeyHelp": "The .key file that goes with that certificate.",
+            "password": "Key password",
+            "passwordHelp": "The e.firma one; it is not kept in this browser.",
+            "notCertificate": "The file is not a certificate: choose the e.firma .cer.",
+            "otherRfc": "The certificate belongs to RFC {{rfc}}, not {{expected}}.",
+            "rfc": "RFC",
+            "curp": "CURP",
+            "representative": "Legal representative",
+            "certificateNumber": "Certificate number",
+            "validity": "Valid",
+            "validityRange": "From {{from}} to {{to}}",
+            "branch": "Branch",
+            "verify": "Check the e.firma",
+            "verified": "The key opens with that password and belongs to this certificate.",
+            "verifyFailed": "The e.firma could not be checked. Try again.",
+            "problems": {
+                "notKey": "The .key file is not a private key: choose the e.firma .key.",
+                "wrongPassword": "The password does not open the key.",
+                "otherCertificate": "The key opens, but it does not belong to this certificate."
+            },
+            "status": {
+                "valid": "Valid",
+                "expired": "Expired",
+                "notYetValid": "Not valid yet"
+            }
+        },
+        "cfdi": {
+            "withoutFolio": "No series or folio",
+            "version": "CFDI {{version}}",
+            "issuer": "Issued by",
+            "receiver": "Issued to",
+            "issuedAt": "Date",
+            "uuid": "Tax folio",
+            "copyUuid": "Copy the tax folio",
+            "subtotal": "Subtotal",
+            "taxes": "Taxes",
+            "total": "Total",
+            "concepts": "Items",
+            "description": "Description",
+            "quantity": "Quantity",
+            "amount": "Amount",
+            "otherReceiver": "The invoice is for RFC {{rfc}}, not {{expected}}.",
+            "notStamped": "It does not have the SAT stamp: it is not a valid invoice yet.",
+            "voucherTypes": {
+                "I": "Income",
+                "E": "Expense",
+                "T": "Transfer",
+                "N": "Payroll",
+                "P": "Payment"
+            }
+        }
+    },
     "validation": {
+        "rfc": "The RFC is not written correctly: check its letters, the date and the homoclave.",
+        "curp": "The CURP is not written correctly: check its 18 characters.",
+        "clabe": "The CLABE is not valid: check its 18 digits.",
         "default": "The value is not valid.",
         "required": "This field is required.",
         "notType": "The value doesn't have the expected format.",

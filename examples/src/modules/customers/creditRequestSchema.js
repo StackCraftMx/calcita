@@ -5,9 +5,9 @@
 //
 // OJO: función y no constante, por lo mismo que newCustomerSchema.js (yup toma los mensajes al armar el esquema).
 import {Yup} from '@stackcraftmx/calcita/forms';
+import {clabeRule} from '@stackcraftmx/calcita/mexico';
 
 const PHONE_DIGITS = /^\d{10}$/;
-const CLABE_DIGITS = /^\d{18}$/;
 const HEX_COLOR = /^#[0-9A-F]{6}$/;
 
 export const CREDIT_REQUEST_INITIAL_VALUES = Object.freeze({
@@ -37,8 +37,8 @@ export function buildCreditRequestSchema() {
         // cuánto se presta según el ingreso lo revisa el servidor: aquí solo que venga
         requested_amount: Yup.string().required(),
         term_months: Yup.string().required(),
-        // la CLABE llega limpia (sin espacios) de su campo con máscara
-        deposit_clabe: Yup.string().required().matches(CLABE_DIGITS, {message: {key: 'customers:credit.clabeFormat'}}),
+        // la CLABE llega limpia (sin espacios) de su campo con máscara; clabeRule revisa sus 18 dígitos y el verificador
+        deposit_clabe: Yup.string().required().test(clabeRule()),
         guarantor_name: Yup.string().trim(),
         // el teléfono del aval solo si hay aval
         guarantor_phone: Yup.string().when('guarantor_name', {

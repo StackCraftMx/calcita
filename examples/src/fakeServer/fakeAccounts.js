@@ -23,6 +23,7 @@ export const ABILITIES = Object.freeze({
     reportsDownload: 'reports.download',
     metricsView: 'metrics.view',
     profilesManage: 'profiles.manage',
+    fiscalManage: 'fiscal.manage',
 });
 
 /** Los perfiles, cada uno con su nombre en los dos idiomas (en la base irían en su tabla de traducciones). */
