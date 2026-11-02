@@ -25,6 +25,7 @@ import {
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
+import {CfdiSummary, EfirmaFields, readCfdi} from '@stackcraftmx/calcita/mexico';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
 import {AccountProvider, ProfileScreen, ResetPasswordScreen, SignInScreen} from '@stackcraftmx/calcita/account';
@@ -148,6 +149,11 @@ const CASES = [
     ['CookieNotice con su política', h(CookieNotice, {version: '2026-11', policyHref: '/docs/cookies.pdf'}), 'Política de cookies'],
     ['TermsAcceptanceDialog cerrado no pinta', h(TermsAcceptanceDialog, {open: false, version: '1', onAccept: () => {}, onDecline: () => {}}, 'Texto'), ''],
     ['PdfViewerDialog cerrado no pinta', h(PdfViewerDialog, {open: false, onClose: () => {}, title: 'Aviso', src: '/aviso.pdf'}), ''],
+    ['CfdiSummary con su folio fiscal y el aviso de otro receptor', h(CfdiSummary, {
+        expectedReceiverRfc: 'BBB010101BBB',
+        cfdi: readCfdi('<cfdi:Comprobante Version="4.0" Total="1160.00" Moneda="MXN" TipoDeComprobante="I"><cfdi:Emisor Rfc="AAA010101AAA" Nombre="EMISOR"/><cfdi:Receptor Rfc="XAXX010101000" Nombre="RECEPTOR"/><tfd:TimbreFiscalDigital UUID="6f2d1c8e-12ab-4cd3-9e0f-0123456789ab"/></cfdi:Comprobante>'),
+    }), '6F2D1C8E-12AB-4CD3-9E0F-0123456789AB'],
+    ['EfirmaFields vacío con su botón de revisar', h(EfirmaFields, {onChange: () => {}, onVerifyKey: async () => {}}), 'Revisar la e.firma'],
     ['TemplateDownloadButton con su API', h(TemplateDownloadButton, {request: async () => ({blob: new Blob(['a']), fileName: 'plantilla.csv'}), format: 'csv'}), 'Descargar la plantilla'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
     // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)

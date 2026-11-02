@@ -27,6 +27,10 @@ import {
     INSTANT_FORMAT, MonthInput, TIME_OF_DAY_FORMAT, TimeInput, timeZoneNameOf,
 } from '@stackcraftmx/calcita/date-pickers';
 import {nextNavigation} from '@stackcraftmx/calcita/next';
+import {
+    CERTIFICATE_STATUS, CfdiSummary, EfirmaFields, RFC_KIND, certificateStatusOf, clabeRule, isValidClabe, isValidCurp, isValidRfc, readCertificate, readCfdi,
+    rfcRule, verifyEfirmaKey, EFIRMA_KEY_PROBLEM, EfirmaKeyError,
+} from '@stackcraftmx/calcita/mexico';
 import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/calcita/maps';
 import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard, isOverLimit, moveCard} from '@stackcraftmx/calcita/kanban';
@@ -115,6 +119,22 @@ const smallPieces = [
     createElement(PdfViewerDialog, {open: true, onClose: () => {}, title: 'Contrato', src: new Blob(['%PDF']), fileName: 'contrato.pdf'}),
     createElement(CookieNotice, {version: '2026-11', onPolicyClick: () => {}, onAccept: ({version}) => version}),
     createElement(TermsAcceptanceDialog, {open: true, version: '2026-11', onAccept: async ({version}) => { void version; }, onDecline: () => {}}),
+];
+// México: claves con su dígito, reglas de yup, la e.firma y la factura
+const isCompany: boolean = isValidRfc('SAT970701NN3', {strict: true}) && isValidCurp('MAPA850101HDFRRN03') && isValidClabe('032180000118359719');
+const companyKind: string = RFC_KIND.company;
+const yupRules = [rfcRule({strict: true}), clabeRule()].map((rule) => rule.message.key);
+const invoice = readCfdi('<cfdi:Comprobante/>');
+const invoiceTotal: string | null | undefined = invoice?.total;
+const certificateStatus = (certificate: ReturnType<typeof readCertificate>) => certificateStatusOf(certificate) === CERTIFICATE_STATUS.expired;
+const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
+    .catch((error: unknown) => error instanceof EfirmaKeyError && error.reason === EFIRMA_KEY_PROBLEM.wrongPassword);
+const mexicoPieces = [
+    invoice && createElement(CfdiSummary, {cfdi: invoice, expectedReceiverRfc: 'AAA010101AAA', showConcepts: false}),
+    createElement(EfirmaFields, {
+        onChange: (value) => value.password.length, expectedRfc: 'AAA010101AAA',
+        onVerifyKey: async ({certificate, password}) => { void certificate.rfc; void password; },
+    }),
 ];
 const copyRow = createElement(CopyButton, {label: 'Copiar', value: () => tableRowTextOf(['P-1', 2, null]), onCopyFailed: (error: unknown) => error});
 // fecha con hora, hora y mes: cada uno con su valor en texto y sus límites con la misma forma
@@ -286,4 +306,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

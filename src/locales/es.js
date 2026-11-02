@@ -497,7 +497,67 @@ export default Object.freeze({
             "detail": "El enlace o el registro venció o ya se usó."
         }
     },
+    "mexico": {
+        "efirma": {
+            "certificate": "Certificado (.cer)",
+            "certificateHelp": "El archivo .cer de la e.firma: se lee aquí, sin subirlo.",
+            "privateKey": "Llave privada (.key)",
+            "privateKeyHelp": "El archivo .key que va con ese certificado.",
+            "password": "Contraseña de la llave",
+            "passwordHelp": "La de la e.firma; no se guarda en este navegador.",
+            "notCertificate": "El archivo no es un certificado: elija el .cer de la e.firma.",
+            "otherRfc": "El certificado es del RFC {{rfc}}, no del {{expected}}.",
+            "rfc": "RFC",
+            "curp": "CURP",
+            "representative": "Representante legal",
+            "certificateNumber": "Número de certificado",
+            "validity": "Vigencia",
+            "validityRange": "Del {{from}} al {{to}}",
+            "branch": "Sucursal",
+            "verify": "Revisar la e.firma",
+            "verified": "La llave abre con esa contraseña y es de este certificado.",
+            "verifyFailed": "No se pudo revisar la e.firma. Intente de nuevo.",
+            "problems": {
+                "notKey": "El archivo .key no es una llave privada: elija el .key de la e.firma.",
+                "wrongPassword": "La contraseña no abre la llave.",
+                "otherCertificate": "La llave abre, pero no es la de este certificado."
+            },
+            "status": {
+                "valid": "Vigente",
+                "expired": "Vencida",
+                "notYetValid": "Todavía no vale"
+            }
+        },
+        "cfdi": {
+            "withoutFolio": "Sin serie ni folio",
+            "version": "CFDI {{version}}",
+            "issuer": "Emite",
+            "receiver": "Recibe",
+            "issuedAt": "Fecha",
+            "uuid": "Folio fiscal",
+            "copyUuid": "Copiar el folio fiscal",
+            "subtotal": "Subtotal",
+            "taxes": "Impuestos",
+            "total": "Total",
+            "concepts": "Conceptos",
+            "description": "Descripción",
+            "quantity": "Cantidad",
+            "amount": "Importe",
+            "otherReceiver": "La factura es para el RFC {{rfc}}, no para el {{expected}}.",
+            "notStamped": "No trae el timbre del SAT: todavía no es una factura válida.",
+            "voucherTypes": {
+                "I": "Ingreso",
+                "E": "Egreso",
+                "T": "Traslado",
+                "N": "Nómina",
+                "P": "Pago"
+            }
+        }
+    },
     "validation": {
+        "rfc": "El RFC no está bien escrito: revise sus letras, la fecha y la homoclave.",
+        "curp": "La CURP no está bien escrita: revise sus 18 caracteres.",
+        "clabe": "La CLABE no es válida: revise sus 18 dígitos.",
         "default": "El valor no es válido.",
         "required": "Este campo es obligatorio.",
         "notType": "El valor no tiene el formato esperado.",
