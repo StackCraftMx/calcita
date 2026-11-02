@@ -4,6 +4,24 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.42.0] - 2026-11-02
+
+### Agregado
+
+- `CheckboxGroupInput` y `FormCheckboxGroupField` (formik y react-hook-form): pocas opciones a la vista con su casilla y su
+  explicación, en columna o en renglón (`row`), con «Elegir todos» (`selectAll`). Pieza del tema `CalcitaCheckboxGroupInput`.
+- `TransferListInput` y `FormTransferListField`: dos columnas, «Disponibles» y «Elegidos», con buscador en cada una,
+  «marcar los que se ven», pasar los marcados, pasar todos y doble clic para pasar uno; en el teléfono una debajo de otra.
+  Pieza del tema `CalcitaTransferListInput`.
+- `SelectInput` con `multiple`: `selectAll` («Elegir todos» con su casilla a medias) y `checkboxes` (una casilla por opción
+  en lugar de la palomita); `options[].disabled`.
+- `CatalogInput` con `multiple`: `selectAll` (con algo buscado, «Elegir los N que coinciden», y lo buscado se queda para
+  seguir eligiendo), `checkboxes` y `limitTags` («+3 más» con el campo sin foco).
+- `selectAllStateOf`: la regla de «todos» sin React.
+- Ejemplos: secciones 8 y 9 en Formularios de Hecho en Calcita; el alta de cliente con «Elegir todos» en días y estados; en
+  «Condiciones del cliente», los avisos de cobranza (casillas) y las sucursales donde puede comprar (transferencia), con el
+  servidor de mentira que revisa que cada sucursal del reparto esté entre ellas.
+
 ## [0.41.1] - 2026-11-02
 
 ### Arreglado
