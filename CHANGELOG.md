@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.45.0] - 2026-11-02
+
+### Agregado
+
+- `HelpCarouselDialog`: la ayuda en carrusel, pasos con imagen o ilustración, título y texto; se avanza con «Siguiente», los
+  puntos, las flechas del teclado o deslizando con el dedo; «Listo» en el último; casilla «No volver a mostrar»; sin
+  animación con «reducir movimiento». Avisa `onClose(reason, {dontShowAgain})` (`HELP_CLOSE_REASON`) y `onStepChange`.
+  Pieza del tema `CalcitaHelpCarouselDialog`.
+- `useHelpCarousel({helpKey, version, autoOpen, seen})`: la abre sola la primera vez y por versión; terminarla la recuerda,
+  cerrarla antes solo con «No volver a mostrar»; `seen` para lo que ya sabe el servidor del proyecto.
+- `HelpButton`: el «?» que vuelve a abrir la ayuda.
+- Ejemplos: «6. Ayuda en carrusel» en Marco y menú; Tareas la enseña sola la primera vez, con su «?» en el encabezado.
+
 ## [0.44.0] - 2026-11-02
 
 ### Agregado
