@@ -198,6 +198,31 @@ export default Object.freeze({
                 "step3": "Confirm."
             }
         },
+        "countdown": {
+            "done": "It is over",
+            "daysShort": "d"
+        },
+        "pdfViewer": {
+            "openInTab": "Open in another tab",
+            "download": "Download"
+        },
+        "legal": {
+            "cookies": {
+                "region": "Cookie notice",
+                "text": "We use cookies so your session and your preferences work. By continuing, you accept their use.",
+                "policy": "Cookie policy",
+                "accept": "Accept"
+            },
+            "terms": {
+                "title": "Terms and conditions",
+                "version": "Version {{version}}",
+                "checkbox": "I have read and accept the terms",
+                "readToEnd": "Read to the end to be able to accept.",
+                "accept": "I accept",
+                "decline": "I do not accept",
+                "saveFailed": "Your answer could not be saved. Try again."
+            }
+        },
         "upload": {
             "hint": "Drop your file here",
             "hintMultiple": "Drop your files here",

@@ -198,6 +198,31 @@ export default Object.freeze({
                 "step3": "Confirme."
             }
         },
+        "countdown": {
+            "done": "Ya terminó",
+            "daysShort": "d"
+        },
+        "pdfViewer": {
+            "openInTab": "Abrir en otra pestaña",
+            "download": "Descargar"
+        },
+        "legal": {
+            "cookies": {
+                "region": "Aviso de cookies",
+                "text": "Usamos cookies para que la sesión y sus preferencias funcionen. Al seguir, acepta su uso.",
+                "policy": "Política de cookies",
+                "accept": "Aceptar"
+            },
+            "terms": {
+                "title": "Términos y condiciones",
+                "version": "Versión {{version}}",
+                "checkbox": "He leído y acepto los términos",
+                "readToEnd": "Lea hasta el final para poder aceptar.",
+                "accept": "Acepto",
+                "decline": "No acepto",
+                "saveFailed": "No se pudo guardar su respuesta. Intente de nuevo."
+            }
+        },
         "upload": {
             "hint": "Arrastre aquí su archivo",
             "hintMultiple": "Arrastre aquí sus archivos",
