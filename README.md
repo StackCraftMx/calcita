@@ -308,6 +308,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaActivityLog` | `itemIcon` |
 | `CalcitaAppearanceSettings` | `selectSection`, `section`, `sectionLabel`, `option`, `divider` |
 | `CalcitaAppLayout` | `skipLink`, `brand`, `brandLogo`, `brandText`, `brandName`, `brandCaption`, `titleArea`, `phoneTitle`, `desktopTitle`, `railBrand`, `railLogo`, `collapseButton`, `root`, `scrollEdge`, `bar`, `toolbar`, `menuButton`, `spacer`, `tools`, `progress`, `body`, `drawer`, `main`, `phoneSlot`, `content`, `phoneDrawer` |
+| `CalcitaAttachmentsInput` | `root`, `actions`, `button`, `list`, `fileChip`, `limits` |
 | `CalcitaAuditTrailDialog` | `description` |
 | `CalcitaAuthLayout` | `root`, `tools`, `body`, `brand`, `logo`, `brandName`, `card`, `description`, `content`, `footer` |
 | `CalcitaBarActions` | `group` |
@@ -334,6 +335,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaEventCalendar` | `toolbar`, `navigation`, `title`, `calendar` |
 | `CalcitaEventDetails` | `row`, `rowContent`, `titleRow`, `toneDot`, `linkRow`, `link`, `guestsTitle`, `guest`, `guestAvatar`, `guestName`, `notes`, `actions` |
 | `CalcitaFileDropzone` | `root`, `fileArea`, `fileChip`, `hint`, `actions`, `limits`, `extra` |
+| `CalcitaFileInput` | `root`, `button`, `fileChip`, `empty` |
 | `CalcitaFilterChips` | `root`, `header`, `clearButton` |
 | `CalcitaFontSizeToggle` | `button` |
 | `CalcitaFormProblemAlert` | `root` |
@@ -345,6 +347,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaGroupedTimeline` | `group`, `groupHeader`, `groupButton`, `groupTitle`, `expandIcon`, `timeline`, `opposite`, `connector`, `content`, `entryTitle` |
 | `CalcitaHeaderFilter` | `button`, `badge`, `panel` |
 | `CalcitaHeaderTools` | `divider`, `root` |
+| `CalcitaImageInput` | `root`, `preview`, `image`, `placeholder`, `actions` |
 | `CalcitaInboxLayout` | `labelDot`, `folder`, `folderIcon`, `folderCount`, `root`, `folders`, `foldersHeader`, `labelsTitle`, `listPane`, `phoneTabs`, `phoneTabBadge`, `listHeader`, `list`, `detail`, `backButton` |
 | `CalcitaInstallAppSetting` | `root` |
 | `CalcitaInstallInstructions` | `steps` |
@@ -390,6 +393,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaTabBarEditor` | `root`, `header`, `title`, `list`, `itemIcon`, `footer` |
 | `CalcitaTableToggle` | `root`, `button` |
 | `CalcitaTag` | `root` |
+| `CalcitaTemplateDownloadButton` | `root` |
 | `CalcitaTextInput` | `field` |
 | `CalcitaTopMenu` | `link`, `root` |
 | `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
@@ -861,6 +865,27 @@ import {FileDropzone, buildUploadActors, uploadMachine, uploadWithProgress} from
 
 `accept` acepta nombres (`'excel'`, `['pdf', 'image']`) o lo de siempre del input (`'.xlsx,.xls'`); `maxSize` va en bytes
 o con unidades (`'10 MB'`, en base 1000 como el navegador).
+
+Para otros acomodos, con las mismas reglas y los mismos avisos:
+
+| Pieza (suelta · formik y react-hook-form) | Para qué | Al formulario llega |
+|---|---|---|
+| `FileInput` · `FormFileField` | un archivo del tamaño de un campo (la constancia, el contrato) | el `File`, lo ya guardado (`{name, size}`) o `null` |
+| `AttachmentsInput` · `FormAttachmentsField` | varios, como en un correo: «Adjuntar» y un chip por archivo | la lista (nuevos y guardados) |
+| `ImageInput` · `FormImageField` | una foto con su vista previa, en círculo o recuadro | el `File`, la dirección de la guardada o `null` |
+| `TemplateDownloadButton` | «Descargar la plantilla» (un archivo fijo con `href` o su API con `request`) | — |
+
+Los cuatro cargadores aceptan `template` para poner «Descargar la plantilla» junto a su botón, y `AttachmentsInput` suma
+`maxFiles` y `maxTotalSize`. Para armar uno propio (una tarjeta, un botón en la barra) está `useFilePicker`, que da el
+input, abrir la ventana, soltar encima y la revisión con sus avisos.
+
+```jsx
+import {AttachmentsInput, FileInput} from '@stackcraftmx/calcita';
+
+<FileInput label="Constancia fiscal" value={file} onChange={setFile} accept="pdf" maxSize="2 MB"
+           template={{href: '/plantillas/constancia.pdf'}} />
+<AttachmentsInput value={files} onChange={setFiles} accept={['pdf', 'image']} maxFiles={5} maxTotalSize="10 MB" />
+```
 
 ## Dinero sin problemas de decimales
 
