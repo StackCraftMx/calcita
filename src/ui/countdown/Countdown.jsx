@@ -1,4 +1,4 @@
-// La cuenta regresiva ya pintada: «02:14:30» hasta un momento (el cierre de una subasta, el inicio de una cita, el fin de
+// La cuenta regresiva ya pintada: «02:14:30» hasta un momento (el cierre de unas inscripciones, el inicio de una cita, el fin de
 // una oferta), con días cuando faltan («3 d 02:14:30»), y lo que dice al llegar a cero («Ya terminó»). Avisa con onComplete
 // una sola vez.
 //
@@ -24,7 +24,7 @@ const CountdownRoot = piecePart(THEME_NAME, 'Root', Typography);
 /**
  * @param {object} props
  * @param {string|number|Date} props.until el momento: un instante en texto, un Date o milisegundos
- * @param {string} [props.label] ya traducido: qué se cuenta («Tiempo para que cierre la subasta»), para un lector de pantalla
+ * @param {string} [props.label] ya traducido: qué se cuenta («Tiempo para que cierren las inscripciones»), para un lector de pantalla
  * @param {() => void} [props.onComplete] al llegar a cero (una vez)
  * @param {import('react').ReactNode} [props.completedText] lo que dice al terminar; por omisión «Ya terminó»
  * @param {boolean} [props.showSeconds] por omisión, sí

@@ -1,7 +1,7 @@
 // Cuánto falta para un momento, al día cada segundo, y avisar una sola vez al llegar a cero (onComplete). Para pintar la
 // cuenta a su manera; Countdown es la que ya viene pintada.
 //
-//   const {parts, isOver} = useCountdown(auction.closes_at, {onComplete: reloadAuction});
+//   const {parts, isOver} = useCountdown(registration.closes_at, {onComplete: reloadRegistration});
 //
 // Mientras ya terminó no corre ningún reloj de fondo, y al desmontar se apaga.
 //

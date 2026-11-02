@@ -30,3 +30,9 @@ test('la palabra corta sale solo si la entrada la trae; si no, su etiqueta de si
     assert.equal(shortLabelOf(lookup(ORDER_STATUS, 'rejected'), translateKey), '«dictionaries:orderStatus.rejected.shortLabel»');
     assert.equal(shortLabelOf(lookup(ORDER_STATUS, 'pending'), translateKey), '«dictionaries:orderStatus.pending.label»');
 });
+
+test('una entrada puede guardar su ícono (para una insignia) y sin él no trae la llave', () => {
+    const CardIcon = () => null;
+    assert.equal(dictionaryEntryOf('card', 'paymentMethod.card', 'info', {icon: CardIcon}).icon, CardIcon);
+    assert.equal('icon' in dictionaryEntryOf('cash', 'paymentMethod.cash', 'default'), false);
+});

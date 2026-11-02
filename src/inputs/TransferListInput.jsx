@@ -1,5 +1,5 @@
 // La lista de transferencia: dos columnas, «Disponibles» y «Elegidos», y botones para pasar de una a otra. Para elegir
-// muchos de una lista larga viendo siempre qué quedó de cada lado (los compradores de una subasta, las sucursales donde
+// muchos de una lista larga viendo siempre qué quedó de cada lado (los usuarios que pueden ver un reporte, las sucursales donde
 // puede comprar un cliente). Al formulario llega la lista de los elegidos, en el orden en que se pasaron.
 //
 // Cada columna trae su título con cuántos tiene, su buscador (searchable) y su casilla de «todos los que se ven» (con algo

@@ -14,6 +14,7 @@
 //   - shortLabelKey: palabra corta para una columna angosta («Rechazada» por «Rechazada por estructura»). Solo la traen
 //     las entradas cuyo nombre completo no cabe; quien la pinta deja el nombre completo en el tooltip (StatusChip, short).
 //   - color: color de paleta de MUI (success, warning, error, info, default).
+//   - icon (opcional): el ícono con que la pinta una insignia (IconBadge); el diccionario solo guarda la referencia.
 //   - isKnown: false solo en la entrada "unknown"; sirve para pintar el código crudo cuando no hay texto (p. ej. un
 //     estatus nuevo que el backend empezó a mandar).
 //
@@ -42,15 +43,18 @@ const UNKNOWN_ENTRY = Object.freeze({
  * @param {string} value el código del API
  * @param {string} keyPrefix dónde viven sus textos dentro del namespace dictionaries ('orderStatus.paid' → orderStatus.paid.label)
  * @param {string} color color de paleta de MUI
- * @param {{hasShortLabel?: boolean}} [options] hasShortLabel: trae palabra corta (keyPrefix.shortLabel)
- * @returns {{value: string, labelKey: string, tooltipKey: string, shortLabelKey?: string, color: string, isKnown: boolean}}
+ * @param {{hasShortLabel?: boolean, icon?: import('react').ElementType}} [options] hasShortLabel: trae palabra corta
+ *     (keyPrefix.shortLabel); icon: el ícono con que se pinta en una insignia (IconBadge), p. ej. CreditCardOutlinedIcon
+ * @returns {{value: string, labelKey: string, tooltipKey: string, shortLabelKey?: string, icon?: import('react').ElementType, color: string, isKnown: boolean}}
  */
-export function dictionaryEntryOf(value, keyPrefix, color, {hasShortLabel = false} = {}) {
+export function dictionaryEntryOf(value, keyPrefix, color, {hasShortLabel = false, icon} = {}) {
     return Object.freeze({
         value,
         labelKey: `${NAMESPACE}:${keyPrefix}.label`,
         tooltipKey: `${NAMESPACE}:${keyPrefix}.tooltip`,
         ...(hasShortLabel ? {shortLabelKey: `${NAMESPACE}:${keyPrefix}.shortLabel`} : {}),
+        // el ícono es solo una referencia: el diccionario sigue sin React
+        ...(icon ? {icon} : {}),
         color,
         isKnown: true,
     });

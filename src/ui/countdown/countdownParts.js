@@ -1,4 +1,4 @@
-// Cuánto falta para un momento (el cierre de una subasta, el inicio de una cita, el fin de una oferta), en días, horas,
+// Cuánto falta para un momento (el cierre de unas inscripciones, el inicio de una cita, el fin de una oferta), en días, horas,
 // minutos y segundos, y cómo se escribe como reloj. Lo usan useCountdown y Countdown.
 //
 // Puro (sin React): se prueba con node (countdownParts.test.js).
