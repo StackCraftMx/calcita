@@ -43,3 +43,32 @@ export function formLevelMessageOf(errorsByField, formFieldNames, generalMessage
     const hasFieldErrors = Object.keys(errorsByField ?? {}).length > 0;
     return hasFieldErrors ? null : (generalMessage || null);
 }
+
+// un renglón en la ruta del servidor: 'contacts.2.email' (Laravel) o 'contacts[2].email'
+const ROW_SEGMENT = /(^|\.)\d+(\.|$)|\[\d+\]/;
+
+/**
+ * Separa los errores de un 422 que son de un campo DENTRO de un renglón que el formulario sí tiene ('contacts.2.email'
+ * con contacts[2] en los valores): esos van a su renglón con la ruta completa. Los demás siguen el camino de siempre
+ * (fieldErrorsOf los reduce a su último nombre: 'rows.3.email' → 'email').
+ *
+ * @param {object|null|undefined} rawErrors problem.errors tal cual ({ruta: [mensajes]})
+ * @param {(path: string) => boolean} existsInForm si esa ruta existe en los valores del formulario
+ * @returns {{rowFieldErrors: Record<string, string>, otherErrors: Record<string, unknown>}}
+ */
+export function splitRowFieldErrors(rawErrors, existsInForm) {
+    const rowFieldErrors = {};
+    const otherErrors = {};
+    if (!rawErrors || typeof rawErrors !== 'object' || Array.isArray(rawErrors)) {
+        return {rowFieldErrors, otherErrors};
+    }
+    for (const [path, messages] of Object.entries(rawErrors)) {
+        if (ROW_SEGMENT.test(path) && existsInForm(path)) {
+            rowFieldErrors[path] = (Array.isArray(messages) ? messages : [messages]).map(String).join(' ');
+        } else {
+            otherErrors[path] = messages;
+        }
+    }
+    return {rowFieldErrors, otherErrors};
+}
+

@@ -156,6 +156,16 @@ const SERVER_TEXTS = Object.freeze({
             unreadable: 'No pudimos leer el archivo como Excel: puede estar dañado o protegido con contraseña.',
             attachmentTooLarge: 'El servidor acepta adjuntos de hasta {{max}}.',
         },
+        customerTerms: {
+            creditLimitRequired: 'Escriba el límite de crédito.',
+            branchRepeated: 'Esa sucursal ya está en el reparto.',
+            splitTooHigh: 'El reparto suma {{total}} y el límite de crédito es {{max}}.',
+            discountsOrder: 'Los descuentos van de menor a mayor compra y de menor a mayor descuento.',
+            oneMainContact: 'Marque un solo contacto principal.',
+            emailInvalid: 'Escriba un correo válido.',
+            emailTaken: 'Ese correo ya lo usa otro cliente.',
+            saved: 'Se guardaron las condiciones del cliente.',
+        },
         documents: {
             invalidType: 'El documento tiene que ser un PDF o una foto (JPG o PNG).',
             tooLarge: 'El documento pesa más de {{max}}.',
@@ -312,6 +322,16 @@ const SERVER_TEXTS = Object.freeze({
             notExcel: 'The file must be an Excel workbook (.xlsx).',
             unreadable: 'We could not read the file as Excel: it may be damaged or password protected.',
             attachmentTooLarge: 'The server accepts attachments up to {{max}}.',
+        },
+        customerTerms: {
+            creditLimitRequired: 'Enter the credit limit.',
+            branchRepeated: 'That branch is already in the split.',
+            splitTooHigh: 'The split adds up to {{total}} and the credit limit is {{max}}.',
+            discountsOrder: 'Discounts go from lower to higher purchase and from lower to higher discount.',
+            oneMainContact: 'Mark exactly one main contact.',
+            emailInvalid: 'Enter a valid email.',
+            emailTaken: 'That email is already used by another customer.',
+            saved: 'The customer terms were saved.',
         },
         documents: {
             invalidType: 'The document must be a PDF or a photo (JPG or PNG).',

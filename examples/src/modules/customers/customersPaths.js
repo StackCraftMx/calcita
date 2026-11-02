@@ -5,4 +5,5 @@ export const CUSTOMERS_PATHS = Object.freeze({
     formik: APP_PATHS.customers,
     hookForm: `${APP_PATHS.customers}/hook-form`,
     creditRequest: `${APP_PATHS.customers}/credit-request`,
+    terms: `${APP_PATHS.customers}/terms`,
 });

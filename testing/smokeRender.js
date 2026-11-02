@@ -20,7 +20,7 @@ import {
 import {ServerTable, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
 import {
-    ChangePasswordForm, ForgotPasswordForm, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard,
+    ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard,
 } from '@stackcraftmx/calcita/forms';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
@@ -167,6 +167,14 @@ const CASES = [
     ['ServerTable', h(NuqsTestingAdapter, null, h(ServerTable, {
         fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
+    // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
+    ['FormRepeatingFields con dos renglones', h(Formik, {initialValues: {contacts: [{name: 'Ana'}, {name: 'Luis'}]}, onSubmit: () => {}}, () => h(FormRepeatingFields, {
+        name: 'contacts', label: 'Contactos', emptyRow: {name: ''}, maxRows: 5, rowLabelOf: (index) => `Contacto ${index + 1}`,
+        renderRow: ({nameOf}) => h(FormTextField, {name: nameOf('name'), label: 'Nombre'}),
+    })), 'Contacto 2'],
+    ['FormRepeatingFields con el mínimo dice Limpiar', h(Formik, {initialValues: {contacts: [{name: ''}]}, onSubmit: () => {}}, () => h(FormRepeatingFields, {
+        name: 'contacts', emptyRow: {name: ''}, renderRow: ({nameOf}) => h(FormTextField, {name: nameOf('name'), label: 'Nombre'}),
+    })), 'Limpiar'],
     ['FormTextField', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormTextField, {name: 'email', label: 'Correo'})), 'Correo'],
     ['FormWizard con un paso opcional', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormWizard, {
         submitLabel: 'Enviar', steps: [{key: 'a', label: 'Datos', fields: ['email'], content: h(FormTextField, {name: 'email', label: 'Correo'})}, {key: 'b', label: 'Extra', optional: true, content: 'nada'}],

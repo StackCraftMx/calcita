@@ -9,4 +9,5 @@ export const routes = [
         lazy: async () => ({Component: (await import('@/modules/customers/NewCustomerHookFormPage.jsx')).NewCustomerHookFormPage}),
     },
     {path: CUSTOMERS_PATHS.creditRequest, lazy: async () => ({Component: (await import('@/modules/customers/CreditRequestPage.jsx')).CreditRequestPage})},
+    {path: CUSTOMERS_PATHS.terms, lazy: async () => ({Component: (await import('@/modules/customers/CustomerTermsPage.jsx')).CustomerTermsPage})},
 ];

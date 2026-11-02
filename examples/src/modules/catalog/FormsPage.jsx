@@ -13,12 +13,16 @@ import NewCustomerHookForm from '@/modules/catalog/demos/forms/NewCustomerHookFo
 import CreditWizard from '@/modules/catalog/demos/forms/CreditWizard.tsx';
 import CreditWizardHookForm from '@/modules/catalog/demos/forms/CreditWizardHookForm.tsx';
 import MaskedFields from '@/modules/catalog/demos/forms/MaskedFields.tsx';
+import VolumePrices from '@/modules/catalog/demos/forms/VolumePrices.tsx';
+import ContactsHookForm from '@/modules/catalog/demos/forms/ContactsHookForm.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
 const loadWizard = () => import('@/modules/catalog/demos/forms/CreditWizard.tsx?demo-source');
 const loadHookWizard = () => import('@/modules/catalog/demos/forms/CreditWizardHookForm.tsx?demo-source');
 const loadMasked = () => import('@/modules/catalog/demos/forms/MaskedFields.tsx?demo-source');
+const loadRepeating = () => import('@/modules/catalog/demos/forms/VolumePrices.tsx?demo-source');
+const loadRepeatingHookForm = () => import('@/modules/catalog/demos/forms/ContactsHookForm.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -67,6 +71,23 @@ const MASKED_EXTENSIONS = [
     {id: 'textInput', option: 'lo de TextInput', example: 'helperText="10 dígitos" placeholder="555 123 4567" error={errors.phone}'},
 ];
 
+const REPEATING_EXTENSIONS = [
+    {id: 'rows', option: 'name · emptyRow · renderRow({nameOf, index, row})', example: "renderRow={({nameOf}) => <FormTextField name={nameOf('email')} label=\"Correo\" />}"},
+    {id: 'limits', option: 'minRows · maxRows', example: 'minRows={1} maxRows={5}  // con el mínimo, «Quitar» limpia el renglón'},
+    {id: 'layout', option: 'columns · rowLabelOf · addLabel · label', example: "columns={{xs: 1, md: 3}} rowLabelOf={(index) => `Precio ${index + 1}`}"},
+    {id: 'unique', option: 'uniqueInListRule', example: "Yup.string().test(uniqueInListRule('prices', 'min_quantity'))"},
+    {id: 'ordered', option: 'orderedInListRule', example: "Yup.string().test(orderedInListRule('prices', 'unit_price', {ascending: false}))"},
+    {id: 'total', option: 'listTotalAtMostRule · listTotalOf', example: "Yup.array().test(listTotalAtMostRule('amount', (values) => values.credit_limit))"},
+    {id: 'slots', option: 'rowActionsOf · footer · helperText', example: 'footer={<Typography>Suman {listTotalOf(rows, \'amount\').format()}</Typography>}'},
+    {id: 'view', option: '<RepeatingFields> · useRowKeys', example: "import {RepeatingFields} from '@stackcraftmx/calcita';  // la vista sola, para otro formulario"},
+];
+const REPEATING_HOOK_EXTENSIONS = [
+    {id: 'entry', option: "FormRepeatingFields de '@stackcraftmx/calcita/react-hook-form'", example: '<FormRepeatingFields name="contacts" emptyRow={EMPTY_CONTACT} renderRow={…} />'},
+    {id: 'remove', option: 'removeBlockedReason · confirmRemove', example: "removeBlockedReason={(row) => (row.is_main ? 'Es el principal' : null)} confirmRemove={(row) => Boolean(row.id)}"},
+    {id: 'events', option: 'onAdd · onRemove', example: 'onRemove={(row) => row.id && removedIds.push(row.id)}'},
+    {id: 'serverProblem', option: 'applyServerProblem', example: "// el 422 en 'contacts.2.email' llega a ese renglón"},
+];
+
 export const FormsPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `forms.${section}`, extensions);
@@ -84,6 +105,10 @@ export const FormsPage = () => {
                          extensions={rowsOf('hookWizard', HOOK_WIZARD_EXTENSIONS)} Demo={CreditWizardHookForm} loadSource={loadHookWizard} />
             <DemoSection title={t('forms.masked.title')} description={t('forms.masked.description')}
                          extensions={rowsOf('masked', MASKED_EXTENSIONS)} Demo={MaskedFields} loadSource={loadMasked} />
+            <DemoSection title={t('forms.repeating.title')} description={t('forms.repeating.description')}
+                         extensions={rowsOf('repeating', REPEATING_EXTENSIONS)} Demo={VolumePrices} loadSource={loadRepeating} />
+            <DemoSection title={t('forms.repeatingHookForm.title')} description={t('forms.repeatingHookForm.description')}
+                         extensions={rowsOf('repeatingHookForm', REPEATING_HOOK_EXTENSIONS)} Demo={ContactsHookForm} loadSource={loadRepeatingHookForm} />
         </Stack>
     );
 };

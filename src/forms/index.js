@@ -8,6 +8,8 @@ export {default as FormImageField} from '@/forms/FormImageField.jsx';
 export {default as FormMaskedField} from '@/forms/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/forms/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/forms/FormProblemAlert.jsx';
+export {default as FormRepeatingFields} from '@/forms/FormRepeatingFields.jsx';
+export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
 export {default as FormSelectField} from '@/forms/FormSelectField.jsx';
 export {default as FormServerProblem} from '@/forms/FormServerProblem.jsx';
 export {default as FormTextField} from '@/forms/FormTextField.jsx';
@@ -22,6 +24,6 @@ export {
 } from '@/forms/security/securityRules.js';
 export {default as SubmitButton} from '@/forms/SubmitButton.jsx';
 export {applyServerProblem} from '@/forms/applyServerProblem.js';
-export {formLevelMessageOf, splitServerFieldErrors} from '@/forms/serverProblemFields.js';
+export {formLevelMessageOf, splitRowFieldErrors, splitServerFieldErrors} from '@/forms/serverProblemFields.js';
 export {useFormikField} from '@/forms/useFormikField.js';
 export {Yup, buildYupLocale, translateValidationMessage} from '@/forms/validation.js';

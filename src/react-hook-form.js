@@ -8,7 +8,7 @@
 //   </form></FormProvider>
 //
 // La fecha con react-hook-form: DateInput de /date-pickers dentro de un Controller.
-export {Controller, FormProvider, useForm, useFormContext} from 'react-hook-form';
+export {Controller, FormProvider, useFieldArray, useForm, useFormContext, useWatch} from 'react-hook-form';
 export {yupResolver} from '@hookform/resolvers/yup';
 export {default as FormAttachmentsField} from '@/hookForm/FormAttachmentsField.jsx';
 export {default as FormCatalogField} from '@/hookForm/FormCatalogField.jsx';
@@ -19,6 +19,9 @@ export {default as FormImageField} from '@/hookForm/FormImageField.jsx';
 export {default as FormMaskedField} from '@/hookForm/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/hookForm/FormProblemAlert.jsx';
+export {default as FormRepeatingFields} from '@/hookForm/FormRepeatingFields.jsx';
+// las reglas de listas son las mismas de /forms (no dependen de formik): sirven con yupResolver
+export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
 export {default as FormSelectField} from '@/hookForm/FormSelectField.jsx';
 export {default as FormWizard} from '@/hookForm/FormWizard.jsx';
 export {default as FormTextField} from '@/hookForm/FormTextField.jsx';
