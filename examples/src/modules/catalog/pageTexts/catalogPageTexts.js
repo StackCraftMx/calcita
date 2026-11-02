@@ -1384,6 +1384,30 @@ export const catalogPageTexts = {
                         texts: 'Los textos de los botones, igual que en el de formik.',
                     },
                 },
+                repeating: {
+                    title: '6. Renglones que se repiten',
+                    description: 'Los precios por volumen de un producto: cada renglón se agrega y se quita, y lo que no cuadra se dice en su renglón: una cantidad repetida, las cantidades de menor a mayor y los precios de mayor a menor. Pruebe a poner 5 piezas en el segundo precio o un precio más caro abajo.',
+                    extend: {
+                        rows: 'La lista del formulario y cómo empieza un renglón nuevo; cada campo se conecta con nameOf.',
+                        limits: 'Cuántos renglones como mínimo y como máximo; con el mínimo, «Quitar» deja el renglón vacío.',
+                        layout: 'Cuántos campos lado a lado, el título de cada renglón y el del botón.',
+                        unique: 'Sin repetidos en una columna: el que repite dice con cuál choca.',
+                        ordered: 'En orden por una columna, de menor a mayor o al revés: dice entre cuáles debe ir.',
+                        total: 'Lo que suma una columna (con Money, sin errores de decimales) contra un tope de otro campo.',
+                        slots: 'Botones en el título del renglón, algo junto a «Agregar» (el total) y la ayuda.',
+                        view: 'La vista sola, para otro formulario, y las llaves estables de los renglones.',
+                    },
+                },
+                repeatingHookForm: {
+                    title: '7. Renglones con react-hook-form',
+                    description: 'Los contactos de un cliente: el principal no se puede quitar (sale el motivo) y los que ya estaban guardados piden confirmar. Un correo repetido se marca en su renglón.',
+                    extend: {
+                        entry: 'El mismo componente con useFieldArray por dentro.',
+                        remove: 'Si un renglón se puede quitar y si hay que confirmar, según sus valores.',
+                        events: 'Avisos al agregar y al quitar (p. ej. para mandar al servidor los que se borraron).',
+                        serverProblem: 'Un error del servidor en un campo de un renglón llega a ese renglón.',
+                    },
+                },
                 masked: {
                     title: '5. Campos con máscara',
                     description: 'Un teléfono, una CLABE, un RFC, un folio fiscal: mientras se escribe se ven los separadores y al formulario llega el valor limpio. Pegar un número con otros separadores también sirve. Pruebe a pegar «(555) 123-4567» en el teléfono.',
@@ -3327,6 +3351,30 @@ export const catalogPageTexts = {
                         skip: 'Skipping a step returns its fields to their starting value (resetField): skipping is not giving that data.',
                         serverProblem: 'If the server rejects a field of an earlier step, applyServerProblem marks it and the form goes back to that step.',
                         texts: 'The texts of the buttons, same as the formik one.',
+                    },
+                },
+                repeating: {
+                    title: '6. Repeating rows',
+                    description: 'Volume prices of a product: each row is added and removed, and what does not fit is said in its row: a repeated quantity, quantities from low to high and prices from high to low. Try 5 pieces in the second price or a higher price below.',
+                    extend: {
+                        rows: 'The form list and how a new row starts; each field connects with nameOf.',
+                        limits: 'How many rows at least and at most; at the minimum, «Remove» clears the row.',
+                        layout: 'How many fields side by side, the title of each row and of the button.',
+                        unique: 'No repeats in a column: the repeated one says which one it clashes with.',
+                        ordered: 'In order by a column, low to high or the other way: it says between which values it goes.',
+                        total: 'What a column adds up to (with Money, no decimal errors) against a cap from another field.',
+                        slots: 'Buttons in the row title, something next to «Add» (the total) and the help.',
+                        view: 'The view alone, for another form, and the stable keys of the rows.',
+                    },
+                },
+                repeatingHookForm: {
+                    title: '7. Rows with react-hook-form',
+                    description: 'The contacts of a customer: the main one cannot be removed (the reason shows) and the ones already saved ask to confirm. A repeated email is marked in its row.',
+                    extend: {
+                        entry: 'The same component with useFieldArray inside.',
+                        remove: 'Whether a row can be removed and whether to confirm, by its values.',
+                        events: 'Notices when adding and removing (e.g. to send the deleted ones to the server).',
+                        serverProblem: 'A server error in a field of a row reaches that row.',
                     },
                 },
                 masked: {
