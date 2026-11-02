@@ -388,6 +388,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
 | `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
+| `CalcitaRouteTabs` | `root`, `tab`, `badge` |
 | `CalcitaScrollableRow` | `root` |
 | `CalcitaRepeatingFields` | `root`, `row`, `rowHeader`, `rowContent`, `addButton`, `helper` |
 | `CalcitaRichTextEditor` | `root`, `toolbar`, `content`, `footer` |
@@ -511,7 +512,10 @@ const menuItems = composeMenu(import.meta.glob('@/modules/*/menu.js', {eager: tr
 
 En cada pantalla, `PageHeading` pone el título, la descripción y los botones, y arma las migas solo desde el menú
 (Inicio › Sección › Pantalla). `PageHeader` es el encabezado centrado de una portada y `DetailHeader` el de un registro.
-Junto al título de un registro van su estatus (`StatusChip`) y sus insignias (`IconBadge`): un ícono y un texto corto con el
+Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una pestaña y
+«atrás» regresa a la anterior); por ruta (cada pestaña su página) o en la consulta (`mode="query"`, `?tab=pagos`, con
+`useActiveRouteTab` para pintar el panel), con ícono, conteo y permiso por pestaña. Junto al título de un registro van su
+estatus (`StatusChip`) y sus insignias (`IconBadge`): un ícono y un texto corto con el
 color de lo que significan («Envío asegurado», «Pago con tarjeta»), con borde, tenue o sin caja. Mejor desde un diccionario:
 la entrada trae su ícono (`dictionaryEntryOf(value, keyPrefix, color, {icon})`) y la insignia saca de ahí texto,
 explicación, color e ícono (`<IconBadge dictionary={PAYMENT_METHOD} value={order.payment_method} />`).
