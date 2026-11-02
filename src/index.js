@@ -117,6 +117,8 @@ export {default as MaskedInput} from '@/inputs/MaskedInput.jsx';
 export {INPUT_MASK, isMaskComplete, maskPatternOf, maskedTextOf, rawValueOf} from '@/inputs/inputMasks.js';
 export {FORM_ROW_CLASS, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
 export {default as NumberInput} from '@/inputs/NumberInput.jsx';
+export {default as RepeatingFields} from '@/inputs/RepeatingFields.jsx';
+export {useRowKeys} from '@/inputs/useRowKeys.js';
 export {default as SelectInput} from '@/inputs/SelectInput.jsx';
 export {default as WizardLayout} from '@/inputs/WizardLayout.jsx';
 export {default as TextInput} from '@/inputs/TextInput.jsx';

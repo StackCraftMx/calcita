@@ -8,8 +8,8 @@
 export {FieldArray, Form, Formik, useField, useFormikContext} from 'formik';
 export {
     ChangePasswordForm, ForgotPasswordForm, FormAttachmentsField, FormCatalogField, FormColorField, FormFileField, FormFileUploadField, FormImageField,
-    FormMaskedField, FormNumberField, FormProblemAlert, FormSelectField, FormServerProblem,
+    FormMaskedField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormServerProblem,
     FormTextField, FormWizard, RECOVERY_CODE_PATTERN, SECOND_STEP_METHOD, SecondStepForm, SignInForm, SubmitButton, TOTP_CODE_PATTERN,
     TwoStepVerificationCard, Yup, applyServerProblem, buildYupLocale, formLevelMessageOf, normalizeRecoveryCode, normalizeTotpCode,
-    splitServerFieldErrors, translateValidationMessage, useFormikField,
+    listTotalAtMostRule, listTotalOf, orderedInListRule, splitRowFieldErrors, splitServerFieldErrors, translateValidationMessage, uniqueInListRule, useFormikField,
 } from '@/forms/index.js';
