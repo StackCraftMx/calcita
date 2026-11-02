@@ -15,8 +15,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
-import {toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {Form, Formik, FormProblemAlert, FormSelectField, FormTextField, SubmitButton, Yup, applyServerProblem} from '@stackcraftmx/calcita/forms';
+import {IMAGE_SHAPE, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {
+    Form, Formik, FormImageField, FormProblemAlert, FormSelectField, FormTextField, SubmitButton, Yup, applyServerProblem,
+} from '@stackcraftmx/calcita/forms';
 
 import {BRANCH_CITY_NAMES, BRANCH_STATUS, addBranch} from '@/modules/branches/branchesApi.js';
 
@@ -24,7 +26,10 @@ const NAME_MAX_LENGTH = 60;
 const ADDRESS_MAX_LENGTH = 120;
 
 /** Con qué arranca: las llaves son las del API, así un 422 cae en su campo. Una sucursal nueva arranca abierta. */
-const NEW_BRANCH_INITIAL_VALUES = Object.freeze({name: '', city: '', address: '', status: BRANCH_STATUS.open});
+const NEW_BRANCH_INITIAL_VALUES = Object.freeze({name: '', city: '', address: '', status: BRANCH_STATUS.open, photo: null});
+// la foto de la fachada (opcional)
+const PHOTO_MAX_SIZE = '2 MB';
+const PHOTO_PREVIEW_PIXELS = 88;
 
 /**
  * Las reglas del navegador. OJO: es una función y no una constante: yup toma sus mensajes al armar el esquema, y armado al
@@ -38,6 +43,7 @@ function buildNewBranchSchema() {
         city: Yup.string().required(),
         address: Yup.string().trim().required().max(ADDRESS_MAX_LENGTH),
         status: Yup.string().required(),
+        photo: Yup.mixed().nullable(),
     });
 }
 
@@ -79,6 +85,9 @@ export const NewBranchDialog = ({open, onClose, onCreated}) => {
                                 <FormTextField name="address" label={t('add.address')} placeholder={t('add.addressPlaceholder')}
                                                slotProps={{htmlInput: {maxLength: ADDRESS_MAX_LENGTH}}} />
                                 <FormSelectField name="status" label={t('add.status')} options={statusOptions} />
+                                {/* la foto en recuadro: se pica o se suelta encima; viaja el archivo al guardar */}
+                                <FormImageField name="photo" label={t('add.photo')} helperText={t('add.photoHelp')} shape={IMAGE_SHAPE.rounded}
+                                                size={PHOTO_PREVIEW_PIXELS} maxSize={PHOTO_MAX_SIZE} />
                             </Stack>
                         </DialogContent>
                         <DialogActions>

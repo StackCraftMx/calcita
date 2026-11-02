@@ -105,6 +105,10 @@ function fieldErrorsOf(customer) {
         errors.delivery_states = [serverTextOf('customers.stateInvalid')];
     }
     // «cliente desde» es una fecha de calendario: se compara como texto AAAA-MM-DD contra el día de hoy de la tienda
+    // la constancia es opcional; si viene, el servidor revisa por su cuenta que sea PDF (no confía en lo que filtró el navegador)
+    if (customer.tax_certificate && !/\.pdf$/i.test(customer.tax_certificate.name ?? '')) {
+        errors.tax_certificate = [serverTextOf('customers.taxCertificateNotPdf')];
+    }
     if (customer.customer_since && customer.customer_since > storeDateOf(new Date().toISOString())) {
         errors.customer_since = [serverTextOf('customers.sinceInFuture')];
     }

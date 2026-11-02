@@ -85,9 +85,15 @@ export {DEFAULT_PASSWORD_POLICY, PASSWORD_RULE, isPasswordAccepted, passwordChec
 export {default as PasswordChecklist} from '@/auth/PasswordChecklist.jsx';
 export {ERROR_PAGE_KIND, default as ErrorPage} from '@/ui/layout/ErrorPage.jsx';
 
-// ─── subir archivos (la zona de MUI; la de FilePond va en su propia puerta) ──
+// ─── subir archivos (los de MUI; la zona de FilePond va en su propia puerta) ──
+export {default as AttachmentsInput} from '@/upload/AttachmentsInput.jsx';
 export {default as FileDropzone} from '@/upload/FileDropzone.jsx';
-export {FILE_ACCEPT_PRESETS, FILE_REJECTION, matchesAccept, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
+export {default as FileInput} from '@/upload/FileInput.jsx';
+export {IMAGE_SHAPE, default as ImageInput} from '@/upload/ImageInput.jsx';
+export {default as TemplateDownloadButton} from '@/upload/TemplateDownloadButton.jsx';
+export {fileAppearanceOf} from '@/upload/fileAppearance.js';
+export {FILE_ACCEPT_PRESETS, FILE_REJECTION, matchesAccept, parseFileSize, resolveAccept, screenFiles} from '@/upload/fileRules.js';
+export {useFilePicker} from '@/upload/useFilePicker.js';
 export {buildUploadActors, uploadMachine} from '@/upload/uploadMachine.js';
 export {uploadWithProgress} from '@/upload/uploadWithProgress.js';
 

@@ -14,6 +14,11 @@ import {RouteErrorScreen, withChunkRecovery} from '@stackcraftmx/calcita/react-r
 import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/calcita/passkeys';
 import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
+import {
+    AttachmentsInput, FILE_REJECTION, FileInput, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles, useFilePicker,
+} from '@stackcraftmx/calcita';
+import {FormAttachmentsField, FormFileField, FormImageField} from '@stackcraftmx/calcita/forms';
+import {FormFileField as HookFormFileField} from '@stackcraftmx/calcita/react-hook-form';
 import {FormTextField as HookFormTextField, SERVER_PROBLEM_ROOT, applyServerProblem as applyToHookForm} from '@stackcraftmx/calcita/react-hook-form';
 import {
     CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, DateInput, DateTimeInput, FormDateField, FormDateTimeField, FormMonthField, FormTimeField,
@@ -77,6 +82,24 @@ Money.zero().plus(5);
 const wrongFormat: number = VALUE_FORMAT.count;
 
 const dateFormat: string = CALENDAR_DATE_FORMAT;
+// los cargadores: un archivo, varios (nuevos y ya guardados), una imagen y la plantilla
+const pickerRef: {current: {open: () => void} | null} = {current: null};
+const uploaders = [
+    createElement(FileInput, {label: 'Constancia', value: null, onChange: (file: File | null) => file?.name, accept: ['pdf'], maxSize: '5 MB', template: {href: '/plantilla.pdf'}}),
+    createElement(AttachmentsInput, {value: [{id: 'a1', name: 'contrato.pdf', size: 1000}], onChange: (files) => files.length, maxFiles: 3, showButton: false, pickerRef, onRemove: (file) => file.name}),
+    createElement(ImageInput, {label: 'Foto', value: '/foto.jpg', onChange: () => {}, shape: IMAGE_SHAPE.circle, size: 72}),
+    createElement(TemplateDownloadButton, {request: async () => ({blob: new Blob(['x']), fileName: 'plantilla.csv'}), format: 'csv', onDownload: () => {}}),
+    createElement(FormFileField, {name: 'taxCertificate', label: 'Constancia', accept: 'pdf'}),
+    createElement(FormAttachmentsField, {name: 'attachments', maxTotalSize: '10 MB'}),
+    createElement(FormImageField, {name: 'photo', label: 'Foto', shape: IMAGE_SHAPE.rounded}),
+    createElement(HookFormFileField, {name: 'contract', label: 'Contrato'}),
+    // @ts-expect-error la forma es 'circle' o 'rounded'
+    createElement(ImageInput, {label: 'Foto', value: null, onChange: () => {}, shape: 'square'}),
+];
+const screened = screenFiles([{name: 'a.pdf', size: 10}], {maxFiles: 1});
+const rejectionReason: string = FILE_REJECTION.count;
+const pdfLook = fileAppearanceOf('factura.pdf').color;
+const filePickerHook = useFilePicker;
 // fecha con hora, hora y mes: cada uno con su valor en texto y sus límites con la misma forma
 const travelFormats: string[] = [CALENDAR_MONTH_FORMAT, INSTANT_FORMAT, TIME_OF_DAY_FORMAT];
 const zoneName: string = timeZoneNameOf('America/Mexico_City', 'es-MX');
@@ -246,4 +269,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

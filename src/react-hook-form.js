@@ -10,8 +10,11 @@
 // La fecha con react-hook-form: DateInput de /date-pickers dentro de un Controller.
 export {Controller, FormProvider, useForm, useFormContext} from 'react-hook-form';
 export {yupResolver} from '@hookform/resolvers/yup';
+export {default as FormAttachmentsField} from '@/hookForm/FormAttachmentsField.jsx';
 export {default as FormCatalogField} from '@/hookForm/FormCatalogField.jsx';
 export {default as FormColorField} from '@/hookForm/FormColorField.jsx';
+export {default as FormFileField} from '@/hookForm/FormFileField.jsx';
+export {default as FormImageField} from '@/hookForm/FormImageField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/hookForm/FormProblemAlert.jsx';
 export {default as FormSelectField} from '@/hookForm/FormSelectField.jsx';

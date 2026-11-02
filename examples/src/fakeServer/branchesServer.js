@@ -61,10 +61,10 @@ export async function listBranches({status = null} = {}, signal) {
  * POST branches: una sucursal nueva. Valida como el backend: lo obligatorio, que la ciudad exista y que no se repita el
  * nombre en la misma ciudad (422 con el error en su campo).
  *
- * @param {{name: string, city: string, address: string, status: string}} input
+ * @param {{name: string, city: string, address: string, status: string, photo?: File|null}} input la foto es opcional
  * @returns {Promise<{branch: object, message: string}>}
  */
-export async function createBranch({name, city, address, status}) {
+export async function createBranch({name, city, address, status, photo = null}) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
     const cleanName = name?.trim() ?? '';
     const errors = {};
@@ -79,6 +79,10 @@ export async function createBranch({name, city, address, status}) {
     if (!address?.trim()) {
         errors.address = [serverTextOf('branches.addressRequired')];
     }
+    // el servidor revisa por su cuenta que la foto sea imagen (no confía en lo que filtró el navegador)
+    if (photo && !photo.type?.startsWith('image/')) {
+        errors.photo = [serverTextOf('branches.photoNotImage')];
+    }
     if (Object.keys(errors).length > 0) {
         throw new ApiError({status: HTTP_STATUS.unprocessable, problem: {title: serverTextOf('validation.title'), detail: serverTextOf('validation.detail'), errors}});
     }
@@ -86,6 +90,8 @@ export async function createBranch({name, city, address, status}) {
     const sameCityCount = branches.filter((branch) => branch.city === city).length;
     const branch = {
         id: `branch-${Date.now()}`, name: cleanName, city, address: address.trim(), status, orders: 0,
+        // un servidor de verdad la guardaría y daría su dirección; este de mentira usa una dirección del navegador
+        photo_url: photo ? URL.createObjectURL(photo) : null,
         position: [latitude + NEW_BRANCH_OFFSET_DEGREES * sameCityCount, longitude + NEW_BRANCH_OFFSET_DEGREES * sameCityCount],
     };
     branches.push(branch);

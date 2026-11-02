@@ -1,7 +1,8 @@
 // Importar un Excel con la zona de MUI (FileDropzone de la puerta principal) y la máquina de subida del paquete.
 //
-// La zona solo elige el archivo; el botón «Importar» manda a la máquina, que sigue la subida: el porcentaje mientras
-// viaja, «procesando» mientras el servidor trabaja, cómo terminó y el «Cancelar» que corta la petición de verdad.
+// La zona solo elige el archivo y ofrece su plantilla; el botón «Importar» manda a la máquina, que sigue la subida: el
+// porcentaje mientras viaja, «procesando» mientras el servidor trabaja, cómo terminó y el «Cancelar» que corta la petición de
+// verdad.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useState} from 'react';
@@ -11,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import {FileDropzone, SectionCard, buildUploadActors, formatNumber, uploadMachine, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {UploadStatus} from '@/modules/uploads/UploadStatus.jsx';
-import {importPaymentsFile} from '@/modules/uploads/uploadsApi.js';
+import {downloadPaymentsTemplate, importPaymentsFile} from '@/modules/uploads/uploadsApi.js';
 
 // fuera del componente: la máquina se arma una vez (con useMemo adentro sería lo mismo, con una línea más)
 const EXCEL_IMPORT_MACHINE = uploadMachine.provide({actors: buildUploadActors(importPaymentsFile)});
@@ -39,6 +40,8 @@ export const ExcelImportSection = () => {
                 accept="excel"
                 maxSize={EXCEL_MAX_SIZE}
                 busy={isUploading}
+                // «Descargar la plantilla» junto a «Elegir archivo»: la da el API y sale en el panel de descargas
+                template={{request: downloadPaymentsTemplate, format: 'xlsx'}}
                 actions={(
                     <Button variant="contained" disabled={!file || isUploading} onClick={() => send({type: 'UPLOAD', input: {file}})}>
                         {t('excel.submit')}

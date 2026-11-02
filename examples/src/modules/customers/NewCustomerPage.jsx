@@ -3,6 +3,7 @@
 // Lo que se ve aquí:
 //   - FormTextField, FormSelectField, FormNumberField (miles y decimales; al formulario llega '50000.00', listo para
 //     Money), FormCatalogField (se busca por clave o nombre) y FormDateField (de /date-pickers; viaja 'AAAA-MM-DD');
+//   - FormFileField: la constancia fiscal del tamaño de un campo (PDF de hasta 2 MB; se puede soltar encima);
 //   - varias opciones con `multiple`: los días en la lista (cada elegido con su palomita) y los estados en el catálogo (cada
 //     uno con su etiqueta y su ×); al formulario y al servidor llegan como listas;
 //   - el error de cada campo solo cuando ya se tocó y en el idioma activo; el correo se normaliza al salir del campo;
@@ -18,13 +19,16 @@ import Stack from '@mui/material/Stack';
 import {FormSection, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {FormDateField} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Form, Formik, FormCatalogField, FormNumberField, FormProblemAlert, FormSelectField, FormTextField, SubmitButton, applyServerProblem,
+    Form, Formik, FormCatalogField, FormFileField, FormNumberField, FormProblemAlert, FormSelectField, FormTextField, SubmitButton,
+    applyServerProblem,
 } from '@stackcraftmx/calcita/forms';
 
 import {customerTypeOptionsOf, deliveryDayOptionsOf} from '@/modules/customers/customerDictionaries.js';
 import {SIMULATED_RESPONSES, createCustomer} from '@/modules/customers/customersApi.js';
 import {FormsNav} from '@/modules/customers/FormsNav.jsx';
-import {NEW_CUSTOMER_INITIAL_VALUES, buildNewCustomerSchema, normalizedEmailOf} from '@/modules/customers/newCustomerSchema.js';
+import {
+    NEW_CUSTOMER_INITIAL_VALUES, TAX_CERTIFICATE_MAX_SIZE, buildNewCustomerSchema, normalizedEmailOf,
+} from '@/modules/customers/newCustomerSchema.js';
 import {ServerResponseCard} from '@/modules/customers/ServerResponseCard.jsx';
 import {useStatesCatalog} from '@/modules/customers/useStatesCatalog.js';
 
@@ -77,6 +81,10 @@ export const NewCustomerPage = () => {
                                 <FormSelectField name="delivery_days" label={t('form.deliveryDays')} options={deliveryDayOptionsOf(t)} multiple />
                                 <FormCatalogField name="delivery_states" label={t('form.deliveryStates')} placeholder={t('form.deliveryStatesPlaceholder')}
                                                   options={states} loading={isLoadingStates} multiple />
+                                </FormSection>
+                                <FormSection title={t('form.sections.documents')} footer={t('form.sections.documentsFooter')}>
+                                <FormFileField name="tax_certificate" label={t('form.taxCertificate')} helperText={t('form.taxCertificateHelp')}
+                                               accept="pdf" maxSize={TAX_CERTIFICATE_MAX_SIZE} />
                                 </FormSection>
                                 <Stack direction="row" sx={{justifyContent: 'flex-end'}}>
                                     <SubmitButton>{t('form.submit')}</SubmitButton>

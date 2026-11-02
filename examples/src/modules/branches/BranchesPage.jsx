@@ -3,12 +3,13 @@
 // «Agregar sucursal» abre el formulario en una ventana (NewBranchDialog); al guardar, la nueva sale en la lista y el mapa
 // vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra como ícono con su tooltip
 // (BarActionButton); en el teléfono flota arriba a la derecha.
-// El globo de cada alfiler es del proyecto (renderPopup de MapView): su estado, sus pedidos del mes y «Cómo llegar», que
-// abre la ruta en OpenStreetMap.
+// El globo de cada alfiler es del proyecto (renderPopup de MapView): la foto de la fachada (si se subió con ImageInput al
+// darla de alta), su estado, sus pedidos del mes y «Cómo llegar», que abre la ruta en OpenStreetMap.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useState} from 'react';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -92,11 +93,16 @@ export const BranchesPage = () => {
                     <MapView ariaLabel={t('map')} height={MAP_HEIGHT_PIXELS} selectedId={selectedId} onSelect={setSelectedId}
                              markers={(branches ?? []).map((branch) => ({
                                  id: branch.id, position: branch.position, title: `${branch.name} · ${branch.city}`, description: branch.address, tone: branch.tone,
-                                 status: branch.status, orders: branch.orders,
+                                 status: branch.status, orders: branch.orders, photoUrl: branch.photoUrl,
                              }))}
                              // el globo del proyecto: recibe el marcador con sus campos propios (status, orders)
                              renderPopup={(marker) => (
                                  <Stack spacing={0.75} sx={{minWidth: 200}}>
+                                     {/* la foto de la fachada, si la subieron al darla de alta */}
+                                     {marker.photoUrl && (
+                                         <Box component="img" src={marker.photoUrl} alt={t('photoOf', {name: marker.title})}
+                                              sx={{width: '100%', height: 110, objectFit: 'cover', borderRadius: 1, display: 'block'}} />
+                                     )}
                                      <Typography variant="subtitle2" component="p">{marker.title}</Typography>
                                      <Typography variant="body2" color="text.secondary" component="p">{marker.description}</Typography>
                                      <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>

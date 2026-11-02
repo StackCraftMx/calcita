@@ -17,10 +17,15 @@ const PHONE_DIGITS = /^\d{10}$/;
  * Los valores con que arranca el formulario. Las llaves son las del API: así un 422 cae en su campo. El límite de crédito
  * es texto ('50000.00'), como lo deja el campo de número y como lo lee Money.
  */
+/** El peso máximo de la constancia fiscal (el servidor vuelve a revisar que sea PDF). */
+export const TAX_CERTIFICATE_MAX_SIZE = '2 MB';
+
 export const NEW_CUSTOMER_INITIAL_VALUES = Object.freeze({
     name: '', email: '', phone: '', customer_type: '', credit_limit: '', state: '', customer_since: '',
     // varias opciones: listas (al menos un día; los estados, opcionales)
     delivery_days: [], delivery_states: [],
+    // la constancia de situación fiscal (PDF, opcional): el archivo elegido o null
+    tax_certificate: null,
 });
 
 /**
@@ -48,5 +53,6 @@ export function buildNewCustomerSchema() {
         customer_since: Yup.string(),
         delivery_days: Yup.array().of(Yup.string().oneOf(Object.keys(DELIVERY_DAY))).min(1),
         delivery_states: Yup.array().of(Yup.string()),
+        tax_certificate: Yup.mixed().nullable(),
     });
 }

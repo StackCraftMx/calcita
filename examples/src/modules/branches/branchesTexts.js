@@ -11,6 +11,7 @@ export const branchesTexts = {
             list: 'Lista de sucursales',
             map: 'Mapa de sucursales',
             orders: '{{count}} pedidos este mes',
+            photoOf: 'Fachada de {{name}}',
             directions: 'Cómo llegar',
             add: {
                 button: 'Agregar sucursal',
@@ -22,6 +23,8 @@ export const branchesTexts = {
                 address: 'Dirección',
                 addressPlaceholder: 'Calle, número y colonia',
                 status: 'Estado',
+                photo: 'Foto',
+                photoHelp: 'La fachada, en JPG, PNG o WebP de hasta 2 MB (opcional).',
                 cancel: 'Cancelar',
                 save: 'Guardar sucursal',
             },
@@ -38,6 +41,7 @@ export const branchesTexts = {
             list: 'Branch list',
             map: 'Branch map',
             orders: '{{count}} orders this month',
+            photoOf: 'Storefront of {{name}}',
             directions: 'How to get there',
             add: {
                 button: 'Add branch',
@@ -49,6 +53,8 @@ export const branchesTexts = {
                 address: 'Address',
                 addressPlaceholder: 'Street, number and neighborhood',
                 status: 'Status',
+                photo: 'Photo',
+                photoHelp: 'The storefront, as a JPG, PNG or WebP of up to 2 MB (optional).',
                 cancel: 'Cancel',
                 save: 'Save branch',
             },

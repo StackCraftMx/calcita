@@ -101,3 +101,49 @@ export function parseFileSize(size) {
     }
     return Math.round(Number(match[1]) * BYTES_BY_UNIT[(match[2] ?? 'b').toLowerCase()]);
 }
+
+/**
+ * Lo que queda al elegir o soltar archivos: cuáles pasan y cuáles no, con su motivo. La usan los cargadores de MUI del
+ * paquete (la zona, el compacto, «Adjuntar» y la imagen), así rechazan igual y con los mismos motivos.
+ *
+ * Un archivo con el MISMO nombre que uno que ya estaba lo reemplaza (se volvió a elegir corregido) y no cuenta doble ni
+ * en la cantidad ni en el peso. Se revisa en este orden: tipo, peso del archivo, cantidad y peso de todos juntos.
+ *
+ * @param {Array<{name: string, type?: string, size?: number}>} pickedFiles lo que se eligió o se soltó
+ * @param {object} rules
+ * @param {string} [rules.resolvedAccept] lo que regresa resolveAccept
+ * @param {number|null} [rules.maxBytes] el peso máximo de cada archivo
+ * @param {number} [rules.maxFiles] cuántos como máximo entre los que ya estaban y los nuevos
+ * @param {number|null} [rules.maxTotalBytes] cuánto pueden pesar todos juntos
+ * @param {Array<{name: string, size?: number}>} [rules.keptFiles] los que ya estaban (un archivo guardado sin peso cuenta 0)
+ * @returns {{files: Array<object>, accepted: Array<object>, rejected: Array<{file: object, reason: string}>}} files: los
+ *     que ya estaban (sin los reemplazados) y después los nuevos que pasaron
+ */
+export function screenFiles(pickedFiles, {resolvedAccept, maxBytes = null, maxFiles, maxTotalBytes = null, keptFiles = []} = {}) {
+    const kept = keptFiles.filter((keptFile) => !pickedFiles.some((picked) => picked.name === keptFile.name));
+    const accepted = [];
+    const rejected = [];
+    let totalBytes = kept.reduce((sum, keptFile) => sum + (keptFile.size ?? 0), 0);
+
+    for (const file of pickedFiles) {
+        let reason = null;
+        if (!matchesAccept(file, resolvedAccept)) {
+            reason = FILE_REJECTION.type;
+        } else if (maxBytes && file.size > maxBytes) {
+            reason = FILE_REJECTION.size;
+        } else if (maxFiles && kept.length + accepted.length >= maxFiles) {
+            reason = FILE_REJECTION.count;
+        } else if (maxTotalBytes && totalBytes + (file.size ?? 0) > maxTotalBytes) {
+            reason = FILE_REJECTION.total;
+        }
+
+        if (reason) {
+            rejected.push({file, reason});
+        } else {
+            accepted.push(file);
+            totalBytes += file.size ?? 0;
+        }
+    }
+
+    return {files: [...kept, ...accepted], accepted, rejected};
+}
