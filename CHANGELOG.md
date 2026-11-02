@@ -4,6 +4,22 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.47.0] - 2026-11-02
+
+### Agregado
+
+- `RecordCard`: la tarjeta de un registro. Encabezado con avatar (iniciales), folio, título y subtítulo, estatus e
+  insignias, botón para abrirlo (`onOpen`) y menú «⋯»; grupos de datos (`groups`, o `content` libre) lado a lado en
+  escritorio y uno debajo de otro en el teléfono; dato principal grande (`highlight`); `trailing` para lo que va al final
+  del cuerpo y `columns` para fijar el ancho de cada columna (el orden es el que se da: sirve para un orden obligatorio);
+  `footer`, `details` que se despliega (`onDetailsToggle`), `header` propio y `children`. Pieza del tema `CalcitaRecordCard`.
+- `RecordCardSkeleton`: su esqueleto con la misma forma.
+- `ActionsMenu`: submenús (`children`) que se abren dentro del mismo menú con «Regresar» (también con → y ←), títulos de
+  sección y separadores (`ACTIONS_MENU_ROW`), ligas (`href`, `download`), explicación por renglón (`description`) y renglones
+  propios (`render`). Lo de antes sigue igual.
+- Ejemplos: Pedidos con pestañas «Tabla / Tarjetas» (`?view=cards`), cada pedido en su tarjeta con su seguimiento y un menú
+  con submenús; «3. Tarjetas de registro» en Encabezados y tarjetas, con un ejemplo de orden fijo.
+
 ## [0.46.0] - 2026-11-02
 
 ### Agregado
