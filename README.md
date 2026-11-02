@@ -396,6 +396,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaProfileScreen` | `sectionTitle`, `form`, `preferences` |
 | `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
 | `CalcitaPdfViewerDialog` | `actions`, `frame` |
+| `CalcitaRecordCard` | `root`, `header`, `avatar`, `titles`, `status`, `body`, `group`, `fact`, `highlight`, `footer`, `details` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
 | `CalcitaRouteTabs` | `root`, `tab`, `badge` |
 | `CalcitaScrollableRow` | `root` |
@@ -525,6 +526,13 @@ Para explicar una pantalla la primera vez que se entra, la ayuda en carrusel: `H
 ilustración, título y texto; Siguiente, los puntos, las flechas o deslizando) y `useHelpCarousel({helpKey, version})`, que
 la abre sola la primera vez y por versión, hasta que se termina o se marca «No volver a mostrar» (`seen` para lo que ya sabe
 el servidor del proyecto); `HelpButton` es el «?» que la vuelve a abrir.
+
+Para listas donde una tabla se queda corta, `RecordCard`: arriba quién es (avatar con iniciales, folio, nombre) con su
+estatus, insignias, botón para abrirlo y menú «⋯»; en el cuerpo sus datos en grupos (`groups`, o `content` libre) y el dato
+principal grande; abajo lo que va a todo lo ancho y «Ver detalle», que despliega más. El orden es el que se da y nada se
+reacomoda solo: para un orden obligatorio, `trailing` pone el estatus al final y `columns` fija el ancho de cada columna.
+`RecordCardSkeleton` es su esqueleto. El menú «⋯» (`ActionsMenu`) acepta secciones, separadores, ligas, renglones propios y
+submenús (`children`), que se abren dentro del mismo menú con «Regresar».
 
 Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una pestaña y
 «atrás» regresa a la anterior); por ruta (cada pestaña su página) o en la consulta (`mode="query"`, `?tab=pagos`, con
