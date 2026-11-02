@@ -1,14 +1,14 @@
-// Lo que respondería el API al recibir archivos: importar un Excel (lo abre de verdad y cuenta sus renglones), recibir
-// varios adjuntos de un jalón y recibir cada adjunto por su cuenta (el «server» de FilePond).
+// Lo que respondería el API al recibir archivos: importar un Excel (lo abre de verdad y cuenta sus renglones), dar la
+// plantilla de ese Excel, recibir varios adjuntos de un jalón y recibir cada adjunto por su cuenta (el «server» de FilePond).
 //
 // La subida avanza como una de verdad (sendLikeNetwork) y después «procesa» un momento, sin porcentaje, como hace un
 // servidor después de recibir el cuerpo.
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
-import {formatFileSize} from '@stackcraftmx/calcita';
+import {formatFileSize, toolkitSettings} from '@stackcraftmx/calcita';
 
 import {ApiError} from '@/fakeServer/ApiError.js';
-import {NETWORK_DELAY_MILLISECONDS, sendLikeNetwork, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
+import {NETWORK_DELAY_MILLISECONDS, deliverLikeNetwork, sendLikeNetwork, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
 
 const HTTP_STATUS = Object.freeze({unprocessable: 422});
@@ -37,6 +37,38 @@ function fileProblemOf(message) {
             title: serverTextOf('validation.title'), detail: message, errors: {archivo: [message]},
         },
     });
+}
+
+// las columnas de la plantilla de pagos, en el idioma de la petición (lo que haría el Accept-Language)
+const PAYMENTS_TEMPLATE_COLUMNS = Object.freeze([
+    {header: {es: 'Fecha', en: 'Date'}, example: '2026-10-15', width: 14},
+    {header: {es: 'Referencia', en: 'Reference'}, example: 'TRF-000123', width: 18},
+    {header: {es: 'Cliente', en: 'Customer'}, example: 'Muebles del Norte', width: 28},
+    {header: {es: 'Importe', en: 'Amount'}, example: 1250.5, width: 14},
+]);
+const PAYMENTS_TEMPLATE_SHEET = {es: 'Pagos', en: 'Payments'};
+const EXCEL_CONTENT_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const TEMPLATE_DELIVERY_MILLISECONDS = 800;
+
+/**
+ * GET /imports/payments/template: el Excel vacío con las columnas que espera la importación y un renglón de ejemplo.
+ *
+ * @param {{signal: AbortSignal, onDownloadProgress: Function}} transferOptions las que pasa startDownload
+ * @returns {Promise<{blob: Blob, fileName: string}>}
+ */
+export async function downloadPaymentsTemplate(transferOptions) {
+    const language = toolkitSettings().language === 'en' ? 'en' : 'es';
+    // ExcelJS se carga solo aquí, al pedir la plantilla
+    const {default: ExcelJS} = await import('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet(PAYMENTS_TEMPLATE_SHEET[language]);
+    sheet.columns = PAYMENTS_TEMPLATE_COLUMNS.map((column) => ({header: column.header[language], width: column.width}));
+    sheet.getRow(1).font = {bold: true};
+    sheet.addRow(PAYMENTS_TEMPLATE_COLUMNS.map((column) => column.example));
+
+    const blob = new Blob([await workbook.xlsx.writeBuffer()], {type: EXCEL_CONTENT_TYPE});
+    await deliverLikeNetwork(blob, transferOptions, TEMPLATE_DELIVERY_MILLISECONDS);
+    return {blob, fileName: language === 'en' ? 'payments-template.xlsx' : 'plantilla-pagos.xlsx'};
 }
 
 /**

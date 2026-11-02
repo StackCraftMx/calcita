@@ -2,13 +2,13 @@
 // archivos adjuntos. Responder, responder a todos y reenviar llegan con todo ya puesto (draft). Cerrar con algo escrito lo
 // guarda en Borradores; «Tirar» lo borra. Al mandar, la pantalla enseña «Deshacer» unos segundos.
 //
-// Los archivos son de mentira: se toma su nombre y su peso, no se suben (en su proyecto, uploadWithProgress o su API).
+// Los adjuntos van con AttachmentsInput sin su botón: los abre el clip de abajo, como en Gmail (pickerRef), con un tope de
+// 25 MB entre todos. Son de mentira: se toma su nombre y su peso, no se suben (en su proyecto, uploadWithProgress o su API).
 // Los errores del servidor van a su campo.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useMemo, useRef, useState} from 'react';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,7 +18,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {formatFileSize, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {AttachmentsInput, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {
     Form, FormProblemAlert, FormTextField, Formik, SubmitButton, Yup, applyServerProblem, useFormikContext,
 } from '@stackcraftmx/calcita/forms';
@@ -30,6 +30,8 @@ const BODY_MIN_ROWS = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // lo que se revisa para saber si hay algo escrito (y vale la pena guardarlo como borrador)
 const DRAFT_FIELDS = Object.freeze(['to', 'cc', 'bcc', 'subject', 'body']);
+// lo más que pueden pesar todos los adjuntos de un mensaje (el tope de Gmail)
+const ATTACHMENTS_MAX_TOTAL_SIZE = '25 MB';
 
 /** ¿Todas las direcciones del campo son correos? (vacío también vale: el campo obligatorio lo revisa required) */
 const areEmails = (text) => (text ?? '').split(/[,;]/).map((address) => address.trim()).filter(Boolean).every((address) => EMAIL_PATTERN.test(address));
@@ -45,7 +47,7 @@ const KeepLatestValues = ({target}) => {
 
 /**
  * @param {object} props
- * @param {{to?: string, cc?: string, bcc?: string, subject?: string, body?: string, attachments?: Array<{name: string, size: string}>, conversationId?: string, draftId?: string, mode?: 'new'|'reply'|'replyAll'|'forward', isRestored?: boolean}|null} props.draft
+ * @param {{to?: string, cc?: string, bcc?: string, subject?: string, body?: string, attachments?: Array<File|{name: string, size?: number|string}>, conversationId?: string, draftId?: string, mode?: 'new'|'reply'|'replyAll'|'forward', isRestored?: boolean}|null} props.draft
  *     lo que llega ya puesto; null: cerrado. isRestored: regresó de «Deshacer» (al cerrar se guarda aunque no cambie)
  * @param {() => void} props.onClose
  * @param {(sent: object, values: object) => void} props.onSent lo que regresó el servidor (para «Deshacer») y lo que se escribió
@@ -55,7 +57,8 @@ export const ComposeDialog = ({draft, onClose, onSent, onDraftChange}) => {
     const {t} = useToolkitTranslation('mail');
     const [showsCopies, setShowsCopies] = useState(Boolean(draft?.cc || draft?.bcc));
     const [attachments, setAttachments] = useState(draft?.attachments ?? []);
-    const fileInput = useRef(null);
+    // el clip de abajo abre la ventana de archivos de AttachmentsInput
+    const attachPicker = useRef(null);
     // lo último escrito, para guardarlo como borrador al cerrar
     const latestValues = useRef(null);
     // el esquema se arma al pintar: yup toma sus mensajes (ya traducidos) al armarlo
@@ -122,21 +125,9 @@ export const ComposeDialog = ({draft, onClose, onSent, onDraftChange}) => {
                             {showsCopies && <FormTextField name="bcc" label={t('compose.bcc')} helperText={t('compose.bccHint')} />}
                             <FormTextField name="subject" label={t('compose.subject')} />
                             <FormTextField name="body" label={t('compose.body')} multiline minRows={BODY_MIN_ROWS} autoFocus={Boolean(draft.to)} />
-                            {attachments.length > 0 && (
-                                <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: 'wrap'}} aria-label={t('compose.attachments')} role="group">
-                                    {attachments.map((attachment) => (
-                                        <Chip key={attachment.name} icon={<AttachFileRoundedIcon />} label={`${attachment.name} · ${attachment.size}`}
-                                              onDelete={() => setAttachments((current) => current.filter((item) => item.name !== attachment.name))} />
-                                    ))}
-                                </Stack>
-                            )}
-                            {/* el selector de archivos del sistema, escondido: lo abre el clip */}
-                            <input ref={fileInput} type="file" multiple hidden aria-hidden="true"
-                                   onChange={(event) => {
-                                       const picked = [...event.target.files].map((file) => ({name: file.name, size: formatFileSize(file.size)}));
-                                       setAttachments((current) => [...current.filter((item) => !picked.some((file) => file.name === item.name)), ...picked]);
-                                       event.target.value = '';
-                                   }} />
+                            {/* sin su botón: lo abre el clip de abajo; cada adjunto en su chip con su × */}
+                            <AttachmentsInput value={attachments} onChange={setAttachments} showButton={false} pickerRef={attachPicker}
+                                              maxTotalSize={ATTACHMENTS_MAX_TOTAL_SIZE} />
                         </Stack>
                     </DialogContent>
                     <DialogActions>
@@ -144,7 +135,7 @@ export const ComposeDialog = ({draft, onClose, onSent, onDraftChange}) => {
                             <IconButton aria-label={t('compose.discard')} onClick={discard}><DeleteOutlineIcon /></IconButton>
                         </Tooltip>
                         <Tooltip title={t('compose.attach')}>
-                            <IconButton aria-label={t('compose.attach')} onClick={() => fileInput.current?.click()}><AttachFileRoundedIcon /></IconButton>
+                            <IconButton aria-label={t('compose.attach')} onClick={() => attachPicker.current?.open()}><AttachFileRoundedIcon /></IconButton>
                         </Tooltip>
                         <Stack direction="row" spacing={1} sx={{ml: 'auto'}}>
                             <Button onClick={closeAndKeep}>{t('compose.saveAndClose')}</Button>

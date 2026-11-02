@@ -11,14 +11,16 @@ import Stack from '@mui/material/Stack';
 import {FormSection, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {DateInput} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Controller, FormCatalogField, FormNumberField, FormProblemAlert, FormProvider, FormSelectField, FormTextField, SubmitButton,
+    Controller, FormCatalogField, FormFileField, FormNumberField, FormProblemAlert, FormProvider, FormSelectField, FormTextField, SubmitButton,
     applyServerProblem, useForm, yupResolver,
 } from '@stackcraftmx/calcita/react-hook-form';
 
 import {customerTypeOptionsOf, deliveryDayOptionsOf} from '@/modules/customers/customerDictionaries.js';
 import {SIMULATED_RESPONSES, createCustomer} from '@/modules/customers/customersApi.js';
 import {FormsNav} from '@/modules/customers/FormsNav.jsx';
-import {NEW_CUSTOMER_INITIAL_VALUES, buildNewCustomerSchema, normalizedEmailOf} from '@/modules/customers/newCustomerSchema.js';
+import {
+    NEW_CUSTOMER_INITIAL_VALUES, TAX_CERTIFICATE_MAX_SIZE, buildNewCustomerSchema, normalizedEmailOf,
+} from '@/modules/customers/newCustomerSchema.js';
 import {ServerResponseCard} from '@/modules/customers/ServerResponseCard.jsx';
 import {useStatesCatalog} from '@/modules/customers/useStatesCatalog.js';
 
@@ -83,6 +85,10 @@ export const NewCustomerHookFormPage = () => {
                                 <FormSelectField name="delivery_days" label={t('form.deliveryDays')} options={deliveryDayOptionsOf(t)} multiple />
                                 <FormCatalogField name="delivery_states" label={t('form.deliveryStates')} placeholder={t('form.deliveryStatesPlaceholder')}
                                                   options={states} loading={isLoadingStates} multiple />
+                                </FormSection>
+                                <FormSection title={t('form.sections.documents')} footer={t('form.sections.documentsFooter')}>
+                                <FormFileField name="tax_certificate" label={t('form.taxCertificate')} helperText={t('form.taxCertificateHelp')}
+                                               accept="pdf" maxSize={TAX_CERTIFICATE_MAX_SIZE} />
                                 </FormSection>
                                 <Stack direction="row" sx={{justifyContent: 'flex-end'}}>
                                     <SubmitButton>{t('form.submit')}</SubmitButton>

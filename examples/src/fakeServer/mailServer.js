@@ -7,6 +7,8 @@
 // El texto de los mensajes es texto (sin HTML): uno trae HTML a propósito, para ver que se pinta como texto.
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
+import {formatFileSize} from '@stackcraftmx/calcita';
+
 import {ApiError} from '@/fakeServer/ApiError.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
@@ -289,7 +291,10 @@ export async function sendMessage({conversationId, draftId, to, cc, bcc, subject
     failIfInvalidMessage({to, cc, bcc, subject});
     const message = {
         id: `message-${nextNumber++}`, from: ME, to: addressesOf(to), cc: addressesOf(cc), body: body ?? '', receivedAt: new Date().toISOString(),
-        attachments: attachments.map((attachment) => ({name: attachment.name, size: attachment.size})),
+        // el peso llega en bytes (un archivo recién elegido) o ya en texto (uno reenviado): se guarda en texto, como los demás
+        attachments: attachments.map((attachment) => ({
+            name: attachment.name, size: typeof attachment.size === 'number' ? formatFileSize(attachment.size) : attachment.size,
+        })),
     };
     let conversation = conversationId ? findOrFail(conversationId) : null;
     if (conversation) {

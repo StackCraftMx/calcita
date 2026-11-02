@@ -13,7 +13,7 @@ const TONE_BY_STATUS = Object.freeze({[BRANCH_STATUS.open]: 'success', [BRANCH_S
 
 /** La sucursal del API en la forma de la pantalla. */
 function toScreen(branch) {
-    return {...branch, position: [branch.latitude, branch.longitude], tone: TONE_BY_STATUS[branch.status]};
+    return {...branch, position: [branch.latitude, branch.longitude], tone: TONE_BY_STATUS[branch.status], photoUrl: branch.photo_url ?? null};
 }
 
 /**
@@ -28,7 +28,7 @@ export async function loadBranches(filters, signal) {
 /**
  * Agrega una sucursal. Si el servidor dice que no (422), truena con su ApiError: el formulario pone cada error en su campo.
  *
- * @param {{name: string, city: string, address: string, status: string}} values
+ * @param {{name: string, city: string, address: string, status: string, photo: File|null}} values
  * @returns {Promise<{branch: object, message: string}>}
  */
 export async function addBranch(values) {
