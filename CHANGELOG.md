@@ -4,6 +4,22 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.33.0] - 2026-11-01
+
+### Agregado
+
+- `/date-pickers`: `DateTimeInput` y `FormDateTimeField` (fecha con hora), `TimeInput` y `FormTimeField` (hora del día) y
+  `MonthInput` y `FormMonthField` (mes), con los selectores de MUI X. La fecha con hora viaja como instante en UTC
+  (`'2026-11-01T18:30:00Z'`; también lee lo que llega con desfase, `'…-06:00'`) y se ve en la zona del proveedor con su
+  nombre abajo (`timeZone` la cambia en un solo campo; `showTimeZone` y `timeZoneLabel` lo quitan o lo cambian). La hora
+  viaja `'HH:mm'` de 24 horas y el mes `'AAAA-MM'`. La hora se ve de 24 horas o con a. m. y p. m. según `hourCycle`.
+- `CALENDAR_MONTH_FORMAT`, `INSTANT_FORMAT`, `TIME_OF_DAY_FORMAT` y `timeZoneNameOf` (el nombre de una zona como lo dice
+  una persona).
+- `pickerProps` en los cuatro campos (también en `DateInput`): lo demás del selector de MUI X (`shouldDisableDate`,
+  `slots`, `localeText`…); su `onClose` también se llama.
+- Ejemplos: página «Fechas y horas» en Hecho en Calcita; las citas eligen la hora con `TimeInput`, el correo pospone hasta
+  un día y hora con `DateTimeInput`, y el reporte por mes se filtra entre dos meses con `MonthInput`.
+
 ## [0.32.2] - 2026-10-19
 
 ### Corregido
