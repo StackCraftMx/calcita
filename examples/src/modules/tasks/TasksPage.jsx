@@ -24,11 +24,16 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import {
-    BarSearch, ConfirmDialog, PageHeading, SegmentedControl, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
+    BarSearch, ConfirmDialog, HelpButton, PageHeading, SegmentedControl, toastProblem, toastSuccess, useConfirmAction, useHelpCarousel,
+    useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {KanbanBoard, moveCard} from '@stackcraftmx/calcita/kanban';
 
 import {TaskDialog} from '@/modules/tasks/TaskDialog.jsx';
+import {TasksHelp} from '@/modules/tasks/TasksHelp.jsx';
+
+// súbala cuando la ayuda del tablero cambie y deba volver a salir sola
+const TASKS_HELP_VERSION = '1';
 import {addTask, archiveDone, loadTaskBoard, removeTask, saveCompletion, saveMove, saveTask} from '@/modules/tasks/tasksApi.js';
 
 const LOADING_HEIGHT_PIXELS = 360;
@@ -68,6 +73,8 @@ const fullIndexOf = (tasks, visibleTasks, {cardId, toColumnId, toIndex}) => {
 export const TasksPage = () => {
     // el idioma: al cambiarlo se vuelve a pedir el tablero (los nombres de las columnas llegan traducidos del servidor)
     const {t, language} = useToolkitTranslation('tasks');
+    // la ayuda en carrusel: sola la primera vez; después, con el «?» del encabezado
+    const help = useHelpCarousel({helpKey: 'tasks', version: TASKS_HELP_VERSION});
     const [board, setBoard] = useState(null);
     const [query, setQuery] = useState('');
     const [who, setWho] = useState(WHO.all);
@@ -175,7 +182,8 @@ export const TasksPage = () => {
 
     return (
         <Stack spacing={3}>
-            <PageHeading title={t('page.title')} description={t('page.description')} />
+            <PageHeading title={t('page.title')} description={t('page.description')} actions={<HelpButton onClick={help.openHelp} />} />
+            <TasksHelp open={help.open} onClose={help.closeHelp} />
             {/* la búsqueda sube a la barra de la app y se encoge a la lupa sin usar (en el teléfono flota arriba) */}
             <BarSearch value={query} onChange={setQuery} placeholder={t('search')} />
             <SegmentedControl ariaLabel={t('who.label')} value={who} onChange={(next) => setWho(next ?? who)}
