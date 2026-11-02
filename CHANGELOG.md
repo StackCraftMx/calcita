@@ -4,6 +4,14 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.41.1] - 2026-11-02
+
+### Arreglado
+
+- `NumberInput` (y `FormNumberField`): al entrar con Tab a un monto que llegó sin decimales («50000», que se pinta
+  «50,000.00»), lo tecleado se pegaba al final en lugar de reemplazar (salía 50,000,100,000). Al entrar el texto cambia y el
+  navegador perdía la selección; ahora, si estaba todo seleccionado, se vuelve a seleccionar. Con un clic no cambia nada.
+
 ## [0.41.0] - 2026-11-02
 
 ### Agregado
