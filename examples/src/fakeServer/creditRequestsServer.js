@@ -62,6 +62,9 @@ function fieldErrorsOf(request) {
     if (!LOAN_TERMS_IN_MONTHS.includes(Number(request.term_months))) {
         errors.term_months = [serverTextOf('creditRequests.termInvalid')];
     }
+    if (!/^\d{18}$/.test(request.deposit_clabe ?? '')) {
+        errors.deposit_clabe = [serverTextOf('creditRequests.clabeInvalid')];
+    }
     if (!STATE_CODES.has(request.state)) {
         errors.state = [serverTextOf('customers.stateInvalid')];
     }

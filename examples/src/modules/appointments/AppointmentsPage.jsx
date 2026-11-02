@@ -2,6 +2,7 @@
 //   - pide al servidor solo las citas del rango que se ve (onDatesChange): así lo haría un backend con un año de citas;
 //   - elegir días u horas abre «Agendar cita»; picar una cita enseña su detalle (EventDetails): cuándo, dónde, la liga de la
 //     reunión con «Unirse», los invitados con su respuesta y el recordatorio, con «Editar» y «Borrar» (con confirmación);
+//   - la cita que todavía no empieza dice cuánto falta (Countdown), segundo a segundo;
 //   - arrastrarla la cambia de día u hora; los domingos la tienda no entrega: el servidor responde 409 y la cita regresa;
 //   - el horario de la tienda (lunes a sábado de 8 a 20) se marca en la semana y el día (fullCalendarProps businessHours).
 // El color dice el tipo: las entregas con el color de información, las instalaciones con el de éxito y las visitas con el
@@ -13,8 +14,9 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import {
-    ConfirmDialog, PageHeading, SectionCard, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
+    ConfirmDialog, Countdown, PageHeading, SectionCard, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {EventCalendar, EventDetails} from '@stackcraftmx/calcita/calendar';
 
@@ -98,6 +100,13 @@ export const AppointmentsPage = () => {
             {/* la ventana se nombra con el título de la cita (titleId) */}
             <Dialog open={Boolean(openAppointment)} onClose={() => setOpenId(null)} maxWidth="xs" fullWidth aria-labelledby={DETAIL_TITLE_ID}>
                 <DialogContent>
+                    {/* cuánto falta para que empiece (Countdown): al llegar a cero dice «Ya empezó» */}
+                    {openAppointment && Date.parse(openAppointment.start) > Date.now() && (
+                        <Stack direction="row" spacing={1} sx={{alignItems: 'baseline', mb: 1.5}}>
+                            <Typography variant="body2" color="text.secondary">{t('detail.startsIn')}</Typography>
+                            <Countdown until={openAppointment.start} label={t('detail.startsIn')} completedText={t('detail.started')} variant="subtitle1" />
+                        </Stack>
+                    )}
                     {openAppointment && (
                         <EventDetails
                             titleId={DETAIL_TITLE_ID}

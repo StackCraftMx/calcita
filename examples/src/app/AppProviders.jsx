@@ -1,8 +1,9 @@
 // La raíz de la app: el ÚNICO lugar donde se conecta el framework. ToolkitProvider recibe el idioma, los textos de los
 // módulos, la zona, la moneda, el router y la regla de permisos de la sesión (AccountProvider, con el conector de la cuenta); NuqsAdapter guarda en la
-// URL el estado de las tablas. Los avisos (Toaster), el panel de descargas y la invitación a instalar la app
-// (InstallPromptBanner) se montan aquí UNA vez, para las pantallas con sesión y para las de entrar. Aquí también se vigila
-// si ya se publicó otra versión (usePublishedBuildWatch): la app anclada al inicio del iPhone se actualiza sola.
+// URL el estado de las tablas. Los avisos (Toaster), el panel de descargas, la invitación a instalar la app
+// (InstallPromptBanner) y el aviso de cookies (LegalNotices) se montan aquí UNA vez, para las pantallas con sesión y para las
+// de entrar. Aquí también se vigila si ya se publicó otra versión (usePublishedBuildWatch): la app anclada al inicio del
+// iPhone se actualiza sola.
 //
 // Va como elemento de la ruta raíz y no afuera del router porque los dos usan sus hooks (useNavigate, useLocation).
 //
@@ -21,6 +22,7 @@ import {
     APP_BUILD_ID, APP_FILE_TYPES, APP_LANGUAGES, APP_NAME, BUILD_VERSION_URL, PRODUCT_CURRENCY, PRODUCT_TIME_ZONE,
 } from '@/app/appSettings.js';
 import {accountConnector} from '@/app/accountConnector.js';
+import {LegalNotices} from '@/app/LegalNotices.jsx';
 import {APP_TEXTS} from '@/app/appTexts.js';
 
 export const AppProviders = () => {
@@ -45,6 +47,7 @@ export const AppProviders = () => {
                     <Toaster />
                     <DownloadManager />
                     <InstallPromptBanner />
+                    <LegalNotices />
                 </ToolkitProvider>
             )}
         </AccountProvider>

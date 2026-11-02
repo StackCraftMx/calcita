@@ -8,10 +8,10 @@
 import {useMemo, useState} from 'react';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import {FormSection, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {FormSection, INPUT_MASK, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {DateInput} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Controller, FormCatalogField, FormFileField, FormNumberField, FormProblemAlert, FormProvider, FormSelectField, FormTextField, SubmitButton,
+    Controller, FormCatalogField, FormFileField, FormMaskedField, FormNumberField, FormProblemAlert, FormProvider, FormSelectField, FormTextField, SubmitButton,
     applyServerProblem, useForm, yupResolver,
 } from '@stackcraftmx/calcita/react-hook-form';
 
@@ -33,8 +33,8 @@ const ContactFields = () => {
             <FormTextField name="name" label={t('form.name')} placeholder={t('form.namePlaceholder')} autoComplete="off" />
             <FormTextField name="email" label={t('form.email')} type="email" placeholder={t('form.emailPlaceholder')} helperText={t('form.emailHelp')}
                            normalizeOnBlur={normalizedEmailOf} autoComplete="off" />
-            <FormTextField name="phone" label={t('form.phone')} placeholder={t('form.phonePlaceholder')} helperText={t('form.phoneHelp')} inputMode="numeric"
-                           autoComplete="off" />
+            <FormMaskedField name="phone" mask={INPUT_MASK.phone} label={t('form.phone')} placeholder={t('form.phonePlaceholder')}
+                             helperText={t('form.phoneHelp')} autoComplete="off" />
         </Stack>
     );
 };

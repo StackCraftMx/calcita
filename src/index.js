@@ -111,6 +111,8 @@ export {
 export {default as CatalogInput} from '@/inputs/CatalogInput.jsx';
 export {default as ColorInput} from '@/inputs/ColorInput.jsx';
 export {default as FieldFrame} from '@/inputs/FieldFrame.jsx';
+export {default as MaskedInput} from '@/inputs/MaskedInput.jsx';
+export {INPUT_MASK, isMaskComplete, maskPatternOf, maskedTextOf, rawValueOf} from '@/inputs/inputMasks.js';
 export {FORM_ROW_CLASS, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
 export {default as NumberInput} from '@/inputs/NumberInput.jsx';
 export {default as SelectInput} from '@/inputs/SelectInput.jsx';
@@ -119,6 +121,17 @@ export {default as TextInput} from '@/inputs/TextInput.jsx';
 export {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 export {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
 export {translateValidationMessage} from '@/forms/validationMessages.js';
+
+// ─── tiempo y documentos: la cuenta regresiva y un PDF en una ventana ─────────
+export {default as Countdown} from '@/ui/countdown/Countdown.jsx';
+export {countdownClockOf, countdownPartsOf} from '@/ui/countdown/countdownParts.js';
+export {useCountdown} from '@/ui/countdown/useCountdown.js';
+export {default as PdfViewerDialog} from '@/ui/documents/PdfViewerDialog.jsx';
+
+// ─── avisos legales: el de cookies y aceptar los términos ────────────────────
+export {default as CookieNotice} from '@/legal/CookieNotice.jsx';
+export {default as TermsAcceptanceDialog} from '@/legal/TermsAcceptanceDialog.jsx';
+export {DEFAULT_COOKIE_CONSENT_KEY, useCookieConsent} from '@/legal/useCookieConsent.js';
 
 // ─── diccionarios de valores del API ─────────────────────────────────────────
 export {dictionaryEntryOf, labelOf, lookup, shortLabelOf} from '@/dictionaries/dictionaries.js';

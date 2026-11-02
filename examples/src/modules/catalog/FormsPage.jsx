@@ -12,11 +12,13 @@ import NewCustomerForm from '@/modules/catalog/demos/forms/NewCustomerForm.tsx';
 import NewCustomerHookForm from '@/modules/catalog/demos/forms/NewCustomerHookForm.tsx';
 import CreditWizard from '@/modules/catalog/demos/forms/CreditWizard.tsx';
 import CreditWizardHookForm from '@/modules/catalog/demos/forms/CreditWizardHookForm.tsx';
+import MaskedFields from '@/modules/catalog/demos/forms/MaskedFields.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
 const loadWizard = () => import('@/modules/catalog/demos/forms/CreditWizard.tsx?demo-source');
 const loadHookWizard = () => import('@/modules/catalog/demos/forms/CreditWizardHookForm.tsx?demo-source');
+const loadMasked = () => import('@/modules/catalog/demos/forms/MaskedFields.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -56,6 +58,15 @@ const HOOK_WIZARD_EXTENSIONS = [
     {id: 'texts', option: 'texts', example: "texts={{wizard: {next: 'Continuar', back: 'Regresar'}}}"},
 ];
 
+const MASKED_EXTENSIONS = [
+    {id: 'presets', option: 'mask={INPUT_MASK.phone · clabe · rfc · curp · uuid · postalCode · card}', example: '<MaskedInput label="CLABE" mask={INPUT_MASK.clabe} value={clabe} onChange={setClabe} />'},
+    {id: 'pattern', option: "mask='9 A X H'", example: 'mask="AAA-9999"  // 9 dígito · A letra · X letra o dígito · H hexadecimal'},
+    {id: 'clean', option: 'value · onChange (valor limpio)', example: "onChange={(clean) => setPhone(clean)}  // '5551234567'"},
+    {id: 'forms', option: 'FormMaskedField', example: "<FormMaskedField name=\"phone\" mask=\"phone\" label=\"Teléfono\" />  // /forms o /react-hook-form"},
+    {id: 'pure', option: 'maskedTextOf · rawValueOf · isMaskComplete', example: "maskedTextOf('5551234567', INPUT_MASK.phone)  // '555 123 4567'"},
+    {id: 'textInput', option: 'lo de TextInput', example: 'helperText="10 dígitos" placeholder="555 123 4567" error={errors.phone}'},
+];
+
 export const FormsPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `forms.${section}`, extensions);
@@ -71,6 +82,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('wizard', WIZARD_EXTENSIONS)} Demo={CreditWizard} loadSource={loadWizard} />
             <DemoSection title={t('forms.hookWizard.title')} description={t('forms.hookWizard.description')}
                          extensions={rowsOf('hookWizard', HOOK_WIZARD_EXTENSIONS)} Demo={CreditWizardHookForm} loadSource={loadHookWizard} />
+            <DemoSection title={t('forms.masked.title')} description={t('forms.masked.description')}
+                         extensions={rowsOf('masked', MASKED_EXTENSIONS)} Demo={MaskedFields} loadSource={loadMasked} />
         </Stack>
     );
 };

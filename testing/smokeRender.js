@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, ColorInput, FileDropzone, FileInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, ColorInput, FileDropzone, FileInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -142,6 +142,12 @@ const CASES = [
     ['ImageInput con la imagen guardada', h(ImageInput, {label: 'Foto', value: '/fotos/ana.jpg', onChange: () => {}, shape: IMAGE_SHAPE.rounded}), 'src="/fotos/ana.jpg"'],
     ['ImageInput vacío', h(ImageInput, {label: 'Foto', value: null, onChange: () => {}}), 'Elegir imagen'],
     ['CopyButton con su nombre y el renglón al picar', h(CopyButton, {label: 'Copiar el renglón', value: () => 'a\tb'}), 'aria-label="Copiar el renglón"'],
+    ['MaskedInput con el teléfono con espacios', h(MaskedInput, {label: 'Teléfono', mask: INPUT_MASK.phone, value: '5551234567', onChange: () => {}}), 'value="555 123 4567"'],
+    ['Countdown con días', h(Countdown, {until: Date.now() + (2 * 86_400 + 3600) * 1000, label: 'Cierra en'}), ' d 01:00:0'],
+    ['Countdown que ya terminó', h(Countdown, {until: '2020-01-01T00:00:00Z'}), 'Ya terminó'],
+    ['CookieNotice con su política', h(CookieNotice, {version: '2026-11', policyHref: '/docs/cookies.pdf'}), 'Política de cookies'],
+    ['TermsAcceptanceDialog cerrado no pinta', h(TermsAcceptanceDialog, {open: false, version: '1', onAccept: () => {}, onDecline: () => {}}, 'Texto'), ''],
+    ['PdfViewerDialog cerrado no pinta', h(PdfViewerDialog, {open: false, onClose: () => {}, title: 'Aviso', src: '/aviso.pdf'}), ''],
     ['TemplateDownloadButton con su API', h(TemplateDownloadButton, {request: async () => ({blob: new Blob(['a']), fileName: 'plantilla.csv'}), format: 'csv'}), 'Descargar la plantilla'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
     // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)

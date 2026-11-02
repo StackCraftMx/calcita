@@ -9,7 +9,7 @@ export const appointmentsTexts = {
             },
             calendar: 'Calendario de entregas',
             kinds: {delivery: 'Entrega', installation: 'Instalación', visit: 'Visita'},
-            detail: {edit: 'Editar', delete: 'Borrar', close: 'Cerrar'},
+            detail: {edit: 'Editar', delete: 'Borrar', close: 'Cerrar', startsIn: 'Empieza en', started: 'Ya empezó'},
             confirmDelete: {title: '¿Borrar la cita?', description: 'Se quita del calendario de todos sus invitados. No se puede deshacer.'},
             dialog: {
                 newTitle: 'Agendar cita',
@@ -48,7 +48,7 @@ export const appointmentsTexts = {
             },
             calendar: 'Delivery calendar',
             kinds: {delivery: 'Delivery', installation: 'Installation', visit: 'Visit'},
-            detail: {edit: 'Edit', delete: 'Delete', close: 'Close'},
+            detail: {edit: 'Edit', delete: 'Delete', close: 'Close', startsIn: 'Starts in', started: 'It already started'},
             confirmDelete: {title: 'Delete the appointment?', description: 'It is removed from the calendar of all its guests. This cannot be undone.'},
             dialog: {
                 newTitle: 'Schedule appointment',

@@ -10,9 +10,12 @@ import {useMemo, useState} from 'react';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import {CopyButton, FormSection, PageHeading, SecretField, SectionCard, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {
-    Form, Formik, FormCatalogField, FormColorField, FormNumberField, FormSelectField, FormTextField, FormWizard, applyServerProblem,
+    CopyButton, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, toastSuccess, useToolkitTranslation,
+} from '@stackcraftmx/calcita';
+import {
+    Form, Formik, FormCatalogField, FormColorField, FormMaskedField, FormNumberField, FormSelectField, FormTextField, FormWizard,
+    applyServerProblem,
 } from '@stackcraftmx/calcita/forms';
 
 import {
@@ -59,6 +62,8 @@ export const CreditRequestPage = () => {
                 <FormSection>
                     <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')} />
                     <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
+                    <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
+                                     placeholder="002 180 01234567890 1" autoComplete="off" />
                 </FormSection>
             ),
         },
@@ -67,7 +72,7 @@ export const CreditRequestPage = () => {
             content: (
                 <FormSection footer={t('credit.guarantorHelp')}>
                     <FormTextField name="guarantor_name" label={t('credit.guarantorName')} autoComplete="off" />
-                    <FormTextField name="guarantor_phone" label={t('credit.guarantorPhone')} inputMode="numeric" autoComplete="off" />
+                    <FormMaskedField name="guarantor_phone" mask={INPUT_MASK.phone} label={t('credit.guarantorPhone')} autoComplete="off" />
                 </FormSection>
             ),
         },

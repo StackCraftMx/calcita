@@ -328,6 +328,8 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaColumnChart` | `chart` |
 | `CalcitaConfirmDialog` | `problem`, `actions` |
 | `CalcitaContentDialog` | `header`, `title`, `closeButton`, `body` |
+| `CalcitaCookieNotice` | `root`, `text`, `actions` |
+| `CalcitaCountdown` | `root` |
 | `CalcitaDateRangeFilter` | `chip`, `panel`, `actions` |
 | `CalcitaDefinitionList` | `root`, `entry`, `label`, `value` |
 | `CalcitaDemoTotpCode` | `root`, `code` |
@@ -377,6 +379,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaProfileHeader` | `root`, `cover`, `body`, `avatar`, `text`, `name`, `chips`, `actions` |
 | `CalcitaProfileScreen` | `sectionTitle`, `form`, `preferences` |
 | `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
+| `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
 | `CalcitaScrollableRow` | `root` |
 | `CalcitaSecondStepForm` | `actions` |
@@ -398,6 +401,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaTableToggle` | `root`, `button` |
 | `CalcitaTag` | `root` |
 | `CalcitaTemplateDownloadButton` | `root` |
+| `CalcitaTermsAcceptanceDialog` | `content`, `frame`, `footer` |
 | `CalcitaTextInput` | `field` |
 | `CalcitaTopMenu` | `link`, `root` |
 | `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
@@ -827,6 +831,19 @@ import {FormRow, FormSection} from '@stackcraftmx/calcita';
 Los campos van directo dentro de la `FormSection` (sin Grid ni Stack en medio): la línea entre renglones se dibuja entre
 hermanos.
 
+### Campos con máscara
+
+`MaskedInput` (y `FormMaskedField` en `/forms` y `/react-hook-form`) es el campo de texto de la casa con una máscara: mientras
+se escribe se ven los separadores («555 123 4567») y al formulario llega el valor limpio («5551234567»). Pegar un número con
+otros separadores también sirve. Las de siempre vienen con nombre en `INPUT_MASK` (`phone`, `postalCode`, `clabe`, `card`,
+`rfc`, `curp`, `uuid`); una propia es un patrón donde `9` es un dígito, `A` una letra, `X` letra o dígito y `H` hexadecimal
+(`mask="AAA-9999"`). El RFC y la CURP solo se filtran y se pasan a mayúsculas mientras se escriben.
+
+```jsx
+<FormMaskedField name="phone" mask={INPUT_MASK.phone} label="Teléfono" placeholder="555 123 4567" />
+<FormMaskedField name="clabe" mask="clabe" label="CLABE" />
+```
+
 ### Fechas y horas
 
 Cuatro campos en `/date-pickers`, con los selectores de MUI X. Cada uno viaja en texto con una sola forma y se ve en el
@@ -889,6 +906,28 @@ import {AttachmentsInput, FileInput} from '@stackcraftmx/calcita';
 <FileInput label="Constancia fiscal" value={file} onChange={setFile} accept="pdf" maxSize="2 MB"
            template={{href: '/plantillas/constancia.pdf'}} />
 <AttachmentsInput value={files} onChange={setFiles} accept={['pdf', 'image']} maxFiles={5} maxTotalSize="10 MB" />
+```
+
+## Documentos, avisos legales y cuenta regresiva
+
+- `PdfViewerDialog`: un PDF en una ventana con el visor del navegador (sin librerías), con «Abrir en otra pestaña» y
+  «Descargar» siempre a la vista (en el iPhone el visor dentro de la página enseña solo la primera hoja). `src` es la
+  dirección o el archivo (un Blob de su API).
+- `CookieNotice`: el aviso de cookies abajo, hasta que se acepta ESA versión en el navegador; no bloquea la pantalla.
+  `useCookieConsent` para pintar uno propio.
+- `TermsAcceptanceDialog`: aceptar los términos antes de seguir; pide leerlos hasta el final, marcar la casilla y «Acepto»,
+  y no se cierra con Escape. Quién aceptó qué versión lo registra su API en `onAccept` (la ventana espera y, si falla, dice
+  el motivo).
+- `Countdown`: «02:14:30» hasta un momento, con días cuando faltan, lo que dice al llegar a cero y `onComplete`;
+  `useCountdown` da las partes para pintarla a su manera.
+
+```jsx
+<CookieNotice version="2026-11" policyHref="/legal/cookies" />
+<TermsAcceptanceDialog open={!session.terms.accepted} version={session.terms.current} onAccept={({version}) => api.acceptTerms(version)}
+                       onDecline={signOut}>
+    <TermsText />
+</TermsAcceptanceDialog>
+<Countdown until={auction.closes_at} onComplete={reloadAuction} completedText="Cerrada" />
 ```
 
 ## Dinero sin problemas de decimales

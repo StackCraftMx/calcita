@@ -54,6 +54,9 @@ export const fakeProfiles = [
     },
 ];
 
+/** La versión vigente de los términos de uso: quien no la aceptó la ve al entrar (TermsAcceptanceDialog). */
+export const CURRENT_TERMS_VERSION = '2026-11';
+
 /** Las personas: una por perfil. La de administración es la que está dentro al abrir los ejemplos. */
 export const fakeUsers = [
     {
@@ -65,6 +68,8 @@ export const fakeUsers = [
         phone: '',
         positions: {es: 'Administración', en: 'Administration'},
         profileKey: PROFILE_KEYS.admin,
+        // la versión de los términos que aceptó (null: ninguna). La de administración ya aceptó la vigente
+        termsVersion: CURRENT_TERMS_VERSION,
     },
     {
         id: 'user-sample',
@@ -75,6 +80,7 @@ export const fakeUsers = [
         phone: '',
         positions: {es: 'Supervisor', en: 'Supervisor'},
         profileKey: PROFILE_KEYS.supervisor,
+        termsVersion: null,
     },
     {
         id: 'user-luis',
@@ -85,6 +91,8 @@ export const fakeUsers = [
         phone: '',
         positions: {es: 'Consulta', en: 'Read only'},
         profileKey: PROFILE_KEYS.viewer,
+        // aceptó una versión vieja: al entrar se le piden los términos nuevos
+        termsVersion: '2026-01',
     },
 ];
 
