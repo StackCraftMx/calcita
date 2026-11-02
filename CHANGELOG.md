@@ -4,6 +4,23 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.43.0] - 2026-11-02
+
+### Agregado
+
+- `IconBadge`: la insignia, un ícono y un texto corto con el color de lo que significan; con borde, tenue o sin caja
+  (`ICON_BADGE_VARIANT`), en dos tamaños, con su explicación al pasar el cursor. Desde un diccionario (`dictionary` y
+  `value`) saca texto, explicación, color e ícono. El texto se lee en claro y en oscuro (medido: 5.3 : 1 o más). Pieza del
+  tema `CalcitaIconBadge` y clases fijas `ICON_BADGE_CLASSES`.
+- `dictionaryEntryOf` acepta `{icon}`: el ícono con que se pinta la entrada en una insignia.
+- Ejemplos: «3. Insignias» en Diccionarios de Hecho en Calcita; el detalle de pedido con la forma de pago y el segundo
+  intento de entrega como insignias.
+
+### Cambiado
+
+- Los comentarios, los textos y los ejemplos de la cuenta regresiva, «publicar con anticipación» y la lista de
+  transferencia usan casos neutros (unas inscripciones, una promoción, quién puede ver un reporte).
+
 ## [0.42.0] - 2026-11-02
 
 ### Agregado
@@ -89,7 +106,7 @@ número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 - Con vidrio, las columnas de horas y minutos heredaban la palomita de los menús: tapaba el número y lo corría. Ahora el
   elegido va como el día elegido del calendario, centrado y sin palomita; en oscuro ya no sale el número negro sobre el
   naranja (también en el minimalista).
-- Ejemplo de la cuenta regresiva: la subasta cerraba en 8 segundos y al llegar a la sección ya decía «Cerrada»; ahora
+- Ejemplo de la cuenta regresiva: las inscripciones cerraban en 8 segundos y al llegar a la sección ya decía «Cerrada»; ahora
   cierra en 2 minutos, con «Cerrar en 10 segundos» para ver el cierre, y la oferta y sus cajas traen segundos.
 
 ## [0.38.0] - 2026-11-02
