@@ -31,6 +31,7 @@ export const BUILT_IN_PATHS = Object.freeze({
     themeAndGlass: `${BUILT_IN_ROOT}/theme-and-glass`,
     shell: `${BUILT_IN_ROOT}/frame-and-menu`,
     forms: `${BUILT_IN_ROOT}/forms`,
+    dates: `${BUILT_IN_ROOT}/dates`,
     permissions: `${BUILT_IN_ROOT}/permissions`,
     uploads: `${BUILT_IN_ROOT}/file-uploads`,
     excelReports: `${BUILT_IN_ROOT}/excel-and-csv`,
