@@ -359,6 +359,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaGroupedTimeline` | `group`, `groupHeader`, `groupButton`, `groupTitle`, `expandIcon`, `timeline`, `opposite`, `connector`, `content`, `entryTitle` |
 | `CalcitaHeaderFilter` | `button`, `badge`, `panel` |
 | `CalcitaHeaderTools` | `divider`, `root` |
+| `CalcitaIconBadge` | `root`, `icon`, `label` |
 | `CalcitaImageInput` | `root`, `preview`, `image`, `placeholder`, `actions` |
 | `CalcitaInboxLayout` | `labelDot`, `folder`, `folderIcon`, `folderCount`, `root`, `folders`, `foldersHeader`, `labelsTitle`, `listPane`, `phoneTabs`, `phoneTabBadge`, `listHeader`, `list`, `detail`, `backButton` |
 | `CalcitaInstallAppSetting` | `root` |
@@ -510,6 +511,10 @@ const menuItems = composeMenu(import.meta.glob('@/modules/*/menu.js', {eager: tr
 
 En cada pantalla, `PageHeading` pone el título, la descripción y los botones, y arma las migas solo desde el menú
 (Inicio › Sección › Pantalla). `PageHeader` es el encabezado centrado de una portada y `DetailHeader` el de un registro.
+Junto al título de un registro van su estatus (`StatusChip`) y sus insignias (`IconBadge`): un ícono y un texto corto con el
+color de lo que significan («Envío asegurado», «Pago con tarjeta»), con borde, tenue o sin caja. Mejor desde un diccionario:
+la entrada trae su ícono (`dictionaryEntryOf(value, keyPrefix, color, {icon})`) y la insignia saca de ahí texto,
+explicación, color e ícono (`<IconBadge dictionary={PAYMENT_METHOD} value={order.payment_method} />`).
 
 La misma regla protege las rutas (`withAccess(access, routes)` de `/react-router`: quien no puede ve «sin permiso», o la
 página propia que se pase en `{fallback}`) y
@@ -882,7 +887,7 @@ import {FormDateTimeField, FormMonthField, FormTimeField} from '@stackcraftmx/ca
 Con react-hook-form, el campo suelto va dentro de un `Controller` (la puerta de fechas no pide react-hook-form).
 
 Los minutos van de uno en uno (MUI X trae de 5 en 5); `minutesStep` los cambia. Para algo que se publica con
-anticipación y dura un mínimo (una subasta, una oferta), el inicio lleva `minimumMinutesFromNow` (el mínimo se recorre
+anticipación y dura un mínimo (una promoción, una venta especial), el inicio lleva `minimumMinutesFromNow` (el mínimo se recorre
 solo con el reloj mientras la pantalla está abierta) y el fin `minDateTime={instantPlusMinutes(startsAt, 30)}`; en yup,
 las mismas reglas con su mensaje. El servidor vuelve a revisar: entre llenar el formulario y guardarlo pasa el tiempo.
 
@@ -1019,7 +1024,7 @@ dice en qué va cada renglón para contar «2 de 3 cargados».
                        onDecline={signOut}>
     <TermsText />
 </TermsAcceptanceDialog>
-<Countdown until={auction.closes_at} onComplete={reloadAuction} completedText="Cerrada" />
+<Countdown until={registration.closes_at} onComplete={reloadRegistration} completedText="Cerradas" />
 ```
 
 ## Texto con formato
