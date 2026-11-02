@@ -7,8 +7,8 @@
 // También los formularios de entrar: iniciar sesión, «¿olvidó su contraseña?» y cambiar la contraseña.
 export {FieldArray, Form, Formik, useField, useFormikContext} from 'formik';
 export {
-    ChangePasswordForm, ForgotPasswordForm, FormAttachmentsField, FormCatalogField, FormColorField, FormFileField, FormFileUploadField, FormImageField,
-    FormMaskedField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormServerProblem,
+    ChangePasswordForm, ForgotPasswordForm, FormAttachmentsField, FormCatalogField, FormCheckboxGroupField, FormColorField, FormFileField, FormFileUploadField, FormImageField,
+    FormMaskedField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormServerProblem, FormTransferListField,
     FormTextField, FormWizard, RECOVERY_CODE_PATTERN, SECOND_STEP_METHOD, SecondStepForm, SignInForm, SubmitButton, TOTP_CODE_PATTERN,
     TwoStepVerificationCard, Yup, applyServerProblem, buildYupLocale, formLevelMessageOf, normalizeRecoveryCode, normalizeTotpCode,
     listTotalAtMostRule, listTotalOf, orderedInListRule, splitRowFieldErrors, splitServerFieldErrors, translateValidationMessage, uniqueInListRule, useFormikField,

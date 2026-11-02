@@ -125,7 +125,12 @@ export default Object.freeze({
             "pickColor": "Pick the color",
             "colorContrast": "Contrast on white: {{ratio}}:1",
             "colorLowContrast": "With that color the text would be hard to read on white. {{suggestion}} is the same hue, darker.",
-            "colorUseSuggestion": "Use {{color}}"
+            "colorUseSuggestion": "Use {{color}}",
+            "selectAll": "Select all ({{count}})",
+            "unselectAll": "Clear all",
+            "selectMatching": "Select the {{count}} matching",
+            "unselectMatching": "Clear the {{count}} matching",
+            "moreSelected": "+{{count}} more"
         },
         "selection": {
             "clear": "Clear selection",
@@ -145,6 +150,20 @@ export default Object.freeze({
             "confirmText": "It was already saved: it is really removed when the form is saved.",
             "blockedTitle": "It cannot be removed",
             "understood": "Got it"
+        },
+        "transfer": {
+            "available": "Available",
+            "chosen": "Chosen",
+            "search": "Search",
+            "markVisible": "Mark all visible in «{{list}}»",
+            "markedOf": "{{marked}} of {{count}} marked",
+            "moveMarked": "Move the marked ones to chosen",
+            "moveAll": "Move all to chosen",
+            "returnMarked": "Return the marked ones to available",
+            "returnAll": "Return all to available",
+            "emptyAvailable": "Nothing left to choose.",
+            "noMatches": "Nothing matches «{{text}}».",
+            "emptyChosen": "Nothing chosen yet: mark them on the left and move them with ›."
         },
         "wizard": {
             "next": "Next",

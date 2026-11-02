@@ -6,7 +6,8 @@
 //
 // Con `multiple` se eligen varias: la lista se queda abierta, cada elegida lleva su palomita y en la caja quedan sus nombres
 // separados por coma, en el orden de las opciones. Al formulario llega la lista de valores (Yup.array().min(1) la valida).
-// Para catálogos largos, CatalogInput con `multiple` (busca y deja chips).
+// Para catálogos largos, CatalogInput con `multiple` (busca y deja chips). Con varias, además: selectAll («Elegir todos»
+// arriba, con su casilla a medias si hay algunos) y checkboxes (una casilla en cada opción en lugar de la palomita).
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSelectInput con defaultProps y
 // styleOverrides de sus partes: option, optionText.
@@ -15,12 +16,14 @@
 import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {translateValidationMessage} from '@/forms/validationMessages.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -28,6 +31,10 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 const THEME_NAME = 'CalcitaSelectInput';
 const SelectOption = piecePart(THEME_NAME, 'Option', MenuItem);
 const SelectOptionText = piecePart(THEME_NAME, 'OptionText', Box);
+// la opción de «Elegir todos»: no es de la lista y nunca llega al formulario
+const SELECT_ALL_VALUE = '__calcita_select_all__';
+// con casillas, la palomita que el tema le pone al elegido sobra
+const WITHOUT_CHECKMARK = Object.freeze({'&.Mui-selected::after': {content: 'none'}});
 
 /**
  * @param {object} props
@@ -36,19 +43,22 @@ const SelectOptionText = piecePart(THEME_NAME, 'OptionText', Box);
  * @param {string|number|Array<string|number>|null|undefined} props.value '' = sin elegir; con multiple, la lista ([] = ninguna)
  * @param {(value: any) => void} props.onChange recibe el valor elegido (con multiple, la lista), no el evento
  * @param {() => void} [props.onBlur]
- * @param {Array<{value: string|number, label: string, description?: string}>} props.options
+ * @param {Array<{value: string|number, label: string, description?: string, disabled?: boolean}>} props.options
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ayuda fija; el error la reemplaza
  * @param {string} [props.placeholder] texto de la opción vacía
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.multiple] elegir varias opciones
+ * @param {boolean} [props.selectAll] con multiple: «Elegir todos» arriba de la lista
+ * @param {boolean} [props.checkboxes] con multiple: una casilla en cada opción
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function SelectInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
     const {
-    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false, texts,
+    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false,
+    selectAll = false, checkboxes = false, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -72,10 +82,17 @@ export default function SelectInput(props) {
         return options.find((option) => option.value === selectedValue)?.label ?? placeholderText;
     };
     const currentValue = multiple ? (Array.isArray(value) ? value : []) : (value ?? '');
+    const selectAllState = selectAllStateOf(currentValue, options.filter((option) => !option.disabled).map((option) => option.value));
     // OJO: con multiple, el autollenado del navegador puede mandar el valor como texto separado por comas (lo dice MUI)
     const handleChange = (event) => {
         const nextValue = event.target.value;
-        onChange(multiple && typeof nextValue === 'string' ? nextValue.split(',') : nextValue);
+        const values = multiple && typeof nextValue === 'string' ? nextValue.split(',') : nextValue;
+        // «Elegir todos» llega como una opción más: se cambia por todos (o por ninguno, si ya estaban todos)
+        if (multiple && values.includes(SELECT_ALL_VALUE)) {
+            onChange(selectAllState.toggled());
+            return;
+        }
+        onChange(values);
     };
 
     return (
@@ -96,10 +113,21 @@ export default function SelectInput(props) {
                 slotProps={{select: {multiple, displayEmpty: true, renderValue: renderSelectedValue, labelId}}}>
                 {/* la opción vacía solo con una: con varias, se quitan picándolas otra vez */}
                 {!multiple && <MenuItem value="" disabled>{placeholderText}</MenuItem>}
+                {multiple && selectAll && (
+                    <SelectOption value={SELECT_ALL_VALUE} ownSx={{fontWeight: 600, ...WITHOUT_CHECKMARK}}>
+                        <Checkbox size="small" tabIndex={-1} disableRipple sx={{p: 0, mr: 1}}
+                                  checked={selectAllState.allChosen} indeterminate={selectAllState.someChosen} />
+                        {selectAllState.allChosen ? t('form.unselectAll') : t('form.selectAll', {count: options.length})}
+                    </SelectOption>
+                )}
                 {options.map((option) => (
                     // la opción en renglón y su nombre con su explicación en un bloque: con la opción en columna, la palomita del
                     // elegido (el tema la pinta al final) se bajaba a otro renglón (lo cachó una captura de Tareas)
-                    <SelectOption key={option.value} value={option.value} ownSx={{whiteSpace: 'normal'}}>
+                    <SelectOption key={option.value} value={option.value} disabled={option.disabled}
+                                  ownSx={{whiteSpace: 'normal', ...(multiple && checkboxes && WITHOUT_CHECKMARK)}}>
+                        {multiple && checkboxes && (
+                            <Checkbox size="small" tabIndex={-1} disableRipple sx={{p: 0, mr: 1}} checked={currentValue.includes(option.value)} />
+                        )}
                         <SelectOptionText component="span" ownSx={{display: 'flex', flexDirection: 'column', minWidth: 0, flexGrow: 1}}>
                             <Typography component="span" variant="body2">{option.label}</Typography>
                             {option.description && (
