@@ -18,11 +18,15 @@ const HTTP_STATUS = Object.freeze({unprocessable: 422});
 // los correos que ya son de otros clientes (en el sistema de verdad, una consulta)
 const EMAILS_OF_OTHER_CUSTOMERS = Object.freeze(['compras@otrocliente.mx', 'pagos@otrocliente.mx']);
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Por dónde se le avisa la cobranza. */
+export const NOTIFY_CHANNEL = Object.freeze({email: 'email', sms: 'sms', whatsapp: 'whatsapp', call: 'call'});
 let nextRowNumber = 100;
 
 // lo que está guardado, en la memoria de esta pestaña: cada renglón guardado lleva su id
 let storedTerms = {
     credit_limit: '200000',
+    notify_channels: [NOTIFY_CHANNEL.email],
+    allowed_branch_ids: ['cdmx-centro', 'cdmx-polanco', 'gdl-chapultepec'],
     branch_split: [
         {id: 'split-1', branch_id: 'cdmx-centro', amount: '120000'},
         {id: 'split-2', branch_id: 'gdl-chapultepec', amount: '50000'},
@@ -61,12 +65,23 @@ function fieldErrorsOf(terms) {
         add('credit_limit', serverTextOf('customerTerms.creditLimitRequired'));
     }
 
-    // el reparto: cada sucursal una vez y entre todas no pasan del límite
+    if (!(terms.notify_channels ?? []).length) {
+        add('notify_channels', serverTextOf('customerTerms.channelRequired'));
+    }
+    const allowedBranches = new Set(terms.allowed_branch_ids ?? []);
+    if (allowedBranches.size === 0) {
+        add('allowed_branch_ids', serverTextOf('customerTerms.allowedRequired'));
+    }
+
+    // el reparto: cada sucursal una vez, entre las que puede comprar, y entre todas no pasan del límite
     const seenBranches = new Set();
     let splitTotal = Money.zero({currency: STORE_CURRENCY});
     (terms.branch_split ?? []).forEach((row, index) => {
         if (seenBranches.has(row.branch_id)) {
             add(`branch_split.${index}.branch_id`, serverTextOf('customerTerms.branchRepeated'));
+        } else if (allowedBranches.size > 0 && !allowedBranches.has(row.branch_id)) {
+            // solo el servidor cruza las dos listas: la pantalla no lo revisa
+            add(`branch_split.${index}.branch_id`, serverTextOf('customerTerms.branchNotAllowed'));
         }
         seenBranches.add(row.branch_id);
         const amount = moneyOrNull(row.amount);
@@ -136,6 +151,8 @@ export async function saveCustomerTerms(terms) {
     const withIds = (rows, prefix) => rows.map((row) => ({...row, id: row.id ?? `${prefix}-${nextRowNumber++}`}));
     storedTerms = {
         credit_limit: terms.credit_limit,
+        notify_channels: [...(terms.notify_channels ?? [])],
+        allowed_branch_ids: [...(terms.allowed_branch_ids ?? [])],
         branch_split: withIds(terms.branch_split ?? [], 'split'),
         volume_discounts: withIds(terms.volume_discounts ?? [], 'discount'),
         contacts: withIds(terms.contacts ?? [], 'contact'),
