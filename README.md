@@ -187,6 +187,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/filepond` | `FileDropzone` con FilePond: el mismo uso que la de la puerta principal, más varios archivos, avance por archivo y `createPondServer` | `filepond`, `react-filepond`, `filepond-plugin-file-validate-type`, `filepond-plugin-file-validate-size` |
 | `@stackcraftmx/calcita/next` | la navegación de Next.js (App Router) para ToolkitProvider; los componentes ya vienen marcados con `'use client'` y los puros sirven en el servidor | `next` |
 | `@stackcraftmx/calcita/money` | `Money`: dinero exacto en centavos enteros, con suma, resta, multiplicación, división, potencia, raíz y su formato con la moneda | — |
+| `@stackcraftmx/calcita/mexico` | RFC, CURP y CLABE con su dígito verificador y sus reglas de yup; la e.firma (`EfirmaFields`: el .cer leído y la llave abierta en el navegador) y la factura (`readCfdi`, `CfdiSummary`) | `jsrsasign` |
 | `@stackcraftmx/calcita/passkeys` | llaves de acceso (passkeys): crearlas y firmar con ellas, con los errores del navegador en palabras de la persona | `@simplewebauthn/browser` 14 |
 | `@stackcraftmx/calcita/account` | la cuenta completa: `SignInScreen` (con el segundo paso), `ForgotPasswordScreen`, `ResetPasswordScreen`, `ProfileScreen` (con campos y pestañas propias), `AccountSecuritySection`, `AccountProvider` y `createRestAccountConnector` | `@simplewebauthn/browser` 14, `formik`, `yup` |
 | `@stackcraftmx/calcita/account-demo` | `createDemoAccountConnector`: la cuenta en el navegador, sin backend (y los códigos TOTP) | — |
@@ -320,6 +321,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaBarList` | `row`, `chart` |
 | `CalcitaBarSearch` | `field` |
 | `CalcitaCalendarHeatmap` | `header`, `toggle`, `tableArea`, `dateCell`, `valueCell`, `descriptionCell`, `gridArea`, `grid`, `monthLabel`, `week`, `dayLabel`, `cell`, `legend`, `legendLess`, `legendCell`, `legendMore` |
+| `CalcitaCfdiSummary` | `root`, `header`, `amounts`, `concepts` |
 | `CalcitaChart` | `tableArea`, `legend`, `legendItem`, `legendLine`, `legendSwatch`, `reference`, `referenceLine` |
 | `CalcitaChartTooltip` | `root` |
 | `CalcitaCollapsibleSection` | `root`, `accordion`, `summary`, `titleArea`, `collapsedTitle`, `expandedTitle`, `details` |
@@ -337,6 +339,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaDownloadManager` | `doneIcon`, `failedIcon`, `canceledIcon`, `cancelButton`, `progress`, `cancelIcon`, `item`, `itemText`, `itemStatus`, `itemActions`, `panel`, `header`, `title`, `list` |
 | `CalcitaDownloadMenu` | `button` |
 | `CalcitaEmptyState` | `root`, `icon` |
+| `CalcitaEfirmaFields` | `root`, `certificate`, `verify` |
 | `CalcitaErrorPage` | `root`, `actions` |
 | `CalcitaEventCalendar` | `toolbar`, `navigation`, `title`, `calendar` |
 | `CalcitaEventDetails` | `row`, `rowContent`, `titleRow`, `toneDot`, `linkRow`, `link`, `guestsTitle`, `guest`, `guestAvatar`, `guestName`, `notes`, `actions` |
@@ -929,6 +932,30 @@ import {AttachmentsInput, FileInput} from '@stackcraftmx/calcita';
 </TermsAcceptanceDialog>
 <Countdown until={auction.closes_at} onComplete={reloadAuction} completedText="Cerrada" />
 ```
+
+## México: RFC, CURP, CLABE, e.firma y facturas
+
+`@stackcraftmx/calcita/mexico` trae lo que casi cualquier sistema en México pide (pide `jsrsasign` solo para abrir la llave):
+
+- `isValidRfc`, `isValidCurp`, `isValidClabe`: la forma, que la fecha exista y el dígito verificador (el del RFC, con
+  `{strict: true}`). En yup, como reglas con su mensaje: `Yup.string().test(clabeRule())`.
+- `readCfdi(xmlText)` / `readCfdiFile(file)`: la factura (CFDI 3.3 y 4.0) leída del XML, con los montos en texto para
+  `Money`; `null` si no es factura. `CfdiSummary` la enseña, con el aviso si no es para su RFC o si no está timbrada.
+- `EfirmaFields`: el .cer, el .key y la contraseña. El certificado se lee en el navegador (`readCertificate`: RFC, CURP, nombre,
+  número de certificado, vigencia) y avisa si venció o es de otro RFC. «Revisar la e.firma» abre la llave con su contraseña y
+  comprueba que es la del certificado, también en el navegador (`verifyEfirmaKey`, con jsrsasign, que se baja hasta que se
+  usa: la llave del SAT va cifrada con 3DES y el navegador no lo trae), y dice el motivo de un «no». Con `onVerifyKey` la
+  revisión la hace su API. Calcita no manda la llave a ningún lado.
+
+```jsx
+import {CfdiSummary, EfirmaFields, clabeRule, readCfdiFile} from '@stackcraftmx/calcita/mexico';
+
+const cfdi = await readCfdiFile(file);  // null si no es factura
+<CfdiSummary cfdi={cfdi} expectedReceiverRfc={company.rfc} />
+<EfirmaFields value={efirma} onChange={setEfirma} expectedRfc={company.rfc} />   {/* revisa la llave en el navegador */}
+```
+
+Revisan la forma y leen los archivos; si el RFC existe, si la factura sigue vigente y si la llave abre lo dice su servidor.
 
 ## Dinero sin problemas de decimales
 
