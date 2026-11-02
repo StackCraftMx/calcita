@@ -7,6 +7,7 @@ import {isValidClabe} from '@stackcraftmx/calcita/mexico';
 
 import {ApiError} from '@/fakeServer/ApiError.js';
 import {MEXICAN_STATES} from '@/fakeServer/catalogsServer.js';
+import {isUploadedDocument} from '@/fakeServer/documentsServer.js';
 import {STORE_CURRENCY} from '@/fakeServer/fakeOrders.js';
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
@@ -21,6 +22,9 @@ const PHONE_DIGITS = /^\d{10}$/;
 const HEX_COLOR = /^#[0-9A-F]{6}$/;
 const FOLIO_DIGITS = 6;
 const STATE_CODES = new Set(MEXICAN_STATES.map((state) => state.code));
+// los documentos que pide la solicitud (el id de cada uno, ya subido); el estado de cuenta es opcional
+const REQUIRED_DOCUMENT_FIELDS = Object.freeze(['identification_file_id', 'address_proof_file_id']);
+const OPTIONAL_DOCUMENT_FIELDS = Object.freeze(['bank_statement_file_id']);
 
 // el consecutivo del folio, en la memoria de esta pestaña
 let nextFolioNumber = 1;
@@ -66,6 +70,19 @@ function fieldErrorsOf(request) {
     // el servidor también revisa el dígito verificador: no confía en lo que ya revisó la pantalla
     if (!isValidClabe(request.deposit_clabe)) {
         errors.deposit_clabe = [serverTextOf('creditRequests.clabeInvalid')];
+    }
+    // cada documento, con el id de uno que de verdad se subió: no se confía en lo que manda la pantalla
+    for (const field of REQUIRED_DOCUMENT_FIELDS) {
+        if (!request[field]) {
+            errors[field] = [serverTextOf('documents.missing')];
+        } else if (!isUploadedDocument(request[field])) {
+            errors[field] = [serverTextOf('documents.unknown')];
+        }
+    }
+    for (const field of OPTIONAL_DOCUMENT_FIELDS) {
+        if (request[field] && !isUploadedDocument(request[field])) {
+            errors[field] = [serverTextOf('documents.unknown')];
+        }
     }
     if (!STATE_CODES.has(request.state)) {
         errors.state = [serverTextOf('customers.stateInvalid')];

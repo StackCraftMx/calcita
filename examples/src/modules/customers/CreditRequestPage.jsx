@@ -1,5 +1,7 @@
-// Ejemplo del formulario por pasos (FormWizard): una solicitud de crédito en cuatro pasos, con el aval y la imagen de la
-// empresa como pasos opcionales. Al final, el folio con su botón de copiar y la clave que se enseña una sola vez
+// Ejemplo del formulario por pasos (FormWizard): una solicitud de crédito en cinco pasos, con el aval y la imagen de la
+// empresa como pasos opcionales. Los documentos van con el cargador mini (FormFileUploadField): cada uno se sube en cuanto se
+// elige y al formulario llega solo su id; el servidor revisa al recibir la solicitud que esos ids sean de documentos
+// subidos. Al final, el folio con su botón de copiar y la clave que se enseña una sola vez
 // (SecretField).
 //
 // La página solo declara sus pasos (qué campos lleva cada uno); revisar por paso, omitir, enviar y regresar al paso con el
@@ -14,17 +16,34 @@ import {
     CopyButton, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, toastSuccess, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {
-    Form, Formik, FormCatalogField, FormColorField, FormMaskedField, FormNumberField, FormSelectField, FormTextField, FormWizard,
-    applyServerProblem,
+    Form, Formik, FormCatalogField, FormColorField, FormFileUploadField, FormMaskedField, FormNumberField, FormSelectField, FormTextField,
+    FormWizard, applyServerProblem, useFormikContext,
 } from '@stackcraftmx/calcita/forms';
 
 import {
     CREDIT_REQUEST_INITIAL_VALUES, CREDIT_REQUEST_STEP_FIELDS, buildCreditRequestSchema,
 } from '@/modules/customers/creditRequestSchema.js';
-import {LOAN_TERMS_IN_MONTHS, submitCreditRequest} from '@/modules/customers/customersApi.js';
+import {
+    LOAN_TERMS_IN_MONTHS, downloadUploadedDocument, submitCreditRequest, uploadDocument,
+} from '@/modules/customers/customersApi.js';
 import {FormsNav} from '@/modules/customers/FormsNav.jsx';
 import {normalizedEmailOf} from '@/modules/customers/newCustomerSchema.js';
 import {useStatesCatalog} from '@/modules/customers/useStatesCatalog.js';
+
+// cuántos documentos ya tienen su id (los que terminaron de subir), para el pie de la sección
+const FormikDocumentsCount = ({children}) => {
+    const {values} = useFormikContext();
+    return children(CREDIT_DOCUMENTS.filter(({field}) => Boolean(values[field])).length);
+};
+
+// los documentos que pide la solicitud: el campo del formulario y su texto; lo que aceptan es lo mismo que revisa el servidor
+const CREDIT_DOCUMENTS = Object.freeze([
+    {field: 'identification_file_id', labelKey: 'credit.documents.identification'},
+    {field: 'address_proof_file_id', labelKey: 'credit.documents.addressProof'},
+    {field: 'bank_statement_file_id', labelKey: 'credit.documents.bankStatement'},
+]);
+const DOCUMENT_ACCEPT = Object.freeze(['pdf', '.jpg', '.jpeg', '.png']);
+const DOCUMENT_MAX_SIZE = '5 MB';
 
 export const CreditRequestPage = () => {
     const {t} = useToolkitTranslation('customers');
@@ -65,6 +84,22 @@ export const CreditRequestPage = () => {
                     <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
                                      placeholder="032 180 00011835971 9" autoComplete="off" />
                 </FormSection>
+            ),
+        },
+        {
+            key: 'documents', label: t('credit.steps.documents'), fields: CREDIT_REQUEST_STEP_FIELDS.documents,
+            content: (
+                <FormikDocumentsCount>
+                    {(uploadedCount) => (
+                        <FormSection footer={t('credit.documents.count', {uploaded: uploadedCount, total: CREDIT_DOCUMENTS.length})}>
+                            {CREDIT_DOCUMENTS.map(({field, labelKey}) => (
+                                <FormFileUploadField key={field} name={field} label={t(labelKey)} upload={uploadDocument}
+                                                     download={downloadUploadedDocument} accept={DOCUMENT_ACCEPT} maxSize={DOCUMENT_MAX_SIZE}
+                                                     limitsText={t('credit.documents.limits')} />
+                            ))}
+                        </FormSection>
+                    )}
+                </FormikDocumentsCount>
             ),
         },
         {

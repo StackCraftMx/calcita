@@ -13,6 +13,7 @@ const HEX_COLOR = /^#[0-9A-F]{6}$/;
 export const CREDIT_REQUEST_INITIAL_VALUES = Object.freeze({
     applicant_name: '', email: '', monthly_income: '', state: '',
     requested_amount: '', term_months: '', deposit_clabe: '',
+    identification_file_id: '', address_proof_file_id: '', bank_statement_file_id: '',
     guarantor_name: '', guarantor_phone: '',
     company_color: '',
 });
@@ -21,6 +22,7 @@ export const CREDIT_REQUEST_INITIAL_VALUES = Object.freeze({
 export const CREDIT_REQUEST_STEP_FIELDS = Object.freeze({
     applicant: ['applicant_name', 'email', 'monthly_income', 'state'],
     loan: ['requested_amount', 'term_months', 'deposit_clabe'],
+    documents: ['identification_file_id', 'address_proof_file_id', 'bank_statement_file_id'],
     guarantor: ['guarantor_name', 'guarantor_phone'],
     brand: ['company_color'],
 });
@@ -39,6 +41,10 @@ export function buildCreditRequestSchema() {
         term_months: Yup.string().required(),
         // la CLABE llega limpia (sin espacios) de su campo con máscara; clabeRule revisa sus 18 dígitos y el verificador
         deposit_clabe: Yup.string().required().test(clabeRule()),
+        // los documentos: el id que dio el servidor al subirlos ('' mientras no se suben); el estado de cuenta es opcional
+        identification_file_id: Yup.string().required(),
+        address_proof_file_id: Yup.string().required(),
+        bank_statement_file_id: Yup.string(),
         guarantor_name: Yup.string().trim(),
         // el teléfono del aval solo si hay aval
         guarantor_phone: Yup.string().when('guarantor_name', {
