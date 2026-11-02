@@ -3,6 +3,7 @@ export {default as FormAttachmentsField} from '@/forms/FormAttachmentsField.jsx'
 export {default as FormCatalogField} from '@/forms/FormCatalogField.jsx';
 export {default as FormColorField} from '@/forms/FormColorField.jsx';
 export {default as FormFileField} from '@/forms/FormFileField.jsx';
+export {default as FormFileUploadField} from '@/forms/FormFileUploadField.jsx';
 export {default as FormImageField} from '@/forms/FormImageField.jsx';
 export {default as FormMaskedField} from '@/forms/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/forms/FormNumberField.jsx';

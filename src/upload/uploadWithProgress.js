@@ -37,7 +37,8 @@ function headersOf(rawHeaders) {
  * @param {FormData} formData los archivos y los campos que pida el backend
  * @param {object} [options]
  * @param {Record<string, string>} [options.headers] p. ej. Authorization; Accept-Language ya va con el idioma activo
- * @param {(percent: number) => void} [options.onProgress] 0 a 100 de lo que ya viajó del cuerpo
+ * @param {(percent: number, transfer: {loaded: number, total: number}) => void} [options.onProgress] 0 a 100 de lo que ya
+ *     viajó del cuerpo, y los bytes (para la velocidad y lo que falta)
  * @param {AbortSignal} [options.signal]
  * @param {boolean} [options.withCredentials] manda las cookies a otro dominio (sesión de Sanctum en otro subdominio)
  * @returns {Promise<Response>}
@@ -65,7 +66,7 @@ export function uploadWithProgress(url, formData, {headers = {}, onProgress, sig
 
         request.upload.onprogress = (event) => {
             if (event.lengthComputable) {
-                onProgress?.(Math.round((event.loaded / event.total) * PERCENT));
+                onProgress?.(Math.round((event.loaded / event.total) * PERCENT), {loaded: event.loaded, total: event.total});
             }
         };
         request.onload = () => {

@@ -14,6 +14,7 @@ export {default as FormAttachmentsField} from '@/hookForm/FormAttachmentsField.j
 export {default as FormCatalogField} from '@/hookForm/FormCatalogField.jsx';
 export {default as FormColorField} from '@/hookForm/FormColorField.jsx';
 export {default as FormFileField} from '@/hookForm/FormFileField.jsx';
+export {default as FormFileUploadField} from '@/hookForm/FormFileUploadField.jsx';
 export {default as FormImageField} from '@/hookForm/FormImageField.jsx';
 export {default as FormMaskedField} from '@/hookForm/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
