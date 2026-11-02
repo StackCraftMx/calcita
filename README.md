@@ -387,6 +387,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
 | `CalcitaScrollableRow` | `root` |
+| `CalcitaRepeatingFields` | `root`, `row`, `rowHeader`, `rowContent`, `addButton`, `helper` |
 | `CalcitaRichTextEditor` | `root`, `toolbar`, `content`, `footer` |
 | `CalcitaRichTextView` | `root` |
 | `CalcitaSecondStepForm` | `actions` |
@@ -894,6 +895,37 @@ const schema = Yup.object({
 <FormDateTimeField name="startsAt" label="Empieza" minimumMinutesFromNow={5} />
 <FormDateTimeField name="endsAt" label="Termina" minDateTime={instantPlusMinutes(values.startsAt, 30)} />
 ```
+
+### Renglones que se repiten
+
+`FormRepeatingFields` (de formik y de react-hook-form, con el mismo uso) pinta una lista del formulario: cada renglón con
+su número y «Quitar», y «Agregar» al final. `minRows` (por omisión 1: con el mínimo, «Quitar» limpia el renglón) y
+`maxRows`; si un renglón se puede quitar lo decide la pantalla (`removeBlockedReason` da el motivo, `confirmRemove` pide
+confirmar uno guardado). En escritorio los campos de un renglón van lado a lado (`columns`) y en el teléfono uno debajo de
+otro. Las reglas de listas marcan el error en SU renglón:
+
+```jsx
+import {FormNumberField, FormRepeatingFields, Yup, listTotalAtMostRule, orderedInListRule, uniqueInListRule} from '@stackcraftmx/calcita/forms';
+
+const schema = Yup.object({
+    prices: Yup.array().of(Yup.object({
+        min_quantity: Yup.string().required()
+            .test(uniqueInListRule('prices', 'min_quantity'))      // «Ya está en el renglón 2»
+            .test(orderedInListRule('prices', 'min_quantity')),    // «Debe ir entre 10 (renglón 1) y 50 (renglón 3)»
+    })),
+    split: Yup.array().test(listTotalAtMostRule('amount', (values) => values.credit_limit)),  // con Money, sin floats
+});
+
+<FormRepeatingFields name="prices" label="Precios por volumen" emptyRow={{min_quantity: '', unit_price: ''}} maxRows={6}
+                     renderRow={({nameOf}) => (<>
+                         <FormNumberField name={nameOf('min_quantity')} label="Desde (piezas)" decimals={0} />
+                         <FormNumberField name={nameOf('unit_price')} label="Precio" prefix="$" />
+                     </>)} />
+```
+
+Un 422 del servidor en `contacts.2.email` llega a ese renglón (`applyServerProblem`). Con formik, el error de toda la lista
+(el tope) sale cuando los renglones ya no tienen errores: formik guarda los dos en el mismo lugar; para verlo mientras se
+escribe va un resumen en vivo en `footer` con `listTotalOf`.
 
 ## Subir archivos
 
