@@ -4,6 +4,7 @@
 // access es la regla de quién lo ve; la misma protege sus rutas (withAccess en app/appRouter.jsx).
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import FormatListNumberedOutlinedIcon from '@mui/icons-material/FormatListNumberedOutlined';
+import PlaylistAddOutlinedIcon from '@mui/icons-material/PlaylistAddOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
@@ -32,6 +33,7 @@ export function buildMenuItem() {
             {to: CUSTOMERS_PATHS.formik, labelKey: 'customers:nav.formik', Icon: PersonAddAltOutlinedIcon},
             {to: CUSTOMERS_PATHS.hookForm, labelKey: 'customers:nav.hookForm', Icon: PersonAddAlt1OutlinedIcon},
             {to: CUSTOMERS_PATHS.creditRequest, labelKey: 'customers:nav.creditRequest', Icon: FormatListNumberedOutlinedIcon},
+            {to: CUSTOMERS_PATHS.terms, labelKey: 'customers:nav.terms', Icon: PlaylistAddOutlinedIcon},
         ],
     };
 }

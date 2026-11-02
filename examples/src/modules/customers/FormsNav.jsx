@@ -12,6 +12,7 @@ const FORM_TABS = Object.freeze([
     {path: CUSTOMERS_PATHS.formik, labelKey: 'nav.formik'},
     {path: CUSTOMERS_PATHS.hookForm, labelKey: 'nav.hookForm'},
     {path: CUSTOMERS_PATHS.creditRequest, labelKey: 'nav.creditRequest'},
+    {path: CUSTOMERS_PATHS.terms, labelKey: 'nav.terms'},
 ]);
 
 export const FormsNav = () => {
