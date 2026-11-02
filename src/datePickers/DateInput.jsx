@@ -5,30 +5,18 @@
 // y MM/DD/AAAA en inglés, con el calendario y sus textos en el idioma activo. '' = sin fecha. Una fecha de calendario no
 // tiene hora ni zona: nunca se pasa por Date (que la movería de día según la zona).
 //
-// Cada campo trae su LocalizationProvider con dayjs: la pantalla no tiene que poner nada alrededor.
+// Cada campo trae su LocalizationProvider con dayjs (PickerFrame): la pantalla no tiene que poner nada alrededor.
 //
 // Genérico del paquete: function (regla de la casa).
-import {useId} from 'react';
 import dayjs from 'dayjs';
-import 'dayjs/locale/es';
-import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {enUS, esES} from '@mui/x-date-pickers/locales';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
-import FieldFrame from '@/inputs/FieldFrame.jsx';
+import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
+import {CALENDAR_DATE_FORMAT} from '@/datePickers/pickerValues.js';
+import {usePickerField} from '@/datePickers/usePickerField.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
-/** Cómo viaja una fecha de calendario. */
-export const CALENDAR_DATE_FORMAT = 'YYYY-MM-DD';
-
-// cómo se ve y con qué textos sale el calendario en cada idioma
-const DATE_LOOK_BY_LANGUAGE = Object.freeze({
-    es: {adapterLocale: 'es', displayFormat: 'DD/MM/YYYY', localeText: esES.components.MuiLocalizationProvider.defaultProps.localeText},
-    en: {adapterLocale: 'en', displayFormat: 'MM/DD/YYYY', localeText: enUS.components.MuiLocalizationProvider.defaultProps.localeText},
-});
+export {CALENDAR_DATE_FORMAT};
 
 /**
  * Una fecha de calendario 'AAAA-MM-DD' como la quiere el DatePicker; null si está vacía.
@@ -57,44 +45,40 @@ function pickerValueOf(calendarDate) {
  * @param {'day'|'month'|'year'} [props.openTo] por dónde abre el calendario (year para un nacimiento)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableDate, slots,
+ *     slotProps…); value y onChange son del campo
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function DateInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
-    openTo = 'day', disabled = false, inputRef, texts,
+    openTo = 'day', disabled = false, inputRef, pickerProps, texts,
     ...unknownProps
 }) {
     warnUnknownProps('DateInput', unknownProps);
-    const {t, language} = useToolkitTranslation('common', texts);
-    const generatedId = useId();
-    const inputId = `${name ?? 'date'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
-    const look = DATE_LOOK_BY_LANGUAGE[language] ?? DATE_LOOK_BY_LANGUAGE.es;
+    const {language, inputId, errorText, formats} = usePickerField({name, kind: 'date', error, texts});
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={look.adapterLocale} localeText={look.localeText}>
-                <DatePicker
-                    format={look.displayFormat}
-                    value={pickerValueOf(value)}
-                    minDate={pickerValueOf(minDate) ?? undefined}
-                    maxDate={pickerValueOf(maxDate) ?? undefined}
-                    disableFuture={disableFuture}
-                    disablePast={disablePast}
-                    disabled={disabled}
-                    openTo={openTo}
-                    views={openTo === 'year' ? ['year', 'month', 'day'] : undefined}
-                    inputRef={inputRef}
-                    // una fecha a medias (25/1_/____) todavía no es fecha: viaja como vacía hasta que se complete
-                    onChange={(pickedDate) => onChange(pickedDate?.isValid() ? pickedDate.format(CALENDAR_DATE_FORMAT) : '')}
-                    onClose={onBlur}
-                    slotProps={{
-                        textField: {
-                            id: inputId, name, size: 'small', fullWidth: true, onBlur, error: Boolean(errorText), helperText: errorText ?? helperText,
-                        },
-                    }}
-                />
-            </LocalizationProvider>
-        </FieldFrame>
+        <PickerFrame inputId={inputId} label={label} language={language}>
+            <DatePicker
+                {...pickerProps}
+                format={formats.date}
+                value={pickerValueOf(value)}
+                minDate={pickerValueOf(minDate) ?? undefined}
+                maxDate={pickerValueOf(maxDate) ?? undefined}
+                disableFuture={disableFuture}
+                disablePast={disablePast}
+                disabled={disabled}
+                openTo={openTo}
+                views={openTo === 'year' ? ['year', 'month', 'day'] : pickerProps?.views}
+                inputRef={inputRef}
+                // una fecha a medias (25/1_/____) todavía no es fecha: viaja como vacía hasta que se complete
+                onChange={(pickedDate) => onChange(pickedDate?.isValid() ? pickedDate.format(CALENDAR_DATE_FORMAT) : '')}
+                onClose={() => {
+                    pickerProps?.onClose?.();
+                    onBlur?.();
+                }}
+                slotProps={textFieldSlotPropsOf({id: inputId, name, onBlur, error: Boolean(errorText), helperText: errorText ?? helperText}, pickerProps)}
+            />
+        </PickerFrame>
     );
 }

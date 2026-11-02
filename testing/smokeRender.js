@@ -24,6 +24,7 @@ import {
 } from '@stackcraftmx/calcita/forms';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
+import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
 import {AccountProvider, ProfileScreen, ResetPasswordScreen, SignInScreen} from '@stackcraftmx/calcita/account';
@@ -203,6 +204,13 @@ const CASES = [
     // el logo ancho con una imagen para cada modo: se pintan las dos
     ['AppLayout con wordmark para cada modo', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, wordmark: {light: h('img', {src: '/logo-color.svg', alt: ''}), dark: h('img', {src: '/logo-blanco.svg', alt: ''})}}, 'contenido'), '/logo-blanco.svg'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
+    // /date-pickers: cada valor viaja en texto y se pinta en el idioma y la zona del proveedor
+    // vacía y antes que ninguna con valor: el selector pide las zonas de dayjs aunque no haya valor (tumbaba la pantalla)
+    ['DateTimeInput vacío', h(DateTimeInput, {label: 'Posponer hasta', value: '', onChange: () => {}}), 'Posponer hasta'],
+    ['DateInput', h(DateInput, {label: 'Fecha de entrega', value: '2026-11-01', onChange: () => {}}), 'Fecha de entrega'],
+    ['DateTimeInput rotula su zona', h(DateTimeInput, {label: 'Posponer hasta', value: '2026-11-01T18:30:00Z', onChange: () => {}, timeZone: 'America/Mexico_City'}), 'Hora estándar central'],
+    ['TimeInput', h(TimeInput, {label: 'Hora de inicio', value: '09:30', onChange: () => {}, minutesStep: 30}), 'Hora de inicio'],
+    ['MonthInput con el nombre del mes', h(MonthInput, {label: 'Mes del reporte', value: '2026-11', onChange: () => {}}), 'noviembre'],
 ];
 
 // los avisos de Calcita (una opción que una pieza no conoce): ningún caso debe dar uno, porque cada caso usa las opciones como

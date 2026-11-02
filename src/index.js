@@ -13,7 +13,7 @@
 //   @stackcraftmx/calcita/filepond      la zona para soltar archivos con FilePond (filepond, react-filepond)
 //   @stackcraftmx/calcita/react-hook-form  los mismos campos de /forms, conectados a react-hook-form
 //   @stackcraftmx/calcita/next          la navegación de Next.js (App Router)
-//   @stackcraftmx/calcita/date-pickers  la fecha con el DatePicker de MUI X (@mui/x-date-pickers, dayjs)
+//   @stackcraftmx/calcita/date-pickers  fecha, fecha con hora, hora y mes con los selectores de MUI X (@mui/x-date-pickers, dayjs)
 
 // ─── configuración: idioma, textos, zona, moneda y navegación ────────────────
 export {ToolkitProvider} from '@/toolkit/ToolkitProvider.jsx';
