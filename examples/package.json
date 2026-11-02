@@ -37,6 +37,7 @@
         "filepond-plugin-file-validate-size": "2.2.8",
         "filepond-plugin-file-validate-type": "1.2.9",
         "formik": "2.4.9",
+        "jsrsasign": "11.1.5",
         "leaflet": "1.9.4",
         "nuqs": "2.10.1",
         "prism-react-renderer": "2.4.1",

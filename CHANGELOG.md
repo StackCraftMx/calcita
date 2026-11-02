@@ -4,6 +4,25 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.37.0] - 2026-11-01
+
+### Agregado
+
+- Puerta nueva `/mexico` (pide `jsrsasign` solo para abrir la llave de la e.firma; se baja hasta que se usa):
+  - `isValidRfc` (forma y fecha; el dígito verificador con `{strict: true}`), `isValidCurp`, `isValidClabe`, `rfcKindOf`,
+    los cálculos de cada dígito verificador y las reglas de yup `rfcRule`, `curpRule` y `clabeRule`.
+  - `readCertificate` y `certificateStatusOf`: el certificado (.cer) de una e.firma o un sello digital leído en el
+    navegador (RFC y CURP propios y del representante, nombre, número de certificado, vigencia).
+  - `readCfdi` y `readCfdiFile`: la factura electrónica (CFDI 3.3 y 4.0) leída del XML, con los montos en texto.
+  - `CfdiSummary`: el resumen de la factura con su folio fiscal, el aviso si es para otro RFC o si no está timbrada.
+  - `verifyEfirmaKey`: abre la llave (.key) con su contraseña en el navegador y comprueba que es la del certificado, con el
+    motivo de un «no» (`EFIRMA_KEY_PROBLEM`).
+  - `EfirmaFields`: el .cer, el .key y la contraseña, con el certificado a la vista y «Revisar la e.firma» en el navegador;
+    con `onVerifyKey` la revisión es del proyecto.
+- Ejemplos: página «México: claves, e.firma y facturas» en Hecho en Calcita; módulo «Documentos fiscales» (cargar facturas
+  de proveedores sin repetir el folio fiscal, la e.firma de la tienda y archivos de ejemplo para probar); la CLABE de la
+  solicitud de crédito revisa su dígito verificador en la pantalla y en el servidor.
+
 ## [0.36.0] - 2026-11-01
 
 ### Agregado

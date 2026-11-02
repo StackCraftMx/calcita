@@ -1,6 +1,6 @@
 {
     "name": "@stackcraftmx/calcita",
-    "version": "0.36.0",
+    "version": "0.37.0",
     "description": "Componentes y utilidades de React con MUI para arrancar proyectos rápido: tabla de servidor, diálogos, avisos, descargas, formularios, formatos y reportes en Excel.",
     "license": "FSL-1.1-MIT",
     "author": "calcifux",
@@ -91,6 +91,10 @@
             "types": "./dist/types/money.d.ts",
             "import": "./dist/money.js"
         },
+        "./mexico": {
+            "types": "./dist/types/mexico.d.ts",
+            "import": "./dist/mexico.js"
+        },
         "./filepond": {
             "types": "./dist/types/filepond.d.ts",
             "import": "./dist/filepond.js"
@@ -170,6 +174,7 @@
         "filepond-plugin-file-validate-size": "^2.2.8",
         "filepond-plugin-file-validate-type": "^1.2.9",
         "formik": "^2.4.0",
+        "jsrsasign": "^11.0.0",
         "leaflet": "^1.9.0",
         "next": ">=15.0.0",
         "nuqs": "^2.0.0",
@@ -240,6 +245,9 @@
         "leaflet": {
             "optional": true
         },
+        "jsrsasign": {
+            "optional": true
+        },
         "next": {
             "optional": true
         },
@@ -297,6 +305,7 @@
         "filepond-plugin-file-validate-size": "2.2.8",
         "filepond-plugin-file-validate-type": "1.2.9",
         "formik": "2.4.9",
+        "jsrsasign": "11.1.5",
         "leaflet": "1.9.4",
         "next": "16.4.2",
         "nuqs": "2.10.1",

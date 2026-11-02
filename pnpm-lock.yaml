@@ -96,6 +96,9 @@ importers:
       formik:
         specifier: 2.4.9
         version: 2.4.9(@types/react@19.3.0)(react@19.3.0)
+      jsrsasign:
+        specifier: 11.1.5
+        version: 11.1.5
       leaflet:
         specifier: 1.9.4
         version: 1.9.4
@@ -222,6 +225,9 @@ importers:
       formik:
         specifier: 2.4.9
         version: 2.4.9(@types/react@19.3.0)(react@19.3.0)
+      jsrsasign:
+        specifier: 11.1.5
+        version: 11.1.5
       leaflet:
         specifier: 1.9.4
         version: 1.9.4
@@ -2320,6 +2326,10 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  jsrsasign@11.1.5:
+    resolution: {integrity: sha512-i6mAjey0/4UQmlOaNS2vROl8EkWV8Ei436reJAby2OPQ3lF6uXSs1VYpnM8hndmmCMFIzNc04Uw2GF+0JVLFbg==}
+    deprecated: This package is no longer maintained.
 
   jszip@3.10.2:
     resolution: {integrity: sha512-3l+rb15IOWtUhU0H5MFqES/T6Kh7abYwjosBey/vD6hDt8zoEffkSC5Ws5SGtgVw3gBx2NEbhTeSW1+kWkpyTQ==}
@@ -5044,6 +5054,8 @@ snapshots:
   json-parse-even-better-errors@2.3.1: {}
 
   json5@2.2.3: {}
+
+  jsrsasign@11.1.5: {}
 
   jszip@3.10.2:
     dependencies:
