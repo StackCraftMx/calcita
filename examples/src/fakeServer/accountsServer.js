@@ -73,10 +73,10 @@ export async function acceptTerms({version}) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
     const user = fakeUsers.find((candidate) => candidate.id === signedInUserIdOf());
     if (!user) {
-        throw new ApiError({status: HTTP_STATUS.unauthorized, problem: {title: serverTextOf('accounts.signedOut')}});
+        throw new ApiError({status: HTTP_STATUS.unauthorized, problem: {title: serverTextOf('accounts.termsRejected'), detail: serverTextOf('accounts.signedOut')}});
     }
     if (version !== CURRENT_TERMS_VERSION) {
-        throw new ApiError({status: HTTP_STATUS.conflict, problem: {title: serverTextOf('accounts.termsOutdated')}});
+        throw new ApiError({status: HTTP_STATUS.conflict, problem: {title: serverTextOf('accounts.termsRejected'), detail: serverTextOf('accounts.termsOutdated')}});
     }
     user.termsVersion = version;
     return {version, acceptedAt: new Date().toISOString()};

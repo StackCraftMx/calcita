@@ -63,7 +63,7 @@ export const CreditRequestPage = () => {
                     <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')} />
                     <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
                     <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
-                                     placeholder="002 180 01234567890 1" autoComplete="off" />
+                                     placeholder="032 180 00011835971 9" autoComplete="off" />
                 </FormSection>
             ),
         },

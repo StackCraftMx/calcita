@@ -11,6 +11,7 @@ export const APP_PATHS = Object.freeze({
     customers: '/customers',
     feedback: '/feedback',
     uploads: '/uploads',
+    fiscal: '/fiscal',
     reports: '/reports',
     metrics: '/metrics',
     glass: '/glass',

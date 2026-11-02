@@ -3,6 +3,7 @@
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
 import {Money} from '@stackcraftmx/calcita/money';
+import {isValidClabe} from '@stackcraftmx/calcita/mexico';
 
 import {ApiError} from '@/fakeServer/ApiError.js';
 import {MEXICAN_STATES} from '@/fakeServer/catalogsServer.js';
@@ -62,7 +63,8 @@ function fieldErrorsOf(request) {
     if (!LOAN_TERMS_IN_MONTHS.includes(Number(request.term_months))) {
         errors.term_months = [serverTextOf('creditRequests.termInvalid')];
     }
-    if (!/^\d{18}$/.test(request.deposit_clabe ?? '')) {
+    // el servidor también revisa el dígito verificador: no confía en lo que ya revisó la pantalla
+    if (!isValidClabe(request.deposit_clabe)) {
         errors.deposit_clabe = [serverTextOf('creditRequests.clabeInvalid')];
     }
     if (!STATE_CODES.has(request.state)) {
