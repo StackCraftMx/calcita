@@ -4,6 +4,26 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.36.0] - 2026-11-01
+
+### Agregado
+
+- `MaskedInput` y su `FormMaskedField` (formik y react-hook-form): campo con máscara que enseña los separadores mientras se
+  escribe y manda el valor limpio. `INPUT_MASK` con teléfono, código postal, CLABE, tarjeta, RFC, CURP y folio fiscal; una
+  propia con `9`, `A`, `X` y `H`. Pegar con otros separadores funciona y escribir en medio no manda el cursor al final.
+  `maskedTextOf`, `rawValueOf`, `isMaskComplete` y `maskPatternOf` sin React.
+- `Countdown`, `useCountdown`, `countdownPartsOf` y `countdownClockOf`: la cuenta regresiva hasta un momento, con
+  `onComplete` (una vez) y lo que dice al llegar a cero; para un lector de pantalla es un temporizador que no anuncia cada
+  segundo.
+- `PdfViewerDialog`: un PDF en la hoja de lectura de la casa con el visor del navegador, «Abrir en otra pestaña» y
+  «Descargar».
+- `CookieNotice` y `useCookieConsent`: el aviso de cookies por versión, recordado en el navegador.
+- `TermsAcceptanceDialog`: aceptar los términos de una versión antes de seguir, leyendo hasta el final (o con un PDF).
+- Ejemplos: «Documentos y avisos legales» en Hecho en Calcita, «Campos con máscara» en Formularios y «Cuenta regresiva» en
+  Fechas y horas; la app de ejemplos trae su aviso de cookies (la política en el visor de PDF) y pide los términos nuevos a
+  quien aceptó una versión vieja; el teléfono y la CLABE con máscara en el alta de cliente y la solicitud de crédito; la
+  cita dice cuánto falta para empezar.
+
 ## [0.35.0] - 2026-11-01
 
 ### Agregado
