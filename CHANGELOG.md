@@ -4,6 +4,31 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.34.0] - 2026-11-01
+
+### Agregado
+
+- `FileInput` y su `FormFileField` (formik y react-hook-form): un archivo del tamaño de un campo, con «Elegir archivo», el
+  elegido en su chip con la × y su ayuda o su error abajo; dentro de una `FormSection` es un renglón. Acepta lo ya guardado
+  (`{name, size}`) al editar.
+- `AttachmentsInput` y su `FormAttachmentsField`: varios archivos como en un correo, con `maxFiles`, `maxTotalSize`,
+  `onRemove`, y `showButton={false}` + `pickerRef` para abrir la ventana desde un botón propio. Un archivo con el mismo
+  nombre reemplaza al que estaba. La lista conserva el tipo de lo ya guardado.
+- `ImageInput` y su `FormImageField`: una foto con su vista previa (sin subirla), en círculo o recuadro (`IMAGE_SHAPE`),
+  con `placeholder` para las iniciales.
+- `TemplateDownloadButton`: «Descargar la plantilla» con `href` (un archivo fijo) o `request` (su API, por el panel de
+  descargas). `template` en `FileDropzone`, `FileInput` y `AttachmentsInput` lo pone junto a su botón.
+- `useFilePicker` (para armar un cargador propio), `screenFiles` (qué pasa y qué no, con su motivo: tipo, peso, cuántos y
+  cuánto juntos) y `fileAppearanceOf` (el ícono y el color de cada tipo de archivo).
+- Ejemplos: secciones 3 a 7 en «Subir archivos» de Hecho en Calcita; la importación de pagos ofrece su plantilla de Excel,
+  el alta de cliente pide la constancia fiscal, el correo adjunta con el clip y la sucursal nueva lleva su foto en el globo
+  del mapa.
+
+### Cambiado
+
+- `FileDropzone` usa las mismas piezas que los cargadores nuevos (`useFilePicker`, el chip del archivo); se ve y se porta
+  igual.
+
 ## [0.33.0] - 2026-11-01
 
 ### Agregado
