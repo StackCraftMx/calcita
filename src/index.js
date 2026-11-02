@@ -103,7 +103,7 @@ export {
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, LANGUAGES,
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
-    StatusChip, TableToggle, Tag, scrollableRow, useAppBarHeightPublisher,
+    StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useAppBarHeightPublisher,
 } from '@/ui/index.js';
 
 // ─── campos sueltos: la vista de cada campo, sin librería de formularios ────

@@ -49,6 +49,10 @@ pnpm exec calcita make:component OrderTotals --module purchase-orders
 El CLI nunca pisa un archivo que ya existe. Sus plantillas son los archivos tal cual (`cli/templates`), con
 `//#if pwa` … `//#endif` en lo que depende de una respuesta.
 
+El proyecto trae pruebas de pantalla (`pnpm test`, Vitest con jsdom y Testing Library): cada una abre la app completa en una
+dirección con el servidor de mentira (`openScreen` en `src/testing`) y pica como una persona. Vienen las del inicio, la de
+entrar y las del módulo de ejemplo, y `make:module` arma la de cada módulo nuevo.
+
 ## Arrancar en un proyecto que ya existe
 
 ```bash
@@ -170,7 +174,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | Importar de | Trae | Pide además |
 |---|---|---|
 | `@stackcraftmx/calcita` | proveedor, marco de la app, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos (`useFormatters`), fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja, la navegación sin router (`createBrowserNavigation`, `createHashNavigation`), la búsqueda de la barra (`BarSearch`), el menú «⋯» (`ActionsMenu`), las acciones de lo elegido (`SelectionActions`), la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) y la bandeja tipo correo (`InboxLayout`, `MessageList` con selección, `MessageView` con la conversación) | — |
-| `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs` |
+| `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs`, `react-window` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista de una o varias opciones, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo | `formik`, `yup` |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, su formulario por pasos y `yupResolver` | `react-hook-form`, `@hookform/resolvers` (y `yup` si valida con yup) |
 | `@stackcraftmx/calcita/date-pickers` | fecha, fecha con hora, hora y mes con los selectores de MUI X (`DateInput`, `DateTimeInput`, `TimeInput`, `MonthInput` y su versión de formik); cada uno viaja en texto | `@mui/x-date-pickers` 8, `dayjs` |

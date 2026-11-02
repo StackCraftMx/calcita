@@ -9,7 +9,7 @@ import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 
 import {
-    BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
+    BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
     AppLayout, AttachmentsInput, CatalogInput, ColorInput, FileDropzone, FileInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
@@ -141,6 +141,7 @@ const CASES = [
     ['AttachmentsInput con topes', h(AttachmentsInput, {value: [{name: 'factura.pdf', size: 1_200_000}, {name: 'foto.jpg', size: 800_000}], onChange: () => {}, maxFiles: 5, maxTotalSize: '5 MB'}), '2 archivos · 2 MB de 5 MB'],
     ['ImageInput con la imagen guardada', h(ImageInput, {label: 'Foto', value: '/fotos/ana.jpg', onChange: () => {}, shape: IMAGE_SHAPE.rounded}), 'src="/fotos/ana.jpg"'],
     ['ImageInput vacío', h(ImageInput, {label: 'Foto', value: null, onChange: () => {}}), 'Elegir imagen'],
+    ['CopyButton con su nombre y el renglón al picar', h(CopyButton, {label: 'Copiar el renglón', value: () => 'a\tb'}), 'aria-label="Copiar el renglón"'],
     ['TemplateDownloadButton con su API', h(TemplateDownloadButton, {request: async () => ({blob: new Blob(['a']), fileName: 'plantilla.csv'}), format: 'csv'}), 'Descargar la plantilla'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
     // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)

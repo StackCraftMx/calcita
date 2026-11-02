@@ -47,6 +47,7 @@ export {default as Tag} from '@/ui/labels/Tag.jsx';
 
 // ─── actions ─────────────────────────────────────────────────────────────────
 export {default as CopyButton} from '@/ui/actions/CopyButton.jsx';
+export {tableRowTextOf} from '@/ui/actions/tableRowText.js';
 export {default as DownloadMenu} from '@/ui/actions/DownloadMenu.jsx';
 export {default as SecretField} from '@/ui/actions/SecretField.jsx';
 

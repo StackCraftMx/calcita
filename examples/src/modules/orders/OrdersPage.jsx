@@ -7,6 +7,7 @@
 //     chips de lo que está filtrado, que se quitan de a uno;
 //   - el orden con clic en el encabezado y el icono de la última columna para abrir el detalle (no la fila entera);
 //   - todo vive en la URL con el prefijo «orders»: se comparte por enlace y sobrevive a recargar;
+//   - «Ir a la página N» (showGoToPage): la lista trae todas las páginas (con 10 por página, más de 100) y abre en la actual;
 //   - elegir pedidos con su casilla y actuar sobre ellos (selectionActions): «Recordar pago» y, con el permiso
 //     orders.cancel, «Cancelar» con motivo. Se conservan al cambiar de página; con toda la página elegida se ofrece «Elegir
 //     los N que coinciden» y entonces al servidor le llegan los filtros. El servidor aplica sus reglas: cancela los que puede
@@ -185,6 +186,8 @@ export const OrdersPage = () => {
                 searchPlaceholder={t('search.placeholder')}
                 // la búsqueda arriba, en la barra de la app (en el teléfono se queda aquí)
                 searchInBar
+                // «Ir a la página N»: con 10 por página son más de 100 páginas y la lista llega hasta la última
+                showGoToPage
                 countLabel={(total) => t('count', {count: total, total: formatNumber(total)})}
                 emptyLabel={t('empty')}
                 ariaLabel={t('list.ariaLabel')}

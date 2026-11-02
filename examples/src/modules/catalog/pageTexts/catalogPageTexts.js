@@ -135,7 +135,7 @@ export const catalogPageTexts = {
                     ariaLabel: 'Acciones rápidas',
                 },
                 framework: {
-                    description: 'CopyButton copia un texto y avisa que se copió.',
+                    description: 'CopyButton copia un texto y avisa que se copió; si el navegador no deja copiar, lo dice en rojo. Un renglón entero se copia con tableRowTextOf: al pegarlo en Excel cada dato cae en su celda.',
                 },
             },
             chips: {
@@ -1919,7 +1919,7 @@ export const catalogPageTexts = {
                     ariaLabel: 'Quick actions',
                 },
                 framework: {
-                    description: 'CopyButton copies a text and tells you it was copied.',
+                    description: 'CopyButton copies a text and tells you it was copied; if the browser does not allow copying, it says so in red. A whole row is copied with tableRowTextOf: pasted in Excel, each value lands in its cell.',
                 },
             },
             chips: {

@@ -31,7 +31,8 @@ src/
   app/                el único lugar donde se conecta el framework: proveedores, marco, rutas, tema y textos
   core/               lo que comparten dos o más módulos (se importa de '@/core')
   fakeServer/         el servidor de mentira: datos en memoria con la forma del API de verdad
-  modules/<módulo>/   cada módulo en su carpeta: menu.js, routes.js, sus pantallas, su *Api.js y sus *Texts.js
+  modules/<módulo>/   cada módulo en su carpeta: menu.js, routes.js, sus pantallas, su *Api.js, sus *Texts.js y sus pruebas
+  testing/            el kit de las pruebas de pantalla: abrir la app en una dirección (openScreen) y los huecos de jsdom
 ```
 
 - **Un módulo nuevo no edita nada fuera de su carpeta**: el menú, las rutas y los textos se descubren solos.
@@ -41,6 +42,18 @@ src/
 - **Textos en español e inglés** en los `*Texts.js` de cada módulo; los de los componentes de Calcita (tablas, diálogos,
   validaciones) ya vienen.
 - **Imports con el alias `@/`** (= `src/`), declarado en `vite.config.js` y en `jsconfig.json`.
+
+## Pruebas de pantalla
+
+```bash
+pnpm test
+```
+
+Cada `*.test.jsx` abre la app COMPLETA en una dirección (`openScreen`, en `src/testing`), con el servidor de mentira, y pica
+como una persona: busca lo que se ve por su papel y su nombre (`screen.findByRole('heading', {name: 'Bienvenida'})`) y da
+clic o escribe con `user`. Pasa por lo mismo que la persona (permisos, menú, textos, avisos). Vienen las del inicio y las del
+módulo de ejemplo, y `make:module` arma la de cada módulo nuevo. Corren con Vitest y jsdom (un navegador de mentira): lo que
+depende de medir o pintar se revisa en un navegador de verdad.
 
 ## Publicar una versión nueva
 

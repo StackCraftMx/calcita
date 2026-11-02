@@ -1,50 +1,87 @@
-// Botón para copiar un valor al portapapeles, con la palomita de «copiado» un par de segundos.
+// Botón para copiar al portapapeles: un ícono que pone el texto y lo confirma ahí mismo («Copiado» un par de segundos, con la
+// palomita). Va donde copiar a mano cuesta trabajo: un folio, un texto largo que en pantalla va cortado, un renglón entero
+// (con tableRowTextOf: separado por tabuladores, al pegarlo en Excel cada dato cae en su celda).
 //
-// Sin permiso de portapapeles (una página en http, dentro de un iframe) no truena: el valor sigue a la vista para copiarlo
-// a mano.
+// Si el navegador no deja copiar (una página en http, dentro de un iframe, sin permiso), el botón lo dice en rojo en lugar
+// de fingir que copió, y avisa con onCopyFailed. La confirmación también se anuncia a los lectores de pantalla (el globo no
+// siempre se anuncia).
+//
+// value puede ser una función: se llama al picar (arma el renglón solo si de verdad se copia).
 //
 // Genérico del paquete: function (regla de la casa).
-import {useState} from 'react';
-import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+import {useEffect, useRef, useState} from 'react';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import CheckIcon from '@mui/icons-material/CheckRounded';
 import CopyIcon from '@mui/icons-material/ContentCopyOutlined';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
-// cuánto se queda la palomita de «copiado»
-const COPIED_FEEDBACK_MILLISECONDS = 2000;
+// cuánto se queda la confirmación (copiado o no se pudo) antes de regresar al ícono de copiar
+const FEEDBACK_MILLISECONDS = 2000;
+// en qué va el botón: listo, copiado o no se pudo
+const COPY_STATE = Object.freeze({idle: 'idle', copied: 'copied', failed: 'failed'});
+const ICON_BY_STATE = Object.freeze({[COPY_STATE.idle]: CopyIcon, [COPY_STATE.copied]: CheckIcon, [COPY_STATE.failed]: ErrorOutlineIcon});
+const COLOR_BY_STATE = Object.freeze({[COPY_STATE.idle]: undefined, [COPY_STATE.copied]: 'success.dark', [COPY_STATE.failed]: 'error.dark'});
+// el aviso para lectores de pantalla, escondido a la vista. OJO: '1px' en texto; en MUI un width: 1 es 100% y el texto
+// escondido ensanchaba la página
+const VISUALLY_HIDDEN_SX = {position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap'};
 
 /**
  * @param {object} props
- * @param {string} props.value lo que se copia
- * @param {string} [props.label] ya traducido; por omisión «Copiar»
+ * @param {string|(() => string)} props.value lo que se copia; una función se llama al picar
+ * @param {string} [props.label] ya traducido: qué copia («Copiar el folio»); por omisión «Copiar». Es el globo y el nombre
+ *     del botón para un lector de pantalla
  * @param {'small'|'medium'} [props.size]
  * @param {() => void} [props.onCopied]
+ * @param {(error: unknown) => void} [props.onCopyFailed] el navegador no dejó copiar (el botón ya lo dice en rojo)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CopyButton({value, label, size = 'small', onCopied, texts, ...unknownProps}) {
+export default function CopyButton({value, label, size = 'small', onCopied, onCopyFailed, texts, ...unknownProps}) {
     warnUnknownProps('CopyButton', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
-    const [isCopied, setIsCopied] = useState(false);
+    const [copyState, setCopyState] = useState(COPY_STATE.idle);
+    const resetTimer = useRef(null);
     const buttonLabel = label ?? t('form.copy');
 
+    // al desmontar no se queda un temporizador vivo
+    useEffect(() => () => clearTimeout(resetTimer.current), []);
+
     const copy = async () => {
+        clearTimeout(resetTimer.current);
         try {
-            await navigator.clipboard.writeText(value);
-            setIsCopied(true);
+            await navigator.clipboard.writeText(typeof value === 'function' ? value() : value);
+            setCopyState(COPY_STATE.copied);
             onCopied?.();
-            setTimeout(() => setIsCopied(false), COPIED_FEEDBACK_MILLISECONDS);
-        } catch {
-            // sin permiso de portapapeles: el valor está a la vista para copiarlo a mano
+        } catch (error) {
+            setCopyState(COPY_STATE.failed);
+            onCopyFailed?.(error);
         }
+        resetTimer.current = setTimeout(() => setCopyState(COPY_STATE.idle), FEEDBACK_MILLISECONDS);
     };
 
+    const feedbackText = {
+        [COPY_STATE.idle]: buttonLabel,
+        [COPY_STATE.copied]: t('form.copied'),
+        [COPY_STATE.failed]: t('form.copyFailed'),
+    }[copyState];
+    const StateIcon = ICON_BY_STATE[copyState];
+
     return (
-        <Tooltip title={isCopied ? t('form.copied') : buttonLabel}>
-            <IconButton size={size} aria-label={buttonLabel} onClick={copy} color={isCopied ? 'success' : 'default'}>
-                {isCopied ? <CheckIcon fontSize="inherit" /> : <CopyIcon fontSize="inherit" />}
-            </IconButton>
-        </Tooltip>
+        <>
+            {/* la confirmación se queda abierta mientras dura, aunque el cursor ya no esté encima; arriba y no a un lado, para no
+                tapar el dato de junto */}
+            <Tooltip title={feedbackText} open={copyState === COPY_STATE.idle ? undefined : true} placement="top">
+                <IconButton size={size} aria-label={buttonLabel} onClick={copy} sx={{color: COLOR_BY_STATE[copyState]}}>
+                    <StateIcon fontSize="inherit" />
+                </IconButton>
+            </Tooltip>
+            <Box component="span" role="status" aria-live="polite" sx={VISUALLY_HIDDEN_SX}>
+                {copyState === COPY_STATE.idle ? '' : feedbackText}
+            </Box>
+        </>
     );
 }
