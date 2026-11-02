@@ -15,7 +15,8 @@ import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/c
 import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
 import {
-    AttachmentsInput, FILE_REJECTION, FileInput, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles, useFilePicker,
+    AttachmentsInput, CopyButton, FILE_REJECTION, FileInput, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles,
+    tableRowTextOf, useFilePicker,
 } from '@stackcraftmx/calcita';
 import {FormAttachmentsField, FormFileField, FormImageField} from '@stackcraftmx/calcita/forms';
 import {FormFileField as HookFormFileField} from '@stackcraftmx/calcita/react-hook-form';
@@ -100,6 +101,8 @@ const screened = screenFiles([{name: 'a.pdf', size: 10}], {maxFiles: 1});
 const rejectionReason: string = FILE_REJECTION.count;
 const pdfLook = fileAppearanceOf('factura.pdf').color;
 const filePickerHook = useFilePicker;
+// copiar un renglón para Excel, armado al picar, y saber si el navegador no dejó
+const copyRow = createElement(CopyButton, {label: 'Copiar', value: () => tableRowTextOf(['P-1', 2, null]), onCopyFailed: (error: unknown) => error});
 // fecha con hora, hora y mes: cada uno con su valor en texto y sus límites con la misma forma
 const travelFormats: string[] = [CALENDAR_MONTH_FORMAT, INSTANT_FORMAT, TIME_OF_DAY_FORMAT];
 const zoneName: string = timeZoneNameOf('America/Mexico_City', 'es-MX');
@@ -269,4 +272,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

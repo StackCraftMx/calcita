@@ -119,6 +119,7 @@ export default Object.freeze({
             "selectPlaceholder": "Elija una opción",
             "copy": "Copiar",
             "copied": "Copiado",
+            "copyFailed": "No se pudo copiar: el navegador no dio permiso.",
             "noOptions": "Ninguna opción coincide",
             "loadingOptions": "Cargando opciones…",
             "pickColor": "Elegir el color",
