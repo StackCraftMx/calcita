@@ -10,7 +10,7 @@
 import {TimePicker} from '@mui/x-date-pickers/TimePicker';
 
 import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
-import {pickerTimeOf, timeTextOf} from '@/datePickers/pickerValues.js';
+import {DEFAULT_MINUTES_STEP, pickerTimeOf, timeTextOf} from '@/datePickers/pickerValues.js';
 import {usePickerField} from '@/datePickers/usePickerField.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -25,7 +25,8 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {string} [props.helperText]
  * @param {string} [props.minTime] 'HH:mm'
  * @param {string} [props.maxTime] 'HH:mm'
- * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos (30 para citas de media hora)
+ * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos; por omisión de uno en uno (30 para citas de
+ *     media hora)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del TimePicker de MUI X que aquí no tiene nombre (views, shouldDisableTime,
@@ -33,7 +34,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function TimeInput({
-    name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep, disabled = false, inputRef,
+    name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep = DEFAULT_MINUTES_STEP, disabled = false, inputRef,
     pickerProps, texts,
     ...unknownProps
 }) {
@@ -50,7 +51,8 @@ export default function TimeInput({
                 minTime={pickerTimeOf(minTime) ?? undefined}
                 maxTime={pickerTimeOf(maxTime) ?? undefined}
                 disabled={disabled}
-                {...(minutesStep && {minutesStep, timeSteps: {minutes: minutesStep}})}
+                minutesStep={minutesStep}
+                timeSteps={{minutes: minutesStep, ...pickerProps?.timeSteps}}
                 inputRef={inputRef}
                 onChange={(pickedValue) => onChange(timeTextOf(pickedValue))}
                 onClose={() => {

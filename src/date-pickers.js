@@ -5,6 +5,9 @@
 //   TimeInput      / FormTimeField       hora del día     'HH:mm'
 //   MonthInput     / FormMonthField      mes              'AAAA-MM'
 //
+// Los minutos van de uno en uno. Para lo que depende del reloj o de otro campo (publicar con anticipación, algo que dura un
+// mínimo): minimumMinutesFromNow e instantPlusMinutes en el campo, y minutesFromNowRule / minutesAfterRule en yup.
+//
 // Con react-hook-form (cualquiera de los cuatro, igual):
 //   <Controller name="birthDate" control={control} render={({field, fieldState}) => (
 //       <DateInput label="Fecha de nacimiento" value={field.value} onChange={field.onChange} onBlur={field.onBlur}
@@ -19,5 +22,8 @@ export {default as FormTimeField} from '@/datePickers/FormTimeField.jsx';
 export {default as MonthInput} from '@/datePickers/MonthInput.jsx';
 export {default as FormMonthField} from '@/datePickers/FormMonthField.jsx';
 export {
-    CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, INSTANT_FORMAT, TIME_OF_DAY_FORMAT, timeZoneNameOf,
+    CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, DEFAULT_MINUTES_STEP, INSTANT_FORMAT, TIME_OF_DAY_FORMAT, earliestInstantFromNow,
+    instantPlusMinutes, latestInstantOf, timeZoneNameOf,
 } from '@/datePickers/pickerValues.js';
+export {minutesAfterRule, minutesFromNowRule} from '@/datePickers/dateTimeRules.js';
+export {useCurrentMinute} from '@/datePickers/useCurrentMinute.js';

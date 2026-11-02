@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
-    displayFormatsOf, instantTextOf, monthTextOf, pickerInstantOf, pickerMonthOf, pickerTimeOf, timeTextOf, timeZoneNameOf,
+    displayFormatsOf, earliestInstantFromNow, instantPlusMinutes, instantTextOf, latestInstantOf, monthTextOf, pickerInstantOf, pickerMonthOf, pickerTimeOf, timeTextOf, timeZoneNameOf,
 } from '@/datePickers/pickerValues.js';
+import {minutesAfterRule, minutesFromNowRule} from '@/datePickers/dateTimeRules.js';
 
 test('un instante se pinta en la zona del proveedor y regresa en UTC', () => {
     const shown = pickerInstantOf('2026-11-01T18:30:00Z', 'America/Mexico_City');
@@ -55,3 +56,34 @@ test('la zona se nombra en palabras y, si no se puede, tal cual', () => {
     assert.match(name, /^Hora /);
     assert.equal(timeZoneNameOf('Zona/Inventada', 'es-MX'), 'Zona/Inventada');
 });
+
+test('«al menos N minutos después de ahora» cuenta desde el minuto en punto, sin segundos', () => {
+    // 18:32:47 UTC + 5 minutos = 18:37:00 (los segundos de ahora no cuentan)
+    assert.equal(earliestInstantFromNow(5, Date.parse('2026-11-02T18:32:47.512Z')), '2026-11-02T18:37:00Z');
+    assert.equal(earliestInstantFromNow(0, new Date('2026-11-02T18:32:00Z')), '2026-11-02T18:32:00Z');
+});
+
+test('sumar minutos a un instante, y el más tarde de varios mínimos', () => {
+    assert.equal(instantPlusMinutes('2026-11-02T23:45:00Z', 30), '2026-11-03T00:15:00Z');
+    assert.equal(instantPlusMinutes('2026-11-02T12:00:00-06:00', 5), '2026-11-02T18:05:00Z');
+    assert.equal(instantPlusMinutes('', 30), '');
+    assert.equal(instantPlusMinutes('no es fecha', 30), '');
+    assert.equal(latestInstantOf('2026-11-02T18:00:00Z', '', '2026-11-02T18:05:00Z', undefined), '2026-11-02T18:05:00Z');
+    assert.equal(latestInstantOf('', null), '');
+});
+
+test('las reglas de yup: con anticipación desde ahora y con duración desde el inicio', () => {
+    const fromNow = minutesFromNowRule(5);
+    assert.deepEqual(fromNow.message, {key: 'validation:minutesFromNow', values: {count: 5}});
+    assert.equal(fromNow.test(''), true);
+    assert.equal(fromNow.test(new Date(Date.now() + 60 * 60_000).toISOString()), true);
+    assert.equal(fromNow.test(new Date(Date.now() + 60_000).toISOString()), false);
+
+    const afterStart = minutesAfterRule('startsAt', 30);
+    const parent = {startsAt: '2026-11-02T18:00:00Z'};
+    assert.equal(afterStart.test('2026-11-02T18:30:00Z', {parent}), true);
+    assert.equal(afterStart.test('2026-11-02T18:29:00Z', {parent}), false);
+    // sin inicio no hay contra qué comparar: lo dice la regla del inicio
+    assert.equal(afterStart.test('2026-11-02T18:29:00Z', {parent: {startsAt: ''}}), true);
+});
+
