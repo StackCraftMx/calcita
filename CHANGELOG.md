@@ -4,6 +4,17 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.44.0] - 2026-11-02
+
+### Agregado
+
+- `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga, «atrás» regresa a la anterior, se abre en
+  otra pestaña del navegador). Por ruta (`tabs[].to`, `exact`) o dentro de una pantalla en la consulta (`mode="query"`,
+  `paramName`), con ícono, conteo (`badge`), permiso (`access`, con la regla de ToolkitProvider), apagada u oculta, y
+  `onChange`. `useActiveRouteTab` dice cuál está activa para pintar su panel. Usa la navegación conectada (react-router,
+  Next o la del navegador). Pieza del tema `CalcitaRouteTabs`.
+- Ejemplos: «5. Pestañas por ruta» en Marco y menú; las pestañas de Formularios ya son `RouteTabs`.
+
 ## [0.43.0] - 2026-11-02
 
 ### Agregado
