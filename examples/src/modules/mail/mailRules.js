@@ -9,6 +9,8 @@ export const COMPOSE_MODE = Object.freeze({new: 'new', reply: 'reply', replyAll:
 
 /** Hasta cuándo se pospone: más tarde hoy (si aún es temprano), mañana o la semana que entra, siempre a una hora fija. */
 export const SNOOZE_OPTION = Object.freeze({laterToday: 'laterToday', tomorrow: 'tomorrow', nextWeek: 'nextWeek'});
+/** Posponer a mano: al menos estos minutos después de ahora (el servidor revisa lo mismo). */
+export const MINIMUM_SNOOZE_MINUTES = 5;
 
 // «más tarde hoy» es a las 18; después de las 17 ya no se ofrece (quedaría en menos de una hora)
 const LATER_TODAY_HOUR = 18;
