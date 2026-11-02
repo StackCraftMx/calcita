@@ -9,8 +9,8 @@
 // Por qué máquina y no cuatro useState: los estados imposibles dejan de existir (no hay "resultado y error a la vez"
 // ni "progreso sin carga") y el flujo sending → processing → done queda DECLARADO, no regado en callbacks.
 //
-// Contexto: progress (% de bytes enviados; null fuera de sending) · result (lo que resuelva la subida) · problem (el
-// error RFC 9457 del rechazo, normalmente un ApiError).
+// Contexto: progress (% de bytes enviados; null fuera de sending) · transfer (cuánto va y cuánto pesa, {loaded, total}, si
+// la subida lo da) · result (lo que resuelva la subida) · problem (el error RFC 9457 del rechazo, normalmente un ApiError).
 //
 // Uso:
 //   const [uploadSnapshot, sendToUpload] = useMachine(uploadMachine.provide({actors: buildUploadActors(uploadFile)}));
@@ -19,7 +19,7 @@
 // Pura: solo importa xstate.
 import {assign, fromCallback, setup} from 'xstate';
 
-const resetContext = assign({progress: null, result: null, problem: null});
+const resetContext = assign({progress: null, transfer: null, result: null, problem: null});
 
 export const uploadMachine = setup({
     actors: {
@@ -34,7 +34,7 @@ export const uploadMachine = setup({
 }).createMachine({
     id: 'upload',
     initial: 'idle',
-    context: {progress: null, result: null, problem: null},
+    context: {progress: null, transfer: null, result: null, problem: null},
     states: {
         idle: {
             on: {UPLOAD: {target: 'uploading', actions: resetContext}},
@@ -46,8 +46,8 @@ export const uploadMachine = setup({
                 sending: {
                     on: {
                         PROGRESS: [
-                            {guard: 'isFullySent', target: 'processing', actions: assign({progress: ({event}) => event.percent})},
-                            {actions: assign({progress: ({event}) => event.percent})},
+                            {guard: 'isFullySent', target: 'processing', actions: assign({progress: ({event}) => event.percent, transfer: ({event}) => event.transfer ?? null})},
+                            {actions: assign({progress: ({event}) => event.percent, transfer: ({event}) => event.transfer ?? null})},
                         ],
                     },
                 },
@@ -55,10 +55,10 @@ export const uploadMachine = setup({
                 processing: {},
             },
             on: {
-                DONE: {target: 'done', actions: assign({result: ({event}) => event.output, progress: null})},
-                FAIL: {target: 'failed', actions: assign({problem: ({event}) => event.problem, progress: null})},
+                DONE: {target: 'done', actions: assign({result: ({event}) => event.output, progress: null, transfer: null})},
+                FAIL: {target: 'failed', actions: assign({problem: ({event}) => event.problem, progress: null, transfer: null})},
                 // salir de uploading DETIENE el actor y su cleanup aborta la petición de verdad (no solo la UI)
-                CANCEL: {target: 'cancelled', actions: assign({progress: null})},
+                CANCEL: {target: 'cancelled', actions: assign({progress: null, transfer: null})},
             },
         },
         done: {
@@ -79,13 +79,14 @@ export const uploadMachine = setup({
  *
  * fromCallback y no fromPromise: hacen falta EVENTOS a medio camino (el avance) y un CLEANUP que aborte la petición.
  *
- * @param {(input: object, onProgress: (percent: number) => void, signal: AbortSignal) => Promise<unknown>} uploadFile
+ * @param {(input: object, onProgress: (percent: number, transfer?: {loaded: number, total: number}) => void, signal: AbortSignal) => Promise<unknown>} uploadFile
+ *     onProgress lleva, si se sabe, cuánto va y cuánto pesa (para la velocidad y lo que falta)
  */
 export function buildUploadActors(uploadFile) {
     return {
         upload: fromCallback(({input, sendBack}) => {
             const abortController = new AbortController();
-            uploadFile(input, (percent) => sendBack({type: 'PROGRESS', percent}), abortController.signal)
+            uploadFile(input, (percent, transfer) => sendBack({type: 'PROGRESS', percent, transfer}), abortController.signal)
                 .then((output) => sendBack({type: 'DONE', output}))
                 .catch((problem) => {
                     // aborto esperado (CANCEL): la máquina ya cambió de estado sola

@@ -13,6 +13,7 @@ import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import AttachmentsDemo from '@/modules/catalog/demos/upload/AttachmentsDemo.tsx';
 import FileInputDemo from '@/modules/catalog/demos/upload/FileInputDemo.tsx';
+import FileUploadDemo from '@/modules/catalog/demos/upload/FileUploadDemo.tsx';
 import ImageInputDemo from '@/modules/catalog/demos/upload/ImageInputDemo.tsx';
 import OwnPickerDemo from '@/modules/catalog/demos/upload/OwnPickerDemo.tsx';
 import TemplateDemo from '@/modules/catalog/demos/upload/TemplateDemo.tsx';
@@ -21,6 +22,7 @@ import UploadDemo from '@/modules/catalog/demos/upload/UploadDemo.tsx';
 const loadDemo = () => import('@/modules/catalog/demos/upload/UploadDemo.tsx?demo-source');
 const loadApi = () => import('@/modules/catalog/demos/upload/UploadToApi.ts?demo-source');
 const loadFileInput = () => import('@/modules/catalog/demos/upload/FileInputDemo.tsx?demo-source');
+const loadFileUpload = () => import('@/modules/catalog/demos/upload/FileUploadDemo.tsx?demo-source');
 const loadAttachments = () => import('@/modules/catalog/demos/upload/AttachmentsDemo.tsx?demo-source');
 const loadImage = () => import('@/modules/catalog/demos/upload/ImageInputDemo.tsx?demo-source');
 const loadTemplate = () => import('@/modules/catalog/demos/upload/TemplateDemo.tsx?demo-source');
@@ -62,6 +64,16 @@ const FILE_INPUT_EXTENSIONS = [
     {id: 'slots', option: 'actions · buttonLabel · emptyText', example: 'buttonLabel="Elegir el contrato" emptyText="Sin contrato"'},
     ...SHARED_PICKER_EXTENSIONS,
 ];
+const FILE_UPLOAD_EXTENSIONS = [
+    {id: 'upload', option: 'upload · idOf', example: "upload={(file, {signal, onUploadProgress, idempotencyKey}) => documentsApi.upload(file, …)} idOf={(response) => response.info.file.id}"},
+    {id: 'saved', option: 'uploadedFile', example: "value={claim.ine_file_id} uploadedFile={{name: 'ine.pdf', size: 245000}}"},
+    {id: 'download', option: 'download', example: 'download={(fileId, transferOptions) => documentsApi.download(fileId, transferOptions)}'},
+    {id: 'actions', option: 'actions', example: '<Chip size="small" color="warning" label="Falta información" />'},
+    {id: 'events', option: 'onStatusChange · onUploaded · onUploadFailed · onCancel · onRemove', example: 'onStatusChange={(status) => setStatus(key, status)}'},
+    {id: 'limits', option: 'accept · maxSize · limitsText', example: "accept={['pdf', 'image']} maxSize=\"5 MB\" limitsText=\"PDF o foto, hasta 5 MB\""},
+    {id: 'forms', option: 'FormFileUploadField', example: "import {FormFileUploadField} from '@stackcraftmx/calcita/forms';  // o /react-hook-form"},
+    {id: 'theme', option: 'theme.components.CalcitaFileUploadInput', example: "components: {CalcitaFileUploadInput: {styleOverrides: {status: {fontWeight: 600}}}}"},
+];
 const ATTACHMENTS_EXTENSIONS = [
     {id: 'limits', option: 'maxFiles · maxTotalSize', example: 'maxFiles={5} maxTotalSize="5 MB"'},
     {id: 'saved', option: 'value con {id, name, size}', example: "value={[{id: 'att-1', name: 'contrato.pdf', size: 245000}, newFile]}"},
@@ -102,6 +114,8 @@ export const FileUploadsPage = () => {
                          extensions={rowsOf('api', API_EXTENSIONS)} loadSource={loadApi} />
             <DemoSection title={t('uploads.fileInput.title')} description={t('uploads.fileInput.description')}
                          extensions={rowsOf('fileInput', FILE_INPUT_EXTENSIONS)} Demo={FileInputDemo} loadSource={loadFileInput} />
+            <DemoSection title={t('uploads.fileUpload.title')} description={t('uploads.fileUpload.description')}
+                         extensions={rowsOf('fileUpload', FILE_UPLOAD_EXTENSIONS)} Demo={FileUploadDemo} loadSource={loadFileUpload} />
             <DemoSection title={t('uploads.attachments.title')} description={t('uploads.attachments.description')}
                          extensions={rowsOf('attachments', ATTACHMENTS_EXTENSIONS)} Demo={AttachmentsDemo} loadSource={loadAttachments} />
             <DemoSection title={t('uploads.image.title')} description={t('uploads.image.description')}

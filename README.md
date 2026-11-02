@@ -346,6 +346,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaEventDetails` | `row`, `rowContent`, `titleRow`, `toneDot`, `linkRow`, `link`, `guestsTitle`, `guest`, `guestAvatar`, `guestName`, `notes`, `actions` |
 | `CalcitaFileDropzone` | `root`, `fileArea`, `fileChip`, `hint`, `actions`, `limits`, `extra` |
 | `CalcitaFileInput` | `root`, `button`, `fileChip`, `empty` |
+| `CalcitaFileUploadInput` | `root`, `fileName`, `status`, `button`, `helper` |
 | `CalcitaFilterChips` | `root`, `header`, `clearButton` |
 | `CalcitaFontSizeToggle` | `button` |
 | `CalcitaFormProblemAlert` | `root` |
@@ -930,6 +931,26 @@ import {AttachmentsInput, FileInput} from '@stackcraftmx/calcita';
            template={{href: '/plantillas/constancia.pdf'}} />
 <AttachmentsInput value={files} onChange={setFiles} accept={['pdf', 'image']} maxFiles={5} maxTotalSize="10 MB" />
 ```
+
+### El cargador mini: sube en cuanto se elige
+
+Los de arriba solo eligen y el archivo viaja con el formulario. `FileUploadInput` (y `FormFileUploadField` de formik y de
+react-hook-form) SUBE el archivo en cuanto se elige, en su renglón: para una lista de documentos (lo que pide una solicitud,
+el expediente de un cliente). Enseña su estado (Por cargar, Subiendo 40 %, Procesando, Cargado, No se cargó), «Cargar» que ya
+cargado dice «Sustituir», bajar el subido y quitarlo, y abajo el avance en palabras o el motivo del error. Al formulario
+llega solo el id que da el servidor (`''` mientras sube): `Yup.string().required()` pide el documento.
+
+```jsx
+import {FormFileUploadField} from '@stackcraftmx/calcita/forms';
+
+<FormFileUploadField name="identification_file_id" label="Identificación oficial" accept={['pdf', 'image']} maxSize="5 MB"
+                     upload={(file, {signal, onUploadProgress, idempotencyKey}) => documentsApi.upload(file, {signal, onUploadProgress, idempotencyKey})}
+                     download={(fileId, transferOptions) => documentsApi.download(fileId, transferOptions)} />
+```
+
+`upload` es la subida del proyecto (`uploadWithProgress`, axios o su cliente) y `idOf` dice qué guardar de la respuesta (por
+omisión `result.id`). Lo del negocio (Aprobado, Falta información) va junto al estado con `actions`, y `onStatusChange`
+dice en qué va cada renglón para contar «2 de 3 cargados».
 
 ## Documentos, avisos legales y cuenta regresiva
 

@@ -3,4 +3,5 @@
 // SIMULATED_RESPONSES solo existe en los ejemplos: con un backend de verdad, la respuesta la decide el servidor.
 export {getStatesCatalog} from '@/fakeServer/catalogsServer.js';
 export {LOAN_TERMS_IN_MONTHS, submitCreditRequest} from '@/fakeServer/creditRequestsServer.js';
+export {downloadUploadedDocument, uploadDocument} from '@/fakeServer/documentsServer.js';
 export {SIMULATED_RESPONSES, createCustomer} from '@/fakeServer/customersServer.js';

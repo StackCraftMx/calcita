@@ -156,6 +156,15 @@ const SERVER_TEXTS = Object.freeze({
             unreadable: 'No pudimos leer el archivo como Excel: puede estar dañado o protegido con contraseña.',
             attachmentTooLarge: 'El servidor acepta adjuntos de hasta {{max}}.',
         },
+        documents: {
+            invalidType: 'El documento tiene que ser un PDF o una foto (JPG o PNG).',
+            tooLarge: 'El documento pesa más de {{max}}.',
+            notPdf: 'El archivo dice ser PDF pero no lo es, o está dañado. Vuelva a guardarlo como PDF.',
+            notFoundTitle: 'No encontramos el documento',
+            notFound: 'El documento ya no está en el servidor. Vuelva a subirlo.',
+            missing: 'Suba este documento.',
+            unknown: 'Ese documento no se subió a este servidor. Vuelva a subirlo.',
+        },
     },
     en: {
         security: {
@@ -303,6 +312,15 @@ const SERVER_TEXTS = Object.freeze({
             notExcel: 'The file must be an Excel workbook (.xlsx).',
             unreadable: 'We could not read the file as Excel: it may be damaged or password protected.',
             attachmentTooLarge: 'The server accepts attachments up to {{max}}.',
+        },
+        documents: {
+            invalidType: 'The document must be a PDF or a photo (JPG or PNG).',
+            tooLarge: 'The document is larger than {{max}}.',
+            notPdf: 'The file says it is a PDF but it is not, or it is damaged. Save it as PDF again.',
+            notFoundTitle: 'We could not find the document',
+            notFound: 'The document is no longer on the server. Upload it again.',
+            missing: 'Upload this document.',
+            unknown: 'That document was not uploaded to this server. Upload it again.',
         },
     },
 });

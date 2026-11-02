@@ -68,10 +68,11 @@ export const customersTexts = {
             },
             credit: {
                 title: 'Solicitud de crédito',
-                subtitle: 'Un solo formulario en cuatro pasos. «Siguiente» revisa solo los campos del paso; el paso de la imagen de la empresa es opcional y se puede omitir. Si el servidor rechaza un campo de un paso anterior, el formulario regresa solo a ese paso.',
+                subtitle: 'Un solo formulario en cinco pasos. «Siguiente» revisa solo los campos del paso; el paso de la imagen de la empresa es opcional y se puede omitir. Si el servidor rechaza un campo de un paso anterior, el formulario regresa solo a ese paso.',
                 steps: {
                     applicant: 'Solicitante',
                     loan: 'Crédito',
+                    documents: 'Documentos',
                     guarantor: 'Aval',
                     brand: 'Imagen de la empresa',
                 },
@@ -87,6 +88,13 @@ export const customersTexts = {
                 guarantorPhone: 'Teléfono del aval',
                 depositClabe: 'CLABE para el depósito',
                 depositClabeHelp: 'Los 18 dígitos de la cuenta donde se deposita el crédito.',
+                documents: {
+                    identification: 'Identificación oficial',
+                    addressProof: 'Comprobante de domicilio',
+                    bankStatement: 'Estado de cuenta (opcional)',
+                    limits: 'PDF o foto (JPG o PNG), hasta 5 MB',
+                    count: '{{uploaded}} de {{total}} documentos cargados. Cada uno se sube en cuanto lo elige; puede bajarlo para revisarlo o sustituirlo.',
+                },
                 guarantorHelp: 'Opcional: puede omitir este paso.',
                 companyColor: 'Color de su empresa',
                 companyColorHelp: 'Para sus documentos. Opcional.',
@@ -177,10 +185,11 @@ export const customersTexts = {
             },
             credit: {
                 title: 'Credit request',
-                subtitle: 'One form in four steps. «Next» checks only the fields of the step; the company image step is optional and can be skipped. If the server rejects a field of an earlier step, the form goes back to that step by itself.',
+                subtitle: 'One form in five steps. «Next» checks only the fields of the step; the company image step is optional and can be skipped. If the server rejects a field of an earlier step, the form goes back to that step by itself.',
                 steps: {
                     applicant: 'Applicant',
                     loan: 'Credit',
+                    documents: 'Documents',
                     guarantor: 'Guarantor',
                     brand: 'Company image',
                 },
@@ -196,6 +205,13 @@ export const customersTexts = {
                 guarantorPhone: 'Guarantor phone',
                 depositClabe: 'CLABE for the deposit',
                 depositClabeHelp: 'The 18 digits of the account where the credit is deposited.',
+                documents: {
+                    identification: 'Official ID',
+                    addressProof: 'Proof of address',
+                    bankStatement: 'Bank statement (optional)',
+                    limits: 'PDF or photo (JPG or PNG), up to 5 MB',
+                    count: '{{uploaded}} of {{total}} documents uploaded. Each one uploads as soon as you choose it; you can download it to check it or replace it.',
+                },
                 guarantorHelp: 'Optional: you can skip this step.',
                 companyColor: 'Your company color',
                 companyColorHelp: 'For your documents. Optional.',

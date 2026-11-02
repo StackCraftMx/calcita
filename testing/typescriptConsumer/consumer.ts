@@ -15,7 +15,7 @@ import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/c
 import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
 import {
-    AttachmentsInput, CopyButton, FILE_REJECTION, FileInput, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles,
+    AttachmentsInput, CopyButton, FILE_REJECTION, FILE_UPLOAD_STATUS, FileInput, FileUploadInput, transferProgressOf, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles,
     tableRowTextOf, useFilePicker, MaskedInput, INPUT_MASK, rawValueOf, Countdown, useCountdown, countdownPartsOf, PdfViewerDialog, CookieNotice,
     TermsAcceptanceDialog, useCookieConsent,
 } from '@stackcraftmx/calcita';
@@ -96,6 +96,17 @@ const dateFormat: string = CALENDAR_DATE_FORMAT;
 const pickerRef: {current: {open: () => void} | null} = {current: null};
 const uploaders = [
     createElement(FileInput, {label: 'Constancia', value: null, onChange: (file: File | null) => file?.name, accept: ['pdf'], maxSize: '5 MB', template: {href: '/plantilla.pdf'}}),
+    // el cargador mini: la subida del proyecto con su avance, lo que se guarda de la respuesta y los eventos
+    createElement(FileUploadInput, {
+        label: 'Identificación', value: '', onChange: (fileId: string) => fileId.length, accept: ['pdf', 'image'], maxSize: '5 MB',
+        upload: async (file: File, {signal, idempotencyKey, onUploadProgress}) => {
+            onUploadProgress({loaded: file.size, total: file.size});
+            return {file_id: `${idempotencyKey}-${signal.aborted}`};
+        },
+        idOf: (response: {file_id: string}) => response.file_id,
+        download: async (fileId: string) => ({blob: new Blob([fileId]), fileName: 'ine.pdf'}),
+        onStatusChange: (status: string) => status === FILE_UPLOAD_STATUS.uploaded,
+    }),
     createElement(AttachmentsInput, {value: [{id: 'a1', name: 'contrato.pdf', size: 1000}], onChange: (files) => files.length, maxFiles: 3, showButton: false, pickerRef, onRemove: (file) => file.name}),
     createElement(ImageInput, {label: 'Foto', value: '/foto.jpg', onChange: () => {}, shape: IMAGE_SHAPE.circle, size: 72}),
     createElement(TemplateDownloadButton, {request: async () => ({blob: new Blob(['x']), fileName: 'plantilla.csv'}), format: 'csv', onDownload: () => {}}),
@@ -143,6 +154,7 @@ const richTextPieces = [
     createElement(FormRichTextField, {name: 'notes', label: 'Notas', placeholder: 'Escriba aquí'}),
 ];
 // publicar con anticipación: el mínimo que se recorre, el fin desde el inicio y las reglas de yup
+const uploadSpeed: number | null = transferProgressOf({loaded: 10, total: 100}, 0).bytesPerSecond;
 const publishStart: string = earliestInstantFromNow(5);
 const publishEnd: string = instantPlusMinutes(publishStart, 30);
 const strictestMinimum: string = latestInstantOf(publishStart, undefined, '');
@@ -330,4 +342,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, strictestMinimum, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, ColorInput, FileDropzone, FileInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, ColorInput, FileDropzone, FileInput, FileUploadInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -138,6 +138,9 @@ const CASES = [
     ['SecretField tapado', h(SecretField, {label: 'Clave', value: 'secreto-123'}), 'type="password"'],
     ['FileDropzone de MUI con límite', h(FileDropzone, {value: null, onChange: () => {}, accept: 'excel', maxSize: '2 MB'}), 'Hasta 2 MB por archivo'],
     ['FileDropzone con «Descargar la plantilla»', h(FileDropzone, {value: null, onChange: () => {}, template: {href: '/plantillas/pagos.xlsx'}}), 'href="/plantillas/pagos.xlsx"'],
+    // el cargador mini: por cargar, y uno que ya estaba subido (al editar) con su nombre y «Sustituir»
+    ['FileUploadInput por cargar', h(FileUploadInput, {label: 'Identificación oficial', value: '', onChange: () => {}, upload: async () => ({id: 'file-1'})}), 'Por cargar'],
+    ['FileUploadInput ya cargado', h(FileUploadInput, {label: 'Comprobante', value: 'file-1', uploadedFile: {name: 'recibo-luz.pdf', size: 120_000}, onChange: () => {}, upload: async () => ({id: 'file-2'})}), 'Sustituir'],
     ['FileInput vacío', h(FileInput, {label: 'Constancia fiscal', value: null, onChange: () => {}, accept: 'pdf'}), 'Ningún archivo elegido'],
     ['FileInput con un archivo ya guardado', h(FileInput, {label: 'Contrato', value: {name: 'contrato-firmado.pdf', size: 245_000}, onChange: () => {}}), 'contrato-firmado.pdf · 245 kB'],
     ['AttachmentsInput con topes', h(AttachmentsInput, {value: [{name: 'factura.pdf', size: 1_200_000}, {name: 'foto.jpg', size: 800_000}], onChange: () => {}, maxFiles: 5, maxTotalSize: '5 MB'}), '2 archivos · 2 MB de 5 MB'],
