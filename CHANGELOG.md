@@ -4,6 +4,21 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.46.0] - 2026-11-02
+
+### Agregado
+
+- `FilterDrawer`: la búsqueda en cajón, un panel que sale de un lado (`anchor`, `width`, `title`) con los campos que filtran
+  una lista, declarados una vez (`FILTER_FIELD_KIND`: text, select, multiSelect, catalog, checkboxes, numberRange, dateRange,
+  comparison y custom). Trabaja sobre un borrador: la lista no se mueve hasta «Buscar»; «Limpiar» vacía el cajón y un rango
+  al revés no deja buscar. En el teléfono ocupa todo el ancho. Pieza del tema `CalcitaFilterDrawer`.
+- `ServerTableFilterDrawer` (`/table`): el botón «Filtros (N)» con su cajón, conectado a los filtros de la tabla (en la
+  dirección, con sus chips). `filterDrawerDefaultsOf`, `filterDrawerKindsOf` y `filterDrawerChipsOf` arman lo que la tabla
+  necesita; `comparisonOf` y `comparisonTextOf` leen y escriben un monto con operador (`gte:500`).
+- `useTableFilter()` también da `setFilters` (varios filtros en una sola consulta).
+- Ejemplos: «3. Búsqueda en cajón» en Tabla de servidor (saliendo de la izquierda) y Pedidos con su botón «Filtros», piezas
+  desde y hasta y el total con operador (el servidor de mentira compara con Money).
+
 ## [0.45.0] - 2026-11-02
 
 ### Agregado
