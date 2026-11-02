@@ -34,6 +34,7 @@ export const BUILT_IN_PATHS = Object.freeze({
     dates: `${BUILT_IN_ROOT}/dates`,
     legal: `${BUILT_IN_ROOT}/legal`,
     mexico: `${BUILT_IN_ROOT}/mexico`,
+    richText: `${BUILT_IN_ROOT}/rich-text`,
     permissions: `${BUILT_IN_ROOT}/permissions`,
     uploads: `${BUILT_IN_ROOT}/file-uploads`,
     excelReports: `${BUILT_IN_ROOT}/excel-and-csv`,
