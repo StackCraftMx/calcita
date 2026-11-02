@@ -27,6 +27,7 @@ import {
     INSTANT_FORMAT, MonthInput, TIME_OF_DAY_FORMAT, TimeInput, timeZoneNameOf,
 } from '@stackcraftmx/calcita/date-pickers';
 import {nextNavigation} from '@stackcraftmx/calcita/next';
+import {FormRichTextField, RICH_TEXT_FEATURE, RichTextEditor, RichTextView, linkUrlOf, normalizedHtmlOf} from '@stackcraftmx/calcita/rich-text';
 import {
     CERTIFICATE_STATUS, CfdiSummary, EfirmaFields, RFC_KIND, certificateStatusOf, clabeRule, isValidClabe, isValidCurp, isValidRfc, readCertificate, readCfdi,
     rfcRule, verifyEfirmaKey, EFIRMA_KEY_PROBLEM, EfirmaKeyError,
@@ -127,6 +128,17 @@ const yupRules = [rfcRule({strict: true}), clabeRule()].map((rule) => rule.messa
 const invoice = readCfdi('<cfdi:Comprobante/>');
 const invoiceTotal: string | null | undefined = invoice?.total;
 const certificateStatus = (certificate: ReturnType<typeof readCertificate>) => certificateStatusOf(certificate) === CERTIFICATE_STATUS.expired;
+// el editor con formato: HTML de ida y vuelta, botones a la medida y el editor de Tiptap
+const safeLink: string | null = linkUrlOf('calcita.mx');
+const emptyHtml: string = normalizedHtmlOf('<p></p>');
+const richTextPieces = [
+    createElement(RichTextEditor, {
+        label: 'Notas', value: '', onChange: (html: string) => html.length, maxLength: 500,
+        features: [RICH_TEXT_FEATURE.bold, RICH_TEXT_FEATURE.link], onEditorReady: (editor) => editor.commands.focus(),
+    }),
+    createElement(RichTextView, {value: '<p>Hola</p>'}),
+    createElement(FormRichTextField, {name: 'notes', label: 'Notas', placeholder: 'Escriba aquí'}),
+];
 const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
     .catch((error: unknown) => error instanceof EfirmaKeyError && error.reason === EFIRMA_KEY_PROBLEM.wrongPassword);
 const mexicoPieces = [
@@ -306,4 +318,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
