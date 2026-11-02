@@ -9,7 +9,7 @@ import {createContext, useContext} from 'react';
 export const TableFilterContext = createContext(null);
 
 /**
- * @returns {{filters: object, setFilter: Function, clearFilter: Function, sortOrders: Array, toggleSort: Function, clearSort: Function, facets: object}}
+ * @returns {{filters: object, setFilter: Function, setFilters: Function, clearFilter: Function, sortOrders: Array, toggleSort: Function, clearSort: Function, facets: object}}
  */
 export function useTableFilter() {
     const tableFilterValue = useContext(TableFilterContext);

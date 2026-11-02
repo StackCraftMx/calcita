@@ -515,6 +515,8 @@ export default function ServerTable(props) {
     const tableFilterValue = useMemo(() => ({
         filters,
         setFilter: tableState.setFilter,
+        // varios a la vez (el cajón de búsqueda manda todos sus campos juntos: una sola consulta)
+        setFilters: tableState.setFilters,
         clearFilter: tableState.clearFilter,
         sortOrders,
         toggleSort,

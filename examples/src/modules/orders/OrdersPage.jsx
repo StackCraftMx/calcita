@@ -23,11 +23,11 @@ import TextField from '@mui/material/TextField';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import {
-    ConfirmDialog, DateRangeFilter, DictionaryText, PageHeading, StatusChip, formatDate, formatDateTime, formatNumber, labelOf, lookup,
-    toastProblem, toastSuccess, useCan, useConfirmAction, usePageName, useRememberListUrl, useToolkitTranslation,
+    ConfirmDialog, DateRangeFilter, DictionaryText, FILTER_FIELD_KIND, PageHeading, StatusChip, filterDrawerChipsOf, formatDate, formatDateTime,
+    formatNumber, labelOf, lookup, toastProblem, toastSuccess, useCan, useConfirmAction, usePageName, useRememberListUrl, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {
-    FILTER_KINDS, SELECTION_PHONE_LAYOUT, ServerTable, buildChipConfig, detailColumn, facetColumn, textColumn,
+    FILTER_KINDS, SELECTION_PHONE_LAYOUT, ServerTable, ServerTableFilterDrawer, buildChipConfig, detailColumn, facetColumn, textColumn,
 } from '@stackcraftmx/calcita/table';
 import {Money} from '@stackcraftmx/calcita/money';
 
@@ -40,6 +40,8 @@ import {ORDERS_LIST_KEY, orderDetailPathOf} from '@/modules/orders/ordersPaths.j
 // cómo se lee la URL)
 const ORDER_FILTER_DEFAULTS = Object.freeze({
     contains: '', number: '', customer_name: '', product_name: '', status: [], payment_method: [], created_from: '', created_to: '',
+    // los del cajón de búsqueda que no están en otro lado: piezas desde y hasta, y el total con su operador
+    quantity_min: '', quantity_max: '', total: '',
 });
 const ORDER_FILTER_KINDS = Object.freeze({
     contains: FILTER_KINDS.text,
@@ -50,6 +52,9 @@ const ORDER_FILTER_KINDS = Object.freeze({
     payment_method: FILTER_KINDS.multiSelect,
     created_from: FILTER_KINDS.text,
     created_to: FILTER_KINDS.text,
+    quantity_min: FILTER_KINDS.text,
+    quantity_max: FILTER_KINDS.text,
+    total: FILTER_KINDS.text,
 });
 // los chips de estado salen siempre en este orden, aunque alguno tenga cero pedidos
 const STATUS_CHIP_ORDER = Object.keys(ORDER_STATUS);
@@ -58,6 +63,7 @@ const isOrderSelectable = (row) => row.status !== ORDER_STATUS.canceled.value;
 
 export const OrdersPage = () => {
     const {t} = useToolkitTranslation('orders');
+    const {t: commonT} = useToolkitTranslation('common');
     const navigate = useNavigate();
     // al salir, la lista anota su URL (con filtros): el «Regresar» del detalle vuelve aquí tal como estaba
     useRememberListUrl(ORDERS_LIST_KEY);
@@ -142,6 +148,21 @@ export const OrdersPage = () => {
         detailColumn({onOpen: (row) => navigate(orderDetailPathOf(row.id)), ariaLabelOf: (row) => t('columns.openDetail', {number: row.number})}),
     ], [t, navigate]);
 
+    // el cajón de búsqueda (botón «Filtros»): edita los mismos filtros que las columnas, los chips y la tira de arriba, y
+    // además piezas desde y hasta y el total con su operador. Se busca al picar «Buscar», no con cada tecla
+    const drawerFields = [
+        {name: 'status', label: t('drawer.status'), kind: FILTER_FIELD_KIND.multiSelect,
+            options: STATUS_CHIP_ORDER.map((value) => ({value, label: labelOf(lookup(ORDER_STATUS, value), t)}))},
+        {name: 'payment_method', label: t('drawer.paymentMethod'), kind: FILTER_FIELD_KIND.checkboxes,
+            options: Object.keys(PAYMENT_METHOD).map((value) => ({value, label: labelOf(lookup(PAYMENT_METHOD, value), t)}))},
+        {name: 'customer_name', label: t('drawer.customer'), kind: FILTER_FIELD_KIND.text, placeholder: t('drawer.customerPlaceholder')},
+        {name: 'quantity', label: t('drawer.quantity'), kind: FILTER_FIELD_KIND.numberRange, suffix: t('drawer.piecesSuffix')},
+        {name: 'created', label: t('drawer.created'), kind: FILTER_FIELD_KIND.dateRange, keys: {from: 'created_from', to: 'created_to'}},
+        {name: 'total', label: t('drawer.total'), kind: FILTER_FIELD_KIND.comparison, prefix: '$', defaultOperator: 'gte'},
+    ];
+    // los chips de lo que solo pone el cajón (los demás ya tienen el suyo abajo)
+    const drawerChips = filterDrawerChipsOf(drawerFields.filter((field) => ['quantity', 'total'].includes(field.name)), {t: commonT});
+
     // los chips llevan el texto ya traducido: por eso se arman aquí, con t
     const chipConfig = buildChipConfig({
         text: [
@@ -150,6 +171,7 @@ export const OrdersPage = () => {
             {key: 'product_name', label: t('chips.product')},
             {key: 'created_from', label: t('chips.createdFrom'), format: formatDate},
             {key: 'created_to', label: t('chips.createdTo'), format: formatDate},
+            ...drawerChips.text,
         ],
         multiSelect: [
             {key: 'status', label: t('chips.status'), itemLabel: (value) => labelOf(lookup(ORDER_STATUS, value), t)},
@@ -183,6 +205,8 @@ export const OrdersPage = () => {
                 filterKinds={ORDER_FILTER_KINDS}
                 chipConfig={chipConfig}
                 quickFilters={quickFilters}
+                // el botón «Filtros» con su cajón de búsqueda; sale de la derecha (anchor lo cambia)
+                toolbarExtra={<ServerTableFilterDrawer fields={drawerFields} />}
                 searchPlaceholder={t('search.placeholder')}
                 // la búsqueda arriba, en la barra de la app (en el teléfono se queda aquí)
                 searchInBar

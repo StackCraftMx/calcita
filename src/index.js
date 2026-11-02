@@ -101,7 +101,8 @@ export {uploadWithProgress} from '@/upload/uploadWithProgress.js';
 
 // ─── pantalla: esqueleto, navegación, filtros, etiquetas, acciones y métricas ─
 export {
-    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
+    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer,
+    activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
     HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RouteTabs, TREND_DIRECTION,

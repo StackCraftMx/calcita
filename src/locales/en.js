@@ -175,6 +175,29 @@ export default Object.freeze({
             "goToStep": "Go to step {{number}}",
             "dontShowAgain": "Do not show again on entering"
         },
+        "filterDrawer": {
+            "open": "Filters",
+            "openWithCount": "Filters ({{count}})",
+            "title": "Filters",
+            "close": "Close the filters",
+            "apply": "Search",
+            "clear": "Clear",
+            "any": "Any",
+            "from": "From",
+            "to": "To",
+            "operator": "Comparison",
+            "value": "Amount",
+            "operators": {
+                "eq": "Equal to",
+                "gt": "Greater than",
+                "gte": "At least",
+                "lt": "Less than",
+                "lte": "At most"
+            },
+            "rangeBackwards": "It must be equal to or greater than «From».",
+            "chipFrom": "{{label}} from",
+            "chipTo": "{{label}} to"
+        },
         "wizard": {
             "next": "Next",
             "back": "Back",

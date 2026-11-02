@@ -817,8 +817,22 @@ export const catalogPageTexts = {
                         texts: 'Los textos de la barra y del aviso («5 pedidos elegidos», «Quitar selección»), con sus plurales.',
                     },
                 },
+                filterDrawer: {
+                    title: '3. Búsqueda en cajón',
+                    description: 'Un panel que sale de un lado con los campos que filtran una lista: listas, rangos «desde-hasta», fechas y montos con su operador (mayor, menor, igual). Lo que se cambia adentro no mueve la lista hasta «Buscar»; un rango al revés no deja buscar. En Pedidos va conectado a la tabla con su botón «Filtros (N)» y sus chips.',
+                    extend: {
+                        fields: 'Cada campo se declara una vez: de su tipo sale cómo se pinta, cómo viaja y su chip.',
+                        kinds: 'Los tipos: texto, una o varias opciones, catálogo, casillas, rango de números, de fechas, comparación o uno propio.',
+                        keys: 'Los nombres con que viaja un rango (los del backend) y qué operadores se ofrecen.',
+                        side: 'De qué lado sale, su ancho, su título y el texto del botón.',
+                        table: 'El botón «Filtros (N)» con su cajón, conectado a los filtros de la tabla.',
+                        setup: 'Lo que la tabla necesita de los campos: sus valores vacíos, sus tipos y sus chips.',
+                        custom: 'Un campo propio dentro del cajón.',
+                        theme: 'Sus partes en el tema: paper, header, body, footer.',
+                    },
+                },
                 api: {
-                    title: '3. Conectarla a su API',
+                    title: '4. Conectarla a su API',
                     description: 'La tabla le dice qué página, qué filtros y qué orden quiere; usted lo manda a su API y regresa los renglones con el total. toServerTableParams lo convierte a lo que espera un backend como el de Laravel (la página desde 1, los filtros vacíos no viajan).',
                     extend: {
                         fetchPage: 'Cómo pedir una página. Recibe lo que pide la tabla y una señal que cancela la consulta anterior si la persona sigue escribiendo.',
@@ -2846,8 +2860,22 @@ export const catalogPageTexts = {
                         texts: 'The texts of the bar and the notice (“5 orders selected”, “Clear selection”), with their plurals.',
                     },
                 },
+                filterDrawer: {
+                    title: '3. Drawer search',
+                    description: 'A panel that slides from one side with the fields that filter a list: lists, «from-to» ranges, dates and amounts with their operator (greater, less, equal). What you change inside does not move the list until «Search»; a backwards range does not allow searching. In Orders it is connected to the table with its «Filters (N)» button and its chips.',
+                    extend: {
+                        fields: 'Each field is declared once: its kind says how it is painted, how it travels and its chip.',
+                        kinds: 'The kinds: text, one or several options, catalog, checkboxes, number range, date range, comparison or your own.',
+                        keys: 'The names a range travels with (the backend ones) and which operators are offered.',
+                        side: 'Which side it slides from, its width, its title and the button text.',
+                        table: 'The «Filters (N)» button with its drawer, connected to the table filters.',
+                        setup: 'What the table needs from the fields: their empty values, their kinds and their chips.',
+                        custom: 'Your own field inside the drawer.',
+                        theme: 'Its parts in the theme: paper, header, body, footer.',
+                    },
+                },
                 api: {
-                    title: '3. Connect it to your API',
+                    title: '4. Connect it to your API',
                     description: 'The table tells you which page, filters and order it wants; you send it to your API and return the rows with the total. toServerTableParams converts it to what a backend like Laravel expects (page from 1, empty filters do not travel).',
                     extend: {
                         fetchPage: 'How to request a page. It receives what the table asks for and a signal that cancels the previous request if the person keeps typing.',
