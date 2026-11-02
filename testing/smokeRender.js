@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -168,6 +168,11 @@ const CASES = [
         fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
     // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
+    // la tarjeta de un registro con sus grupos, su dato principal y su detalle; y su esqueleto
+    ['RecordCard completa', h(RecordCard, {title: 'Ana López', eyebrow: 'P-1203', avatar: 'Ana López', status: 'Pagado', onOpen: () => {},
+        actions: [{key: 'copy', label: 'Copiar', onClick: () => {}}], groups: [{title: 'Importe', facts: [{label: 'Subtotal', value: '$100.00'}, {label: 'IVA', value: '$16.00'}]}],
+        highlight: {label: 'Total', value: '$116.00'}, footer: 'Entrega mañana', details: 'Historial'}), 'Total'],
+    ['RecordCardSkeleton', h(RecordCardSkeleton, {groups: 3}), ''],
     // el cajón de búsqueda abierto (va en un portal que no se pinta en el servidor: que no truene con todos sus tipos)
     ['FilterDrawer abierto no truena en el servidor', h(FilterDrawer, {open: true, onClose: () => {}, values: {}, onApply: () => {}, fields: [
         {name: 'status', label: 'Estado', kind: 'multiSelect', options: [{value: 'paid', label: 'Pagado'}]},

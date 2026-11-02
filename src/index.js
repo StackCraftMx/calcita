@@ -58,7 +58,7 @@ export {AuthLayout} from '@/appShell/AuthLayout.jsx';
 export {default as BarActions} from '@/appShell/BarActions.jsx';
 export {default as BarActionButton} from '@/appShell/BarActionButton.jsx';
 export {default as BarSearch} from '@/appShell/BarSearch.jsx';
-export {default as ActionsMenu} from '@/ui/actions/ActionsMenu.jsx';
+export {ACTIONS_MENU_ROW, default as ActionsMenu} from '@/ui/actions/ActionsMenu.jsx';
 export {SELECTION_PHONE_LAYOUT, default as SelectionActions, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
 export {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
 export {BAR_CAPSULE_HEIGHT_PIXELS, default as BarCapsule} from '@/appShell/BarCapsule.jsx';
@@ -105,7 +105,8 @@ export {
     activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
     HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
-    LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RouteTabs, TREND_DIRECTION,
+    LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RecordCard, RecordCardSkeleton, RouteTabs,
+    TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
     StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher, useHelpCarousel,
 } from '@/ui/index.js';
