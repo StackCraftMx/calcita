@@ -8,12 +8,14 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
+import RouteTabsDemo from '@/modules/catalog/demos/shell/RouteTabsDemo.tsx';
 import ScreenCapsules from '@/modules/catalog/demos/shell/ScreenCapsules.tsx';
 
 const loadLayout = () => import('@/modules/catalog/demos/shell/AppShellSetup.tsx?demo-source');
 const loadMenu = () => import('@/modules/catalog/demos/shell/moduleMenu.tsx?demo-source');
 const loadCapsules = () => import('@/modules/catalog/demos/shell/ScreenCapsules.tsx?demo-source');
 const loadBack = () => import('@/modules/catalog/demos/shell/BackToList.tsx?demo-source');
+const loadRouteTabs = () => import('@/modules/catalog/demos/shell/RouteTabsDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (shell.<sección>.extend.<id>)
@@ -66,6 +68,14 @@ const BACK_EXTENSIONS = [
     {id: 'fallbackTo', option: 'fallbackTo', example: 'fallbackTo="/orders"'},
     {id: 'label', option: 'label', example: 'label="Regresar a los pedidos"'},
 ];
+const ROUTE_TABS_EXTENSIONS = [
+    {id: 'path', option: 'tabs[].to · exact', example: "{to: `/customers/${id}/payments`, label: 'Pagos'}  // la activa sale de la ruta"},
+    {id: 'query', option: 'mode="query" · paramName', example: '<RouteTabs mode={ROUTE_TABS_MODE.query} paramName="section" tabs={…} />'},
+    {id: 'active', option: 'useActiveRouteTab', example: 'const activeTab = useActiveRouteTab(TABS, {mode: ROUTE_TABS_MODE.query});'},
+    {id: 'perTab', option: 'icon · badge · access · disabled · hidden', example: "{value: 'files', label: 'Documentos', badge: 2, access: {ability: 'files.view'}}"},
+    {id: 'onChange', option: 'onChange', example: 'onChange={(tab) => logTabView(tab.value)}'},
+    {id: 'theme', option: 'theme.components.CalcitaRouteTabs', example: 'components: {CalcitaRouteTabs: {styleOverrides: {tab: {textTransform: \'none\'}}}}'},
+];
 
 export const FrameAndMenuPage = () => {
     const {t} = useToolkitTranslation('catalog');
@@ -82,6 +92,8 @@ export const FrameAndMenuPage = () => {
                          extensions={rowsOf('capsules', CAPSULES_EXTENSIONS)} Demo={ScreenCapsules} loadSource={loadCapsules} />
             <CodeSection title={t('shell.back.title')} description={t('shell.back.description')}
                          extensions={rowsOf('back', BACK_EXTENSIONS)} loadSource={loadBack} />
+            <DemoSection title={t('shell.routeTabs.title')} description={t('shell.routeTabs.description')}
+                         extensions={rowsOf('routeTabs', ROUTE_TABS_EXTENSIONS)} Demo={RouteTabsDemo} loadSource={loadRouteTabs} />
         </Stack>
     );
 };

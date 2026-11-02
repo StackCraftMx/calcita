@@ -1,10 +1,7 @@
-// Las pestañas entre los tres formularios de ejemplo.
+// Las pestañas entre los formularios de ejemplo.
 //
 // Lo renderiza la app: arrow (regla de la casa).
-import {Link, useLocation} from 'react-router';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import {useToolkitTranslation} from '@stackcraftmx/calcita';
+import {RouteTabs, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CUSTOMERS_PATHS} from '@/modules/customers/customersPaths.js';
 
@@ -15,14 +12,11 @@ const FORM_TABS = Object.freeze([
     {path: CUSTOMERS_PATHS.terms, labelKey: 'nav.terms'},
 ]);
 
+// las pestañas por ruta del paquete (RouteTabs): cada formulario es su página y la pestaña activa sale de la dirección
 export const FormsNav = () => {
     const {t} = useToolkitTranslation('customers');
-    const {pathname} = useLocation();
-
     return (
-        <Tabs value={FORM_TABS.some((tab) => tab.path === pathname) ? pathname : false} variant="scrollable" allowScrollButtonsMobile
-              aria-label={t('nav.ariaLabel')} sx={{mb: 2, borderBottom: 1, borderColor: 'divider'}}>
-            {FORM_TABS.map((tab) => <Tab key={tab.path} value={tab.path} label={t(tab.labelKey)} component={Link} to={tab.path} />)}
-        </Tabs>
+        <RouteTabs ariaLabel={t('nav.ariaLabel')} tabs={FORM_TABS.map((tab) => ({to: tab.path, label: t(tab.labelKey)}))}
+                   sx={{mb: 2, borderBottom: 1, borderColor: 'divider'}} />
     );
 };

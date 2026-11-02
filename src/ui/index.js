@@ -33,6 +33,7 @@ export {LANGUAGES, default as LanguageToggle} from '@/ui/navigation/LanguageTogg
 export {default as FontSizeToggle} from '@/ui/navigation/FontSizeToggle.jsx';
 export {FONT_SIZE_LEVELS} from '@/ui/navigation/fontSizeLevels.js';
 export {default as PageBreadcrumbs} from '@/ui/navigation/PageBreadcrumbs.jsx';
+export {ROUTE_TABS_MODE, default as RouteTabs, useActiveRouteTab} from '@/ui/navigation/RouteTabs.jsx';
 
 // ─── filters ─────────────────────────────────────────────────────────────────
 export {default as DateRangeFilter} from '@/ui/filters/DateRangeFilter.jsx';
