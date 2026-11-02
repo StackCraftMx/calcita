@@ -5,6 +5,7 @@ export {default as EmptyState} from '@/DataTable/EmptyState.jsx';
 export {default as FilterChips} from '@/DataTable/FilterChips.jsx';
 export {default as GoToPage} from '@/DataTable/GoToPage.jsx';
 export {SELECTION_PHONE_LAYOUT, default as ServerTable} from '@/DataTable/ServerTable.jsx';
+export {default as ServerTableFilterDrawer} from '@/DataTable/ServerTableFilterDrawer.jsx';
 export {buildChipConfig} from '@/DataTable/buildChipConfig.js';
 export {detailColumn, facetColumn, textColumn} from '@/DataTable/columns.jsx';
 export {TableFilterContext, useTableFilter} from '@/DataTable/filterContext.js';

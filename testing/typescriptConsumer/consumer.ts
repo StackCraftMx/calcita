@@ -1,11 +1,11 @@
 // Un proyecto en TypeScript que usa el paquete (JavaScript con sus tipos generados del JSDoc). Solo se compila:
 //   npx tsc -p testing/typescriptConsumer/tsconfig.json
-import {HELP_CLOSE_REASON, HelpButton, HelpCarouselDialog, useHelpCarousel, ICON_BADGE_VARIANT, IconBadge, ROUTE_TABS_MODE, RouteTabs, useActiveRouteTab, dictionaryEntryOf, formatCurrency, labelOf, lookup, problemTitle, reportPublishedBuild, toolkitTextsEs} from '@stackcraftmx/calcita';
+import {COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer, comparisonOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, HELP_CLOSE_REASON, HelpButton, HelpCarouselDialog, useHelpCarousel, ICON_BADGE_VARIANT, IconBadge, ROUTE_TABS_MODE, RouteTabs, useActiveRouteTab, dictionaryEntryOf, formatCurrency, labelOf, lookup, problemTitle, reportPublishedBuild, toolkitTextsEs} from '@stackcraftmx/calcita';
 import {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf, usePublishedBuildWatch} from '@stackcraftmx/calcita';
 import {VALUE_FORMAT, reportSheetOf} from '@stackcraftmx/calcita/excel';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
-import {ServerTable} from '@stackcraftmx/calcita/table';
+import {ServerTable, ServerTableFilterDrawer} from '@stackcraftmx/calcita/table';
 import {FormTextField} from '@stackcraftmx/calcita/forms';
 import {createCsrfRetryHandler} from '@stackcraftmx/calcita/laravel';
 import {MONEY_ROUNDING, Money} from '@stackcraftmx/calcita/money';
@@ -211,6 +211,17 @@ const helpPieces = [
         onStepChange: (index: number) => index,
     }),
 ];
+// el cajón de búsqueda: sus campos, sus defaults y tipos para la tabla, sus chips y el botón conectado a la tabla
+const drawerFields = [
+    {name: 'total', label: 'Total', kind: FILTER_FIELD_KIND.comparison, prefix: '$', operators: [COMPARISON_OPERATOR.greaterOrEqual]},
+    {name: 'created', label: 'Fecha', kind: FILTER_FIELD_KIND.dateRange, keys: {from: 'created_from', to: 'created_to'}},
+];
+const drawerSetup = {defaults: filterDrawerDefaultsOf(drawerFields), kinds: filterDrawerKindsOf(drawerFields), chips: filterDrawerChipsOf(drawerFields, {t: (key: string) => key})};
+const parsedComparison = comparisonOf('gte:500');
+const drawerPieces = [
+    createElement(FilterDrawer, {open: true, onClose: () => undefined, fields: drawerFields, values: {}, onApply: (values: Record<string, unknown>) => values, anchor: FILTER_DRAWER_ANCHOR.left, width: 420}),
+    createElement(ServerTableFilterDrawer, {fields: drawerFields, anchor: 'right', title: 'Buscar pedidos'}),
+];
 const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
     .catch((error: unknown) => error instanceof EfirmaKeyError && error.reason === EFIRMA_KEY_PROBLEM.wrongPassword);
 const mexicoPieces = [
@@ -390,4 +401,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

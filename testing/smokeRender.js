@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -168,6 +168,12 @@ const CASES = [
         fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
     // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
+    // el cajón de búsqueda abierto (va en un portal que no se pinta en el servidor: que no truene con todos sus tipos)
+    ['FilterDrawer abierto no truena en el servidor', h(FilterDrawer, {open: true, onClose: () => {}, values: {}, onApply: () => {}, fields: [
+        {name: 'status', label: 'Estado', kind: 'multiSelect', options: [{value: 'paid', label: 'Pagado'}]},
+        {name: 'quantity', label: 'Piezas', kind: 'numberRange'}, {name: 'total', label: 'Total', kind: 'comparison', prefix: '$'},
+        {name: 'created', label: 'Fecha', kind: 'dateRange'}, {name: 'pay', label: 'Pago', kind: 'select', options: []},
+    ]}), ''],
     // la ayuda: el botón «?» (la ventana va en un portal que no se pinta en el servidor: que no truene)
     ['HelpButton', h(HelpButton, {onClick: () => {}}), 'Ayuda de esta pantalla'],
     ['HelpCarouselDialog abierta no truena en el servidor', h(HelpCarouselDialog, {open: true, onClose: () => {}, steps: [{title: 'Paso uno', content: 'Hola'}]}), ''],

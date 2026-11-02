@@ -40,6 +40,11 @@ export {useHelpCarousel} from '@/ui/help/useHelpCarousel.js';
 
 // ─── filters ─────────────────────────────────────────────────────────────────
 export {default as DateRangeFilter} from '@/ui/filters/DateRangeFilter.jsx';
+export {FILTER_DRAWER_ANCHOR, default as FilterDrawer} from '@/ui/filters/FilterDrawer.jsx';
+export {
+    COMPARISON_OPERATOR, FILTER_FIELD_KIND, activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf,
+    filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf,
+} from '@/ui/filters/filterDrawerFields.js';
 export {default as PeriodRangeSelector} from '@/ui/filters/PeriodRangeSelector.jsx';
 export {default as QuickFilters} from '@/ui/filters/QuickFilters.jsx';
 export {default as SegmentedControl, SEGMENTED_CONTROL_SX} from '@/ui/filters/SegmentedControl.jsx';
