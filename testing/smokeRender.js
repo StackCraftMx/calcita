@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -168,6 +168,9 @@ const CASES = [
         fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
     // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
+    // la insignia: suelta y desde un diccionario con su ícono
+    ['IconBadge suelta', h(IconBadge, {label: 'Envío asegurado', tone: 'success', variant: 'soft', size: 'medium'}), 'Envío asegurado'],
+    ['IconBadge desde un diccionario', h(IconBadge, {dictionary: {card: smokeEntryOf('card', 'paymentMethod.card', 'info', {icon: () => h('svg')})}, value: 'card'}), 'card'],
     // elegir varios: casillas con «Elegir todos», lista de transferencia y la lista desplegable con casillas
     ['CheckboxGroupInput con Elegir todos', h(CheckboxGroupInput, {label: 'Avisos por', value: ['email'], onChange: () => {}, selectAll: true,
         options: [{value: 'email', label: 'Correo'}, {value: 'sms', label: 'SMS', description: 'Al celular'}]}), 'Elegir todos (2)'],

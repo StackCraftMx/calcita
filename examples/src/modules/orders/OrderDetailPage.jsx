@@ -18,7 +18,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import HistoryIcon from '@mui/icons-material/History';
 import {
-    BackButton, ConfirmDialog, CopyButton, DefinitionList, DetailHeader, DictionaryText, SectionCard, StatusChip, formatDateTime,
+    BackButton, ConfirmDialog, CopyButton, DefinitionList, DetailHeader, DictionaryText, ICON_BADGE_VARIANT, IconBadge, SectionCard, StatusChip,
+    formatDateTime,
     tableRowTextOf, toastSuccess,
     usePageName, useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
@@ -27,7 +28,9 @@ import {Money} from '@stackcraftmx/calcita/money';
 
 import {APP_PATHS, ORDER_STATUS} from '@/core';
 import {DeliveryTimeline} from '@/modules/orders/DeliveryTimeline.jsx';
-import {CANCELABLE_ORDER_STATUSES, CANCEL_REASON_MAX_LENGTH, ORDER_EVENT, PAYMENT_METHOD} from '@/modules/orders/orderDictionaries.js';
+import {
+    CANCELABLE_ORDER_STATUSES, CANCEL_REASON_MAX_LENGTH, ORDER_EVENT, ORDER_FLAG, PAYMENT_METHOD,
+} from '@/modules/orders/orderDictionaries.js';
 import {cancelOrder, getOrderHistoryPage} from '@/modules/orders/ordersApi.js';
 import {ORDERS_LIST_KEY} from '@/modules/orders/ordersPaths.js';
 import {ORDER_DETAIL_STATUS, useOrderDetail} from '@/modules/orders/useOrderDetail.js';
@@ -98,7 +101,14 @@ export const OrderDetailPage = () => {
             <DetailHeader
                 eyebrow={t('detail.eyebrow')}
                 title={t('detail.title', {number: order.number})}
-                badges={<StatusChip variant="chip" dictionary={ORDER_STATUS} value={order.status} />}
+                // el estatus y las insignias de lo que destaca del pedido: su forma de pago y, si le pasó, el segundo intento
+                badges={(
+                    <>
+                        <StatusChip variant="chip" dictionary={ORDER_STATUS} value={order.status} />
+                        <IconBadge dictionary={PAYMENT_METHOD} value={order.payment_method} variant={ICON_BADGE_VARIANT.soft} />
+                        {order.needs_second_attempt && <IconBadge dictionary={ORDER_FLAG} value="secondAttempt" />}
+                    </>
+                )}
                 actions={(
                     <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
                         {/* el pedido en un renglón separado por tabuladores: al pegarlo en Excel cada dato cae en su celda.

@@ -103,7 +103,7 @@ const CHOOSING_MANY_EXTENSIONS = [
 ];
 const TRANSFER_LIST_EXTENSIONS = [
     {id: 'field', option: 'TransferListInput · FormTransferListField', example: '<FormTransferListField name="allowedBranchIds" options={branches} />'},
-    {id: 'titles', option: 'availableTitle · chosenTitle', example: 'availableTitle="Todos los compradores" chosenTitle="Pueden ver la subasta"'},
+    {id: 'titles', option: 'availableTitle · chosenTitle', example: 'availableTitle="Todos los usuarios" chosenTitle="Pueden ver el reporte"'},
     {id: 'search', option: 'searchable · listHeight', example: 'searchable listHeight={360}  // por omisión, buscador con más de 8'},
     {id: 'options', option: 'options[].description · options[].disabled', example: "{value: 'b-12', label: 'Comprador SA', description: 'RFC CSA010101AA1'}"},
     {id: 'theme', option: 'theme.components.CalcitaTransferListInput', example: 'components: {CalcitaTransferListInput: {styleOverrides: {list: {borderRadius: 4}}}}'},

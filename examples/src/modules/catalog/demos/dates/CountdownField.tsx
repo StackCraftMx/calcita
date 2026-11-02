@@ -6,26 +6,26 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {Countdown, toastSuccess} from '@stackcraftmx/calcita';
 
-// ─── Los momentos de mentira (en su proyecto NO van: son los del API, p. ej. auction.closes_at) ───
+// ─── Los momentos de mentira (en su proyecto NO van: son los del API, p. ej. registration.closes_at) ───
 const inSeconds = (seconds: number) => new Date(Date.now() + seconds * 1000).toISOString();
 
-// la subasta del ejemplo cierra en 2 minutos (se alcanza a ver correr) y el botón la deja en 10 segundos para ver el cierre
-const AUCTION_SECONDS = 120;
+// las inscripciones del ejemplo cierran en 2 minutos (se alcanza a ver correr) y el botón las deja en 10 segundos para ver el cierre
+const REGISTRATION_SECONDS = 120;
 const CLOSING_SOON_SECONDS = 10;
 
 const CountdownField = () => {
-    const [closesAt, setClosesAt] = useState(() => inSeconds(AUCTION_SECONDS));
+    const [closesAt, setClosesAt] = useState(() => inSeconds(REGISTRATION_SECONDS));
     const [saleEndsAt] = useState(() => inSeconds(2 * 86_400 + 5 * 3600));
 
     return (
         <Stack spacing={2}>
             {/* 1. Segundo a segundo: al llegar a cero dice lo suyo y avisa una vez */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>
-                <Typography color="text.secondary">La subasta cierra en</Typography>
-                <Countdown until={closesAt} label="Tiempo para que cierre la subasta" completedText="Cerrada"
-                           onComplete={() => toastSuccess('La subasta cerró.')} variant="h6" />
+                <Typography color="text.secondary">Las inscripciones cierran en</Typography>
+                <Countdown until={closesAt} label="Tiempo para que cierren las inscripciones" completedText="Cerradas"
+                           onComplete={() => toastSuccess('Se cerraron las inscripciones.')} variant="h6" />
                 <Button size="small" onClick={() => setClosesAt(inSeconds(CLOSING_SOON_SECONDS))}>Cerrar en 10 segundos</Button>
-                <Button size="small" onClick={() => setClosesAt(inSeconds(AUCTION_SECONDS))}>Volver a empezar</Button>
+                <Button size="small" onClick={() => setClosesAt(inSeconds(REGISTRATION_SECONDS))}>Volver a empezar</Button>
             </Stack>
             {/* 2. Con días cuando faltan (showSeconds={false} quita los segundos) */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>

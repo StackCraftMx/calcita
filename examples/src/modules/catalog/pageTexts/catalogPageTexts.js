@@ -922,6 +922,18 @@ export const catalogPageTexts = {
                         namespace: 'Todos los diccionarios comparten el namespace dictionaries: una llave repetida entre módulos truena.',
                     },
                 },
+                badges: {
+                    title: '3. Insignias',
+                    description: 'Un ícono y un texto corto con el color de lo que significan, para destacar algo de un registro en su encabezado o en su tarjeta (no es un botón). Con borde para resaltar, tenue para varias juntas y sin caja dentro de un renglón. Desde un diccionario, la entrada trae su ícono.',
+                    extend: {
+                        loose: 'Suelta: el ícono, el texto y el color.',
+                        variant: 'Con borde, tenue o sin caja, y en dos tamaños.',
+                        fromDictionary: 'Desde un diccionario: texto, explicación, color e ícono escritos una vez.',
+                        entryIcon: 'El ícono de cada entrada del diccionario.',
+                        tooltip: 'La explicación al pasar el cursor (con diccionario, la suya).',
+                        theme: 'Su estilo por omisión y sus partes en el tema: root, icon, label.',
+                    },
+                },
             },
             formats: {
                 title: 'Formatos, fechas y dinero',
@@ -1196,7 +1208,7 @@ export const catalogPageTexts = {
                 },
                 publishWindow: {
                     title: '7. Publicar con anticipación',
-                    description: 'Algo que se publica con anticipación y dura un mínimo (una subasta, una oferta): empieza al menos 5 minutos después de ahora y termina al menos 30 minutos después del inicio. El mínimo del inicio se recorre solo con el reloj y, si el inicio alcanza al fin, el fin se recorre con él. Yup lo revisa al guardar y el servidor otra vez.',
+                    description: 'Algo que se publica con anticipación y dura un mínimo (una promoción, una venta especial): empieza al menos 5 minutos después de ahora y termina al menos 30 minutos después del inicio. El mínimo del inicio se recorre solo con el reloj y, si el inicio alcanza al fin, el fin se recorre con él. Yup lo revisa al guardar y el servidor otra vez.',
                     extend: {
                         fromNow: 'Al menos tantos minutos después de ahora; el mínimo se recorre cada minuto mientras la pantalla está abierta.',
                         afterStart: 'El fin, al menos tantos minutos después del inicio: el mínimo del fin sale del inicio.',
@@ -1206,7 +1218,7 @@ export const catalogPageTexts = {
                 },
                 countdown: {
                     title: '8. Cuenta regresiva',
-                    description: 'Cuánto falta para un momento (el cierre de una subasta, el inicio de una cita), segundo a segundo, y lo que dice al llegar a cero. La primera cierra en 2 minutos; «Cerrar en 10 segundos» deja ver el cierre.',
+                    description: 'Cuánto falta para un momento (el cierre de unas inscripciones, el inicio de una cita), segundo a segundo, y lo que dice al llegar a cero. La primera cierra en 2 minutos; «Cerrar en 10 segundos» deja ver el cierre.',
                     extend: {
                         until: 'El momento: un instante en texto, un Date o milisegundos.',
                         onComplete: 'Avisar al llegar a cero (una vez) y lo que dice entonces.',
@@ -2915,6 +2927,18 @@ export const catalogPageTexts = {
                         namespace: 'All dictionaries share the dictionaries namespace: a key repeated between modules breaks.',
                     },
                 },
+                badges: {
+                    title: '3. Badges',
+                    description: 'An icon and a short text with the color of what they mean, to highlight something about a record in its header or its card (not a button). Outlined to stand out, soft for several together and plain inside a line. From a dictionary, the entry brings its icon.',
+                    extend: {
+                        loose: 'Standalone: the icon, the text and the color.',
+                        variant: 'Outlined, soft or plain, in two sizes.',
+                        fromDictionary: 'From a dictionary: text, explanation, color and icon written once.',
+                        entryIcon: 'The icon of each dictionary entry.',
+                        tooltip: 'The explanation on hover (with a dictionary, its own).',
+                        theme: 'Its default style and its parts in the theme: root, icon, label.',
+                    },
+                },
             },
             formats: {
                 title: 'Formats, dates and money',
@@ -3189,7 +3213,7 @@ export const catalogPageTexts = {
                 },
                 publishWindow: {
                     title: '7. Publish ahead of time',
-                    description: 'Something published ahead of time that lasts a minimum (an auction, an offer): it starts at least 5 minutes from now and ends at least 30 minutes after the start. The start minimum moves with the clock and, if the start reaches the end, the end moves along. Yup checks it on save and the server again.',
+                    description: 'Something published ahead of time that lasts a minimum (a promotion, a special sale): it starts at least 5 minutes from now and ends at least 30 minutes after the start. The start minimum moves with the clock and, if the start reaches the end, the end moves along. Yup checks it on save and the server again.',
                     extend: {
                         fromNow: 'At least that many minutes from now; the minimum moves every minute while the screen is open.',
                         afterStart: 'The end, at least that many minutes after the start: the end minimum comes from the start.',
@@ -3199,7 +3223,7 @@ export const catalogPageTexts = {
                 },
                 countdown: {
                     title: '8. Countdown',
-                    description: 'How long until a moment (an auction closing, an appointment start), second by second, and what it says at zero. The first one closes in 2 minutes; «Close in 10 seconds» shows the closing.',
+                    description: 'How long until a moment (a registration closing, an appointment start), second by second, and what it says at zero. The first one closes in 2 minutes; «Close in 10 seconds» shows the closing.',
                     extend: {
                         until: 'The moment: an instant as text, a Date or milliseconds.',
                         onComplete: 'Know when it reaches zero (once) and what it says then.',

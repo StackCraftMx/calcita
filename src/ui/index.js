@@ -43,6 +43,7 @@ export {default as SegmentedControl, SEGMENTED_CONTROL_SX} from '@/ui/filters/Se
 // ─── labels ──────────────────────────────────────────────────────────────────
 export {default as DictionaryText} from '@/ui/labels/DictionaryText.jsx';
 export {default as StatusChip} from '@/ui/labels/StatusChip.jsx';
+export {ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, default as IconBadge} from '@/ui/labels/IconBadge.jsx';
 export {default as Tag} from '@/ui/labels/Tag.jsx';
 
 // ─── actions ─────────────────────────────────────────────────────────────────

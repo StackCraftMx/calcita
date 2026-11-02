@@ -112,6 +112,9 @@ export const ordersTexts = {
                 transfer: {label: 'Transferencia', tooltip: 'Pago por transferencia bancaria.'},
                 cash: {label: 'Efectivo', tooltip: 'Pago en efectivo en una tienda de conveniencia.'},
             },
+            orderFlag: {
+                secondAttempt: {label: 'Segundo intento de entrega', tooltip: 'La primera vez no se pudo entregar: la paquetería volvió otro día.'},
+            },
             orderEvent: {
                 created: {label: 'Pedido creado', tooltip: 'El cliente hizo el pedido.'},
                 paid: {label: 'Pago confirmado', tooltip: 'El banco confirmó el pago.'},
@@ -233,6 +236,9 @@ export const ordersTexts = {
                 card: {label: 'Card', tooltip: 'Paid with a credit or debit card.'},
                 transfer: {label: 'Transfer', tooltip: 'Paid by bank transfer.'},
                 cash: {label: 'Cash', tooltip: 'Paid in cash at a convenience store.'},
+            },
+            orderFlag: {
+                secondAttempt: {label: 'Second delivery attempt', tooltip: 'The first time it could not be delivered: the carrier came back another day.'},
             },
             orderEvent: {
                 created: {label: 'Order placed', tooltip: 'The customer placed the order.'},

@@ -76,8 +76,8 @@ const PUBLISH_WINDOW_EXTENSIONS = [
 ];
 
 const COUNTDOWN_EXTENSIONS = [
-    {id: 'until', option: 'until', example: 'until={auction.closes_at}  // instante, Date o milisegundos'},
-    {id: 'onComplete', option: 'onComplete · completedText', example: 'onComplete={reloadAuction} completedText="Cerrada"'},
+    {id: 'until', option: 'until', example: 'until={registration.closes_at}  // instante, Date o milisegundos'},
+    {id: 'onComplete', option: 'onComplete · completedText', example: 'onComplete={reloadRegistration} completedText="Cerradas"'},
     {id: 'look', option: 'showSeconds · variant · sx', example: 'showSeconds={false} variant="h6"'},
     {id: 'render', option: 'children(parts)', example: '{({days, hours, minutes}) => <MyClock … />}'},
     {id: 'hook', option: 'useCountdown · countdownPartsOf', example: 'const {parts, isOver} = useCountdown(closesAt, {onComplete});'},
