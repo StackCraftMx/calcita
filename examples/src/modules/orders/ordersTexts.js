@@ -35,6 +35,16 @@ export const ordersTexts = {
                 total: 'Importe',
                 openDetail: 'Ver el detalle del pedido {{number}}',
             },
+            drawer: {
+                status: 'Estado',
+                paymentMethod: 'Forma de pago',
+                customer: 'Cliente',
+                customerPlaceholder: 'Nombre o parte del nombre',
+                quantity: 'Piezas',
+                piecesSuffix: 'pzas',
+                created: 'Fecha del pedido',
+                total: 'Total',
+            },
             chips: {
                 number: 'Pedido',
                 customer: 'Cliente',
@@ -159,6 +169,16 @@ export const ordersTexts = {
                 paymentMethod: 'Payment method',
                 total: 'Amount',
                 openDetail: 'See the detail of order {{number}}',
+            },
+            drawer: {
+                status: 'Status',
+                paymentMethod: 'Payment method',
+                customer: 'Customer',
+                customerPlaceholder: 'Name or part of it',
+                quantity: 'Pieces',
+                piecesSuffix: 'pcs',
+                created: 'Order date',
+                total: 'Total',
             },
             chips: {
                 number: 'Order',

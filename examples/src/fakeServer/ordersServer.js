@@ -18,6 +18,34 @@ import {storeDateOf} from '@/fakeServer/storeCalendar.js';
 const HTTP_STATUS = Object.freeze({notFound: 404, conflict: 409});
 
 // las reglas de cada filtro de la tabla de pedidos (los campos de filterDefaults de la pantalla)
+// los operadores del total como los manda el cajón de búsqueda (operador:cantidad); se compara con Money, al centavo
+const TOTAL_COMPARISONS = Object.freeze({
+    eq: (total, amount) => total.equals(amount),
+    gt: (total, amount) => total.isGreaterThan(amount),
+    gte: (total, amount) => !amount.isGreaterThan(total),
+    lt: (total, amount) => amount.isGreaterThan(total),
+    lte: (total, amount) => !total.isGreaterThan(amount),
+});
+
+/**
+ * ¿El total del pedido cumple la comparación ('gte:500')? Una comparación que no se entiende no filtra nada.
+ *
+ * @param {string} orderTotal
+ * @param {string} comparison
+ * @returns {boolean}
+ */
+function totalMatches(orderTotal, comparison) {
+    const [operator, amountText] = String(comparison).split(':');
+    if (!TOTAL_COMPARISONS[operator] || !amountText) {
+        return true;
+    }
+    try {
+        return TOTAL_COMPARISONS[operator](Money.fromString(orderTotal, {currency: STORE_CURRENCY}), Money.fromString(amountText, {currency: STORE_CURRENCY}));
+    } catch {
+        return true;
+    }
+}
+
 const ORDER_FILTER_RULES = Object.freeze({
     // la caja de búsqueda: el número, el cliente o el producto
     contains: (order, search) => [order.number, order.customer_name, order.product_name].some((text) => containsText(text, search)),
@@ -29,6 +57,10 @@ const ORDER_FILTER_RULES = Object.freeze({
     // el rango de fechas son días de la tienda (AAAA-MM-DD), con los dos extremos adentro
     created_from: (order, fromDate) => storeDateOf(order.created_at) >= fromDate,
     created_to: (order, toDate) => storeDateOf(order.created_at) <= toDate,
+    // el cajón de búsqueda: piezas desde y hasta, y el total con su operador ('gte:500')
+    quantity_min: (order, minimum) => order.quantity >= Number(minimum),
+    quantity_max: (order, maximum) => order.quantity <= Number(maximum),
+    total: (order, comparison) => totalMatches(order.total, comparison),
 });
 
 const ORDER_PAGE_RULES = Object.freeze({
