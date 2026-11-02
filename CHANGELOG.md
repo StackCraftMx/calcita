@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.35.0] - 2026-11-01
+
+### Agregado
+
+- `CopyButton`: si el navegador no deja copiar, lo dice en rojo («No se pudo copiar…») en lugar de fingir que copió, y
+  avisa con `onCopyFailed`. `value` puede ser una función (se arma al picar). La confirmación se queda a la vista mientras
+  dura y se anuncia a los lectores de pantalla.
+- `tableRowTextOf`: un renglón como texto separado por tabuladores, para que al pegarlo en Excel cada dato caiga en su celda.
+- CLI: los proyectos nuevos traen pruebas de pantalla (`pnpm test`, Vitest con jsdom y Testing Library). `openScreen` abre la
+  app completa en una dirección con el servidor de mentira (y la sesión de la demostración); vienen las del inicio, la de
+  entrar y las del módulo de ejemplo, y `make:module` arma la de cada módulo nuevo.
+- Ejemplos: «Ir a la página» en la tabla de pedidos y «Copiar el pedido para pegarlo en Excel» en su detalle.
+
+### Corregido
+
+- «Ir a la página» de `ServerTable` llega a todas las páginas: la lista pinta solo las que se ven (react-window) y abre en la
+  página actual. Antes se cortaba en 100 y la 101 solo se alcanzaba tecleando.
+
+### Cambiado
+
+- **`/table` pide `react-window`** (2 o más nuevo), para la lista de «Ir a la página». Un proyecto que ya usa la tabla
+  agrega `pnpm add react-window`.
+
 ## [0.34.0] - 2026-11-01
 
 ### Agregado

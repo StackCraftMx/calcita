@@ -47,6 +47,7 @@
         "react-hook-form": "7.90.0",
         "react-leaflet": "5.0.0",
         "react-router": "7.18.3",
+        "react-window": "2.3.4",
         "recharts": "3.10.1",
         "sonner": "2.0.8",
         "xstate": "5.33.0",
