@@ -198,6 +198,16 @@ export default Object.freeze({
             "chipFrom": "{{label}} from",
             "chipTo": "{{label}} to"
         },
+        "recordCard": {
+            "open": "Open",
+            "actions": "More actions",
+            "showDetails": "See details",
+            "hideDetails": "Hide details",
+            "loading": "Loading"
+        },
+        "actionsMenu": {
+            "back": "Back"
+        },
         "wizard": {
             "next": "Next",
             "back": "Back",

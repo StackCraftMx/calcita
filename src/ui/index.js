@@ -36,6 +36,8 @@ export {default as PageBreadcrumbs} from '@/ui/navigation/PageBreadcrumbs.jsx';
 export {ROUTE_TABS_MODE, default as RouteTabs, useActiveRouteTab} from '@/ui/navigation/RouteTabs.jsx';
 export {default as HelpButton} from '@/ui/help/HelpButton.jsx';
 export {HELP_CLOSE_REASON, default as HelpCarouselDialog} from '@/ui/help/HelpCarouselDialog.jsx';
+export {default as RecordCard} from '@/ui/cards/RecordCard.jsx';
+export {default as RecordCardSkeleton} from '@/ui/cards/RecordCardSkeleton.jsx';
 export {useHelpCarousel} from '@/ui/help/useHelpCarousel.js';
 
 // ─── filters ─────────────────────────────────────────────────────────────────
