@@ -1537,6 +1537,18 @@ export const catalogPageTexts = {
                         theme: 'Sus partes en el tema: root, tab, badge.',
                     },
                 },
+                helpCarousel: {
+                    title: '6. Ayuda en carrusel',
+                    description: 'Unos cuantos pasos para explicar una pantalla la primera vez que se entra (o cuando cambia), con «No volver a mostrar». Se avanza con «Siguiente», los puntos, las flechas del teclado o deslizando con el dedo; el «?» la vuelve a abrir. En Tareas sale sola la primera vez.',
+                    extend: {
+                        steps: 'Cada paso con su título, su texto y una imagen o una ilustración propia.',
+                        when: 'Cuándo sale sola: una llave por ayuda y su versión (súbala y vuelve a salir).',
+                        server: 'Lo que ya sabe su servidor manda; y el aviso al cerrarla para guardarlo allá.',
+                        button: 'El botón «?» para volver a abrirla, en el encabezado de la pantalla.',
+                        options: 'Un título arriba, sin la casilla, aviso de cada paso y en qué paso empieza.',
+                        theme: 'Sus partes en el tema: media, content, dots, actions.',
+                    },
+                },
             },
             themeAndGlass: {
                 title: 'Tema y vidrio',
@@ -3552,6 +3564,18 @@ export const catalogPageTexts = {
                         perTab: 'Per tab: icon, count, permission (the one you cannot see does not show), disabled or hidden.',
                         onChange: 'Notice of the tab that was chosen (the link already navigates).',
                         theme: 'Its parts in the theme: root, tab, badge.',
+                    },
+                },
+                helpCarousel: {
+                    title: '6. Help carousel',
+                    description: 'A few steps to explain a screen the first time you enter it (or when it changes), with «Do not show again». Move with «Next», the dots, the keyboard arrows or swiping; the «?» opens it again. In Tasks it shows by itself the first time.',
+                    extend: {
+                        steps: 'Each step with its title, its text and an image or an illustration of your own.',
+                        when: 'When it shows by itself: one key per help and its version (raise it and it shows again).',
+                        server: 'What your server already knows wins; and the close notice to keep it there.',
+                        button: 'The «?» button to open it again, in the screen header.',
+                        options: 'A title on top, without the checkbox, a notice per step and the starting step.',
+                        theme: 'Its parts in the theme: media, content, dots, actions.',
                     },
                 },
             },
