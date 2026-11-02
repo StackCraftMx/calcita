@@ -18,7 +18,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import HistoryIcon from '@mui/icons-material/History';
 import {
-    BackButton, ConfirmDialog, DefinitionList, DetailHeader, DictionaryText, SectionCard, StatusChip, formatDateTime, toastSuccess,
+    BackButton, ConfirmDialog, CopyButton, DefinitionList, DetailHeader, DictionaryText, SectionCard, StatusChip, formatDateTime,
+    tableRowTextOf, toastSuccess,
     usePageName, useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {AuditTrailDialog} from '@stackcraftmx/calcita/table';
@@ -99,7 +100,13 @@ export const OrderDetailPage = () => {
                 title={t('detail.title', {number: order.number})}
                 badges={<StatusChip variant="chip" dictionary={ORDER_STATUS} value={order.status} />}
                 actions={(
-                    <Stack direction="row" spacing={1}>
+                    <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
+                        {/* el pedido en un renglón separado por tabuladores: al pegarlo en Excel cada dato cae en su celda.
+                            Se arma al picar (value como función) */}
+                        <CopyButton label={t('detail.copyRow')} size="medium" value={() => tableRowTextOf([
+                            order.number, order.customer_name, order.customer_email, order.product_name, order.quantity,
+                            Money.fromString(order.total).format(), formatDateTime(order.created_at),
+                        ])} />
                         <Button variant="outlined" startIcon={<HistoryIcon />} onClick={() => setIsHistoryOpen(true)}>
                             {t('detail.history')}
                         </Button>
