@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, CatalogInput, ColorInput, FileDropzone, FontSizeToggle, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, CatalogInput, ColorInput, FileDropzone, FileInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -135,6 +135,13 @@ const CASES = [
     ['ColorInput con su contraste', h(ColorInput, {label: 'Color', value: '#1976D2', onChange: () => {}}), 'Contraste sobre blanco'],
     ['SecretField tapado', h(SecretField, {label: 'Clave', value: 'secreto-123'}), 'type="password"'],
     ['FileDropzone de MUI con límite', h(FileDropzone, {value: null, onChange: () => {}, accept: 'excel', maxSize: '2 MB'}), 'Hasta 2 MB por archivo'],
+    ['FileDropzone con «Descargar la plantilla»', h(FileDropzone, {value: null, onChange: () => {}, template: {href: '/plantillas/pagos.xlsx'}}), 'href="/plantillas/pagos.xlsx"'],
+    ['FileInput vacío', h(FileInput, {label: 'Constancia fiscal', value: null, onChange: () => {}, accept: 'pdf'}), 'Ningún archivo elegido'],
+    ['FileInput con un archivo ya guardado', h(FileInput, {label: 'Contrato', value: {name: 'contrato-firmado.pdf', size: 245_000}, onChange: () => {}}), 'contrato-firmado.pdf · 245 kB'],
+    ['AttachmentsInput con topes', h(AttachmentsInput, {value: [{name: 'factura.pdf', size: 1_200_000}, {name: 'foto.jpg', size: 800_000}], onChange: () => {}, maxFiles: 5, maxTotalSize: '5 MB'}), '2 archivos · 2 MB de 5 MB'],
+    ['ImageInput con la imagen guardada', h(ImageInput, {label: 'Foto', value: '/fotos/ana.jpg', onChange: () => {}, shape: IMAGE_SHAPE.rounded}), 'src="/fotos/ana.jpg"'],
+    ['ImageInput vacío', h(ImageInput, {label: 'Foto', value: null, onChange: () => {}}), 'Elegir imagen'],
+    ['TemplateDownloadButton con su API', h(TemplateDownloadButton, {request: async () => ({blob: new Blob(['a']), fileName: 'plantilla.csv'}), format: 'csv'}), 'Descargar la plantilla'],
     ['DocumentTitle con nombre de la app', h(DocumentTitle, {title: 'Pedidos'}), 'Pedidos | Tienda'],
     // sin texto que buscar: la tabla de MUI no pinta sus encabezados en el servidor (solo se revisa que no truene)
     ['ServerTable', h(NuqsTestingAdapter, null, h(ServerTable, {
