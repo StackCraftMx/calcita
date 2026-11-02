@@ -4,6 +4,28 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.41.0] - 2026-11-02
+
+### Agregado
+
+- `FormRepeatingFields` (formik y react-hook-form) y la vista `RepeatingFields`: renglones de campos que se repiten, con su
+  número, «Quitar» y «Agregar»; `minRows` (con el mínimo, «Limpiar») y `maxRows`; quitar lo decide la pantalla
+  (`removeBlockedReason` con su motivo, `confirmRemove` para lo guardado); el renglón con error en rojo; campos lado a lado
+  en escritorio (`columns`) y uno debajo de otro en el teléfono; `rowLabelOf`, `rowActionsOf`, `footer`, `onAdd`,
+  `onRemove`. Llaves estables por renglón (`useRowKeys`). Pieza del tema `CalcitaRepeatingFields`.
+- Reglas de listas para yup: `uniqueInListRule` (sin repetidos), `orderedInListRule` (en orden, dice entre cuáles va) y
+  `listTotalAtMostRule` con `listTotalOf` (la suma con Money contra un tope de otro campo), en `/forms` y
+  `/react-hook-form`.
+- `/react-hook-form` también pasa `useWatch` y `useFieldArray`.
+- Ejemplos: secciones 6 y 7 en Formularios de Hecho en Calcita y la pantalla «Condiciones del cliente» (reparto del crédito
+  por sucursal, descuentos por volumen y contactos) con su servidor de mentira.
+
+### Cambiado
+
+- `applyServerProblem` (formik y react-hook-form): el error del servidor en un campo de un renglón que el formulario tiene
+  (`contacts.2.email`) va a ese renglón; antes se reducía a `email` y, sin ese campo, iba al aviso de arriba. Lo demás no
+  cambia (`splitRowFieldErrors`).
+
 ## [0.40.0] - 2026-11-02
 
 ### Agregado
