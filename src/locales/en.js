@@ -165,6 +165,16 @@ export default Object.freeze({
             "noMatches": "Nothing matches «{{text}}».",
             "emptyChosen": "Nothing chosen yet: mark them on the left and move them with ›."
         },
+        "help": {
+            "button": "Help for this screen",
+            "close": "Close the help",
+            "next": "Next",
+            "back": "Back",
+            "done": "Done",
+            "stepOf": "Step {{current}} of {{total}}",
+            "goToStep": "Go to step {{number}}",
+            "dontShowAgain": "Do not show again on entering"
+        },
         "wizard": {
             "next": "Next",
             "back": "Back",

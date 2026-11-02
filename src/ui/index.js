@@ -34,6 +34,9 @@ export {default as FontSizeToggle} from '@/ui/navigation/FontSizeToggle.jsx';
 export {FONT_SIZE_LEVELS} from '@/ui/navigation/fontSizeLevels.js';
 export {default as PageBreadcrumbs} from '@/ui/navigation/PageBreadcrumbs.jsx';
 export {ROUTE_TABS_MODE, default as RouteTabs, useActiveRouteTab} from '@/ui/navigation/RouteTabs.jsx';
+export {default as HelpButton} from '@/ui/help/HelpButton.jsx';
+export {HELP_CLOSE_REASON, default as HelpCarouselDialog} from '@/ui/help/HelpCarouselDialog.jsx';
+export {useHelpCarousel} from '@/ui/help/useHelpCarousel.js';
 
 // ─── filters ─────────────────────────────────────────────────────────────────
 export {default as DateRangeFilter} from '@/ui/filters/DateRangeFilter.jsx';

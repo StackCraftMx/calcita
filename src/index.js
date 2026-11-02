@@ -102,10 +102,11 @@ export {uploadWithProgress} from '@/upload/uploadWithProgress.js';
 // ─── pantalla: esqueleto, navegación, filtros, etiquetas, acciones y métricas ─
 export {
     APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
-    DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
+    DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
+    HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RouteTabs, TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
-    StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher,
+    StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher, useHelpCarousel,
 } from '@/ui/index.js';
 
 // ─── campos sueltos: la vista de cada campo, sin librería de formularios ────
