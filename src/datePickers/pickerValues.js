@@ -23,6 +23,10 @@ export const CALENDAR_MONTH_FORMAT = 'YYYY-MM';
 export const TIME_OF_DAY_FORMAT = 'HH:mm';
 /** Cómo viaja un instante: en UTC, con la Z al final. */
 export const INSTANT_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]';
+/** De cuánto en cuánto van los minutos en la fecha con hora y en la hora: de uno en uno (MUI X trae de 5 en 5). */
+export const DEFAULT_MINUTES_STEP = 1;
+/** Un minuto. */
+export const MILLISECONDS_PER_MINUTE = 60_000;
 
 // una hora del día no tiene fecha, pero el selector de MUI X trabaja con fechas: se le pega a un día cualquiera sin cambio
 // de horario de verano en ningún país
@@ -111,6 +115,51 @@ export function pickerInstantOf(instantText, timeZone) {
  */
 export function instantTextOf(pickedValue) {
     return pickedValue?.isValid() ? pickedValue.utc().format(INSTANT_FORMAT) : '';
+}
+
+/**
+ * El primer instante que se puede elegir cuando la regla es «al menos N minutos después de ahora» (publicar algo con
+ * anticipación): este minuto, sin segundos, más N minutos. Sin segundos para que la regla no cambie entre que la persona
+ * mira la hora y la elige.
+ *
+ * @param {number} minutes
+ * @param {Date|number} [now]
+ * @returns {string} el instante en UTC ('2026-11-02T18:35:00Z')
+ */
+export function earliestInstantFromNow(minutes, now = Date.now()) {
+    const nowMilliseconds = now instanceof Date ? now.getTime() : now;
+    const startOfMinute = Math.floor(nowMilliseconds / MILLISECONDS_PER_MINUTE) * MILLISECONDS_PER_MINUTE;
+    return instantTextOf(zonedDayjs()(startOfMinute + minutes * MILLISECONDS_PER_MINUTE));
+}
+
+/**
+ * Un instante más N minutos (el fin de algo que dura al menos N minutos desde su inicio). '' si el instante viene vacío
+ * o no se entiende.
+ *
+ * @param {string|null|undefined} instantText
+ * @param {number} minutes
+ * @returns {string}
+ */
+export function instantPlusMinutes(instantText, minutes) {
+    if (!instantText) {
+        return '';
+    }
+    const instant = zonedDayjs()(instantText);
+    return instant.isValid() ? instantTextOf(instant.add(minutes, 'minute')) : '';
+}
+
+/**
+ * El más tarde de varios instantes (los vacíos no cuentan): el mínimo que de verdad aplica cuando hay más de una regla.
+ *
+ * @param {...(string|null|undefined)} instantTexts
+ * @returns {string} '' si todos vienen vacíos
+ */
+export function latestInstantOf(...instantTexts) {
+    const present = instantTexts.filter(Boolean);
+    if (present.length === 0) {
+        return '';
+    }
+    return present.reduce((latest, candidate) => (Date.parse(candidate) > Date.parse(latest) ? candidate : latest));
 }
 
 /**

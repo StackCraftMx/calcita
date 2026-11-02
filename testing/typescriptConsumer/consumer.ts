@@ -27,6 +27,9 @@ import {
     INSTANT_FORMAT, MonthInput, TIME_OF_DAY_FORMAT, TimeInput, timeZoneNameOf,
 } from '@stackcraftmx/calcita/date-pickers';
 import {nextNavigation} from '@stackcraftmx/calcita/next';
+import {
+    DateTimeInput as MinimumDateTimeInput, earliestInstantFromNow, instantPlusMinutes, latestInstantOf, minutesAfterRule, minutesFromNowRule, useCurrentMinute,
+} from '@stackcraftmx/calcita/date-pickers';
 import {FormRichTextField, RICH_TEXT_FEATURE, RichTextEditor, RichTextView, linkUrlOf, normalizedHtmlOf} from '@stackcraftmx/calcita/rich-text';
 import {
     CERTIFICATE_STATUS, CfdiSummary, EfirmaFields, RFC_KIND, certificateStatusOf, clabeRule, isValidClabe, isValidCurp, isValidRfc, readCertificate, readCfdi,
@@ -139,6 +142,15 @@ const richTextPieces = [
     createElement(RichTextView, {value: '<p>Hola</p>'}),
     createElement(FormRichTextField, {name: 'notes', label: 'Notas', placeholder: 'Escriba aquí'}),
 ];
+// publicar con anticipación: el mínimo que se recorre, el fin desde el inicio y las reglas de yup
+const publishStart: string = earliestInstantFromNow(5);
+const publishEnd: string = instantPlusMinutes(publishStart, 30);
+const strictestMinimum: string = latestInstantOf(publishStart, undefined, '');
+const startRule = minutesFromNowRule(5);
+const endRule = minutesAfterRule('startsAt', 30);
+const ruleChecks: boolean[] = [startRule.test(publishStart), endRule.test(publishEnd, {parent: {startsAt: publishStart}})];
+const minuteHook: () => number = () => useCurrentMinute(true);
+const publishPieces = createElement(MinimumDateTimeInput, {label: 'Empieza', value: publishStart, onChange: (instant: string) => instant.length, minimumMinutesFromNow: 5});
 const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
     .catch((error: unknown) => error instanceof EfirmaKeyError && error.reason === EFIRMA_KEY_PROBLEM.wrongPassword);
 const mexicoPieces = [
@@ -318,4 +330,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, strictestMinimum, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

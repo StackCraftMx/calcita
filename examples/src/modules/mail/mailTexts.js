@@ -87,7 +87,7 @@ export const mailTexts = {
             },
             snooze: {
                 title: 'Posponer hasta…', laterToday: 'Más tarde hoy', tomorrow: 'Mañana', nextWeek: 'La semana que entra',
-                pickLabel: 'Otro día y hora', pick: 'Posponer', cancel: 'Cancelar',
+                pickLabel: 'Otro día y hora', pickHelp_one: 'Al menos {{count}} minuto después de ahora', pickHelp_other: 'Al menos {{count}} minutos después de ahora', pick: 'Posponer', cancel: 'Cancelar',
             },
             confirmDeleteForever: {
                 title_one: '¿Borrar para siempre {{count}} conversación?',
@@ -217,7 +217,7 @@ export const mailTexts = {
             },
             snooze: {
                 title: 'Snooze until…', laterToday: 'Later today', tomorrow: 'Tomorrow', nextWeek: 'Next week',
-                pickLabel: 'Another day and time', pick: 'Snooze', cancel: 'Cancel',
+                pickLabel: 'Another day and time', pickHelp_one: 'At least {{count}} minute from now', pickHelp_other: 'At least {{count}} minutes from now', pick: 'Snooze', cancel: 'Cancel',
             },
             confirmDeleteForever: {
                 title_one: 'Delete {{count}} conversation forever?',

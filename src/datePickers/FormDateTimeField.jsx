@@ -9,7 +9,7 @@ import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
  * @param {{name: string} & Omit<Parameters<typeof import('@/datePickers/DateTimeInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
- *     DateTimeInput (minDateTime, disablePast, minutesStep, timeZone…), sin value / onChange / onBlur / error
+ *     DateTimeInput (minDateTime, minimumMinutesFromNow, disablePast, minutesStep, timeZone…), sin value / onChange / onBlur / error
  */
 export default function FormDateTimeField({name, ...inputProps}) {
     const fieldProps = useFormikField(name);

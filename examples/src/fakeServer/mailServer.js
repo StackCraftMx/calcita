@@ -25,6 +25,9 @@ export const MAIL_LABELS = Object.freeze([
 export const MAIL_PAGE_SIZE = 15;
 
 const HTTP_STATUS = Object.freeze({notFound: 404, conflict: 409, unprocessable: 422});
+// posponer: al menos estos minutos después de ahora, contados desde el minuto en punto (como lo pinta la pantalla)
+const SNOOZE_LEAD_MINUTES = 5;
+const MILLISECONDS_PER_MINUTE = 60_000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
 const PREVIEW_LENGTH = 120;
@@ -192,6 +195,14 @@ export async function updateConversations(conversationIds, changes) {
     await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
     if (changes.folder && !STORED_FOLDERS.includes(changes.folder)) {
         throw new ApiError({status: HTTP_STATUS.unprocessable, problem: {title: serverTextOf('validation.title'), detail: serverTextOf('mail.folderInvalid')}});
+    }
+    // el servidor vuelve a revisar: entre elegir la hora y mandarla pasa el tiempo
+    const earliestSnooze = Math.floor(Date.now() / MILLISECONDS_PER_MINUTE) * MILLISECONDS_PER_MINUTE + SNOOZE_LEAD_MINUTES * MILLISECONDS_PER_MINUTE;
+    if (changes.snoozed_until && !(Date.parse(changes.snoozed_until) >= earliestSnooze)) {
+        throw new ApiError({
+            status: HTTP_STATUS.unprocessable,
+            problem: {title: serverTextOf('validation.title'), detail: serverTextOf('mail.snoozeTooSoon', {minutes: SNOOZE_LEAD_MINUTES})},
+        });
     }
     const before = conversationIds.map((conversationId) => {
         const conversation = findOrFail(conversationId);

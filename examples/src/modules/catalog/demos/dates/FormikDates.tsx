@@ -29,7 +29,7 @@ const FormikDates = () => {
                 <Stack spacing={2} sx={{maxWidth: 560}}>
                     {/* 2. Los campos por su nombre: cada uno viaja en su forma (instante en UTC, HH:mm, AAAA-MM) */}
                     <FormSection title="Visita">
-                        <FormDateTimeField name="visitAt" label="Fecha y hora" disablePast minutesStep={30} />
+                        <FormDateTimeField name="visitAt" label="Fecha y hora" disablePast />
                         <FormTimeField name="reminderTime" label="Recordar el día a las" />
                         <FormMonthField name="billingMonth" label="Se cobra en" />
                     </FormSection>

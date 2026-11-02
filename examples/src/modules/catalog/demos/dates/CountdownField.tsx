@@ -9,29 +9,34 @@ import {Countdown, toastSuccess} from '@stackcraftmx/calcita';
 // ─── Los momentos de mentira (en su proyecto NO van: son los del API, p. ej. auction.closes_at) ───
 const inSeconds = (seconds: number) => new Date(Date.now() + seconds * 1000).toISOString();
 
+// la subasta del ejemplo cierra en 2 minutos (se alcanza a ver correr) y el botón la deja en 10 segundos para ver el cierre
+const AUCTION_SECONDS = 120;
+const CLOSING_SOON_SECONDS = 10;
+
 const CountdownField = () => {
-    const [closesAt, setClosesAt] = useState(() => inSeconds(8));
+    const [closesAt, setClosesAt] = useState(() => inSeconds(AUCTION_SECONDS));
     const [saleEndsAt] = useState(() => inSeconds(2 * 86_400 + 5 * 3600));
 
     return (
         <Stack spacing={2}>
-            {/* 1. Corta: al llegar a cero dice lo suyo y avisa una vez */}
+            {/* 1. Segundo a segundo: al llegar a cero dice lo suyo y avisa una vez */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>
                 <Typography color="text.secondary">La subasta cierra en</Typography>
                 <Countdown until={closesAt} label="Tiempo para que cierre la subasta" completedText="Cerrada"
                            onComplete={() => toastSuccess('La subasta cerró.')} variant="h6" />
-                <Button size="small" onClick={() => setClosesAt(inSeconds(8))}>Volver a empezar</Button>
+                <Button size="small" onClick={() => setClosesAt(inSeconds(CLOSING_SOON_SECONDS))}>Cerrar en 10 segundos</Button>
+                <Button size="small" onClick={() => setClosesAt(inSeconds(AUCTION_SECONDS))}>Volver a empezar</Button>
             </Stack>
-            {/* 2. Con días y sin segundos */}
+            {/* 2. Con días cuando faltan (showSeconds={false} quita los segundos) */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>
                 <Typography color="text.secondary">La oferta termina en</Typography>
-                <Countdown until={saleEndsAt} showSeconds={false} label="Tiempo para que termine la oferta" />
+                <Countdown until={saleEndsAt} label="Tiempo para que termine la oferta" />
             </Stack>
-            {/* 3. A su manera: las partes en sus propias cajas */}
+            {/* 3. A su manera: las partes en sus propias cajas, con segundos */}
             <Countdown until={saleEndsAt}>
-                {({days, hours, minutes}) => (
+                {({days, hours, minutes, seconds}) => (
                     <Stack direction="row" spacing={1}>
-                        {[[days, 'días'], [hours, 'horas'], [minutes, 'min']].map(([amount, unit]) => (
+                        {[[days, 'días'], [hours, 'horas'], [minutes, 'min'], [seconds, 'seg']].map(([amount, unit]) => (
                             <Stack key={unit} sx={{px: 1.5, py: 1, borderRadius: 2, bgcolor: 'action.hover', alignItems: 'center', minWidth: 64}}>
                                 <Typography variant="h6" sx={{fontVariantNumeric: 'tabular-nums'}}>{amount}</Typography>
                                 <Typography variant="caption" color="text.secondary">{unit}</Typography>

@@ -59,14 +59,16 @@ import {
     ActionsMenu, BarActionButton, BarSearch, ConfirmDialog, InboxLayout, MessageList, MessageView, PageHeading, SelectionActions, formatDateTime,
     formatNumber, toastInfo, toastProblem, toastSuccess, useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
-import {DateTimeInput} from '@stackcraftmx/calcita/date-pickers';
+import {DateTimeInput, earliestInstantFromNow} from '@stackcraftmx/calcita/date-pickers';
 
 import {ComposeDialog} from '@/modules/mail/ComposeDialog.jsx';
 import {
     MAIL_FOLDER, MAIL_LABELS, MAIL_ME, changeConversations, deleteConversations, emptyTrash, loadConversation, loadConversations,
     restoreConversations, undoSend,
 } from '@/modules/mail/mailApi.js';
-import {COMPOSE_MODE, MAIL_ACTION, actionsOfFolder, draftForReplyOf, snoozeOptionsOf} from '@/modules/mail/mailRules.js';
+import {
+    COMPOSE_MODE, MAIL_ACTION, MINIMUM_SNOOZE_MINUTES, actionsOfFolder, draftForReplyOf, snoozeOptionsOf,
+} from '@/modules/mail/mailRules.js';
 import {MAIL_SHORTCUTS, useMailShortcuts} from '@/modules/mail/useMailShortcuts.js';
 
 const FOLDER_ICONS = Object.freeze({
@@ -405,13 +407,15 @@ export const MailPage = () => {
                         </ListItemButton>
                     ))}
                 </List>
-                {/* o el día y la hora que la persona quiera, como en Gmail: viaja como instante en UTC, igual que las de arriba */}
+                {/* o el día y la hora que la persona quiera, como en Gmail: viaja como instante en UTC, igual que las de arriba;
+                    minuto a minuto y al menos 5 minutos después de ahora (el mínimo se recorre solo con el reloj) */}
                 <DialogContent dividers>
-                    <DateTimeInput label={t('snooze.pickLabel')} value={pickedSnoozeUntil} onChange={setPickedSnoozeUntil} disablePast minutesStep={15} />
+                    <DateTimeInput label={t('snooze.pickLabel')} value={pickedSnoozeUntil} onChange={setPickedSnoozeUntil}
+                                   minimumMinutesFromNow={MINIMUM_SNOOZE_MINUTES} helperText={t('snooze.pickHelp', {count: MINIMUM_SNOOZE_MINUTES})} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={closeSnooze}>{t('snooze.cancel')}</Button>
-                    <Button variant="contained" disabled={!(Date.parse(pickedSnoozeUntil) > Date.now())} onClick={() => snoozeUntil(pickedSnoozeUntil)}>
+                    <Button variant="contained" disabled={!(Date.parse(pickedSnoozeUntil) >= Date.parse(earliestInstantFromNow(MINIMUM_SNOOZE_MINUTES)))} onClick={() => snoozeUntil(pickedSnoozeUntil)}>
                         {t('snooze.pick')}
                     </Button>
                 </DialogActions>

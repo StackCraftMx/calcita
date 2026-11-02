@@ -18,10 +18,10 @@ const DateTimeField = () => {
 
     return (
         <Stack spacing={2} sx={{maxWidth: 360}}>
-            {/* 1. En la zona del proveedor: de ahora en adelante, de 15 en 15 minutos */}
-            <DateTimeInput label="Enviar el recordatorio" value={sendAt} onChange={setSendAt} disablePast minutesStep={15} />
+            {/* 1. En la zona del proveedor: de ahora en adelante, minuto a minuto */}
+            <DateTimeInput label="Enviar el recordatorio" value={sendAt} onChange={setSendAt} disablePast />
             {/* 2. El mismo instante en la hora de otra sucursal: cambiar uno cambia el otro */}
-            <DateTimeInput label="La misma hora en Tijuana" value={sendAt} onChange={setSendAt} timeZone="America/Tijuana" minutesStep={15} />
+            <DateTimeInput label="La misma hora en Tijuana" value={sendAt} onChange={setSendAt} timeZone="America/Tijuana" />
             {/* 3. Lo que viaja al servidor: el instante en UTC, con la Z al final */}
             <Typography variant="body2" color="text.secondary">Viaja: «{sendAt}»</Typography>
         </Stack>

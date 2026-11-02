@@ -6,13 +6,21 @@
 // esté en otra zona. Lee también lo que llega del servidor con desfase ('…-06:00'). '' = vacío. La hora sale de 24 horas o
 // con a.m. y p.m. según el hourCycle del proveedor.
 //
+// Los minutos van de uno en uno (minutesStep los cambia). Para «al menos N minutos después de ahora» (publicar con
+// anticipación) está minimumMinutesFromNow: el mínimo se recorre solo con el reloj mientras la pantalla está abierta. Para
+// «el fin, al menos N minutos después del inicio», minDateTime={instantPlusMinutes(startsAt, N)}. Con formik, las mismas
+// reglas en yup: minutesFromNowRule y minutesAfterRule (el servidor vuelve a revisar).
+//
 // Para una hora del día sin fecha («abre a las 09:00») va TimeInput; para una fecha sin hora, DateInput.
 //
 // Genérico del paquete: function (regla de la casa).
 import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
 
 import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
-import {instantTextOf, pickerInstantOf, timeZoneNameOf} from '@/datePickers/pickerValues.js';
+import {
+    DEFAULT_MINUTES_STEP, earliestInstantFromNow, instantTextOf, latestInstantOf, pickerInstantOf, timeZoneNameOf,
+} from '@/datePickers/pickerValues.js';
+import {useCurrentMinute} from '@/datePickers/useCurrentMinute.js';
 import {usePickerField} from '@/datePickers/usePickerField.js';
 import {intlLocaleOf} from '@/toolkit/toolkitSettings.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
@@ -30,11 +38,13 @@ const HELPER_SEPARATOR = ' · ';
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ya traducida; va antes del nombre de la zona
- * @param {string} [props.minDateTime] instante
+ * @param {string} [props.minDateTime] instante (el fin de algo: instantPlusMinutes(startsAt, 30))
+ * @param {number} [props.minimumMinutesFromNow] al menos tantos minutos después de ahora; se recorre con el reloj
  * @param {string} [props.maxDateTime] instante
  * @param {boolean} [props.disableFuture]
  * @param {boolean} [props.disablePast] p. ej. un envío programado
- * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos (15 para citas de cuarto de hora)
+ * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos; por omisión de uno en uno (15 para citas de
+ *     cuarto de hora)
  * @param {string} [props.timeZone] otra zona que la del proveedor (la de una sucursal); rotulada igual
  * @param {boolean} [props.showTimeZone] false quita el nombre de la zona de abajo (por omisión se ve)
  * @param {string} [props.timeZoneLabel] ya traducido, en lugar del nombre que da el navegador
@@ -45,8 +55,8 @@ const HELPER_SEPARATOR = ' · ';
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function DateTimeInput({
-    name, label, value, onChange, onBlur, error, helperText, minDateTime, maxDateTime, disableFuture = false, disablePast = false,
-    minutesStep, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, texts,
+    name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
+    disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, texts,
     ...unknownProps
 }) {
     warnUnknownProps('DateTimeInput', unknownProps);
@@ -55,6 +65,10 @@ export default function DateTimeInput({
     const shownTimeZone = timeZone ?? field.timeZone;
     const zoneText = showTimeZone ? (timeZoneLabel ?? timeZoneNameOf(shownTimeZone, intlLocaleOf(field.language, languages))) : null;
     const helperLine = [helperText, zoneText].filter(Boolean).join(HELPER_SEPARATOR) || ' ';
+    // el mínimo que de verdad aplica: el que da la pantalla o el de «ahora + N minutos», el más tarde
+    const hasClockRule = minimumMinutesFromNow != null;
+    const currentMinute = useCurrentMinute(hasClockRule);
+    const earliest = latestInstantOf(minDateTime, hasClockRule ? earliestInstantFromNow(minimumMinutesFromNow, currentMinute) : '');
 
     return (
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>
@@ -64,12 +78,13 @@ export default function DateTimeInput({
                 format={field.formats.dateTime}
                 ampm={field.formats.ampm}
                 value={pickerInstantOf(value, shownTimeZone)}
-                minDateTime={pickerInstantOf(minDateTime, shownTimeZone) ?? undefined}
+                minDateTime={pickerInstantOf(earliest, shownTimeZone) ?? undefined}
                 maxDateTime={pickerInstantOf(maxDateTime, shownTimeZone) ?? undefined}
                 disableFuture={disableFuture}
                 disablePast={disablePast}
                 disabled={disabled}
-                {...(minutesStep && {minutesStep, timeSteps: {minutes: minutesStep}})}
+                minutesStep={minutesStep}
+                timeSteps={{minutes: minutesStep, ...pickerProps?.timeSteps}}
                 inputRef={inputRef}
                 onChange={(pickedValue) => onChange(instantTextOf(pickedValue))}
                 onClose={() => {
