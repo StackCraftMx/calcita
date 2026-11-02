@@ -174,7 +174,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | Importar de | Trae | Pide además |
 |---|---|---|
 | `@stackcraftmx/calcita` | proveedor, marco de la app, diálogos, avisos, descargas, encabezados, filtros, chips, métricas, formatos (`useFormatters`), fechas, errores RFC 9457, la petición de la casa (`createApiClient`), la recuperación de versión vieja, la navegación sin router (`createBrowserNavigation`, `createHashNavigation`), la búsqueda de la barra (`BarSearch`), el menú «⋯» (`ActionsMenu`), las acciones de lo elegido (`SelectionActions`), la seguridad de la cuenta (códigos de recuperación, sesiones, bitácora) y la bandeja tipo correo (`InboxLayout`, `MessageList` con selección, `MessageView` con la conversación) | — |
-| `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs`, `react-window` |
+| `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL; `ServerTableFilterDrawer`, su búsqueda en cajón | `@mui/x-data-grid`, `nuqs`, `react-window` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista de una o varias opciones, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo | `formik`, `yup` |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, su formulario por pasos y `yupResolver` | `react-hook-form`, `@hookform/resolvers` (y `yup` si valida con yup) |
 | `@stackcraftmx/calcita/date-pickers` | fecha, fecha con hora, hora y mes con los selectores de MUI X (`DateInput`, `DateTimeInput`, `TimeInput`, `MonthInput` y su versión de formik); cada uno viaja en texto | `@mui/x-date-pickers` 8, `dayjs` |
@@ -250,6 +250,13 @@ su código donde quiera y, en escritorio con cápsulas, el marco las sube a la b
 el teléfono, con cápsulas, flotan arriba a la derecha y se quedan al bajar: las que caben, solo con ícono, y las que no,
 en un menú «⋯». Las `actions` de `PageHeading` ya suben solas, y `ServerTable` sube su búsqueda con
 `searchInBar`. «Hecho en Calcita» → «Marco y menú» lo enseña vivo.
+
+Cuando los filtros de una lista ya no caben arriba de la tabla, la búsqueda en cajón: `FilterDrawer` sale de un lado
+(`anchor`) con los campos declarados una vez (`FILTER_FIELD_KIND`: texto, una o varias opciones, catálogo, casillas, rango de
+números, de fechas, monto con operador o uno propio); lo que se cambia adentro no mueve la lista hasta «Buscar». Con
+`ServerTableFilterDrawer` en `toolbarExtra` va conectado a la tabla: botón «Filtros (N)», filtros en la dirección y un chip
+por filtro (`filterDrawerDefaultsOf`, `filterDrawerKindsOf`, `filterDrawerChipsOf`). Un monto viaja como `gte:500`
+(`comparisonOf` lo separa en el backend o en la pantalla).
 
 ```jsx
 <BarActions label="Buscar en pedidos" order={1}>
@@ -349,6 +356,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaFileInput` | `root`, `button`, `fileChip`, `empty` |
 | `CalcitaFileUploadInput` | `root`, `fileName`, `status`, `button`, `helper` |
 | `CalcitaFilterChips` | `root`, `header`, `clearButton` |
+| `CalcitaFilterDrawer` | `header`, `body`, `footer` (el panel: clase `CalcitaFilterDrawer-paper`) |
 | `CalcitaFontSizeToggle` | `button` |
 | `CalcitaFormProblemAlert` | `root` |
 | `CalcitaFormRow` | `root`, `label`, `control` |
