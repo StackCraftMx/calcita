@@ -8,12 +8,14 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
+import FilterDrawerDemo from '@/modules/catalog/demos/table/FilterDrawerDemo.tsx';
 import OrdersSelectionDemo from '@/modules/catalog/demos/table/OrdersSelectionDemo.tsx';
 import OrdersTableDemo from '@/modules/catalog/demos/table/OrdersTableDemo.tsx';
 
 const loadDemo = () => import('@/modules/catalog/demos/table/OrdersTableDemo.tsx?demo-source');
 const loadSelection = () => import('@/modules/catalog/demos/table/OrdersSelectionDemo.tsx?demo-source');
 const loadApi = () => import('@/modules/catalog/demos/table/OrdersTableApi.ts?demo-source');
+const loadFilterDrawer = () => import('@/modules/catalog/demos/table/FilterDrawerDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (serverTable.<sección>.extend.<id>)
@@ -69,6 +71,17 @@ const API_EXTENSIONS = [
     {id: 'getRowId', option: 'getRowId', example: 'getRowId={(row) => row.folio}'},
 ];
 
+const FILTER_DRAWER_EXTENSIONS = [
+    {id: 'fields', option: 'fields[].kind', example: "{name: 'amount', label: 'Monto', kind: FILTER_FIELD_KIND.comparison, prefix: '$'}"},
+    {id: 'kinds', option: 'text · select · multiSelect · catalog · checkboxes · numberRange · dateRange · comparison · custom', example: "{name: 'term', kind: FILTER_FIELD_KIND.numberRange, suffix: 'días'}  // term_min y term_max"},
+    {id: 'keys', option: 'keys · operators · defaultOperator', example: "{kind: 'dateRange', keys: {from: 'created_from', to: 'created_to'}}"},
+    {id: 'side', option: 'anchor · width · title · applyLabel', example: '<FilterDrawer anchor={FILTER_DRAWER_ANCHOR.left} width={420} title="Buscar facturas" />'},
+    {id: 'table', option: 'ServerTableFilterDrawer (en toolbarExtra)', example: '<ServerTable … toolbarExtra={<ServerTableFilterDrawer fields={FIELDS} />} />'},
+    {id: 'setup', option: 'filterDrawerDefaultsOf · filterDrawerKindsOf · filterDrawerChipsOf', example: 'chipConfig={buildChipConfig(filterDrawerChipsOf(FIELDS, {t, formatDate}))}'},
+    {id: 'custom', option: "kind: 'custom' · render", example: "{name: 'zone', kind: 'custom', render: ({value, onChange}) => <MiMapa value={value} onChange={onChange} />}"},
+    {id: 'theme', option: 'theme.components.CalcitaFilterDrawer', example: 'components: {CalcitaFilterDrawer: {defaultProps: {anchor: \'left\'}}}'},
+];
+
 export const ServerTablePage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `serverTable.${section}`, extensions);
@@ -80,6 +93,8 @@ export const ServerTablePage = () => {
                          extensions={rowsOf('demo', TABLE_EXTENSIONS)} Demo={OrdersTableDemo} loadSource={loadDemo} />
             <DemoSection title={t('serverTable.selection.title')} description={t('serverTable.selection.description')}
                          extensions={rowsOf('selection', SELECTION_EXTENSIONS)} Demo={OrdersSelectionDemo} loadSource={loadSelection} />
+            <DemoSection title={t('serverTable.filterDrawer.title')} description={t('serverTable.filterDrawer.description')}
+                         extensions={rowsOf('filterDrawer', FILTER_DRAWER_EXTENSIONS)} Demo={FilterDrawerDemo} loadSource={loadFilterDrawer} />
             <CodeSection title={t('serverTable.api.title')} description={t('serverTable.api.description')}
                          extensions={rowsOf('api', API_EXTENSIONS)} loadSource={loadApi} />
         </Stack>
