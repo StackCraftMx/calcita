@@ -1525,6 +1525,18 @@ export const catalogPageTexts = {
                         label: 'El texto del botón.',
                     },
                 },
+                routeTabs: {
+                    title: '5. Pestañas por ruta',
+                    description: 'Cada pestaña es una dirección: se comparte la liga a una pestaña, «atrás» regresa a la anterior y se abre en otra pestaña del navegador. Por ruta (cada pestaña su página) o dentro de una misma pantalla en la consulta (?tab=). Pique «Pagos» y recargue: sigue ahí.',
+                    extend: {
+                        path: 'Cada pestaña con su ruta; la activa es la de la dirección (exact: solo la idéntica).',
+                        query: 'Pestañas dentro de una pantalla, guardadas en la consulta con el nombre que quiera.',
+                        active: 'Cuál está activa, para pintar su panel.',
+                        perTab: 'Por pestaña: ícono, conteo, permiso (la que no se puede ver no sale), apagada u oculta.',
+                        onChange: 'Aviso de la pestaña que se eligió (la navegación ya la hace la liga).',
+                        theme: 'Sus partes en el tema: root, tab, badge.',
+                    },
+                },
             },
             themeAndGlass: {
                 title: 'Tema y vidrio',
@@ -3528,6 +3540,18 @@ export const catalogPageTexts = {
                         backButton: 'In the detail: the button that goes back to what the list saved under that key.',
                         fallbackTo: 'Where it goes when nothing was saved (the person arrived by a link).',
                         label: 'The button text.',
+                    },
+                },
+                routeTabs: {
+                    title: '5. Route tabs',
+                    description: 'Each tab is an address: you can share the link to a tab, «back» returns to the previous one and it opens in another browser tab. By route (each tab its page) or inside one screen in the query (?tab=). Pick «Payments» and reload: it stays there.',
+                    extend: {
+                        path: 'Each tab with its route; the active one is the one in the address (exact: only the identical one).',
+                        query: 'Tabs inside one screen, kept in the query with the name you want.',
+                        active: 'Which one is active, to paint its panel.',
+                        perTab: 'Per tab: icon, count, permission (the one you cannot see does not show), disabled or hidden.',
+                        onChange: 'Notice of the tab that was chosen (the link already navigates).',
+                        theme: 'Its parts in the theme: root, tab, badge.',
                     },
                 },
             },
