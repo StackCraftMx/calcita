@@ -870,12 +870,29 @@ hourCycle`, y viaja igual. Lo que el selector de MUI X acepta y aquí no tiene n
 ```jsx
 import {FormDateTimeField, FormMonthField, FormTimeField} from '@stackcraftmx/calcita/date-pickers';
 
-<FormDateTimeField name="visitAt" label="Fecha y hora" disablePast minutesStep={30} />
+<FormDateTimeField name="visitAt" label="Fecha y hora" disablePast />
 <FormTimeField name="opensAt" label="Abre a las" minTime="07:00" maxTime="21:00" />
 <FormMonthField name="billingMonth" label="Se cobra en" disableFuture />
 ```
 
 Con react-hook-form, el campo suelto va dentro de un `Controller` (la puerta de fechas no pide react-hook-form).
+
+Los minutos van de uno en uno (MUI X trae de 5 en 5); `minutesStep` los cambia. Para algo que se publica con
+anticipación y dura un mínimo (una subasta, una oferta), el inicio lleva `minimumMinutesFromNow` (el mínimo se recorre
+solo con el reloj mientras la pantalla está abierta) y el fin `minDateTime={instantPlusMinutes(startsAt, 30)}`; en yup,
+las mismas reglas con su mensaje. El servidor vuelve a revisar: entre llenar el formulario y guardarlo pasa el tiempo.
+
+```jsx
+import {FormDateTimeField, instantPlusMinutes, minutesAfterRule, minutesFromNowRule} from '@stackcraftmx/calcita/date-pickers';
+
+const schema = Yup.object({
+    startsAt: Yup.string().required().test(minutesFromNowRule(5)),
+    endsAt: Yup.string().required().test(minutesAfterRule('startsAt', 30)),
+});
+
+<FormDateTimeField name="startsAt" label="Empieza" minimumMinutesFromNow={5} />
+<FormDateTimeField name="endsAt" label="Termina" minDateTime={instantPlusMinutes(values.startsAt, 30)} />
+```
 
 ## Subir archivos
 
