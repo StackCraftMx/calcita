@@ -325,6 +325,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaCfdiSummary` | `root`, `header`, `amounts`, `concepts` |
 | `CalcitaChart` | `tableArea`, `legend`, `legendItem`, `legendLine`, `legendSwatch`, `reference`, `referenceLine` |
 | `CalcitaChartTooltip` | `root` |
+| `CalcitaCheckboxGroupInput` | `root`, `selectAll`, `option` |
 | `CalcitaCollapsibleSection` | `root`, `accordion`, `summary`, `titleArea`, `collapsedTitle`, `expandedTitle`, `details` |
 | `CalcitaColorInput` | `swatch`, `nativeInput` |
 | `CalcitaColorSchemeToggle` | `button` |
@@ -412,6 +413,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaTermsAcceptanceDialog` | `content`, `frame`, `footer` |
 | `CalcitaTextInput` | `field` |
 | `CalcitaTopMenu` | `link`, `root` |
+| `CalcitaTransferListInput` | `root`, `list`, `actions` |
 | `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
 | `CalcitaWizardLayout` | `stepper`, `phoneSteps`, `actions` |
 | `CalcitaWordmark` | `root` |
@@ -922,6 +924,20 @@ const schema = Yup.object({
                          <FormNumberField name={nameOf('unit_price')} label="Precio" prefix="$" />
                      </>)} />
 ```
+
+### Elegir varios
+
+Tres formas, según cuántas opciones hay, y cada una con su versión de formik y de react-hook-form:
+
+| Pieza | Para qué | Opciones de varias |
+|---|---|---|
+| `CheckboxGroupInput` · `FormCheckboxGroupField` | pocas opciones a la vista (los canales de aviso) | `selectAll`, `row`, `options[].description` |
+| `SelectInput` · `FormSelectField` con `multiple` | una lista corta (los días) | `selectAll`, `checkboxes` |
+| `CatalogInput` · `FormCatalogField` con `multiple` | un catálogo largo con buscador (los estados) | `selectAll` (con algo buscado, «Elegir los N que coinciden»), `checkboxes`, `limitTags` |
+| `TransferListInput` · `FormTransferListField` | elegir muchos viendo qué quedó de cada lado (compradores, sucursales) | `availableTitle`, `chosenTitle`, `searchable`, `listHeight` |
+
+«Elegir todos» lleva su casilla a medias cuando hay algunos elegidos y no cuenta las opciones apagadas (`disabled`). La
+lista de transferencia va fuera de una FormSection: necesita el ancho completo.
 
 Un 422 del servidor en `contacts.2.email` llega a ese renglón (`applyServerProblem`). Con formik, el error de toda la lista
 (el tope) sale cuando los renglones ya no tienen errores: formik guarda los dos en el mismo lugar; para verlo mientras se
