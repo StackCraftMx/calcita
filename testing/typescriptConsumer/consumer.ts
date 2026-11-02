@@ -15,7 +15,10 @@ import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/c
 import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
 import {FormTextField as HookFormTextField, SERVER_PROBLEM_ROOT, applyServerProblem as applyToHookForm} from '@stackcraftmx/calcita/react-hook-form';
-import {CALENDAR_DATE_FORMAT, DateInput, FormDateField} from '@stackcraftmx/calcita/date-pickers';
+import {
+    CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, DateInput, DateTimeInput, FormDateField, FormDateTimeField, FormMonthField, FormTimeField,
+    INSTANT_FORMAT, MonthInput, TIME_OF_DAY_FORMAT, TimeInput, timeZoneNameOf,
+} from '@stackcraftmx/calcita/date-pickers';
 import {nextNavigation} from '@stackcraftmx/calcita/next';
 import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/calcita/maps';
 import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
@@ -74,6 +77,19 @@ Money.zero().plus(5);
 const wrongFormat: number = VALUE_FORMAT.count;
 
 const dateFormat: string = CALENDAR_DATE_FORMAT;
+// fecha con hora, hora y mes: cada uno con su valor en texto y sus límites con la misma forma
+const travelFormats: string[] = [CALENDAR_MONTH_FORMAT, INSTANT_FORMAT, TIME_OF_DAY_FORMAT];
+const zoneName: string = timeZoneNameOf('America/Mexico_City', 'es-MX');
+const pickerFields = [
+    createElement(DateTimeInput, {label: 'Posponer hasta', value: '', onChange: (instant: string) => instant.length, disablePast: true, minutesStep: 15, timeZone: 'America/Tijuana', pickerProps: {closeOnSelect: false}}),
+    createElement(TimeInput, {label: 'Hora', value: '09:00', onChange: () => {}, minTime: '08:00', maxTime: '18:00'}),
+    createElement(MonthInput, {label: 'Mes', value: '2026-11', onChange: () => {}, maxMonth: '2026-12', disableFuture: true}),
+    createElement(FormDateTimeField, {name: 'snoozedUntil', label: 'Posponer hasta', showTimeZone: false}),
+    createElement(FormTimeField, {name: 'startTime', label: 'Hora de inicio', minutesStep: 30}),
+    createElement(FormMonthField, {name: 'month', label: 'Mes'}),
+    // @ts-expect-error minutesStep es un número, no un texto
+    createElement(TimeInput, {label: 'Hora', value: '', onChange: () => {}, minutesStep: '30'}),
+];
 const serverProblemRoot: string = SERVER_PROBLEM_ROOT;
 const emailSchema = Yup.string().email();
 const toolkitTheme = createToolkitTheme({glass: true});
@@ -230,4 +246,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

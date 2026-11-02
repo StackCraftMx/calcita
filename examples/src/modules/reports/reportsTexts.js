@@ -15,6 +15,10 @@ export const reportsTexts = {
                 subtitle: 'El reporte se arma en el navegador con las cifras del servidor. Lo que se descarga en Excel o CSV es lo mismo que se ve aquí.',
                 loading: 'Cargando las cifras…',
             },
+            filters: {
+                fromMonth: 'Desde el mes',
+                toMonth: 'Hasta el mes',
+            },
             download: {
                 label: 'Descargar el reporte',
                 panelLabel: 'Reporte de pedidos y ventas',
@@ -78,6 +82,10 @@ export const reportsTexts = {
                 title: 'Orders and sales per month',
                 subtitle: 'The report is built in the browser with the server figures. What you download in Excel or CSV is the same as what you see here.',
                 loading: 'Loading the figures…',
+            },
+            filters: {
+                fromMonth: 'From month',
+                toMonth: 'To month',
             },
             download: {
                 label: 'Download the report',

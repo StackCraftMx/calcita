@@ -40,6 +40,7 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
 
 import WebOutlinedIcon from '@mui/icons-material/WebOutlined';
 
@@ -86,6 +87,7 @@ export function buildMenuItems() {
             {to: BUILT_IN_PATHS.api, labelKey: 'catalog:nav.api', Icon: CloudSyncOutlinedIcon},
             {to: BUILT_IN_PATHS.serverTable, labelKey: 'catalog:nav.serverTable', Icon: TableChartOutlinedIcon},
             {to: BUILT_IN_PATHS.forms, labelKey: 'catalog:nav.forms', Icon: EditNoteOutlinedIcon},
+            {to: BUILT_IN_PATHS.dates, labelKey: 'catalog:nav.dates', Icon: EventOutlinedIcon},
             {to: BUILT_IN_PATHS.confirmAndNotify, labelKey: 'catalog:nav.confirmAndNotify', Icon: TaskAltOutlinedIcon},
             {to: BUILT_IN_PATHS.cards, labelKey: 'catalog:nav.cards', Icon: DashboardOutlinedIcon},
             {to: BUILT_IN_PATHS.dictionaries, labelKey: 'catalog:nav.dictionaries', Icon: MenuBookOutlinedIcon},

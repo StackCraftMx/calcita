@@ -173,7 +173,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL | `@mui/x-data-grid`, `nuqs` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista de una o varias opciones, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo | `formik`, `yup` |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, su formulario por pasos y `yupResolver` | `react-hook-form`, `@hookform/resolvers` (y `yup` si valida con yup) |
-| `@stackcraftmx/calcita/date-pickers` | la fecha con el DatePicker de MUI X (`DateInput`, `FormDateField`); viaja `AAAA-MM-DD` | `@mui/x-date-pickers` 8, `dayjs` |
+| `@stackcraftmx/calcita/date-pickers` | fecha, fecha con hora, hora y mes con los selectores de MUI X (`DateInput`, `DateTimeInput`, `TimeInput`, `MonthInput` y su versión de formik); cada uno viaja en texto | `@mui/x-date-pickers` 8, `dayjs` |
 | `@stackcraftmx/calcita/charts` | barras, columnas y líneas (una serie o varias), cada una con su vista de tabla, y `ChartTooltip` para las propias | `recharts` |
 | `@stackcraftmx/calcita/timeline` | línea de tiempo por grupos | `@mui/lab` |
 | `@stackcraftmx/calcita/excel` | reporte en Excel (Resumen y Datos) y CSV | `exceljs`, que se le pasa al llamarlo |
@@ -818,6 +818,33 @@ import {FormRow, FormSection} from '@stackcraftmx/calcita';
 
 Los campos van directo dentro de la `FormSection` (sin Grid ni Stack en medio): la línea entre renglones se dibuja entre
 hermanos.
+
+### Fechas y horas
+
+Cuatro campos en `/date-pickers`, con los selectores de MUI X. Cada uno viaja en texto con una sola forma y se ve en el
+idioma de la persona; la pantalla no convierte nada:
+
+| Campo (suelto · formik) | Para qué | Viaja |
+|---|---|---|
+| `DateInput` · `FormDateField` | una fecha de calendario (un nacimiento, una entrega) | `'2026-11-01'` |
+| `DateTimeInput` · `FormDateTimeField` | un momento que pasa una vez (un envío programado, una cita) | `'2026-11-01T18:30:00Z'`, en UTC |
+| `TimeInput` · `FormTimeField` | una hora del día sin fecha (un horario) | `'09:30'`, de 24 horas |
+| `MonthInput` · `FormMonthField` | el mes de un reporte o de un cierre | `'2026-11'` |
+
+La fecha con hora se ve en la zona del proyecto (`ToolkitProvider timeZone`) con el nombre de la zona abajo («Hora estándar
+central»), para que nadie dude en qué hora está escribiendo; `timeZone` la cambia en un solo campo (la hora de una
+sucursal) y el momento que viaja es el mismo. La hora sale de 24 horas o con a. m. y p. m. según `ToolkitProvider
+hourCycle`, y viaja igual. Lo que el selector de MUI X acepta y aquí no tiene nombre va en `pickerProps`.
+
+```jsx
+import {FormDateTimeField, FormMonthField, FormTimeField} from '@stackcraftmx/calcita/date-pickers';
+
+<FormDateTimeField name="visitAt" label="Fecha y hora" disablePast minutesStep={30} />
+<FormTimeField name="opensAt" label="Abre a las" minTime="07:00" maxTime="21:00" />
+<FormMonthField name="billingMonth" label="Se cobra en" disableFuture />
+```
+
+Con react-hook-form, el campo suelto va dentro de un `Controller` (la puerta de fechas no pide react-hook-form).
 
 ## Subir archivos
 

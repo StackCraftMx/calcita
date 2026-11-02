@@ -3,7 +3,8 @@
 // Lo que se ve aquí:
 //   - DownloadMenu: «Descargar ▾» con Excel, CSV y JSON (un tipo propio de la app: APP_FILE_TYPES); cada formato pasa por su
 //     confirmación y el archivo va al panel;
-//   - el reporte (reportSheetOf, reportWorkbookOf, reportCsvOf): la misma hoja se pinta aquí y se descarga;
+//   - el reporte (reportSheetOf, reportWorkbookOf, reportCsvOf): la misma hoja se pinta aquí y se descarga, entre los dos
+//     meses que se eligen con MonthInput (el servidor filtra; viajan 'AAAA-MM');
 //   - el panel de descargas (DownloadManager, montado en AppShell) con startDownload: una descarga lenta que se puede
 //     cancelar y una que falla con el motivo del servidor.
 //
@@ -25,12 +26,13 @@ import {
     ConfirmDialog, DownloadMenu, PageHeading, SectionCard, formatNumber, formatPercent, materialBackgroundOf, startDownload,
     useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
+import {MonthInput} from '@stackcraftmx/calcita/date-pickers';
 import {SHEET_ROW_KIND, VALUE_FORMAT} from '@stackcraftmx/calcita/excel';
 import {Money} from '@stackcraftmx/calcita/money';
 
 import {monthlyReportSheetOf} from '@/modules/reports/monthlyReport.js';
 import {REPORT_FORMATS, reportFileOf} from '@/modules/reports/reportFiles.js';
-import {downloadOrdersLog, downloadUnavailableFile, getOrderMetrics} from '@/modules/reports/reportsApi.js';
+import {downloadOrdersLog, downloadUnavailableFile, getMonthlyReport} from '@/modules/reports/reportsApi.js';
 
 // el estado de cuenta sería un PDF: el panel pinta el ícono de ese tipo de archivo
 const STATEMENT_FORMAT = 'pdf';
@@ -70,10 +72,13 @@ export const ReportsPage = () => {
     const {t} = useToolkitTranslation('reports');
     const [metrics, setMetrics] = useState(null);
     const [loadError, setLoadError] = useState(null);
+    // '' = sin límite de ese lado: al abrir, todos los meses con pedidos
+    const [months, setMonths] = useState({from: '', to: ''});
 
+    // al cambiar un mes se vuelve a pedir; mientras llega se queda la hoja de antes (sin brincar a la ruedita)
     useEffect(() => {
         const abortController = new AbortController();
-        getOrderMetrics(abortController.signal)
+        getMonthlyReport({fromMonth: months.from, toMonth: months.to}, abortController.signal)
             .then(setMetrics)
             .catch((error) => {
                 if (!abortController.signal.aborted) {
@@ -81,7 +86,7 @@ export const ReportsPage = () => {
                 }
             });
         return () => abortController.abort();
-    }, []);
+    }, [months.from, months.to]);
 
     // la hoja se vuelve a armar al cambiar de idioma (t cambia con él): los títulos y los meses van en el idioma activo
     const sheet = useMemo(() => (metrics ? monthlyReportSheetOf(metrics, t) : null), [metrics, t]);
@@ -130,6 +135,13 @@ export const ReportsPage = () => {
             <PageHeading title={t('page.title')} description={t('page.subtitle')} actions={downloadMenu} />
             <Stack spacing={2}>
                 <SectionCard title={t('excel.title')}>
+                    {/* «desde» no pasa de «hasta» y los dos se quedan en los meses que tienen pedidos */}
+                    <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{mb: 1, maxWidth: 560}}>
+                        <MonthInput label={t('filters.fromMonth')} value={months.from} onChange={(from) => setMonths((current) => ({...current, from}))}
+                                    minMonth={metrics?.first_month} maxMonth={months.to || metrics?.last_month} />
+                        <MonthInput label={t('filters.toMonth')} value={months.to} onChange={(to) => setMonths((current) => ({...current, to}))}
+                                    minMonth={months.from || metrics?.first_month} maxMonth={metrics?.last_month} />
+                    </Stack>
                     {sheet ? (
                         <TableContainer>
                             <Table size="small">

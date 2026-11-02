@@ -116,3 +116,23 @@ export async function getOrderMetrics(signal) {
         days: dailyOrdersOf(),
     };
 }
+
+/**
+ * GET /reports/monthly?from_month=AAAA-MM&to_month=AAAA-MM: las cifras por mes entre dos meses, como las filtraría un
+ * backend. Un mes vacío es «sin límite» de ese lado; first_month y last_month dicen qué meses tienen pedidos.
+ *
+ * @param {{fromMonth?: string, toMonth?: string}} months
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<{currency: string, first_month: string, last_month: string, months: object[]}>}
+ */
+export async function getMonthlyReport({fromMonth = '', toMonth = ''}, signal) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS, signal);
+    // 'AAAA-MM' se compara como texto en el orden del calendario
+    const isInRange = ({month}) => (!fromMonth || month >= fromMonth) && (!toMonth || month <= toMonth);
+    return {
+        currency: STORE_CURRENCY,
+        first_month: storeMonthOf(`${FIRST_ORDER_DATE}T12:00:00Z`),
+        last_month: storeMonthOf(`${LAST_ORDER_DATE}T12:00:00Z`),
+        months: monthlyFiguresOf().filter(isInRange),
+    };
+}

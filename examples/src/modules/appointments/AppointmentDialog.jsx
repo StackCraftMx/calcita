@@ -11,31 +11,37 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import {FormSection, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {FormDateField} from '@stackcraftmx/calcita/date-pickers';
+import {FormDateField, FormTimeField} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Form, FormCatalogField, FormProblemAlert, FormSelectField, FormTextField, Formik, SubmitButton, Yup, applyServerProblem,
+    Form, FormCatalogField, FormProblemAlert, FormSelectField, FormTextField, Formik, SubmitButton, Yup, applyServerProblem, useFormikContext,
 } from '@stackcraftmx/calcita/forms';
 
 import {APPOINTMENT_KIND, saveAppointment} from '@/modules/appointments/appointmentsApi.js';
 
-// las horas que se ofrecen, cada media hora de 7:00 a 21:00 (el horario de la tienda con margen)
-const FIRST_HOUR = 7;
-const LAST_HOUR = 21;
-const TIME_OPTIONS = Object.freeze(Array.from({length: (LAST_HOUR - FIRST_HOUR) * 2 + 1}, (_, index) => {
-    const minutes = FIRST_HOUR * 60 + index * 30;
-    const time = `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
-    return {value: time, label: time};
-}));
+// las horas que se ofrecen: de media en media hora, de 7:00 a 21:00 (el horario de la tienda con margen)
+const FIRST_TIME = '07:00';
+const LAST_TIME = '21:00';
+const TIME_STEP_MINUTES = 30;
 // los recordatorios que se ofrecen, en minutos antes ('' = sin recordatorio)
 const REMINDER_MINUTES = Object.freeze([10, 30, 60, 1440]);
 const DEFAULT_START_TIME = '09:00';
 const DEFAULT_END_TIME = '10:00';
 const TITLE_MAX_LENGTH = 120;
 
-/** La hora HH:MM de lo que manda el calendario, si la trae y está entre las que se ofrecen. */
+/** La hora HH:MM de lo que manda el calendario, si la trae y está en el horario que se ofrece ('HH:MM' se compara como texto). */
 const timeOf = (isoText, fallback) => {
     const time = /T(\d{2}:\d{2})/.exec(isoText ?? '')?.[1];
-    return TIME_OPTIONS.some((option) => option.value === time) ? time : fallback;
+    return time && time >= FIRST_TIME && time <= LAST_TIME ? time : fallback;
+};
+
+/**
+ * La hora de fin: no puede ir antes de la de inicio (la lee del formulario); el servidor lo vuelve a revisar.
+ *
+ * @param {{label: string}} props
+ */
+const EndTimeField = ({label}) => {
+    const {values} = useFormikContext();
+    return <FormTimeField name="endTime" label={label} minTime={values.startTime || FIRST_TIME} maxTime={LAST_TIME} minutesStep={TIME_STEP_MINUTES} />;
 };
 
 /**
@@ -99,8 +105,9 @@ export const AppointmentDialog = ({draft, people, onClose, onSaved}) => {
                             </FormSection>
                             <FormSection title={t('dialog.whenSection')}>
                                 <FormDateField name="date" label={t('dialog.date')} />
-                                <FormSelectField name="startTime" label={t('dialog.startTime')} options={TIME_OPTIONS} />
-                                <FormSelectField name="endTime" label={t('dialog.endTime')} options={TIME_OPTIONS} />
+                                <FormTimeField name="startTime" label={t('dialog.startTime')} minTime={FIRST_TIME} maxTime={LAST_TIME}
+                                               minutesStep={TIME_STEP_MINUTES} />
+                                <EndTimeField label={t('dialog.endTime')} />
                                 <FormSelectField name="reminderMinutes" label={t('dialog.reminder')}
                                                  options={[{value: '', label: t('dialog.noReminder')}, ...REMINDER_MINUTES.map((minutes) => ({value: minutes, label: t(`dialog.reminderOptions.${minutes}`)}))]} />
                             </FormSection>

@@ -1047,6 +1047,72 @@ export const catalogPageTexts = {
                     },
                 },
             },
+            dates: {
+                title: 'Fechas y horas',
+                description: 'Cuatro campos con los selectores de MUI X: fecha, fecha con hora, hora del día y mes. Cada uno viaja en texto, con una sola forma, y se ve en el idioma de la persona: la pantalla no convierte nada ni pone nada alrededor. Cada sección trae para qué sirve, el código mínimo y una tabla con lo que acepta.',
+                date: {
+                    title: '1. Fecha',
+                    description: 'Una fecha de calendario (un nacimiento, una entrega). Viaja «AAAA-MM-DD», sin hora ni zona, así que nunca se mueve de día.',
+                    extend: {
+                        limits: 'Desde y hasta qué fecha se puede elegir, o solo pasadas o solo futuras.',
+                        openTo: 'Por dónde abre el calendario: en los años para un nacimiento.',
+                        helperText: 'La ayuda de abajo y el error (el de yup o un texto ya traducido).',
+                        pickerProps: 'Lo demás del selector de MUI X que aquí no tiene nombre: días que no se pueden elegir, botones, piezas propias.',
+                        calendarTexts: 'Los textos del calendario (botones, títulos) para ese campo.',
+                    },
+                },
+                dateTime: {
+                    title: '2. Fecha con hora',
+                    description: 'Un momento que pasa una vez (un envío programado, una cita). Viaja en UTC y se ve en la zona del proyecto, con el nombre de la zona abajo para que nadie dude en qué hora está escribiendo. Cambie una de las dos y vea la otra.',
+                    extend: {
+                        limits: 'Desde y hasta qué momento se puede elegir, o solo pasados o solo futuros.',
+                        minutesStep: 'De cuánto en cuánto van los minutos (15 para citas de cuarto de hora).',
+                        timeZone: 'Otra zona que la del proyecto, solo en ese campo (la de una sucursal). El momento que viaja es el mismo.',
+                        zoneLabel: 'Quitar el nombre de la zona o poner uno propio.',
+                        hourCycle: 'De 24 horas (por omisión) o con a. m. y p. m., para toda la app.',
+                        helperText: 'La ayuda de abajo, antes del nombre de la zona, y el error.',
+                        pickerProps: 'Lo demás del selector de MUI X que aquí no tiene nombre: vistas, días u horas que no se pueden elegir, piezas propias.',
+                        calendarTexts: 'Los textos del calendario (botones, títulos) para ese campo.',
+                    },
+                },
+                time: {
+                    title: '3. Hora',
+                    description: 'Una hora del día sin fecha (el horario de una sucursal, la hora de una cita en un día ya elegido). Viaja «HH:mm» de 24 horas aunque en pantalla se vea con a. m. y p. m. No tiene zona.',
+                    extend: {
+                        limits: 'Desde y hasta qué hora se puede elegir; el límite puede ser el valor de otro campo.',
+                        minutesStep: 'De cuánto en cuánto van los minutos.',
+                        hourCycle: 'De 24 horas (por omisión) o con a. m. y p. m., para toda la app.',
+                        helperText: 'La ayuda de abajo y el error (el de yup o un texto ya traducido).',
+                        pickerProps: 'Lo demás del selector de MUI X que aquí no tiene nombre: horas que no se pueden elegir, piezas propias.',
+                        calendarTexts: 'Los textos del reloj (botones, títulos) para ese campo.',
+                    },
+                },
+                month: {
+                    title: '4. Mes',
+                    description: 'El mes de un reporte, un saldo o un cierre. Viaja «AAAA-MM» y se ve con el nombre del mes en el idioma activo.',
+                    extend: {
+                        limits: 'Desde y hasta qué mes se puede elegir, o solo pasados o solo futuros.',
+                        helperText: 'La ayuda de abajo y el error (el de yup o un texto ya traducido).',
+                        pickerProps: 'Lo demás del selector de MUI X que aquí no tiene nombre: meses que no se pueden elegir, piezas propias.',
+                        calendarTexts: 'Los textos del selector (botones, títulos) para ese campo.',
+                    },
+                },
+                formik: {
+                    title: '5. En un formulario de formik',
+                    description: 'Cada campo tiene su versión de formik, que se conecta sola por su nombre y enseña el error de yup. Dentro de una sección agrupada se vuelven renglones, como los demás campos. Pique «Agendar» vacío para ver los errores.',
+                    extend: {
+                        fields: 'Los cuatro campos conectados a formik, con las mismas opciones que los sueltos.',
+                        section: 'La sección agrupada: los campos se vuelven renglones con la etiqueta a la izquierda.',
+                    },
+                },
+                hookForm: {
+                    title: '6. Con react-hook-form',
+                    description: 'Los mismos campos sueltos dentro de un Controller, con las mismas reglas de yup. Pique «Pedir la recolección» vacío para ver los errores.',
+                    extend: {
+                        controller: 'Cada campo dentro de su Controller: el valor, el cambio, la salida del campo, la referencia y el error.',
+                    },
+                },
+            },
             forms: {
                 title: 'Formularios',
                 description: 'Los campos de la casa, listos para formik (viene con Calcita) o para react-hook-form: se llaman igual, se ven igual y aplican las mismas reglas de yup, con los mensajes en el idioma activo. Los montos viajan como texto exacto (sin errores de decimales) y el error del servidor llega solo a su campo. Cada sección trae para qué sirve, el código mínimo y una tabla con todo lo que acepta.',
@@ -2694,6 +2760,72 @@ export const catalogPageTexts = {
                         requireAccess: 'A part of the screen (or all of it) with the “No permission” page for whoever cannot.',
                         requireFallback: 'Something else instead of the “No permission” page.',
                         checker: 'The whole rule, to ask several things at once.',
+                    },
+                },
+            },
+            dates: {
+                title: 'Dates and times',
+                description: 'Four fields with the MUI X pickers: date, date and time, time of day and month. Each one travels as text, in a single shape, and is shown in the person\'s language: the screen converts nothing and wraps nothing around them. Each section says what it is for, shows the minimal code and has a table with everything it accepts.',
+                date: {
+                    title: '1. Date',
+                    description: 'A calendar date (a birth date, a delivery). It travels as «YYYY-MM-DD», with no time and no time zone, so it never shifts to another day.',
+                    extend: {
+                        limits: 'From and until which date can be picked, or only past or only future dates.',
+                        openTo: 'Where the calendar opens: on the years for a birth date.',
+                        helperText: 'The help below and the error (the one from yup or an already translated text).',
+                        pickerProps: 'Anything else of the MUI X picker that has no name here: days that cannot be picked, buttons, your own pieces.',
+                        calendarTexts: 'The calendar texts (buttons, titles) for that field.',
+                    },
+                },
+                dateTime: {
+                    title: '2. Date and time',
+                    description: 'A moment that happens once (a scheduled send, an appointment). It travels in UTC and is shown in the project time zone, with the zone name below so nobody wonders which time they are typing. Change one of the two and look at the other.',
+                    extend: {
+                        limits: 'From and until which moment can be picked, or only past or only future moments.',
+                        minutesStep: 'The step of the minutes (15 for quarter-hour appointments).',
+                        timeZone: 'Another time zone than the project one, only in that field (a branch). The moment that travels is the same.',
+                        zoneLabel: 'Hide the zone name or set your own.',
+                        hourCycle: '24 hours (the default) or a.m. and p.m., for the whole app.',
+                        helperText: 'The help below, before the zone name, and the error.',
+                        pickerProps: 'Anything else of the MUI X picker that has no name here: views, days or hours that cannot be picked, your own pieces.',
+                        calendarTexts: 'The calendar texts (buttons, titles) for that field.',
+                    },
+                },
+                time: {
+                    title: '3. Time',
+                    description: 'A time of day with no date (a branch opening hours, the time of an appointment on a day already picked). It travels as 24-hour «HH:mm» even when the screen shows a.m. and p.m. It has no time zone.',
+                    extend: {
+                        limits: 'From and until which time can be picked; the limit can be the value of another field.',
+                        minutesStep: 'The step of the minutes.',
+                        hourCycle: '24 hours (the default) or a.m. and p.m., for the whole app.',
+                        helperText: 'The help below and the error (the one from yup or an already translated text).',
+                        pickerProps: 'Anything else of the MUI X picker that has no name here: hours that cannot be picked, your own pieces.',
+                        calendarTexts: 'The clock texts (buttons, titles) for that field.',
+                    },
+                },
+                month: {
+                    title: '4. Month',
+                    description: 'The month of a report, a balance or a closing. It travels as «YYYY-MM» and is shown with the month name in the active language.',
+                    extend: {
+                        limits: 'From and until which month can be picked, or only past or only future months.',
+                        helperText: 'The help below and the error (the one from yup or an already translated text).',
+                        pickerProps: 'Anything else of the MUI X picker that has no name here: months that cannot be picked, your own pieces.',
+                        calendarTexts: 'The picker texts (buttons, titles) for that field.',
+                    },
+                },
+                formik: {
+                    title: '5. In a formik form',
+                    description: 'Each field has its formik version, which connects by its name and shows the yup error. Inside a grouped section they become rows, like the other fields. Press «Agendar» empty to see the errors.',
+                    extend: {
+                        fields: 'The four fields connected to formik, with the same options as the standalone ones.',
+                        section: 'The grouped section: the fields become rows with the label on the left.',
+                    },
+                },
+                hookForm: {
+                    title: '6. With react-hook-form',
+                    description: 'The same standalone fields inside a Controller, with the same yup rules. Press «Pedir la recolección» empty to see the errors.',
+                    extend: {
+                        controller: 'Each field inside its Controller: the value, the change, leaving the field, the reference and the error.',
                     },
                 },
             },
