@@ -183,6 +183,18 @@ export function minimalComponents() {
                 root: ({theme}) => ({'&.Mui-selected, &.Mui-selected:hover': selectedTintOf(theme)}),
             },
         },
+        // las columnas de horas y minutos de MUI X: lo elegido con el mismo tinte que un menú (MUI X les pone el color lleno con
+        // la letra de contraste, que en oscuro sale negra sobre el naranja)
+        MuiMultiSectionDigitalClockSection: {
+            styleOverrides: {
+                item: ({theme}) => ({justifyContent: 'center', '&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus-visible': selectedTintOf(theme)}),
+            },
+        },
+        MuiDigitalClock: {
+            styleOverrides: {
+                item: ({theme}) => ({'&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus-visible': selectedTintOf(theme)}),
+            },
+        },
         // el grupo de botones (el control segmentado): una tira gris y lo elegido en blanco (claro) o un escalón arriba (oscuro)
         MuiToggleButtonGroup: {
             styleOverrides: {

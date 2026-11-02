@@ -149,6 +149,21 @@ test('el renglón elegido de un menú lleva palomita en lugar de fondo de color,
     assert.notEqual(menuItem['&.Mui-selected.Mui-focusVisible, &.Mui-selected:focus-visible'].backgroundColor, 'transparent');
 });
 
+test('las columnas de horas y minutos no heredan la palomita del menú y el elegido no lleva letra negra sobre el color', () => {
+    ['glass', 'minimal'].forEach((look) => {
+        const theme = createToolkitTheme(look === 'glass' ? {glass: true} : {look: 'minimal'});
+        ['MuiMultiSectionDigitalClockSection', 'MuiDigitalClock'].forEach((componentName) => {
+            const item = theme.components[componentName].styleOverrides.item({theme, ownerState: {}});
+            const selected = item['&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus-visible'];
+            assert.ok(selected, `${look} ${componentName}: sin estilo del elegido`);
+            assert.match(String(selected.backgroundColor), /color-mix|rgba|transparent/, `${look} ${componentName}: fondo lleno de color`);
+            if (look === 'glass') {
+                assert.equal(item['&.Mui-selected::after'].content, 'none');
+            }
+        });
+    });
+});
+
 test('con vidrio, el «cargando» es la ruedita de iPhone (rayitas a saltos) y el que dice cuánto falta conserva su anillo', () => {
     const theme = createToolkitTheme({glass: true});
     const rootOf = (variant) => theme.components.MuiCircularProgress.styleOverrides.root({theme, ownerState: {variant}});

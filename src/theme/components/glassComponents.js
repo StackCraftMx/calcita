@@ -221,6 +221,28 @@ function whiteLabelOf(theme, colorName) {
 }
 
 /**
+ * Un renglón de las columnas de horas y minutos: sin la palomita ni la orilla de los menús y, el elegido, en un círculo tenue
+ * de su color con el número legible (como el día elegido del calendario).
+ *
+ * @param {object} theme
+ * @returns {object}
+ */
+function clockItemStylesOf(theme) {
+    const palette = paletteOf(theme);
+    const selected = {
+        backgroundColor: `color-mix(in srgb, ${palette.primary.main} 22%, transparent)`,
+        ...accentTextStylesOf(theme),
+        fontWeight: 600,
+    };
+    return {
+        justifyContent: 'center',
+        marginInline: MENU_ROW_INSET_PIXELS,
+        '&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus-visible': selected,
+        '&.Mui-selected::after': {content: 'none'},
+    };
+}
+
+/**
  * El monograma de Apple: iniciales blancas sobre gris, en claro y en oscuro (MONOGRAM_GRAY).
  *
  * @param {object} theme
@@ -861,6 +883,19 @@ export function glassComponents({surfaces = false} = {}) {
                         '&.MuiPickersDay-today:not(.Mui-selected)': {border: 0, ...accentTextStylesOf(theme), fontWeight: 600},
                     };
                 },
+            },
+        },
+        // las columnas de horas y minutos de MUI X: sus renglones son MenuItem, así que heredaban la palomita del menú (tapaba
+        // el número y lo corría) y además MUI X les pone el color lleno con la letra de contraste (negra sobre el naranja en
+        // oscuro). Aquí el elegido va como el día elegido del calendario: círculo tenue de su color y número legible, centrado
+        MuiMultiSectionDigitalClockSection: {
+            styleOverrides: {
+                item: ({theme}) => clockItemStylesOf(theme),
+            },
+        },
+        MuiDigitalClock: {
+            styleOverrides: {
+                item: ({theme}) => clockItemStylesOf(theme),
             },
         },
         // las pestañas: la misma tira, y la marca de abajo se vuelve la gota detrás de la pestaña elegida (se desliza sola)
