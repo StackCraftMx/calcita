@@ -7,6 +7,15 @@ export const tasksTexts = {
                 title: 'Tareas del equipo',
                 description: 'Arrastre una tarjeta a otra columna (también con el teclado: espacio, flechas y espacio) o use su «⋯». Agregue con el «+» de cada columna y pique una tarjeta para editarla; termínela con su círculo. A la izquierda, encogido, el congelador con las ideas para después. «En proceso» tiene tope de 3: si lo pasa, el servidor dice que no y la tarjeta regresa.',
             },
+            help: {
+                title: 'Cómo usar el tablero',
+                steps: {
+                    move: {title: 'Mueva las tarjetas', text: 'Arrástrelas a otra columna, o con el teclado: espacio para tomarla, flechas para moverla y espacio para soltarla. También con su «⋯».'},
+                    add: {title: 'Agregue y edite', text: 'El «+» de cada columna agrega una tarea ahí; pique una tarjeta para editarla: responsables, fecha, etiquetas y pendientes.'},
+                    complete: {title: 'Termine una tarea', text: 'Pique el círculo de la tarjeta: queda palomeada y dice cuándo se terminó. Para regresarla, píquelo otra vez.'},
+                    icebox: {title: 'El congelador', text: 'A la izquierda, encogido, guarda las ideas para después. Ábralo para verlas y suéltele tarjetas aunque esté encogido.'},
+                },
+            },
             board: 'Tablero de tareas',
             search: 'Buscar por título, descripción o etiqueta',
             who: {label: 'De quién', all: 'Todas', mine: 'Las mías', unassigned: 'Sin asignar'},
@@ -55,6 +64,15 @@ export const tasksTexts = {
             page: {
                 title: 'Team tasks',
                 description: 'Drag a card to another column (also with the keyboard: space, arrows and space) or use its “⋯”. Add with each column’s “+” and click a card to edit it; complete it with its circle. On the left, collapsed, the icebox with the ideas for later. “In progress” has a limit of 3: if you go over it, the server says no and the card goes back.',
+            },
+            help: {
+                title: 'How to use the board',
+                steps: {
+                    move: {title: 'Move the cards', text: 'Drag them to another column, or with the keyboard: space to pick it up, arrows to move it and space to drop it. Also with its “⋯”.'},
+                    add: {title: 'Add and edit', text: 'Each column’s “+” adds a task there; click a card to edit it: assignees, date, tags and to-dos.'},
+                    complete: {title: 'Complete a task', text: 'Click the card’s circle: it gets checked and says when it was completed. To bring it back, click it again.'},
+                    icebox: {title: 'The icebox', text: 'On the left, collapsed, it keeps the ideas for later. Open it to see them and drop cards on it even when collapsed.'},
+                },
             },
             board: 'Task board',
             search: 'Search by title, description or tag',

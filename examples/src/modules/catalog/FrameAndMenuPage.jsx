@@ -8,6 +8,7 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
+import HelpCarouselDemo from '@/modules/catalog/demos/shell/HelpCarouselDemo.tsx';
 import RouteTabsDemo from '@/modules/catalog/demos/shell/RouteTabsDemo.tsx';
 import ScreenCapsules from '@/modules/catalog/demos/shell/ScreenCapsules.tsx';
 
@@ -16,6 +17,7 @@ const loadMenu = () => import('@/modules/catalog/demos/shell/moduleMenu.tsx?demo
 const loadCapsules = () => import('@/modules/catalog/demos/shell/ScreenCapsules.tsx?demo-source');
 const loadBack = () => import('@/modules/catalog/demos/shell/BackToList.tsx?demo-source');
 const loadRouteTabs = () => import('@/modules/catalog/demos/shell/RouteTabsDemo.tsx?demo-source');
+const loadHelpCarousel = () => import('@/modules/catalog/demos/shell/HelpCarouselDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (shell.<sección>.extend.<id>)
@@ -76,6 +78,14 @@ const ROUTE_TABS_EXTENSIONS = [
     {id: 'onChange', option: 'onChange', example: 'onChange={(tab) => logTabView(tab.value)}'},
     {id: 'theme', option: 'theme.components.CalcitaRouteTabs', example: 'components: {CalcitaRouteTabs: {styleOverrides: {tab: {textTransform: \'none\'}}}}'},
 ];
+const HELP_CAROUSEL_EXTENSIONS = [
+    {id: 'steps', option: 'steps[].title · content · image · media', example: "{title: 'Filtre', content: 'Los filtros se guardan…', image: '/ayuda/filtros.png', imageAlt: 'Los filtros'}"},
+    {id: 'when', option: 'useHelpCarousel({helpKey, version, autoOpen})', example: "const help = useHelpCarousel({helpKey: 'reports', version: '2'});"},
+    {id: 'server', option: 'seen · onClose(reason, {dontShowAgain})', example: 'useHelpCarousel({helpKey, seen: !user.first_instructions})  // lo que sabe su servidor'},
+    {id: 'button', option: '<HelpButton>', example: '<PageHeading … actions={<HelpButton onClick={help.openHelp} />} />'},
+    {id: 'options', option: 'title · showDontShowAgain · onStepChange · initialStep', example: 'onStepChange={(index) => logHelpStep(index)}'},
+    {id: 'theme', option: 'theme.components.CalcitaHelpCarouselDialog', example: 'components: {CalcitaHelpCarouselDialog: {styleOverrides: {media: {height: 240}}}}'},
+];
 
 export const FrameAndMenuPage = () => {
     const {t} = useToolkitTranslation('catalog');
@@ -94,6 +104,8 @@ export const FrameAndMenuPage = () => {
                          extensions={rowsOf('back', BACK_EXTENSIONS)} loadSource={loadBack} />
             <DemoSection title={t('shell.routeTabs.title')} description={t('shell.routeTabs.description')}
                          extensions={rowsOf('routeTabs', ROUTE_TABS_EXTENSIONS)} Demo={RouteTabsDemo} loadSource={loadRouteTabs} />
+            <DemoSection title={t('shell.helpCarousel.title')} description={t('shell.helpCarousel.description')}
+                         extensions={rowsOf('helpCarousel', HELP_CAROUSEL_EXTENSIONS)} Demo={HelpCarouselDemo} loadSource={loadHelpCarousel} />
         </Stack>
     );
 };

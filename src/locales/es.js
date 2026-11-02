@@ -165,6 +165,16 @@ export default Object.freeze({
             "noMatches": "Nada coincide con «{{text}}».",
             "emptyChosen": "Todavía no hay elegidos: márquelos a la izquierda y páselos con ›."
         },
+        "help": {
+            "button": "Ayuda de esta pantalla",
+            "close": "Cerrar la ayuda",
+            "next": "Siguiente",
+            "back": "Anterior",
+            "done": "Listo",
+            "stepOf": "Paso {{current}} de {{total}}",
+            "goToStep": "Ir al paso {{number}}",
+            "dontShowAgain": "No volver a mostrar al entrar"
+        },
         "wizard": {
             "next": "Siguiente",
             "back": "Anterior",

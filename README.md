@@ -359,6 +359,7 @@ dejar Calcita con su propia cara, parte por parte.
 | `CalcitaGroupedTimeline` | `group`, `groupHeader`, `groupButton`, `groupTitle`, `expandIcon`, `timeline`, `opposite`, `connector`, `content`, `entryTitle` |
 | `CalcitaHeaderFilter` | `button`, `badge`, `panel` |
 | `CalcitaHeaderTools` | `divider`, `root` |
+| `CalcitaHelpCarouselDialog` | `media`, `content`, `dots`, `actions` |
 | `CalcitaIconBadge` | `root`, `icon`, `label` |
 | `CalcitaImageInput` | `root`, `preview`, `image`, `placeholder`, `actions` |
 | `CalcitaInboxLayout` | `labelDot`, `folder`, `folderIcon`, `folderCount`, `root`, `folders`, `foldersHeader`, `labelsTitle`, `listPane`, `phoneTabs`, `phoneTabBadge`, `listHeader`, `list`, `detail`, `backButton` |
@@ -512,6 +513,11 @@ const menuItems = composeMenu(import.meta.glob('@/modules/*/menu.js', {eager: tr
 
 En cada pantalla, `PageHeading` pone el título, la descripción y los botones, y arma las migas solo desde el menú
 (Inicio › Sección › Pantalla). `PageHeader` es el encabezado centrado de una portada y `DetailHeader` el de un registro.
+Para explicar una pantalla la primera vez que se entra, la ayuda en carrusel: `HelpCarouselDialog` (pasos con imagen o
+ilustración, título y texto; Siguiente, los puntos, las flechas o deslizando) y `useHelpCarousel({helpKey, version})`, que
+la abre sola la primera vez y por versión, hasta que se termina o se marca «No volver a mostrar» (`seen` para lo que ya sabe
+el servidor del proyecto); `HelpButton` es el «?» que la vuelve a abrir.
+
 Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una pestaña y
 «atrás» regresa a la anterior); por ruta (cada pestaña su página) o en la consulta (`mode="query"`, `?tab=pagos`, con
 `useActiveRouteTab` para pintar el panel), con ícono, conteo y permiso por pestaña. Junto al título de un registro van su
