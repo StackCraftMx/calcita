@@ -1,4 +1,4 @@
-// Publicar algo con anticipación (una subasta, una oferta): el inicio, al menos 5 minutos después de ahora, y el fin, al
+// Publicar algo con anticipación (una promoción, una venta especial): el inicio, al menos 5 minutos después de ahora, y el fin, al
 // menos 30 minutos después del inicio. El mínimo del inicio se recorre solo con el reloj mientras el formulario está
 // abierto; si el inicio alcanza al fin, el fin se recorre con él. Yup revisa lo mismo al guardar y el servidor otra vez.
 import {useEffect, useMemo} from 'react';

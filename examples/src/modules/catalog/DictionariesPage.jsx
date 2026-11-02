@@ -10,10 +10,12 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
+import IconBadges from '@/modules/catalog/demos/dictionaries/IconBadges.tsx';
 import OrderStatusDictionary from '@/modules/catalog/demos/dictionaries/OrderStatusDictionary.tsx';
 
 const loadDemo = () => import('@/modules/catalog/demos/dictionaries/OrderStatusDictionary.tsx?demo-source');
 const loadTexts = () => import('@/modules/catalog/demos/dictionaries/orderStatusTexts.ts?demo-source');
+const loadBadges = () => import('@/modules/catalog/demos/dictionaries/IconBadges.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (dictionaries.<sección>.extend.<id>)
@@ -36,6 +38,15 @@ const TEXTS_EXTENSIONS = [
     {id: 'namespace', option: 'dictionaries', example: 'es: {dictionaries: {orderStatus: {…}}}'},
 ];
 
+const BADGE_EXTENSIONS = [
+    {id: 'loose', option: 'icon · label · tone', example: '<IconBadge icon={VerifiedUserOutlinedIcon} label="Envío asegurado" tone="success" />'},
+    {id: 'variant', option: 'variant (outlined · soft · plain) · size', example: '<IconBadge … variant={ICON_BADGE_VARIANT.soft} size="medium" />'},
+    {id: 'fromDictionary', option: 'dictionary · value', example: "<IconBadge dictionary={PAYMENT_METHOD} value={order.payment_method} />"},
+    {id: 'entryIcon', option: 'dictionaryEntryOf(…, {icon})', example: "card: dictionaryEntryOf('card', 'paymentMethod.card', 'default', {icon: CreditCardOutlinedIcon})"},
+    {id: 'tooltip', option: 'tooltip', example: '<IconBadge … tooltip="Cubre el valor del pedido si se pierde" />'},
+    {id: 'theme', option: 'theme.components.CalcitaIconBadge', example: 'components: {CalcitaIconBadge: {defaultProps: {variant: \'soft\'}, styleOverrides: {root: {borderRadius: 999}}}}'},
+];
+
 export const DictionariesPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `dictionaries.${section}`, extensions);
@@ -47,6 +58,8 @@ export const DictionariesPage = () => {
                          extensions={rowsOf('demo', DEMO_EXTENSIONS)} Demo={OrderStatusDictionary} loadSource={loadDemo} />
             <CodeSection title={t('dictionaries.texts.title')} description={t('dictionaries.texts.description')}
                          extensions={rowsOf('texts', TEXTS_EXTENSIONS)} loadSource={loadTexts} />
+            <DemoSection title={t('dictionaries.badges.title')} description={t('dictionaries.badges.description')}
+                         extensions={rowsOf('badges', BADGE_EXTENSIONS)} Demo={IconBadges} loadSource={loadBadges} />
         </Stack>
     );
 };

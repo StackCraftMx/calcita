@@ -1,5 +1,5 @@
 // La lista de transferencia: para elegir muchos de una lista larga viendo siempre qué quedó de cada lado (las sucursales
-// donde puede comprar un cliente, los compradores que pueden ver una subasta). Se marcan y se pasan con ›; » pasa todos;
+// donde puede comprar un cliente, los usuarios que pueden ver un reporte). Se marcan y se pasan con ›; » pasa todos;
 // doble clic pasa uno directo. Cada columna busca por su cuenta. Al campo le llega la lista de los elegidos.
 import {useState} from 'react';
 import Typography from '@mui/material/Typography';
