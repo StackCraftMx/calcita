@@ -1192,6 +1192,43 @@ export const catalogPageTexts = {
                     },
                 },
             },
+            mexico: {
+                title: 'México: claves, e.firma y facturas',
+                description: 'El RFC, la CURP y la CLABE con su dígito verificador; la factura electrónica (CFDI) leída del XML y la e.firma, con su certificado leído y su llave abierta en el navegador. Son estándares del SAT, RENAPO y Banxico. Calcita revisa la forma y lee los archivos; quien dice si existen es el SAT o el banco, del lado del servidor.',
+                identifiers: {
+                    title: '1. RFC, CURP y CLABE',
+                    description: 'Se escriben con su máscara y se revisan con su dígito verificador antes de mandar nada. Cambie un dígito de la CLABE y vea el aviso.',
+                    extend: {
+                        validators: 'Revisar cada clave; el dígito del RFC, solo con strict.',
+                        rules: 'Las mismas revisiones como reglas de yup, con su mensaje en el idioma activo.',
+                        kind: 'Si el RFC es de persona moral, física o genérico.',
+                        digits: 'Calcular el dígito verificador.',
+                        mask: 'El campo con su máscara (mayúsculas, solo lo que cabe).',
+                    },
+                },
+                cfdi: {
+                    title: '2. La factura electrónica (CFDI)',
+                    description: 'El XML se lee en el navegador: quién la emite y a quién, cuánto, sus conceptos y su folio fiscal, con el aviso si no es para la empresa o si no está timbrada. Pique «Usar la de ejemplo».',
+                    extend: {
+                        read: 'Leer el XML o el archivo; null si no es una factura.',
+                        receiver: 'El RFC que debe recibirla: si es otro, se avisa arriba.',
+                        actions: 'Sus botones abajo y si se enseñan los conceptos.',
+                        type: 'El tipo de comprobante: ingreso, egreso, traslado, nómina o pago.',
+                        theme: 'Su estilo desde el tema del proyecto.',
+                    },
+                },
+                efirma: {
+                    title: '3. La e.firma',
+                    description: 'El certificado se lee aquí (RFC, nombre, número, vigencia) y avisa si venció o es de otro RFC. «Revisar la e.firma» abre la llave con su contraseña también aquí (jsrsasign) y dice el motivo de un «no»; con onVerifyKey lo hace su API. Calcita no manda la llave a ningún lado.',
+                    extend: {
+                        value: 'Los tres datos, controlados.',
+                        verify: 'Que la llave la abra su API en lugar del navegador; si falla, su mensaje se enseña.',
+                        expected: 'El RFC que debe traer y avisar lo que dice el certificado al elegirlo.',
+                        reader: 'Las piezas sin React: leer el certificado y saber si vale.',
+                        texts: 'El texto del botón y los demás.',
+                    },
+                },
+            },
             legal: {
                 title: 'Documentos y avisos legales',
                 description: 'Un PDF en una ventana con el visor del navegador, el aviso de cookies y aceptar los términos antes de seguir. Lo que vale ante un reclamo (quién aceptó qué versión y cuándo) lo guarda su API; Calcita pone las pantallas.',
@@ -3032,6 +3069,43 @@ export const catalogPageTexts = {
                         look: 'Without seconds, bigger or with your style.',
                         render: 'Draw it your way with the parts (days, hours, minutes, seconds).',
                         hook: 'Just the parts, to build yours; and the function without React.',
+                    },
+                },
+            },
+            mexico: {
+                title: 'Mexico: IDs, e.firma and invoices',
+                description: 'The RFC, the CURP and the CLABE with their check digit; the electronic invoice (CFDI) read from the XML and the e.firma, with its certificate read and its key opened in the browser. They are SAT, RENAPO and Banxico standards. Calcita checks the shape and reads the files; whether they exist is said by the SAT or the bank, on the server side.',
+                identifiers: {
+                    title: '1. RFC, CURP and CLABE',
+                    description: 'They are typed with their mask and checked with their check digit before sending anything. Change a CLABE digit and see the notice.',
+                    extend: {
+                        validators: 'Check each ID; the RFC digit only with strict.',
+                        rules: 'The same checks as yup rules, with their message in the active language.',
+                        kind: 'Whether the RFC is a company, a person or generic.',
+                        digits: 'Compute the check digit.',
+                        mask: 'The field with its mask (uppercase, only what fits).',
+                    },
+                },
+                cfdi: {
+                    title: '2. The electronic invoice (CFDI)',
+                    description: 'The XML is read in the browser: who issues it and to whom, how much, its items and its tax folio, with a notice if it is not for the company or not stamped. Press «Usar la de ejemplo».',
+                    extend: {
+                        read: 'Read the XML or the file; null if it is not an invoice.',
+                        receiver: 'The RFC that must receive it: if it is another, it says so on top.',
+                        actions: 'Your buttons below and whether the items show.',
+                        type: 'The voucher type: income, expense, transfer, payroll or payment.',
+                        theme: 'Its style from the project theme.',
+                    },
+                },
+                efirma: {
+                    title: '3. The e.firma',
+                    description: 'The certificate is read here (RFC, name, number, validity) and it warns if it expired or belongs to another RFC. «Revisar la e.firma» opens the key with its password here too (jsrsasign) and says why when it fails; with onVerifyKey your API does it. Calcita does not send the key anywhere.',
+                    extend: {
+                        value: 'The three values, controlled.',
+                        verify: 'Have your API open the key instead of the browser; if it fails, its message shows.',
+                        expected: 'The RFC it must have and knowing what the certificate says when chosen.',
+                        reader: 'The pieces without React: read the certificate and know whether it is valid.',
+                        texts: 'The button text and the rest.',
                     },
                 },
             },

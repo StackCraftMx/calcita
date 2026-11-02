@@ -14,7 +14,7 @@ const MaskedFields = () => {
             <FormSection title="Datos con forma fija">
                 {/* 1. Las de siempre, por su nombre */}
                 <MaskedInput label="Teléfono" mask={INPUT_MASK.phone} placeholder="555 123 4567" {...fieldOf('phone')} />
-                <MaskedInput label="CLABE" mask={INPUT_MASK.clabe} placeholder="002 180 01234567890 1" {...fieldOf('clabe')} />
+                <MaskedInput label="CLABE" mask={INPUT_MASK.clabe} placeholder="032 180 00011835971 9" {...fieldOf('clabe')} />
                 {/* 2. RFC y CURP: en mayúsculas y solo letras y dígitos mientras se escriben */}
                 <MaskedInput label="RFC" mask={INPUT_MASK.rfc} placeholder="MARA850101AB1" {...fieldOf('rfc')} />
                 <MaskedInput label="CURP" mask={INPUT_MASK.curp} {...fieldOf('curp')} />
