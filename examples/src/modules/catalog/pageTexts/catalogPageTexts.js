@@ -1408,6 +1408,30 @@ export const catalogPageTexts = {
                         serverProblem: 'Un error del servidor en un campo de un renglón llega a ese renglón.',
                     },
                 },
+                choosingMany: {
+                    title: '8. Elegir varios',
+                    description: 'Tres formas según cuántas opciones hay: casillas a la vista para pocas, la lista con casillas para una lista corta y el catálogo con buscador para uno largo. «Elegir todos» lleva su casilla a medias cuando hay algunos; en el catálogo, con algo escrito, elige los que coinciden. Pruebe a escribir «nu» en los estados.',
+                    extend: {
+                        checkboxGroup: 'Pocas opciones a la vista, cada una con su casilla y su explicación; en renglón con row.',
+                        selectAll: '«Elegir todos» arriba, con su casilla a medias; las opciones apagadas no cuentan.',
+                        checkboxes: 'Una casilla en cada opción de la lista (en lugar de la palomita).',
+                        limitTags: 'Con el campo sin foco, cuántos chips se ven; los demás como «+N más».',
+                        options: 'Una explicación abajo de la opción y opciones que se ven pero no se eligen.',
+                        rules: 'Cuántas como mínimo o como máximo, con los mensajes de la casa.',
+                        pure: 'La regla de «todos», sin React, para armar uno propio.',
+                    },
+                },
+                transferList: {
+                    title: '9. Lista de transferencia',
+                    description: 'Para elegir muchos de una lista larga viendo qué quedó de cada lado: se marcan y se pasan con ›, » pasa todos y doble clic pasa uno directo. Cada columna busca por su cuenta. En el teléfono, una debajo de otra.',
+                    extend: {
+                        field: 'Suelta o conectada a formik o react-hook-form por name.',
+                        titles: 'Cómo se llama cada columna.',
+                        search: 'El buscador de cada columna y lo alto de las columnas.',
+                        options: 'Una explicación abajo (la ciudad, el RFC) y opciones que no se pueden pasar.',
+                        theme: 'Sus partes en el tema: root, list, actions.',
+                    },
+                },
                 masked: {
                     title: '5. Campos con máscara',
                     description: 'Un teléfono, una CLABE, un RFC, un folio fiscal: mientras se escribe se ven los separadores y al formulario llega el valor limpio. Pegar un número con otros separadores también sirve. Pruebe a pegar «(555) 123-4567» en el teléfono.',
@@ -3375,6 +3399,30 @@ export const catalogPageTexts = {
                         remove: 'Whether a row can be removed and whether to confirm, by its values.',
                         events: 'Notices when adding and removing (e.g. to send the deleted ones to the server).',
                         serverProblem: 'A server error in a field of a row reaches that row.',
+                    },
+                },
+                choosingMany: {
+                    title: '8. Choosing several',
+                    description: 'Three ways by how many options there are: checkboxes in view for a few, the list with checkboxes for a short list and the catalog with search for a long one. «Select all» has its half-checked box when some are chosen; in the catalog, with text typed, it selects the matching ones. Try typing «nu» in the states.',
+                    extend: {
+                        checkboxGroup: 'A few options in view, each with its checkbox and its explanation; in a row with row.',
+                        selectAll: '«Select all» on top, with its half-checked box; disabled options do not count.',
+                        checkboxes: 'A checkbox in each option of the list (instead of the checkmark).',
+                        limitTags: 'With the field unfocused, how many chips show; the rest as «+N more».',
+                        options: 'An explanation under the option and options that show but cannot be chosen.',
+                        rules: 'How many at least or at most, with the house messages.',
+                        pure: 'The «all» rule, without React, to build your own.',
+                    },
+                },
+                transferList: {
+                    title: '9. Transfer list',
+                    description: 'To choose many from a long list seeing what is left on each side: mark them and move them with ›, » moves all and double click moves one directly. Each column searches on its own. On the phone, one below the other.',
+                    extend: {
+                        field: 'Standalone or connected to formik or react-hook-form by name.',
+                        titles: 'What each column is called.',
+                        search: 'The search of each column and the height of the columns.',
+                        options: 'An explanation below (the city, the RFC) and options that cannot be moved.',
+                        theme: 'Its parts in the theme: root, list, actions.',
                     },
                 },
                 masked: {

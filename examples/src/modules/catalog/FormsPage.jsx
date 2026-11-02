@@ -15,6 +15,8 @@ import CreditWizardHookForm from '@/modules/catalog/demos/forms/CreditWizardHook
 import MaskedFields from '@/modules/catalog/demos/forms/MaskedFields.tsx';
 import VolumePrices from '@/modules/catalog/demos/forms/VolumePrices.tsx';
 import ContactsHookForm from '@/modules/catalog/demos/forms/ContactsHookForm.tsx';
+import ChoosingMany from '@/modules/catalog/demos/forms/ChoosingMany.tsx';
+import TransferListDemo from '@/modules/catalog/demos/forms/TransferListDemo.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -23,6 +25,8 @@ const loadHookWizard = () => import('@/modules/catalog/demos/forms/CreditWizardH
 const loadMasked = () => import('@/modules/catalog/demos/forms/MaskedFields.tsx?demo-source');
 const loadRepeating = () => import('@/modules/catalog/demos/forms/VolumePrices.tsx?demo-source');
 const loadRepeatingHookForm = () => import('@/modules/catalog/demos/forms/ContactsHookForm.tsx?demo-source');
+const loadChoosingMany = () => import('@/modules/catalog/demos/forms/ChoosingMany.tsx?demo-source');
+const loadTransferList = () => import('@/modules/catalog/demos/forms/TransferListDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -88,6 +92,23 @@ const REPEATING_HOOK_EXTENSIONS = [
     {id: 'serverProblem', option: 'applyServerProblem', example: "// el 422 en 'contacts.2.email' llega a ese renglón"},
 ];
 
+const CHOOSING_MANY_EXTENSIONS = [
+    {id: 'checkboxGroup', option: 'CheckboxGroupInput · FormCheckboxGroupField', example: '<FormCheckboxGroupField name="channels" label="Avisos por" options={CHANNELS} selectAll row />'},
+    {id: 'selectAll', option: 'selectAll', example: '<FormSelectField name="days" label="Días" options={DAYS} multiple selectAll />'},
+    {id: 'checkboxes', option: 'checkboxes', example: '<FormCatalogField name="states" label="Estados" options={states} multiple checkboxes />'},
+    {id: 'limitTags', option: 'limitTags', example: 'limitTags={3}  // sin foco: 3 chips y «+5 más»'},
+    {id: 'options', option: 'options[].description · options[].disabled', example: "{value: 'call', label: 'Llamada', description: 'Para cobranza vencida', disabled: true}"},
+    {id: 'rules', option: 'Yup.array()', example: 'Yup.array().min(1)  // «Elija al menos 1 opción»'},
+    {id: 'pure', option: 'selectAllStateOf', example: 'const {allChosen, someChosen, toggled} = selectAllStateOf(chosen, candidates);'},
+];
+const TRANSFER_LIST_EXTENSIONS = [
+    {id: 'field', option: 'TransferListInput · FormTransferListField', example: '<FormTransferListField name="allowedBranchIds" options={branches} />'},
+    {id: 'titles', option: 'availableTitle · chosenTitle', example: 'availableTitle="Todos los compradores" chosenTitle="Pueden ver la subasta"'},
+    {id: 'search', option: 'searchable · listHeight', example: 'searchable listHeight={360}  // por omisión, buscador con más de 8'},
+    {id: 'options', option: 'options[].description · options[].disabled', example: "{value: 'b-12', label: 'Comprador SA', description: 'RFC CSA010101AA1'}"},
+    {id: 'theme', option: 'theme.components.CalcitaTransferListInput', example: 'components: {CalcitaTransferListInput: {styleOverrides: {list: {borderRadius: 4}}}}'},
+];
+
 export const FormsPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `forms.${section}`, extensions);
@@ -109,6 +130,10 @@ export const FormsPage = () => {
                          extensions={rowsOf('repeating', REPEATING_EXTENSIONS)} Demo={VolumePrices} loadSource={loadRepeating} />
             <DemoSection title={t('forms.repeatingHookForm.title')} description={t('forms.repeatingHookForm.description')}
                          extensions={rowsOf('repeatingHookForm', REPEATING_HOOK_EXTENSIONS)} Demo={ContactsHookForm} loadSource={loadRepeatingHookForm} />
+            <DemoSection title={t('forms.choosingMany.title')} description={t('forms.choosingMany.description')}
+                         extensions={rowsOf('choosingMany', CHOOSING_MANY_EXTENSIONS)} Demo={ChoosingMany} loadSource={loadChoosingMany} />
+            <DemoSection title={t('forms.transferList.title')} description={t('forms.transferList.description')}
+                         extensions={rowsOf('transferList', TRANSFER_LIST_EXTENSIONS)} Demo={TransferListDemo} loadSource={loadTransferList} />
         </Stack>
     );
 };
