@@ -4,6 +4,22 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.40.0] - 2026-11-02
+
+### Agregado
+
+- `FileUploadInput` y `FormFileUploadField` (formik y react-hook-form): el cargador mini que SUBE en cuanto se elige, para
+  listas de documentos. Estado en una etiqueta (Por cargar, Subiendo N %, Procesando, Cargado, No se cargó), «Cargar» que
+  ya cargado dice «Sustituir», bajar el subido (`download`), quitar, cancelar a media subida y abajo el avance en palabras
+  (lo que va, la velocidad y lo que falta) o el motivo del error. Al formulario llega solo el id que da el servidor
+  (`idOf`); una llave por archivo elegido viaja con la subida. Eventos `onStatusChange`, `onUploaded`, `onUploadFailed`,
+  `onCancel` y `onRemove`; lo del negocio junto con `actions`. Pieza del tema `CalcitaFileUploadInput`.
+- `FILE_UPLOAD_STATUS` y `transferProgressOf` (la velocidad y lo que falta de una subida).
+- `uploadWithProgress` y `uploadMachine` también dan los bytes que van (`transfer`), además del porcentaje; quien ya los
+  usaba no cambia nada.
+- Ejemplos: «4. El cargador mini» en Subir archivos; la solicitud de crédito pide sus documentos en un paso nuevo (el
+  servidor de mentira rechaza un PDF que no lo es y revisa que los ids sean de documentos subidos).
+
 ## [0.39.0] - 2026-11-02
 
 ### Agregado
