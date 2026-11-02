@@ -22,6 +22,8 @@ import {
 import {FormAttachmentsField, FormFileField, FormImageField, FormMaskedField} from '@stackcraftmx/calcita/forms';
 import {FormFileField as HookFormFileField, FormRepeatingFields as HookRepeatingFields} from '@stackcraftmx/calcita/react-hook-form';
 import {FormRepeatingFields, listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@stackcraftmx/calcita/forms';
+import {FormCatalogField as ChoiceCatalogField, FormCheckboxGroupField, FormTransferListField} from '@stackcraftmx/calcita/forms';
+import {FormCheckboxGroupField as HookCheckboxGroupField, FormTransferListField as HookTransferListField} from '@stackcraftmx/calcita/react-hook-form';
 import {FormTextField as HookFormTextField, SERVER_PROBLEM_ROOT, applyServerProblem as applyToHookForm} from '@stackcraftmx/calcita/react-hook-form';
 import {
     CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, DateInput, DateTimeInput, FormDateField, FormDateTimeField, FormMonthField, FormTimeField,
@@ -178,6 +180,14 @@ const repeatingPieces = [
 const listRules = [uniqueInListRule('tiers', 'min_quantity'), orderedInListRule('tiers', 'min_quantity', {ascending: true, displayOf: (text: string) => `${text} pzas`})];
 const splitRule = listTotalAtMostRule('amount', (values: {credit_limit?: string}) => values.credit_limit ?? null, {currency: 'MXN'});
 const splitTotal: string = listTotalOf([{amount: '10.50'}], 'amount', {currency: 'MXN'}).format();
+// elegir varios: casillas, transferencia, y «Elegir todos» con casillas y «+N» en el catálogo
+const choicePieces = [
+    createElement(FormCheckboxGroupField, {name: 'channels', label: 'Avisos por', selectAll: true, row: true, options: [{value: 'email', label: 'Correo', disabled: false}]}),
+    createElement(FormTransferListField, {name: 'branches', label: 'Sucursales', options: [{value: 'a', label: 'Centro'}], availableTitle: 'Todas', searchable: true, listHeight: 200}),
+    createElement(HookCheckboxGroupField, {name: 'channels', label: 'Avisos', options: []}),
+    createElement(HookTransferListField, {name: 'branches', options: []}),
+    createElement(ChoiceCatalogField, {name: 'states', label: 'Estados', options: [{code: 'NL', label: 'Nuevo León'}], multiple: true, selectAll: true, checkboxes: true, limitTags: 3}),
+];
 const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
     .catch((error: unknown) => error instanceof EfirmaKeyError && error.reason === EFIRMA_KEY_PROBLEM.wrongPassword);
 const mexicoPieces = [
@@ -357,4 +367,4 @@ const wrongHourCycle = createElement(ToolkitProvider, {hourCycle: 'h24', childre
 
 export {twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, choicePieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -2,7 +2,9 @@
 //   - el reparto del límite de crédito entre sucursales: cada sucursal una vez y entre todas no pasan del límite; abajo,
 //     cuánto va repartido y cuánto queda (listTotalOf, con Money);
 //   - los descuentos por volumen: de menor a mayor compra y de menor a mayor descuento (orderedInListRule);
-//   - los contactos: el principal no se puede quitar y los que ya estaban guardados piden confirmar.
+//   - los contactos: el principal no se puede quitar y los que ya estaban guardados piden confirmar;
+//   - por dónde se le avisa la cobranza (grupo de casillas) y las sucursales donde puede comprar (lista de transferencia):
+//     el servidor revisa que cada sucursal del reparto esté entre ellas.
 // El servidor vuelve a revisar todo y lo que solo él sabe (un correo de otro cliente) llega al renglón que toca.
 //
 // Lo renderiza la app: arrow (regla de la casa).
@@ -11,12 +13,14 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {FormSection, PageHeading, SectionCard, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {
-    Form, Formik, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormTextField, SubmitButton,
-    applyServerProblem, listTotalOf,
+    Form, Formik, FormCheckboxGroupField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormTextField,
+    FormTransferListField, SubmitButton, applyServerProblem, listTotalOf,
 } from '@stackcraftmx/calcita/forms';
 import {Money} from '@stackcraftmx/calcita/money';
 
-import {STORE_CURRENCY, getCustomerTerms, listBranches, saveCustomerTerms} from '@/modules/customers/customersApi.js';
+import {
+    NOTIFY_CHANNEL, STORE_CURRENCY, getCustomerTerms, listBranches, saveCustomerTerms,
+} from '@/modules/customers/customersApi.js';
 import {CUSTOMER_TERMS_LIMITS, EMPTY_ROWS, buildCustomerTermsSchema} from '@/modules/customers/customerTermsSchema.js';
 import {FormsNav} from '@/modules/customers/FormsNav.jsx';
 
@@ -46,6 +50,9 @@ export const CustomerTermsPage = () => {
     const {t} = useToolkitTranslation('customers');
     const [terms, setTerms] = useState(null);
     const [branchOptions, setBranchOptions] = useState([]);
+    const channelOptions = Object.values(NOTIFY_CHANNEL).map((channel) => ({
+        value: channel, label: t(`terms.channels.${channel}.label`), description: t(`terms.channels.${channel}.description`),
+    }));
     const validationSchema = useMemo(() => buildCustomerTermsSchema(STORE_CURRENCY), []);
 
     useEffect(() => {
@@ -83,7 +90,14 @@ export const CustomerTermsPage = () => {
                                 <FormProblemAlert />
                                 <FormSection title={t('terms.credit.title')}>
                                     <FormNumberField name="credit_limit" label={t('terms.credit.limit')} prefix="$" />
+                                    <FormCheckboxGroupField name="notify_channels" label={t('terms.channels.title')} options={channelOptions} selectAll />
                                 </FormSection>
+
+                                <SectionCard title={t('terms.allowed.title')}>
+                                    <FormTransferListField name="allowed_branch_ids" options={branchOptions}
+                                                           availableTitle={t('terms.allowed.available')} chosenTitle={t('terms.allowed.chosen')}
+                                                           helperText={t('terms.allowed.help')} />
+                                </SectionCard>
 
                                 <SectionCard title={t('terms.split.title')}>
                                     <FormRepeatingFields

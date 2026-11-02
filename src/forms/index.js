@@ -1,6 +1,7 @@
 // Barril de formularios: formik + yup con mensajes traducibles. Los campos son las vistas de inputs/ conectadas a formik.
 export {default as FormAttachmentsField} from '@/forms/FormAttachmentsField.jsx';
 export {default as FormCatalogField} from '@/forms/FormCatalogField.jsx';
+export {default as FormCheckboxGroupField} from '@/forms/FormCheckboxGroupField.jsx';
 export {default as FormColorField} from '@/forms/FormColorField.jsx';
 export {default as FormFileField} from '@/forms/FormFileField.jsx';
 export {default as FormFileUploadField} from '@/forms/FormFileUploadField.jsx';
@@ -9,6 +10,7 @@ export {default as FormMaskedField} from '@/forms/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/forms/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/forms/FormProblemAlert.jsx';
 export {default as FormRepeatingFields} from '@/forms/FormRepeatingFields.jsx';
+export {default as FormTransferListField} from '@/forms/FormTransferListField.jsx';
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
 export {default as FormSelectField} from '@/forms/FormSelectField.jsx';
 export {default as FormServerProblem} from '@/forms/FormServerProblem.jsx';

@@ -164,6 +164,9 @@ const SERVER_TEXTS = Object.freeze({
             oneMainContact: 'Marque un solo contacto principal.',
             emailInvalid: 'Escriba un correo válido.',
             emailTaken: 'Ese correo ya lo usa otro cliente.',
+            channelRequired: 'Elija al menos un medio para los avisos de cobranza.',
+            allowedRequired: 'Elija al menos una sucursal donde pueda comprar.',
+            branchNotAllowed: 'Esa sucursal no está entre las que puede comprar.',
             saved: 'Se guardaron las condiciones del cliente.',
         },
         documents: {
@@ -331,6 +334,9 @@ const SERVER_TEXTS = Object.freeze({
             oneMainContact: 'Mark exactly one main contact.',
             emailInvalid: 'Enter a valid email.',
             emailTaken: 'That email is already used by another customer.',
+            channelRequired: 'Choose at least one channel for collection notices.',
+            allowedRequired: 'Choose at least one branch where they can buy.',
+            branchNotAllowed: 'That branch is not among the ones where they can buy.',
             saved: 'The customer terms were saved.',
         },
         documents: {

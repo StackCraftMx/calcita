@@ -80,9 +80,9 @@ export const NewCustomerPage = () => {
                                                disableFuture />
                                 </FormSection>
                                 <FormSection title={t('form.sections.delivery')} footer={t('form.sections.deliveryFooter')}>
-                                <FormSelectField name="delivery_days" label={t('form.deliveryDays')} options={deliveryDayOptionsOf(t)} multiple />
+                                <FormSelectField name="delivery_days" label={t('form.deliveryDays')} options={deliveryDayOptionsOf(t)} multiple selectAll checkboxes />
                                 <FormCatalogField name="delivery_states" label={t('form.deliveryStates')} placeholder={t('form.deliveryStatesPlaceholder')}
-                                                  options={states} loading={isLoadingStates} multiple />
+                                                  options={states} loading={isLoadingStates} multiple selectAll checkboxes limitTags={3} />
                                 </FormSection>
                                 <FormSection title={t('form.sections.documents')} footer={t('form.sections.documentsFooter')}>
                                 <FormFileField name="tax_certificate" label={t('form.taxCertificate')} helperText={t('form.taxCertificateHelp')}

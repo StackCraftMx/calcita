@@ -125,7 +125,12 @@ export default Object.freeze({
             "pickColor": "Elegir el color",
             "colorContrast": "Contraste sobre blanco: {{ratio}}:1",
             "colorLowContrast": "Con ese color el texto casi no se leería sobre blanco. {{suggestion}} es el mismo tono, más oscuro.",
-            "colorUseSuggestion": "Usar {{color}}"
+            "colorUseSuggestion": "Usar {{color}}",
+            "selectAll": "Elegir todos ({{count}})",
+            "unselectAll": "Quitar todos",
+            "selectMatching": "Elegir los {{count}} que coinciden",
+            "unselectMatching": "Quitar los {{count}} que coinciden",
+            "moreSelected": "+{{count}} más"
         },
         "selection": {
             "clear": "Quitar selección",
@@ -145,6 +150,20 @@ export default Object.freeze({
             "confirmText": "Ya estaba guardado: se quita de verdad al guardar el formulario.",
             "blockedTitle": "No se puede quitar",
             "understood": "Entendido"
+        },
+        "transfer": {
+            "available": "Disponibles",
+            "chosen": "Elegidos",
+            "search": "Buscar",
+            "markVisible": "Marcar todos los que se ven en «{{list}}»",
+            "markedOf": "{{marked}} de {{count}} marcados",
+            "moveMarked": "Pasar los marcados a elegidos",
+            "moveAll": "Pasar todos a elegidos",
+            "returnMarked": "Regresar los marcados a disponibles",
+            "returnAll": "Regresar todos a disponibles",
+            "emptyAvailable": "No queda nada por elegir.",
+            "noMatches": "Nada coincide con «{{text}}».",
+            "emptyChosen": "Todavía no hay elegidos: márquelos a la izquierda y páselos con ›."
         },
         "wizard": {
             "next": "Siguiente",

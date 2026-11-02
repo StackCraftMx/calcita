@@ -22,6 +22,8 @@ export const EMPTY_ROWS = Object.freeze({
 export function buildCustomerTermsSchema(currency) {
     return Yup.object({
         credit_limit: Yup.string().required(),
+        notify_channels: Yup.array().min(1),
+        allowed_branch_ids: Yup.array().min(1),
         // el reparto: cada sucursal una vez, y entre todas no pasan del límite que se escribió arriba
         branch_split: Yup.array().max(CUSTOMER_TERMS_LIMITS.branches).of(Yup.object({
             branch_id: Yup.string().required().test(uniqueInListRule('branch_split', 'branch_id')),

@@ -12,6 +12,7 @@ export {Controller, FormProvider, useFieldArray, useForm, useFormContext, useWat
 export {yupResolver} from '@hookform/resolvers/yup';
 export {default as FormAttachmentsField} from '@/hookForm/FormAttachmentsField.jsx';
 export {default as FormCatalogField} from '@/hookForm/FormCatalogField.jsx';
+export {default as FormCheckboxGroupField} from '@/hookForm/FormCheckboxGroupField.jsx';
 export {default as FormColorField} from '@/hookForm/FormColorField.jsx';
 export {default as FormFileField} from '@/hookForm/FormFileField.jsx';
 export {default as FormFileUploadField} from '@/hookForm/FormFileUploadField.jsx';
@@ -20,6 +21,7 @@ export {default as FormMaskedField} from '@/hookForm/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/hookForm/FormProblemAlert.jsx';
 export {default as FormRepeatingFields} from '@/hookForm/FormRepeatingFields.jsx';
+export {default as FormTransferListField} from '@/hookForm/FormTransferListField.jsx';
 // las reglas de listas son las mismas de /forms (no dependen de formik): sirven con yupResolver
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
 export {default as FormSelectField} from '@/hookForm/FormSelectField.jsx';

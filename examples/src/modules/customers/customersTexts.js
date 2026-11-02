@@ -70,6 +70,19 @@ export const customersTexts = {
             terms: {
                 title: 'Condiciones del cliente',
                 subtitle: 'Listas de renglones que se repiten en un solo formulario: el reparto del crédito por sucursal, los descuentos por volumen y los contactos. Lo que no cuadra se dice en su renglón; el servidor revisa lo mismo y además si un correo ya es de otro cliente (pruebe compras@otrocliente.mx).',
+                channels: {
+                    title: 'Avisos de cobranza por',
+                    email: {label: 'Correo', description: 'Facturas y estados de cuenta'},
+                    sms: {label: 'SMS', description: 'Solo el aviso de pago'},
+                    whatsapp: {label: 'WhatsApp', description: 'Aviso y liga de pago'},
+                    call: {label: 'Llamada', description: 'Solo cobranza vencida'},
+                },
+                allowed: {
+                    title: 'Sucursales donde puede comprar',
+                    available: 'Todas las sucursales',
+                    chosen: 'Puede comprar en',
+                    help: 'Cada sucursal del reparto tiene que estar aquí (lo revisa el servidor).',
+                },
                 credit: {title: 'Crédito', limit: 'Límite de crédito'},
                 split: {
                     title: 'Reparto del límite por sucursal',
@@ -221,6 +234,19 @@ export const customersTexts = {
             terms: {
                 title: 'Customer terms',
                 subtitle: 'Lists of repeating rows in a single form: the credit split by branch, the volume discounts and the contacts. What does not fit is said in its row; the server checks the same and also whether an email already belongs to another customer (try compras@otrocliente.mx).',
+                channels: {
+                    title: 'Collection notices by',
+                    email: {label: 'Email', description: 'Invoices and statements'},
+                    sms: {label: 'SMS', description: 'Payment notice only'},
+                    whatsapp: {label: 'WhatsApp', description: 'Notice and payment link'},
+                    call: {label: 'Phone call', description: 'Overdue collection only'},
+                },
+                allowed: {
+                    title: 'Branches where they can buy',
+                    available: 'All branches',
+                    chosen: 'Can buy at',
+                    help: 'Every branch in the split must be here (the server checks it).',
+                },
                 credit: {title: 'Credit', limit: 'Credit limit'},
                 split: {
                     title: 'Credit limit split by branch',
