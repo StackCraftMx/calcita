@@ -4,6 +4,32 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.50.0] - 2026-11-03
+
+### Agregado
+
+- `createPathIndex`: el índice de direcciones con nombre. Cada módulo publica las suyas (paths.js, o uris.js para el API) y el
+  índice las junta con el glob de Vite; se piden por camino (`pathOf('admin:profile:detail', {groupId, userId, tab})`): lo que
+  la ruta pide se sustituye, lo que sobra va como consulta y un nombre que no existe (o una parte que falta) truena diciendo
+  qué sí hay. `fillPath` llena una ruta suelta.
+- `documentBasePath()`: el prefijo con que el servidor sirvió la página, leído de su `<base href>` (`null` sin `<base>`). Con
+  `ASSET_URL=./` una sola compilación sirve detrás de cualquier prefijo que decida el servidor (Laravel, un proxy). El proyecto
+  de `calcita new` y los ejemplos ya lo usan para el router y `publicUrlOf`; sin `<base>`, todo sigue igual.
+- `combineTexts` en el paquete (antes era una copia en los ejemplos y otra en la plantilla del CLI): junta los textos de cada
+  módulo por idioma y namespace, suma los objetos de adentro (`validation.fields` de dos módulos) y truena con un texto
+  repetido, diciendo cuál y en qué idioma.
+- CLI: `calcita check:texts`, que revisa que cada `t('llave')` escrita tal cual exista en todos los idiomas (con el namespace
+  de su archivo o el de la llave; los de Calcita también) y que los idiomas tengan las mismas llaves.
+- Proyecto nuevo del CLI: ESLint (`pnpm lint`, con `no-undef` y las reglas de los hooks de React) y `pnpm check:texts`;
+  `ASSET_URL=./` para archivos relativos a la página.
+- `isPlainLeftClick` suelto (el clic normal, sin Cmd/Ctrl/Shift ni el botón de en medio).
+- Ejemplos: «7. Direcciones con nombre y lo que se arma solo» en Marco y menú.
+
+### Cambiado
+
+- Ejemplos y plantilla del CLI: `combineTexts` viene de `@stackcraftmx/calcita` (se borraron sus copias). Un proyecto que ya
+  tiene su copia puede quedarse con ella.
+
 ## [0.49.0] - 2026-11-03
 
 ### Agregado
