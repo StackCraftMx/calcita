@@ -88,8 +88,8 @@ export default function FileInput(props) {
                         alignItems: 'center', flexWrap: 'wrap', gap: 1, minHeight: 40, borderRadius: 1, px: 0.5, mx: -0.5,
                         outline: picker.isDragging ? 2 : 0, outlineStyle: 'dashed', outlineColor: 'primary.main',
                         bgcolor: picker.isDragging ? 'action.hover' : 'transparent',
-                        ...sx,
                     }}
+                    sx={sx}
                 >
                     <input {...picker.inputProps} name={name} aria-hidden="true" tabIndex={-1} />
                     <FileInputButton id={buttonId} variant="outlined" size="small" startIcon={<AttachFileRoundedIcon />} onClick={picker.open}

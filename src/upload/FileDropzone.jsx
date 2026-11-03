@@ -96,8 +96,8 @@ export default function FileDropzone(props) {
                 bgcolor: picker.isDragging ? 'action.hover' : 'background.paper',
                 transition: 'border-color .15s ease, background-color .15s ease',
                 opacity: disabled ? 0.6 : 1,
-                ...sx,
             }}
+            sx={sx}
         >
             <input {...picker.inputProps} aria-label={hintText} />
             {value ? (

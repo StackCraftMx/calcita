@@ -101,7 +101,7 @@ export default function RecordCard(props) {
     const desktopColumns = columns ?? `${groups.length > 0 ? `repeat(${groups.length}, minmax(0, 1fr))` : ''}${highlight ? ' auto' : ''}${trailing ? ' auto' : ''}`.trim();
 
     return (
-        <RecordCardRoot variant="outlined" component="article" aria-labelledby={titleId} ownSx={{p: {xs: 2, sm: 2.5}, minWidth: 0, ...sx}}>
+        <RecordCardRoot variant="outlined" component="article" aria-labelledby={titleId} ownSx={{p: {xs: 2, sm: 2.5}, minWidth: 0}} sx={sx}>
             {/* en el teléfono el estatus baja abajo del título (si no, le quitaba medio ancho) y arriba quedan los botones */}
             {header ?? (
             <RecordCardHeader direction="row" ownSx={{gap: 1.5, alignItems: 'flex-start', flexWrap: {xs: 'wrap', sm: 'nowrap'}}}>

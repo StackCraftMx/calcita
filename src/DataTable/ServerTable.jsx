@@ -58,7 +58,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, sxListOf, usePieceProps} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaServerTable)
@@ -112,6 +112,11 @@ const GRID_BORDER_PIXELS = 2;
 // OJO: con el alto exacto, el redondeo de subpíxeles hace que el DataGrid crea que hay scroll vertical, reserve el ancho de
 // la barra y aparezca un scroll lateral de 5 px. Lo vigila e2e/tests/upload-control.spec.js (la tabla no se desliza de lado)
 const HEIGHT_SLACK_PIXELS = 2;
+// el alto de renglón que crece con su contenido (lo mismo que acepta el DataGrid)
+const AUTO_ROW_HEIGHT = 'auto';
+// la altura de línea de las celdas: la del texto de la tabla (la hereda de la raíz del DataGrid, que pone la letra del
+// tema), no la del renglón (ver la trampa en los estilos del DataGrid)
+const CELL_LINE_HEIGHT = 'inherit';
 const DATA_GRID_DENSITY = 'compact';
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
 // dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
@@ -293,12 +298,17 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     una función nueva en cada pintada haría filtrar la página cada vez
  * @param {boolean} [props.striped] renglones alternos (cebra) con el color de hover del tema; al pasar el cursor se usa
  *     el de «seleccionado» para que el renglón bajo el cursor se siga distinguiendo
- * @param {(params: any) => number|'auto'|null} [props.getRowHeight]
+ * @param {(params: any) => number|'auto'|null} [props.getRowHeight] el alto de cada renglón: un número (px) o 'auto' para
+ *     que crezca con lo que lleva adentro (varios renglones de texto en una celda). Con 'auto' la tabla se mide a sí misma
+ *     (autoHeight del DataGrid); con maxGridHeight cuenta cada renglón 'auto' con getEstimatedRowHeight de gridProps o, sin
+ *     él, con el alto de siempre
  * @param {boolean} [props.hideFooterWhenAllRowsFit] esconde el pie (el paginador) mientras todo lo que hay cabe en la
  *     página; si un día no cabe, el pie vuelve solo. Para tablas que casi nunca pasan de una página
  * @param {boolean} [props.showGoToPage] «Ir a página N» junto al paginador; por omisión escondido (con las flechas basta en
  *     casi todas las tablas). Para listas de muchas páginas que se recorren por número
- * @param {object} [props.gridSx] estilos extra del DataGrid (clases de renglón)
+ * @param {object|Array<object>|Function} [props.gridSx] estilos extra del DataGrid (clases de renglón, celdas): van DESPUÉS de
+ *     los de la tabla y se combinan regla por regla. Escribir '& .MuiDataGrid-cell': {alignItems: 'flex-start'} cambia solo la
+ *     alineación y la celda conserva lo demás de la tabla (antes reemplazaba el objeto entero y la celda perdía su display)
  * @param {number} [props.maxGridHeight] alto máximo del contenedor; sin él la tabla crece con sus renglones (default)
  * @param {string} [props.ariaLabel] nombre de la tabla para lectores de pantalla
  * @param {string} [props.fixedColumn] campo de la columna que se queda pegada a la izquierda al deslizar de lado (como
@@ -534,11 +544,24 @@ export default function ServerTable(props) {
     // OJO: el alto se suma renglón por renglón con el alto que pide la pantalla (getRowHeight; p. ej. un renglón de
     // resumen más alto que los demás). Con un solo alto para todos, la tabla quedaba con hueco blanco o
     // con barra de desplazamiento sin necesidad
+    // Un renglón 'auto' crece con lo que trae y su alto no se sabe hasta pintarlo: entonces la tabla se mide sola
+    // (autoHeight del DataGrid). OJO, trampa pagada: antes 'auto' se contaba con el alto de siempre, el contenedor quedaba
+    // corto y el renglón salía cortado a la mitad. Con un tope (maxGridHeight) no se puede medir sola: se cuenta con el
+    // alto estimado que dé la pantalla (getEstimatedRowHeight de gridProps) o con el de siempre
     let rowsHeight = placeholderRowCount * ROW_HEIGHT_PIXELS;
+    let hasAutoHeightRows = false;
     for (const row of visibleRows) {
-        const requestedRowHeight = getRowHeight?.({id: getRowId ? getRowId(row) : row.id, model: row, densityFactor: COMPACT_DENSITY_FACTOR});
+        const rowParams = {id: getRowId ? getRowId(row) : row.id, model: row, densityFactor: COMPACT_DENSITY_FACTOR};
+        const requestedRowHeight = getRowHeight?.(rowParams);
+        if (requestedRowHeight === AUTO_ROW_HEIGHT) {
+            hasAutoHeightRows = true;
+            const estimatedRowHeight = gridProps?.getEstimatedRowHeight?.(rowParams);
+            rowsHeight += typeof estimatedRowHeight === 'number' ? estimatedRowHeight : ROW_HEIGHT_PIXELS;
+            continue;
+        }
         rowsHeight += typeof requestedRowHeight === 'number' ? requestedRowHeight : ROW_HEIGHT_PIXELS;
     }
+    const measuresItself = hasAutoHeightRows && !maxGridHeight;
     // la tabla crece con los renglones de la página y NO tiene scroll vertical propio (un solo scroll, el
     // de la página). La paginación del servidor ya acota cuántos renglones hay; maxGridHeight queda solo para quien
     // de verdad necesite un tope (un diálogo con altura fija)
@@ -712,17 +735,26 @@ export default function ServerTable(props) {
                         // IMPORTANTE: el alto va en la raíz del DataGrid y no en la caja de afuera: las variables
                         // --DataGrid-hasScrollX y --DataGrid-scrollbarSize solo existen en la raíz. Cuando las columnas no
                         // caben (historial a 390 px) la barra horizontal ocupa su alto dentro de la tabla y, sin sumarlo, los
-                        // renglones se desplazaban 13 px por dentro. Con barras superpuestas (teléfono, trackpad) mide 0
-                        height: `calc(${gridHeight}px + var(--DataGrid-hasScrollX, 0) * var(--DataGrid-scrollbarSize, 0px))`,
+                        // renglones se desplazaban 13 px por dentro. Con barras superpuestas (teléfono, trackpad) mide 0.
+                        // Con renglones 'auto' el DataGrid se mide solo y aquí no se le pone alto
+                        ...(!measuresItself && {height: `calc(${gridHeight}px + var(--DataGrid-hasScrollX, 0) * var(--DataGrid-scrollbarSize, 0px))`}),
                         border: 0,
-                        // todo centrado verticalmente: el texto suelto se pegaba arriba y los chips quedaban a media altura
-                        '& .MuiDataGrid-cell': {display: 'flex', alignItems: 'center'},
+                        // todo centrado verticalmente: el texto suelto se pegaba arriba y los chips quedaban a media altura.
+                        // OJO, trampa pagada: el DataGrid le da a cada celda una altura de línea IGUAL al alto del renglón
+                        // (para centrar una sola línea de texto). En un renglón alto (100 px) todo texto que no traiga la
+                        // suya quedaba en una línea de 99 px: a media celda o hasta abajo, y lo que iba debajo se salía y se
+                        // cortaba. Las celdas ya se centran con flex, así que la altura de línea vuelve a la del texto
+                        '& .MuiDataGrid-cell': {display: 'flex', alignItems: 'center', lineHeight: CELL_LINE_HEIGHT},
                         '& .MuiDataGrid-columnHeader': {alignItems: 'center'},
                         // cebra: el color del hover del tema
                         [`& .${STRIPED_ROW_CLASS}`]: {bgcolor: 'action.hover'},
                         [`& .${STRIPED_ROW_CLASS}:hover`]: {bgcolor: 'action.selected'},
-                        ...gridSx,
                     }, (gridTheme) => (fixedColumn ? fixedColumnSxOf(gridTheme, fixedColumn, {withCheckboxColumn: isSelectable}) : {})]}
+                    // lo de la pantalla va DESPUÉS y se combina regla por regla con lo de arriba (MUI junta la lista de sx): con
+                    // `...gridSx` dentro del mismo objeto, una llave igual reemplazaba la de la tabla entera (la celda perdía su
+                    // display: flex y alignItems ya no hacía nada). También el sx que llegue en gridProps
+                    sx={[...sxListOf(gridProps?.sx), ...sxListOf(gridSx)]}
+                    autoHeight={measuresItself}
                 />
             </TableCard>
 

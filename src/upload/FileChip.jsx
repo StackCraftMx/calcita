@@ -8,6 +8,7 @@
 import Chip from '@mui/material/Chip';
 import CancelIcon from '@mui/icons-material/Cancel';
 
+import {sxListOf} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {fileAppearanceOf} from '@/upload/fileAppearance.js';
 
@@ -23,7 +24,8 @@ export default function FileChip({file, onRemove, removeLabel, ChipComponent = C
     const {formatFileSize} = useFormatters();
     const {Icon, color} = fileAppearanceOf(file.name);
     const label = typeof file.size === 'number' ? `${file.name} · ${formatFileSize(file.size)}` : file.name;
-    const chipSx = {maxWidth: '100%', height: 'auto', py: 0.5, '& .MuiChip-label': {whiteSpace: 'normal', overflowWrap: 'anywhere'}, ...ownSx};
+    // en lista: lo del cargador va DESPUÉS y se combina regla por regla (dentro del mismo objeto reemplazaría la llave entera)
+    const chipSx = [{maxWidth: '100%', height: 'auto', py: 0.5, '& .MuiChip-label': {whiteSpace: 'normal', overflowWrap: 'anywhere'}}, ...sxListOf(ownSx)];
 
     return (
         <ChipComponent

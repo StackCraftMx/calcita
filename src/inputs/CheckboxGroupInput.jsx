@@ -72,7 +72,7 @@ export default function CheckboxGroupInput(props) {
     return (
         <FieldFrame inputId={`${groupId}-first`} labelId={labelId} label={label}>
             <div>
-                <CheckboxGroupRoot row={row} role="group" aria-labelledby={labelId} ownSx={{columnGap: 2, ...sx}}>
+                <CheckboxGroupRoot row={row} role="group" aria-labelledby={labelId} ownSx={{columnGap: 2}} sx={sx}>
                     {selectAll && (
                         <CheckboxGroupSelectAll
                             disabled={disabled}

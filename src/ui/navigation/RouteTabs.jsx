@@ -85,7 +85,7 @@ export default function RouteTabs(props) {
     return (
         // value false: ninguna pestaña coincide (MUI avisa en la consola si el valor no es de ninguna)
         <RouteTabsRoot value={activeKey ?? false} variant="scrollable" allowScrollButtonsMobile aria-label={ariaLabel}
-                       ownSx={{minWidth: 0, ...sx}}>
+                       ownSx={{minWidth: 0}} sx={sx}>
             {visibleTabs.map((tab) => {
                 const key = isQuery ? tab.value : tab.to;
                 const href = isQuery ? `${location.pathname}${searchWithTab(location.search, paramName, tab.value)}` : tab.to;

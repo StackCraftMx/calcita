@@ -181,7 +181,7 @@ export default function TransferListInput(props) {
     );
 
     const lists = (
-        <TransferRoot direction={{xs: 'column', md: 'row'}} ownSx={{gap: 1.5, alignItems: 'stretch', ...sx}} id={inputId}>
+        <TransferRoot direction={{xs: 'column', md: 'row'}} ownSx={{gap: 1.5, alignItems: 'stretch'}} sx={sx} id={inputId}>
             <TransferColumn title={titles.available} items={available} markedValues={markedAvailable}
                             onMark={toggleIn(setMarkedAvailable)} onMarkMany={setMarkedAvailable} onMoveOne={(itemValue) => moveToChosen([itemValue])}
                             searchable={isSearchable} searchLabel={t('transfer.search')} emptyText={t('transfer.emptyAvailable')}
