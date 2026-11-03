@@ -56,7 +56,9 @@ entrar y las del módulo de ejemplo, y `make:module` arma la de cada módulo nue
 Y dos revisiones para antes de subir: `pnpm lint` (ESLint: una variable que no existe, «t is not defined», se caza al
 escribir) y `pnpm check:texts` (`calcita check:texts`: que cada `t('llave')` escrita tal cual exista en todos los idiomas y
 que los idiomas tengan las mismas llaves). Sirve también en un proyecto que no salió del CLI: lee `src/**/*Texts.js` y
-`src/**/texts.js`.
+`src/**/texts.js`. Un archivo de textos puede reexportar otro con ruta relativa o con `@/` (aquí apunta a la carpeta del
+código, como en Vite; pide Node 22.15 o más). Nunca da un verde falso: sin la carpeta, sin ningún archivo de textos o con uno
+que no se pudo leer, sale con problema y no compara llaves.
 
 ## Arrancar en un proyecto que ya existe
 
