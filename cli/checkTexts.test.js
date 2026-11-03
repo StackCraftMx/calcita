@@ -97,3 +97,18 @@ test('sin archivos de textos o sin la carpeta del código no sale «todo en su l
     const withoutTexts = await checkTexts({projectRoot, packageTexts: PACKAGE_TEXTS});
     assert.match(withoutTexts.problems[0], /No encontré archivos de textos/);
 });
+
+test('con el código en otra carpeta (un Laravel: resources/js) se revisa ahí, y @/ apunta a esa carpeta', async () => {
+    const projectRoot = await mkdtemp(join(tmpdir(), 'calcita-textos-'));
+    await mkdir(join(projectRoot, 'resources/js/modules/orders'), {recursive: true});
+    await writeFile(join(projectRoot, 'resources/js/modules/orders/ordersNames.js'), "export const ordersNames = {es: {orders: {title: 'Pedidos'}}, en: {orders: {title: 'Orders'}}};\n");
+    await writeFile(join(projectRoot, 'resources/js/modules/orders/texts.js'), "export {ordersNames} from '@/modules/orders/ordersNames.js';\n");
+    await writeFile(join(projectRoot, 'resources/js/modules/orders/OrdersPage.jsx'), "const {t} = useToolkitTranslation('orders');\nt('title');\nt('missing');\n");
+    const {problems, checkedKeys, sourceFolder} = await checkTexts({projectRoot, sourceFolder: 'resources/js/', packageTexts: PACKAGE_TEXTS});
+    assert.equal(sourceFolder, 'resources/js');
+    assert.equal(checkedKeys, 2);
+    assert.deepEqual(problems, [
+        'resources/js/modules/orders/OrdersPage.jsx:3  «orders:missing» no existe en es',
+        'resources/js/modules/orders/OrdersPage.jsx:3  «orders:missing» no existe en en',
+    ]);
+});

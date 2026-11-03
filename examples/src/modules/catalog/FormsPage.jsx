@@ -18,6 +18,7 @@ import ContactsHookForm from '@/modules/catalog/demos/forms/ContactsHookForm.tsx
 import ChoosingMany from '@/modules/catalog/demos/forms/ChoosingMany.tsx';
 import TransferListDemo from '@/modules/catalog/demos/forms/TransferListDemo.tsx';
 import OwnErrorMessages from '@/modules/catalog/demos/forms/OwnErrorMessages.tsx';
+import EditingWizard from '@/modules/catalog/demos/forms/EditingWizard.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -29,6 +30,7 @@ const loadRepeatingHookForm = () => import('@/modules/catalog/demos/forms/Contac
 const loadChoosingMany = () => import('@/modules/catalog/demos/forms/ChoosingMany.tsx?demo-source');
 const loadTransferList = () => import('@/modules/catalog/demos/forms/TransferListDemo.tsx?demo-source');
 const loadOwnMessages = () => import('@/modules/catalog/demos/forms/OwnErrorMessages.tsx?demo-source');
+const loadEditingWizard = () => import('@/modules/catalog/demos/forms/EditingWizard.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -60,6 +62,14 @@ const WIZARD_EXTENSIONS = [
     {id: 'submitLabel', option: 'submitLabel', example: '<FormWizard steps={steps} submitLabel="Enviar solicitud" />'},
     {id: 'texts', option: 'texts', example: "texts={{wizard: {next: 'Continuar', skip: 'Ahora no'}}}"},
     {id: 'layout', option: '<WizardLayout>', example: '<WizardLayout steps={steps} activeIndex={index} skippedKeys={skipped} onNext={next} onBack={back} onSkip={skip} submitButton={…} />'},
+];
+const EDITING_WIZARD_EXTENSIONS = [
+    {id: 'initialStepKey', option: 'initialStepKey', example: 'initialStepKey={review.stepKey}  // el paso que dice el servidor'},
+    {id: 'orientation', option: 'orientation · WIZARD_ORIENTATION', example: 'orientation={WIZARD_ORIENTATION.vertical}'},
+    {id: 'stepSelection', option: 'stepSelection · WIZARD_STEP_SELECTION', example: 'stepSelection={WIZARD_STEP_SELECTION.free}  // o .checked'},
+    {id: 'completed', option: 'steps[].completed', example: "{key: 'company', label: 'Empresa', completed: true, …}"},
+    {id: 'onStepChange', option: 'onStepChange(stepKey, index)', example: "onStepChange={(stepKey) => setSearchParams({step: stepKey})}"},
+    {id: 'layout', option: '<WizardLayout orientation onStepSelect>', example: '<WizardLayout … orientation="vertical" onStepSelect={(index) => setActiveIndex(index)} />'},
 ];
 const HOOK_WIZARD_EXTENSIONS = [
     {id: 'entry', option: "FormWizard de '@stackcraftmx/calcita/react-hook-form'", example: '<FormProvider {...form}><form onSubmit={form.handleSubmit(send)}><FormWizard … /></form></FormProvider>'},
@@ -147,6 +157,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('transferList', TRANSFER_LIST_EXTENSIONS)} Demo={TransferListDemo} loadSource={loadTransferList} />
             <DemoSection title={t('forms.ownMessages.title')} description={t('forms.ownMessages.description')}
                          extensions={rowsOf('ownMessages', OWN_MESSAGES_EXTENSIONS)} Demo={OwnErrorMessages} loadSource={loadOwnMessages} />
+            <DemoSection title={t('forms.editingWizard.title')} description={t('forms.editingWizard.description')}
+                         extensions={rowsOf('editingWizard', EDITING_WIZARD_EXTENSIONS)} Demo={EditingWizard} loadSource={loadEditingWizard} />
         </Stack>
     );
 };

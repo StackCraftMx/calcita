@@ -100,3 +100,14 @@ export async function downloadUploadedDocument(documentId, transferOptions) {
 export function isUploadedDocument(documentId) {
     return storedDocuments.has(documentId);
 }
+
+/**
+ * El nombre y el peso de un documento que ya se subió, para enseñarlo al editar (null si no existe).
+ *
+ * @param {string} documentId
+ * @returns {{name: string, size: number}|null}
+ */
+export function uploadedDocumentOf(documentId) {
+    const file = storedDocuments.get(documentId);
+    return file ? {name: file.name, size: file.size} : null;
+}

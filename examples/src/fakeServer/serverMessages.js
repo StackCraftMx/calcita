@@ -151,6 +151,10 @@ const SERVER_TEXTS = Object.freeze({
             clabeConfirmation: 'La confirmación no es la misma CLABE.',
             colorInvalid: 'Escriba el color como #RRGGBB.',
             received: 'Recibimos su solicitud con el folio {{folio}}.',
+            updated: 'Se guardaron los cambios de la solicitud {{folio}}.',
+            reviewBankStatement: 'La mesa de crédito pide el estado de cuenta: con él la revisión es más rápida.',
+            notFoundTitle: 'No encontramos la solicitud',
+            notFound: 'No hay una solicitud con el folio {{folio}}.',
         },
         uploads: {
             notExcel: 'El archivo tiene que ser un Excel (.xlsx).',
@@ -323,6 +327,10 @@ const SERVER_TEXTS = Object.freeze({
             clabeConfirmation: 'The confirmation is not the same CLABE.',
             colorInvalid: 'Write the color as #RRGGBB.',
             received: 'We received your request with folio {{folio}}.',
+            updated: 'The changes to request {{folio}} were saved.',
+            reviewBankStatement: 'The credit desk asks for the bank statement: with it the review is faster.',
+            notFoundTitle: 'We could not find the request',
+            notFound: 'There is no request with folio {{folio}}.',
         },
         uploads: {
             notExcel: 'The file must be an Excel workbook (.xlsx).',

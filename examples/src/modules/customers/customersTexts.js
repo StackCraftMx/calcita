@@ -153,6 +153,10 @@ export const customersTexts = {
                 accessKey: 'Clave para consultar su solicitud',
                 accessKeyHelp: 'Guárdela: no se vuelve a enseñar.',
                 another: 'Hacer otra solicitud',
+                fix: 'Corregir la solicitud',
+                fixing: 'Corrige la solicitud {{folio}}. {{note}}',
+                saveChanges: 'Guardar los cambios',
+                savedTitle: 'Solicitud corregida',
             },
         },
         dictionaries: {
@@ -319,6 +323,10 @@ export const customersTexts = {
                 accessKey: 'Key to check your request',
                 accessKeyHelp: 'Keep it: it will not be shown again.',
                 another: 'Make another request',
+                fix: 'Fix the request',
+                fixing: 'You are fixing request {{folio}}. {{note}}',
+                saveChanges: 'Save the changes',
+                savedTitle: 'Request fixed',
             },
         },
         dictionaries: {

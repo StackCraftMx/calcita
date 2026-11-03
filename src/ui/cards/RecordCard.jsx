@@ -7,7 +7,9 @@
 //   cuerpo       groups: grupos de datos {title?, facts: [{label, value}]} lado a lado en escritorio y uno debajo de otro en
 //                el teléfono; highlight: el dato principal, grande (el total)
 //   abajo        footer (botones, una cuenta regresiva, un formulario corto) y details: lo que se despliega con «Ver
-//                detalle» (una tabla, un historial), que avisa con onDetailsToggle
+//                detalle» (una tabla, un historial), que avisa con onDetailsToggle. footerAlign acomoda ese renglón: el
+//                footer a la izquierda y «Ver detalle» en la otra orilla (lo de siempre), o los dos juntos a la izquierda o a
+//                la derecha (en una tarjeta ancha, dos controles en orillas opuestas se ven sueltos)
 //
 // El ORDEN es el que se da y nada se reacomoda solo: los grupos de izquierda a derecha (de arriba abajo en el teléfono) y
 // los datos de cada grupo en el orden de facts. Para un orden obligatorio (el de un sistema que ya existe, donde el estatus
@@ -37,6 +39,16 @@ import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
+
+/**
+ * Cómo se acomoda el renglón de abajo (footer y «Ver detalle»):
+ *   spaceBetween  el footer a la izquierda y «Ver detalle» en la otra orilla (lo de siempre);
+ *   start         los dos juntos, a la izquierda;
+ *   end           los dos juntos, a la derecha.
+ */
+export const RECORD_CARD_FOOTER_ALIGN = Object.freeze({spaceBetween: 'spaceBetween', start: 'start', end: 'end'});
+// cómo se reparte el renglón en cada caso: con spaceBetween el footer se estira y empuja «Ver detalle» a la orilla
+const FOOTER_JUSTIFY = Object.freeze({spaceBetween: 'flex-start', start: 'flex-start', end: 'flex-end'});
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaRecordCard)
 const THEME_NAME = 'CalcitaRecordCard';
@@ -72,6 +84,7 @@ const RecordCardDetails = piecePart(THEME_NAME, 'Details', Box);
  * @param {string} [props.columns] en escritorio, el ancho de cada columna del cuerpo como en CSS ('1.2fr 1fr 1fr auto'); por
  *     omisión, los grupos a partes iguales y el dato principal y trailing a su medida
  * @param {import('react').ReactNode} [props.footer] abajo, a todo lo ancho
+ * @param {'spaceBetween'|'start'|'end'} [props.footerAlign] uno de RECORD_CARD_FOOTER_ALIGN; por omisión spaceBetween
  * @param {import('react').ReactNode} [props.details] lo que se despliega con «Ver detalle»
  * @param {string} [props.detailsLabel] ya traducido; por omisión «Ver detalle»
  * @param {boolean} [props.defaultDetailsOpen]
@@ -83,7 +96,8 @@ const RecordCardDetails = piecePart(THEME_NAME, 'Details', Box);
  */
 function RecordCardContent(props) {
     const {
-        title, eyebrow, subtitle, avatar, status, actions, groups = [], highlight, trailing, columns, footer, details, detailsLabel, defaultDetailsOpen = false,
+        title, eyebrow, subtitle, avatar, status, actions, groups = [], highlight, trailing, columns, footer,
+        footerAlign = RECORD_CARD_FOOTER_ALIGN.spaceBetween, details, detailsLabel, defaultDetailsOpen = false,
         onDetailsToggle, onOpen, openLabel, header, children, sx, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -176,8 +190,8 @@ function RecordCardContent(props) {
 
             {children}
             {(footer || details) && (
-                <RecordCardFooter direction="row" ownSx={{mt: 2, gap: 1, alignItems: 'center', flexWrap: 'wrap'}}>
-                    <Box sx={{flex: 1, minWidth: 0}}>{footer}</Box>
+                <RecordCardFooter direction="row" ownSx={{mt: 2, gap: 1, alignItems: 'center', flexWrap: 'wrap', justifyContent: FOOTER_JUSTIFY[footerAlign] ?? 'flex-start'}}>
+                    <Box sx={{flex: footerAlign === RECORD_CARD_FOOTER_ALIGN.spaceBetween ? 1 : '0 1 auto', minWidth: 0}}>{footer}</Box>
                     {details && (
                         <Button size="small" onClick={toggleDetails} aria-expanded={isDetailsOpen} aria-controls={detailsId}
                                 endIcon={<ExpandMoreRoundedIcon sx={{transform: isDetailsOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms'}} />}>

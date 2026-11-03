@@ -155,16 +155,18 @@ async function packageTextsOf() {
 /**
  * @param {object} options
  * @param {string} options.projectRoot la carpeta del proyecto
- * @param {string} [options.sourceFolder] dónde está el código (por omisión src)
+ * @param {string} [options.sourceFolder] dónde está el código (por omisión src; en Laravel, resources/js): `--source` del CLI
  * @param {Record<string, object>} [options.packageTexts] los textos de Calcita (por omisión, los de su dist/)
  * @returns {Promise<{problems: string[], checkedKeys: number, textFiles: string[], languages: string[], sourceFolder: string}>}
  */
-export async function checkTexts({projectRoot, sourceFolder = 'src', packageTexts}) {
+export async function checkTexts({projectRoot, sourceFolder: askedFolder = 'src', packageTexts}) {
+    // 'resources/js/' y 'resources/js' son la misma carpeta (el mensaje la dice sin la diagonal de más)
+    const sourceFolder = askedFolder.replace(/[\\/]+$/, '');
     const sourceRoot = join(projectRoot, sourceFolder);
     const nothingChecked = {checkedKeys: 0, textFiles: [], languages: [], sourceFolder};
     const isFolder = await stat(sourceRoot).then((found) => found.isDirectory(), () => false);
     if (!isFolder) {
-        return {...nothingChecked, problems: [`No existe la carpeta ${sourceFolder}/ en el proyecto: no hay código que revisar`]};
+        return {...nothingChecked, problems: [`No existe la carpeta ${sourceFolder}/ en el proyecto: no hay código que revisar (si está en otra, --source resources/js)`]};
     }
     const files = await filesOf(sourceRoot);
     const problems = [];
@@ -211,7 +213,7 @@ export async function checkTexts({projectRoot, sourceFolder = 'src', packageText
         return {...nothingChecked, problems, textFiles: readTextFiles};
     }
     if (readTextFiles.length === 0) {
-        return {...nothingChecked, problems: [`No encontré archivos de textos (*Texts.js o texts.js) en ${sourceFolder}/: no hay con qué comparar`]};
+        return {...nothingChecked, problems: [`No encontré archivos de textos (*Texts.js o texts.js) en ${sourceFolder}/: no hay con qué comparar (si el código está en otra carpeta, --source resources/js)`]};
     }
     problems.push(...duplicates.map((duplicate) => `texto repetido: ${duplicate}`));
 

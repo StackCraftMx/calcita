@@ -5,7 +5,10 @@
 //     dato, no dejar lo que se escribió a medias;
 //   - el último paso envía TODO el formulario (el esquema de yup completo vale para todos los pasos);
 //   - si el envío falla por un campo de un paso anterior (yup o el 422 del servidor con applyServerProblem), regresa solo a
-//     ese paso: un error que no se ve no se puede corregir.
+//     ese paso: un error que no se ve no se puede corregir;
+//   - para editar un registro (se entra a corregir un dato suelto): initialStepKey abre en el paso que diga el servidor,
+//     orientation="vertical" pone los campos dentro de su paso, y stepSelection deja pulsar el título de otro paso para
+//     saltar directo (free) o solo si el paso abierto no tiene errores (checked). onStepChange avisa cada cambio de paso.
 //
 // Va DENTRO de <FormProvider> y del <form> con su handleSubmit (usa useFormContext):
 //   const form = useForm({resolver: yupResolver(schema), defaultValues});
@@ -26,6 +29,7 @@ import {useFormContext} from 'react-hook-form';
 
 import FormProblemAlert from '@/hookForm/FormProblemAlert.jsx';
 import SubmitButton from '@/hookForm/SubmitButton.jsx';
+import {useWizardSteps} from '@/inputs/useWizardSteps.js';
 import WizardLayout from '@/inputs/WizardLayout.jsx';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -37,16 +41,30 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {string[]} [props.steps[].fields] los campos del paso (los que revisa «Siguiente»)
  * @param {boolean} [props.steps[].optional] se puede omitir
  * @param {import('react').ReactNode} props.steps[].content los campos del paso
+ * @param {boolean} [props.steps[].completed] lleva la palomita (cuando los títulos se pulsan, solo si la pantalla lo dice)
  * @param {string} props.submitLabel ya traducido: el botón del último paso
+ * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
+ * @param {string} [props.initialStepKey] la llave del paso en el que se abre (la que diga el servidor); por omisión el primero
+ * @param {'none'|'free'|'checked'} [props.stepSelection] uno de WIZARD_STEP_SELECTION: si el título de otro paso se pulsa y qué
+ *   revisa antes; por omisión none (se avanza con «Siguiente», como siempre)
+ * @param {(stepKey: string, index: number) => void} [props.onStepChange] cada vez que cambia el paso abierto
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function FormWizard({steps, submitLabel, texts, ...unknownProps}) {
+export default function FormWizard({
+    steps, submitLabel, orientation, initialStepKey, stepSelection, onStepChange, texts, ...unknownProps
+}) {
     warnUnknownProps('FormWizard', unknownProps);
     const {trigger, resetField, getFieldState, formState} = useFormContext();
     const {isSubmitting, submitCount} = formState;
-    const [activeIndex, setActiveIndex] = useState(0);
     const [skippedKeys, setSkippedKeys] = useState(() => new Set());
     const wasSubmitting = useRef(false);
+
+    // revisa SOLO los campos de un paso (trigger los marca, los pinta y pone el foco en el primero con error)
+    const isStepValid = async (index) => {
+        const stepFields = steps[index].fields ?? [];
+        return stepFields.length === 0 || trigger(stepFields, {shouldFocus: true});
+    };
+    const {activeIndex, setActiveIndex, selectStep} = useWizardSteps({steps, initialStepKey, stepSelection, onStepChange, isStepValid});
     const activeStep = steps[activeIndex];
 
     // al terminar un envío fallido, regresa al paso con el primer error (solo en ese momento: escribir en otro paso no
@@ -63,10 +81,8 @@ export default function FormWizard({steps, submitLabel, texts, ...unknownProps})
     }, [isSubmitting, submitCount]);
 
     const goNext = async () => {
-        const stepFields = activeStep.fields ?? [];
-        // guard clause: el paso tiene errores; se queda para que se corrijan (trigger los marca y los pinta)
-        const isStepValid = stepFields.length === 0 || await trigger(stepFields, {shouldFocus: true});
-        if (!isStepValid) {
+        // el paso tiene errores: se queda ahí para que se corrijan
+        if (!(await isStepValid(activeIndex))) {
             return;
         }
         setSkippedKeys((currentKeys) => new Set([...currentKeys].filter((key) => key !== activeStep.key)));
@@ -82,8 +98,8 @@ export default function FormWizard({steps, submitLabel, texts, ...unknownProps})
     };
 
     return (
-        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting}
-                      onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)} onNext={goNext} onSkip={skipStep}
+        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation}
+                      onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)} onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
                       submitButton={<SubmitButton>{submitLabel}</SubmitButton>} problemAlert={<FormProblemAlert />} texts={texts} />
     );
 }
