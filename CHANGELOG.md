@@ -4,6 +4,27 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.49.0] - 2026-11-03
+
+### Agregado
+
+- `stackedColumn` (`/table`): los datos que se leen de corrido en una celda, uno debajo del otro, los que hagan falta (el
+  principal en negritas, los demás en gris). Cada dato va solo, si el encabezado de la columna ya dice qué son, o con su
+  etiqueta arriba y una nota corta (`{label, value, note}`) si el encabezado nombra al grupo. Un dato vacío no se pinta,
+  salvo el principal o uno con etiqueta, que enseñan «—» (texto `table.cells.empty`). Con una columna así la tabla pone los
+  renglones a su alto sola. `StackedCell` es la misma celda para un `renderCell` propio. Pieza del tema `CalcitaStackedCell`
+  (root, line, label, valueRow, primary, secondary, note).
+- `statusColumn`: el estatus desde su diccionario (StatusChip), con filtro de facetas (o sin él, `filter: false`) y, con `t`,
+  el ancho de su etiqueta más larga medido en el idioma de la pantalla (`statusColumnWidthOf`, `textWidthOf`).
+- `actionsColumn`: el menú «⋯» de cada renglón en su columna, de ancho fijo (`ACTIONS_COLUMN_FIELD` para dejarla fija;
+  `DETAIL_COLUMN_FIELD` es el de `detailColumn`).
+- `ServerTable` con `renderCard`: la misma lista en tarjetas, con la misma búsqueda, filtros, orden y páginas; un botón
+  (tabla o tarjetas) cambia de vista y con `prefix` la vista va en la dirección, reemplazando el historial. `view`,
+  `defaultView`, `onViewChange`, `showViewToggle` y `cardSkeleton`. Partes del tema `cards`, `cardsPagination` y
+  `viewToggle`. Sueltos: `TableCardsView`, `TableViewToggle`, `useTableView` y `TABLE_VIEW`.
+- Ejemplos: «4. Columnas listas y la vista de tarjetas» en Tabla de servidor (una lista de clientes) y Pedidos con su vista de
+  tarjetas dentro de la tabla: cambiar de vista ya no pierde lo filtrado (antes las tarjetas iban aparte y sin filtros).
+
 ## [0.48.0] - 2026-11-03
 
 ### Agregado
