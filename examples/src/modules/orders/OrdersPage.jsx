@@ -23,7 +23,7 @@ import TextField from '@mui/material/TextField';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import {
-    ConfirmDialog, DateRangeFilter, DictionaryText, FILTER_FIELD_KIND, PageHeading, ROUTE_TABS_MODE, RouteTabs, useActiveRouteTab, StatusChip, filterDrawerChipsOf, formatDate, formatDateTime,
+    ConfirmDialog, DateRangeFilter, DictionaryText, FILTER_FIELD_KIND, PageHeading, StatusChip, filterDrawerChipsOf, formatDate, formatDateTime,
     formatNumber, labelOf, lookup, toastProblem, toastSuccess, useCan, useConfirmAction, usePageName, useRememberListUrl, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {
@@ -34,12 +34,8 @@ import {Money} from '@stackcraftmx/calcita/money';
 import {ORDERS_TABLE_PREFIX, ORDER_STATUS} from '@/core';
 import {CANCELABLE_ORDER_STATUSES, CANCEL_REASON_MAX_LENGTH, PAYMENT_METHOD} from '@/modules/orders/orderDictionaries.js';
 import {cancelOrders, getOrdersPage, sendPaymentRemindersTo} from '@/modules/orders/ordersApi.js';
-import {OrdersCards} from '@/modules/orders/OrdersCards.jsx';
+import {OrderCard} from '@/modules/orders/OrdersCards.jsx';
 import {ORDERS_LIST_KEY, orderDetailPathOf} from '@/modules/orders/ordersPaths.js';
-
-// las dos vistas de la lista, en la consulta (?view=cards): la liga se comparte y al recargar sigue en la misma
-const ORDERS_VIEW = Object.freeze({table: 'table', cards: 'cards'});
-const VIEW_PARAM = 'view';
 
 // OJO: constantes de módulo. Un objeto nuevo en cada pintada reinicia el estado de la tabla (ServerTable arma con ellos
 // cómo se lee la URL)
@@ -69,8 +65,6 @@ const isOrderSelectable = (row) => row.status !== ORDER_STATUS.canceled.value;
 export const OrdersPage = () => {
     const {t} = useToolkitTranslation('orders');
     const {t: commonT} = useToolkitTranslation('common');
-    const viewTabs = [{value: ORDERS_VIEW.table, label: t('views.table')}, {value: ORDERS_VIEW.cards, label: t('views.cards')}];
-    const view = useActiveRouteTab(viewTabs, {mode: ROUTE_TABS_MODE.query, paramName: VIEW_PARAM});
     const navigate = useNavigate();
     // al salir, la lista anota su URL (con filtros): el «Regresar» del detalle vuelve aquí tal como estaba
     useRememberListUrl(ORDERS_LIST_KEY);
@@ -203,8 +197,6 @@ export const OrdersPage = () => {
     return (
         <>
             <PageHeading title={t('list.title')} description={t('list.subtitle')} />
-            <RouteTabs ariaLabel={t('views.ariaLabel')} mode={ROUTE_TABS_MODE.query} paramName={VIEW_PARAM} tabs={viewTabs} sx={{mb: 2}} />
-            {view === ORDERS_VIEW.cards ? <OrdersCards /> : (
             <ServerTable
                 fetchPage={getOrdersPage}
                 queryKey="orders"
@@ -231,9 +223,11 @@ export const OrdersPage = () => {
                 // (por omisión van todas arriba)
                 selectionPhoneLayout={SELECTION_PHONE_LAYOUT.split}
                 isRowSelectable={isOrderSelectable}
+                // la otra vista: cada pedido en su tarjeta, con la misma búsqueda, filtros y páginas (el botón de la derecha
+                // cambia; la vista va en la dirección, ?orders_view=cards)
+                renderCard={(order) => <OrderCard order={order} />}
                 texts={tableTexts}
             />
-            )}
             <ConfirmDialog
                 {...bulkCancel.dialogProps}
                 title={bulkCancelTitle}

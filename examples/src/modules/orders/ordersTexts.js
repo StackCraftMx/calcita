@@ -35,7 +35,6 @@ export const ordersTexts = {
                 total: 'Importe',
                 openDetail: 'Ver el detalle del pedido {{number}}',
             },
-            views: {ariaLabel: 'Cómo ver los pedidos', table: 'Tabla', cards: 'Tarjetas'},
             cards: {
                 productLine_one: '{{product}} · {{count}} pieza',
                 productLine_other: '{{product}} · {{count}} piezas',
@@ -62,8 +61,6 @@ export const ordersTexts = {
                     contact: 'Contactar al cliente',
                     email: 'Mandar un correo',
                 },
-                pagination: {page: 'Página {{page}}', first: 'Primera página', last: 'Última página', next: 'Página siguiente', previous: 'Página anterior',
-                    'start-ellipsis': 'Páginas anteriores', 'end-ellipsis': 'Páginas siguientes'},
             },
             drawer: {
                 status: 'Estado',
@@ -200,7 +197,6 @@ export const ordersTexts = {
                 total: 'Amount',
                 openDetail: 'See the detail of order {{number}}',
             },
-            views: {ariaLabel: 'How to see the orders', table: 'Table', cards: 'Cards'},
             cards: {
                 productLine_one: '{{product}} · {{count}} piece',
                 productLine_other: '{{product}} · {{count}} pieces',
@@ -227,8 +223,6 @@ export const ordersTexts = {
                     contact: 'Contact the customer',
                     email: 'Send an email',
                 },
-                pagination: {page: 'Page {{page}}', first: 'First page', last: 'Last page', next: 'Next page', previous: 'Previous page',
-                    'start-ellipsis': 'Earlier pages', 'end-ellipsis': 'Later pages'},
             },
             drawer: {
                 status: 'Status',
