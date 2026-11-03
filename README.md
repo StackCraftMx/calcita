@@ -345,6 +345,18 @@ tema del proyecto y al final el `sx` que pase la pantalla. Los números se leen 
 Sirve con `createToolkitTheme` y con cualquier tema de MUI (el que ya tenía un sistema, tal cual): así un sistema puede
 dejar Calcita con su propia cara, parte por parte.
 
+Además, como en MUI, cada parte con nombre se puede **cambiar por otro componente** (`slots`) o **recibir props de más**
+(`slotProps`), con el nombre de la parte de la tabla de abajo; desde la pantalla o para toda la app desde el tema:
+
+```jsx
+<RecordCard slots={{avatar: StoreAvatar}} slotProps={{titles: {component: 'header'}}} … />
+createTheme({components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {elevation: 3}}}}}});
+```
+
+`className`, `style` y `sx` de `slotProps` se suman a los de Calcita; una pieza dentro de otra igual no toma los `slots` de la
+de afuera. `TextInput` es la excepción: su `slotProps` es el del `TextField` de MUI (`input`, `htmlInput`…). Una pieza propia
+del proyecto se arma con lo mismo: `piecePart`, `usePieceProps` y `withPieceSlots`.
+
 El `sx` de la pantalla se **combina regla por regla** con el de la pieza, no la reemplaza: en la tabla,
 `gridSx={{'& .MuiDataGrid-cell': {alignItems: 'flex-start'}}}` cambia solo la alineación y la celda conserva lo demás.
 Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (una lista de sx, como pide MUI; nunca
@@ -364,11 +376,14 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaAttachmentsInput` | `root`, `actions`, `button`, `list`, `fileChip`, `limits` |
 | `CalcitaAuditTrailDialog` | `description` |
 | `CalcitaAuthLayout` | `root`, `tools`, `body`, `brand`, `logo`, `brandName`, `card`, `description`, `content`, `footer` |
+| `CalcitaBackButton` | `root` |
+| `CalcitaBarActionButton` | `button`, `iconButton`, `menuItem` |
 | `CalcitaBarActions` | `group` |
 | `CalcitaBarCapsule` | `root` |
 | `CalcitaBarList` | `row`, `chart` |
 | `CalcitaBarSearch` | `field` |
 | `CalcitaCalendarHeatmap` | `header`, `toggle`, `tableArea`, `dateCell`, `valueCell`, `descriptionCell`, `gridArea`, `grid`, `monthLabel`, `week`, `dayLabel`, `cell`, `legend`, `legendLess`, `legendCell`, `legendMore` |
+| `CalcitaCatalogInput` | `field` |
 | `CalcitaCfdiSummary` | `root`, `header`, `amounts`, `concepts` |
 | `CalcitaChart` | `tableArea`, `legend`, `legendItem`, `legendLine`, `legendSwatch`, `reference`, `referenceLine` |
 | `CalcitaChartTooltip` | `root` |
@@ -380,23 +395,27 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaConfirmDialog` | `problem`, `actions` |
 | `CalcitaContentDialog` | `header`, `title`, `closeButton`, `body` |
 | `CalcitaCookieNotice` | `root`, `text`, `actions` |
+| `CalcitaCopyButton` | `button` |
 | `CalcitaCountdown` | `root` |
+| `CalcitaDateInput` | `picker` |
 | `CalcitaDateRangeFilter` | `chip`, `panel`, `actions` |
+| `CalcitaDateTimeInput` | `picker` |
 | `CalcitaDefinitionList` | `root`, `entry`, `label`, `value` |
 | `CalcitaDemoTotpCode` | `root`, `code` |
 | `CalcitaDetailHeader` | `root`, `titleArea`, `title`, `badges`, `actions` |
 | `CalcitaDownloadManager` | `doneIcon`, `failedIcon`, `canceledIcon`, `cancelButton`, `progress`, `cancelIcon`, `item`, `itemText`, `itemStatus`, `itemActions`, `panel`, `header`, `title`, `list` |
 | `CalcitaDownloadMenu` | `button` |
-| `CalcitaEmptyState` | `root`, `icon` |
 | `CalcitaEfirmaFields` | `root`, `certificate`, `verify` |
+| `CalcitaEmptyState` | `root`, `icon` |
 | `CalcitaErrorPage` | `root`, `actions` |
 | `CalcitaEventCalendar` | `toolbar`, `navigation`, `title`, `calendar` |
 | `CalcitaEventDetails` | `row`, `rowContent`, `titleRow`, `toneDot`, `linkRow`, `link`, `guestsTitle`, `guest`, `guestAvatar`, `guestName`, `notes`, `actions` |
+| `CalcitaFieldFrame` | `root`, `label` |
 | `CalcitaFileDropzone` | `root`, `fileArea`, `fileChip`, `hint`, `actions`, `limits`, `extra` |
 | `CalcitaFileInput` | `root`, `button`, `fileChip`, `empty` |
 | `CalcitaFileUploadInput` | `root`, `fileName`, `status`, `button`, `helper` |
 | `CalcitaFilterChips` | `root`, `header`, `clearButton` |
-| `CalcitaFilterDrawer` | `header`, `body`, `footer` (el panel: clase `CalcitaFilterDrawer-paper`) |
+| `CalcitaFilterDrawer` | `header`, `body`, `footer` |
 | `CalcitaFontSizeToggle` | `button` |
 | `CalcitaFormProblemAlert` | `root` |
 | `CalcitaFormRow` | `root`, `label`, `control` |
@@ -407,6 +426,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaGroupedTimeline` | `group`, `groupHeader`, `groupButton`, `groupTitle`, `expandIcon`, `timeline`, `opposite`, `connector`, `content`, `entryTitle` |
 | `CalcitaHeaderFilter` | `button`, `badge`, `panel` |
 | `CalcitaHeaderTools` | `divider`, `root` |
+| `CalcitaHelpButton` | `root` |
 | `CalcitaHelpCarouselDialog` | `media`, `content`, `dots`, `actions` |
 | `CalcitaIconBadge` | `root`, `icon`, `label` |
 | `CalcitaImageInput` | `root`, `preview`, `image`, `placeholder`, `actions` |
@@ -423,32 +443,37 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaMetricCard` | `root`, `action`, `header`, `icon`, `label`, `value`, `caption`, `extra`, `trend` |
 | `CalcitaMobileTabBar` | `tab`, `tabIconPlaceholder`, `tabLabel`, `root`, `bar`, `minimized`, `account`, `sheetHeader` |
 | `CalcitaModalWaiting` | `root`, `title`, `body`, `text` |
+| `CalcitaMonthInput` | `picker` |
 | `CalcitaMultiSelectFilter` | `list`, `option` |
 | `CalcitaNewBuildNotice` | `floating`, `icon`, `message`, `reloadButton`, `banner` |
+| `CalcitaNumberInput` | `field` |
 | `CalcitaPageBreadcrumbs` | `root`, `link`, `current` |
 | `CalcitaPageHeader` | `root`, `subtitle`, `action` |
 | `CalcitaPageHeading` | `root`, `breadcrumbs`, `titleRow`, `title`, `actions`, `description` |
 | `CalcitaPasswordChecklist` | `title`, `list`, `item`, `hidden` |
+| `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaPeriodRangeSelector` | `field`, `select`, `root` |
 | `CalcitaPermissionMatrix` | `permission`, `checkbox`, `group`, `groupHeader`, `groupTitle`, `grid` |
 | `CalcitaPondDropzone` | `root`, `summary`, `limits`, `actions`, `extra` |
 | `CalcitaProfileHeader` | `root`, `cover`, `body`, `avatar`, `text`, `name`, `chips`, `actions` |
 | `CalcitaProfileScreen` | `sectionTitle`, `form`, `preferences` |
 | `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
-| `CalcitaPdfViewerDialog` | `actions`, `frame` |
 | `CalcitaRecordCard` | `root`, `header`, `avatar`, `titles`, `status`, `body`, `group`, `fact`, `highlight`, `footer`, `details` |
+| `CalcitaRecordCardSkeleton` | `root` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
-| `CalcitaRouteTabs` | `root`, `tab`, `badge` |
-| `CalcitaScrollableRow` | `root` |
 | `CalcitaRepeatingFields` | `root`, `row`, `rowHeader`, `rowContent`, `addButton`, `helper` |
 | `CalcitaRichTextEditor` | `root`, `toolbar`, `content`, `footer` |
 | `CalcitaRichTextView` | `root` |
+| `CalcitaRouteTabs` | `root`, `tab`, `badge` |
+| `CalcitaScrollableRow` | `root` |
 | `CalcitaSecondStepForm` | `actions` |
+| `CalcitaSecretField` | `field` |
 | `CalcitaSectionCard` | `root`, `header`, `title` |
 | `CalcitaSegmentedControl` | `root` |
 | `CalcitaSelectInput` | `option`, `optionText` |
 | `CalcitaSelectionActions` | `bar`, `count`, `clear`, `phoneCount`, `phoneActions` |
-| `CalcitaServerTable` | `toolbar`, `summary`, `customHeader`, `count`, `countRow`, `selectionNotice`, `error`, `card`, `grid`, `pagination` |
+| `CalcitaServerTable` | `cards`, `cardsPagination`, `viewToggle`, `toolbar`, `summary`, `customHeader`, `count`, `countRow`, `selectionNotice`, `error`, `card`, `grid`, `pagination` |
+| `CalcitaServerTableFilterDrawer` | `button` |
 | `CalcitaSessionsCard` | `item`, `itemIcon`, `itemHeader`, `actions` |
 | `CalcitaSettingsMenu` | `divider` |
 | `CalcitaSideMenu` | `scrollArrow`, `root`, `brand`, `brandLogo`, `brandText`, `brandName`, `brandCaption`, `railTop`, `listArea`, `list`, `section`, `sectionTitle`, `sectionTitleText`, `footer`, `railBottom` |
@@ -456,19 +481,22 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaSignInForm` | `footer` |
 | `CalcitaSignInScreen` | `alert` |
 | `CalcitaSortableFilterHeader` | `title`, `root`, `sortButton`, `sortIndicator`, `clearButton` |
+| `CalcitaStackedCell` | `root`, `line`, `label`, `valueRow`, `primary`, `secondary`, `note` |
 | `CalcitaStatusChip` | `root`, `dot`, `label`, `chip` |
 | `CalcitaSubmenuActionsMenu` | `badge` |
+| `CalcitaSubmitButton` | `root` |
 | `CalcitaTabBarEditor` | `root`, `header`, `title`, `list`, `itemIcon`, `footer` |
 | `CalcitaTableToggle` | `root`, `button` |
 | `CalcitaTag` | `root` |
 | `CalcitaTemplateDownloadButton` | `root` |
 | `CalcitaTermsAcceptanceDialog` | `content`, `frame`, `footer` |
 | `CalcitaTextInput` | `field` |
+| `CalcitaTimeInput` | `picker` |
 | `CalcitaTopMenu` | `link`, `root` |
 | `CalcitaTransferListInput` | `root`, `list`, `actions` |
 | `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
 | `CalcitaWizardLayout` | `stepper`, `phoneSteps`, `actions` |
-| `CalcitaWordmark` | `root` |
+| `CalcitaWordmark` | `root`, `mode` |
 
 </details>
 
