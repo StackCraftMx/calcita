@@ -64,6 +64,26 @@ export default Object.freeze({
             "all": "Todos",
             "countAriaLabel": "{{count}} registros"
         },
+        "views": {
+            "label": "Cómo ver la lista",
+            "table": "Tabla",
+            "cards": "Tarjetas"
+        },
+        "cards": {
+            "label": "Los registros en tarjetas",
+            "pagination": {
+                "page": "Página {{page}}",
+                "first": "Primera página",
+                "last": "Última página",
+                "next": "Página siguiente",
+                "previous": "Página anterior",
+                "start-ellipsis": "Páginas anteriores",
+                "end-ellipsis": "Páginas siguientes"
+            }
+        },
+        "cells": {
+            "empty": "—"
+        },
         "detail": {
             "tooltip": "Ver detalle",
             "ariaLabel": "Ver el detalle de este registro"

@@ -17,7 +17,7 @@ import {
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
     createHashNavigation,
 } from '@stackcraftmx/calcita';
-import {ServerTable, textColumn} from '@stackcraftmx/calcita/table';
+import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
 import {
     ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard,
@@ -167,6 +167,25 @@ const CASES = [
     ['ServerTable', h(NuqsTestingAdapter, null, h(ServerTable, {
         fetchPage: async () => ({rows: [], total: 0}), queryKey: 'pedidos', columns: [textColumn({field: 'name', label: 'Nombre'})], ariaLabel: 'Pedidos',
     })), ''],
+    // las columnas listas y la vista de tarjetas (la tabla abre en tarjetas: en el servidor, sus esqueletos)
+    ['ServerTable con columnas listas y en tarjetas', h(NuqsTestingAdapter, null, h(ServerTable, {
+        fetchPage: async () => ({rows: [], total: 0}), queryKey: 'clientes', ariaLabel: 'Clientes', defaultView: TABLE_VIEW.cards,
+        fixedColumn: [ACTIONS_COLUMN_FIELD, 'name'],
+        columns: [
+            actionsColumn({label: 'Acciones', actionsOf: () => [{key: 'open', label: 'Abrir', to: '/clientes/1'}]}),
+            stackedColumn({field: 'name', label: 'Empresa', entries: (row) => [row.name, row.rfc], width: 200}),
+            statusColumn({field: 'status', label: 'Estado', dictionary: ORDER_STATUS, t: (key) => key}),
+        ],
+        renderCard: (row) => h(RecordCard, {title: row.name}),
+    })), 'role="list"'],
+    ['TableCardsView con dos tarjetas y su paginación', h(TableCardsView, {
+        rows: [{id: 1, name: 'Acme'}, {id: 2, name: 'Ferretera'}], renderCard: (row) => h(RecordCard, {title: row.name}), rowIdOf: (row) => row.id,
+        isLoading: false, page: 0, pageCount: 3, onPageChange: () => {}, hasActiveFilters: false, onClearFilters: () => {},
+    }), 'Ferretera'],
+    // los datos apilados: el principal, uno vacío que no se pinta, uno con etiqueta y nota, y uno con etiqueta sin valor («—»)
+    ['StackedCell con datos solos, con etiqueta y vacíos', h(StackedCell, {
+        entries: ['Acme', '', {label: 'Régimen', value: 'Moral', note: 'nuevo'}, {label: 'Teléfono', value: null}],
+    }), 'title="—"'],
     // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
     // la tarjeta de un registro con sus grupos, su dato principal y su detalle; y su esqueleto
     ['RecordCard completa', h(RecordCard, {title: 'Ana López', eyebrow: 'P-1203', avatar: 'Ana López', status: 'Pagado', onOpen: () => {},

@@ -449,6 +449,29 @@ const replaceNavigation = browserNavigation048().useNavigate()('/pedidos', {repl
 // @ts-expect-error fixedColumn es un campo o una lista de campos
 const wrongFixed = createElement(ServerTable, {queryKey: 'x', fetchPage: async () => ({rows: [], total: 0}), columns: [], ariaLabel: 'x', fixedColumn: 3});
 
-export {menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+// lo de la 0.49: columnas listas, la vista de tarjetas y su estado
+import {ACTIONS_COLUMN_FIELD, StackedCell, TABLE_VIEW, actionsColumn, stackedColumn, statusColumn, statusColumnWidthOf, useTableView} from '@stackcraftmx/calcita/table';
+import type {StackedEntry} from '@stackcraftmx/calcita/table';
+const readyColumns = [
+    actionsColumn({label: 'Acciones', actionsOf: () => [{key: 'open', label: 'Abrir', to: '/clientes/1'}], labelOf: (row: {name: string}) => `Acciones de ${row.name}`}),
+    stackedColumn({field: 'name', label: 'Empresa', entries: (row: {name: string, rfc: string}) => [row.name, row.rfc], flex: 1}),
+    stackedColumn({field: 'created_at', label: 'Fechas', entries: (row: {created_at: string}, value: string) => [{label: 'Alta', value, note: 'nuevo'}, row.created_at]}),
+    statusColumn({field: 'status', label: 'Estado', dictionary: {}, t: (key: string) => key, variant: 'chip', filter: false}),
+];
+const cardsTable = createElement(ServerTable, {
+    queryKey: 'clientes', fetchPage: async () => ({rows: [], total: 0}), columns: readyColumns, ariaLabel: 'Clientes',
+    fixedColumn: [ACTIONS_COLUMN_FIELD, 'name'], renderCard: (row: {name: string}) => row.name, defaultView: TABLE_VIEW.cards,
+    onViewChange: (nextView: 'table' | 'cards') => nextView === 'cards',
+});
+const statusWidth: number = statusColumnWidthOf(['Estado', 'Registro aprobado']);
+const stackedEntries: StackedEntry[] = ['Acme', {label: 'RFC', value: 'ACM010101AB1'}, null];
+const stackedCell = createElement(StackedCell, {entries: stackedEntries});
+// @ts-expect-error entries es una función del renglón, no la lista
+const wrongStacked = stackedColumn({field: 'name', label: 'Empresa', entries: ['Acme']});
+const viewHook = useTableView;
+// @ts-expect-error la vista es 'table' o 'cards'
+const wrongView049 = createElement(ServerTable, {queryKey: 'x', fetchPage: async () => ({rows: [], total: 0}), columns: [], ariaLabel: 'x', defaultView: 'grid'});
+
+export {readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
