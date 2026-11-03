@@ -36,6 +36,7 @@ const HELP = `Calcita: proyectos y esqueletos con la forma de los ejemplos.
        --module <módulo>                     … o solo de un módulo
   calcita check:texts                        revisa que cada t('llave') exista en todos los idiomas, y que los idiomas tengan
                                              las mismas llaves (lo que si no se descubre en la pantalla)
+       --source <carpeta>                    … con el código en otra carpeta (por omisión src; en Laravel, resources/js)
 
 Opciones:
   -y, --yes                 sin preguntas: lo recomendado, más lo que diga cada opción
@@ -54,6 +55,7 @@ const {values: options, positionals} = parseArgs({
         'yes': {type: 'boolean', short: 'y'},
         'help': {type: 'boolean', short: 'h'},
         'module': {type: 'string'},
+        'source': {type: 'string'},
         'label-es': {type: 'string'},
         'label-en': {type: 'string'},
         ...ANSWER_OPTIONS,
@@ -129,7 +131,7 @@ async function runMakeComponent(componentName) {
 }
 
 async function runCheckTexts() {
-    const {problems, checkedKeys, textFiles, languages, sourceFolder} = await checkTexts({projectRoot: cwd()});
+    const {problems, checkedKeys, textFiles, languages, sourceFolder} = await checkTexts({projectRoot: cwd(), sourceFolder: options.source});
     stdout.write(`Revisé ${checkedKeys} llaves escritas en el código de ${sourceFolder}/ contra ${textFiles.length} archivos de textos (${languages.join(', ') || 'sin idiomas'}).\n`);
     if (problems.length === 0) {
         stdout.write('Todo en su lugar.\n');
