@@ -831,8 +831,23 @@ export const catalogPageTexts = {
                         theme: 'Sus partes en el tema: paper, header, body, footer.',
                     },
                 },
+                readyColumns: {
+                    title: '4. Columnas listas y la vista de tarjetas',
+                    description: 'Lo que pide casi toda lista de administración: los datos que van juntos en una columna, uno debajo del otro (solos si el encabezado dice qué son, o con su etiqueta), el estatus con el ancho de su etiqueta más larga, el «⋯» de cada renglón fijo al deslizar y la misma lista en tarjetas, con la misma búsqueda, filtros y páginas. Pruebe el botón de la derecha y deslice la tabla en el teléfono.',
+                    extend: {
+                        stacked: 'Los datos que hagan falta en una celda, uno debajo del otro: el principal en negritas y los demás en gris; los renglones toman su alto solos.',
+                        stackedLabels: 'Cada dato con su etiqueta arriba y una nota corta, cuando el encabezado nombra al grupo; lo que falta enseña «—» (o el texto que usted ponga).',
+                        status: 'El estatus desde su diccionario; con t mide su etiqueta más larga en el idioma de la pantalla.',
+                        actions: 'El «⋯» de cada renglón en su columna, de ancho fijo, con las acciones del renglón.',
+                        fixed: 'Las columnas que se quedan al deslizar: el «⋯» y la empresa, una tras otra.',
+                        cards: 'Cómo se pinta cada renglón en tarjeta (normalmente RecordCard).',
+                        view: 'Con qué vista abre, quién la decide y si se ve el botón; con prefix va en la dirección.',
+                        skeleton: 'El esqueleto de una tarjeta mientras llega la primera página.',
+                        theme: 'Las partes en el tema: la lista de tarjetas (en dos columnas, por ejemplo), el botón y la celda de datos apilados.',
+                    },
+                },
                 api: {
-                    title: '4. Conectarla a su API',
+                    title: '5. Conectarla a su API',
                     description: 'La tabla le dice qué página, qué filtros y qué orden quiere; usted lo manda a su API y regresa los renglones con el total. toServerTableParams lo convierte a lo que espera un backend como el de Laravel (la página desde 1, los filtros vacíos no viajan).',
                     extend: {
                         fetchPage: 'Cómo pedir una página. Recibe lo que pide la tabla y una señal que cancela la consulta anterior si la persona sigue escribiendo.',
@@ -2920,8 +2935,23 @@ export const catalogPageTexts = {
                         theme: 'Its parts in the theme: paper, header, body, footer.',
                     },
                 },
+                readyColumns: {
+                    title: '4. Ready columns and the cards view',
+                    description: 'What almost every admin list asks for: the values that go together in one column, one below the other (alone if the header says what they are, or with their label), the status with the width of its longest label, each row «⋯» fixed while scrolling and the same list as cards, with the same search, filters and pages. Try the button on the right and scroll the table on a phone.',
+                    extend: {
+                        stacked: 'As many values as needed in one cell, one below the other: the main one in bold and the rest in gray; rows take their own height.',
+                        stackedLabels: 'Each value with its label above and a short note, when the header names the group; what is missing shows «—» (or the text you set).',
+                        status: 'The status from its dictionary; with t it measures its longest label in the screen language.',
+                        actions: 'Each row «⋯» in its own column, fixed width, with the row actions.',
+                        fixed: 'The columns that stay while scrolling: the «⋯» and the company, one after the other.',
+                        cards: 'How each row is painted as a card (usually RecordCard).',
+                        view: 'Which view it opens with, who decides it and whether the button shows; with prefix it goes in the address.',
+                        skeleton: 'A card skeleton while the first page arrives.',
+                        theme: 'The parts in the theme: the card list (in two columns, for example), the button and the stacked cell.',
+                    },
+                },
                 api: {
-                    title: '4. Connect it to your API',
+                    title: '5. Connect it to your API',
                     description: 'The table tells you which page, filters and order it wants; you send it to your API and return the rows with the total. toServerTableParams converts it to what a backend like Laravel expects (page from 1, empty filters do not travel).',
                     extend: {
                         fetchPage: 'How to request a page. It receives what the table asks for and a signal that cancels the previous request if the person keeps typing.',
