@@ -64,6 +64,26 @@ export default Object.freeze({
             "all": "All",
             "countAriaLabel": "{{count}} records"
         },
+        "views": {
+            "label": "How to see the list",
+            "table": "Table",
+            "cards": "Cards"
+        },
+        "cards": {
+            "label": "The records as cards",
+            "pagination": {
+                "page": "Page {{page}}",
+                "first": "First page",
+                "last": "Last page",
+                "next": "Next page",
+                "previous": "Previous page",
+                "start-ellipsis": "Earlier pages",
+                "end-ellipsis": "Later pages"
+            }
+        },
+        "cells": {
+            "empty": "—"
+        },
         "detail": {
             "tooltip": "View details",
             "ariaLabel": "View the details of this record"

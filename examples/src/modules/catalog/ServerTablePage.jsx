@@ -9,6 +9,7 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import FilterDrawerDemo from '@/modules/catalog/demos/table/FilterDrawerDemo.tsx';
+import ReadyColumnsDemo from '@/modules/catalog/demos/table/ReadyColumnsDemo.tsx';
 import OrdersSelectionDemo from '@/modules/catalog/demos/table/OrdersSelectionDemo.tsx';
 import OrdersTableDemo from '@/modules/catalog/demos/table/OrdersTableDemo.tsx';
 
@@ -16,6 +17,7 @@ const loadDemo = () => import('@/modules/catalog/demos/table/OrdersTableDemo.tsx
 const loadSelection = () => import('@/modules/catalog/demos/table/OrdersSelectionDemo.tsx?demo-source');
 const loadApi = () => import('@/modules/catalog/demos/table/OrdersTableApi.ts?demo-source');
 const loadFilterDrawer = () => import('@/modules/catalog/demos/table/FilterDrawerDemo.tsx?demo-source');
+const loadReadyColumns = () => import('@/modules/catalog/demos/table/ReadyColumnsDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (serverTable.<sección>.extend.<id>)
@@ -82,6 +84,18 @@ const FILTER_DRAWER_EXTENSIONS = [
     {id: 'theme', option: 'theme.components.CalcitaFilterDrawer', example: 'components: {CalcitaFilterDrawer: {defaultProps: {anchor: \'left\'}}}'},
 ];
 
+const READY_COLUMNS_EXTENSIONS = [
+    {id: 'stacked', option: 'stackedColumn({entries})', example: "stackedColumn({field: 'business_name', label: 'Empresa', entries: (row) => [row.business_name, row.rfc]})"},
+    {id: 'stackedLabels', option: "{label, value, note} · texts.cells.empty", example: "entries: (row) => [{label: 'Alta', value: formatDate(row.created_at)}, {label: 'Último cambio', value: formatDate(row.updated_at)}]"},
+    {id: 'status', option: 'statusColumn({dictionary, t, variant, filter})', example: "statusColumn({field: 'status', label: 'Estado', dictionary: STATUS, t})  // el ancho, medido"},
+    {id: 'actions', option: 'actionsColumn({label, actionsOf, labelOf})', example: "actionsColumn({label: 'Acciones', actionsOf: (row) => [{key: 'open', label: 'Abrir', to: `/clientes/${row.id}`}]})"},
+    {id: 'fixed', option: 'fixedColumn={[ACTIONS_COLUMN_FIELD, …]}', example: "fixedColumn={[ACTIONS_COLUMN_FIELD, 'business_name']}"},
+    {id: 'cards', option: 'renderCard(row, {index})', example: 'renderCard={(row) => <RecordCard title={row.business_name} … />}'},
+    {id: 'view', option: 'view · defaultView · onViewChange · showViewToggle', example: "defaultView={TABLE_VIEW.cards}  // con prefix va en la dirección: ?clientes_view=cards"},
+    {id: 'skeleton', option: 'cardSkeleton', example: '<RecordCardSkeleton groups={2} withHighlight={false} />'},
+    {id: 'theme', option: 'CalcitaServerTable: cards · viewToggle · CalcitaStackedCell', example: "components: {CalcitaServerTable: {styleOverrides: {cards: {gridTemplateColumns: 'repeat(2, 1fr)'}}}}"},
+];
+
 export const ServerTablePage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `serverTable.${section}`, extensions);
@@ -95,6 +109,8 @@ export const ServerTablePage = () => {
                          extensions={rowsOf('selection', SELECTION_EXTENSIONS)} Demo={OrdersSelectionDemo} loadSource={loadSelection} />
             <DemoSection title={t('serverTable.filterDrawer.title')} description={t('serverTable.filterDrawer.description')}
                          extensions={rowsOf('filterDrawer', FILTER_DRAWER_EXTENSIONS)} Demo={FilterDrawerDemo} loadSource={loadFilterDrawer} />
+            <DemoSection title={t('serverTable.readyColumns.title')} description={t('serverTable.readyColumns.description')}
+                         extensions={rowsOf('readyColumns', READY_COLUMNS_EXTENSIONS)} Demo={ReadyColumnsDemo} loadSource={loadReadyColumns} />
             <CodeSection title={t('serverTable.api.title')} description={t('serverTable.api.description')}
                          extensions={rowsOf('api', API_EXTENSIONS)} loadSource={loadApi} />
         </Stack>

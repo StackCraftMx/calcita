@@ -49,6 +49,9 @@ import {
 } from '@/DataTable/rowSelection.js';
 import {buildTableActors, tableMachine} from '@/DataTable/tableMachine.js';
 import {fixedColumnOffsetsOf, fixedFieldsOf} from '@/DataTable/fixedColumns.js';
+import TableCardsView, {TableViewToggle} from '@/DataTable/TableCardsView.jsx';
+import {COLUMN_STACKED_KEY} from '@/DataTable/columns.jsx';
+import {TABLE_VIEW, useTableView} from '@/DataTable/useTableView.js';
 import {createLogger} from '@/observability/logger.js';
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
 import {FILTER_KINDS, isFilterActive, useTableState} from '@/DataTable/useTableState.js';
@@ -349,6 +352,14 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {object} [props.gridProps] lo demás del DataGrid de MUI, sobre todo sus eventos (onRowClick, onRowDoubleClick,
  *     onCellKeyDown…). OJO: lo que la tabla controla (paginar, ordenar y filtrar en el servidor, el alto, la selección) no se
  *     reemplaza desde aquí: para eso están sus props
+ * @param {(row: any, helpers: {index: number}) => import('react').ReactNode} [props.renderCard] con ella la lista también se ve en
+ *     tarjetas (una por renglón, normalmente RecordCard), con la misma búsqueda, filtros, orden y página: un botón cambia de
+ *     vista. Con `prefix` la vista va en la dirección (?<prefix>_view=cards, reemplazando el historial)
+ * @param {'table'|'cards'} [props.view] la vista que decide la pantalla (TABLE_VIEW); sin ella la lleva la tabla
+ * @param {'table'|'cards'} [props.defaultView] con qué vista abre (por omisión la tabla)
+ * @param {(view: 'table'|'cards') => void} [props.onViewChange] avisa cuando se cambia de vista
+ * @param {boolean} [props.showViewToggle] el botón de tabla o tarjetas (por omisión, si hay renderCard)
+ * @param {import('react').ReactNode} [props.cardSkeleton] el esqueleto de una tarjeta mientras llega la primera página
  * @param {object} [props.texts] los textos de la tabla que cambian, con la forma de `table` en los textos del paquete
  *     (src/locales/es.js), ya en el idioma de la pantalla: {selection: {clear: 'Deseleccionar'}, empty: {filtered: '…'}}.
  *     También les llegan a sus filtros de columna, sus chips y su barra de elegidos
@@ -399,6 +410,12 @@ export default function ServerTable(props) {
     onLoaded,
     onLoadError,
     gridProps,
+    renderCard,
+    view,
+    defaultView,
+    onViewChange,
+    showViewToggle,
+    cardSkeleton,
     texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
@@ -408,6 +425,13 @@ export default function ServerTable(props) {
     const theme = useTheme();
     const tableState = useTableState({prefix, filterDefaults, filterKinds, defaultPageSize});
     const {filters, sortOrders, page, pageSize} = tableState;
+    // tabla o tarjetas: las dos con el mismo estado (búsqueda, filtros, orden, página); las tarjetas solo si hay renderCard
+    const tableView = useTableView({prefix, view, defaultView, onViewChange});
+    const showsCards = Boolean(renderCard) && tableView.view === TABLE_VIEW.cards;
+    const showsViewToggle = Boolean(renderCard) && (showViewToggle ?? true);
+    // una columna de datos apilados (stackedColumn) pone los renglones a su alto, salvo que la pantalla diga el suyo
+    const rowHeightOf = getRowHeight
+        ?? (columns.some((column) => column[COLUMN_STACKED_KEY]) ? () => AUTO_ROW_HEIGHT : undefined);
 
     // la caja de búsqueda rebota: se escribe sin latencia y al servidor va una consulta cuando se deja de teclear
     const [searchDraft, setSearchDraft] = useDebouncedFilter(
@@ -567,7 +591,7 @@ export default function ServerTable(props) {
     let hasAutoHeightRows = false;
     for (const row of visibleRows) {
         const rowParams = {id: getRowId ? getRowId(row) : row.id, model: row, densityFactor: COMPACT_DENSITY_FACTOR};
-        const requestedRowHeight = getRowHeight?.(rowParams);
+        const requestedRowHeight = rowHeightOf?.(rowParams);
         if (requestedRowHeight === AUTO_ROW_HEIGHT) {
             hasAutoHeightRows = true;
             const estimatedRowHeight = gridProps?.getEstimatedRowHeight?.(rowParams);
@@ -644,6 +668,7 @@ export default function ServerTable(props) {
                     </TableCount>
                 )}
                 </TableSummary>
+                {showsViewToggle && <TableViewToggle view={tableView.view} onChange={tableView.setView} />}
             </TableToolbar>
 
             {beforeQuickFilters}
@@ -690,8 +715,16 @@ export default function ServerTable(props) {
                 </TableError>
             )}
 
+            {showsCards && (
+                <TableCardsView rows={visibleRows} renderCard={renderCard} rowIdOf={(row) => (getRowId ? getRowId(row) : row.id)}
+                                isLoading={isLoading} page={page} pageCount={Math.ceil(total / pageSize) || 1} onPageChange={tableState.setPage}
+                                hasActiveFilters={hasActiveFilters} emptyLabel={emptyLabel} onClearFilters={tableState.clearAll}
+                                skeleton={cardSkeleton} ariaLabel={ariaLabel} />
+            )}
+
             {/* minWidth 0: dentro de un flex o grid el DataGrid no empuja la página; en el teléfono la tabla se desliza
                 de lado DENTRO de su tarjeta y la página no */}
+            {!showsCards && (
             <TableCard variant="outlined" ownSx={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
                 <TableGrid
                     // primero lo de la pantalla (sus eventos); lo de abajo es lo que la tabla controla y le gana
@@ -704,7 +737,7 @@ export default function ServerTable(props) {
                         getRowClassName?.(params),
                         striped && params.indexRelativeToCurrentPage % 2 === 1 ? STRIPED_ROW_CLASS : '',
                     ].filter(Boolean).join(' ')}
-                    getRowHeight={getRowHeight}
+                    getRowHeight={rowHeightOf}
                     aria-label={ariaLabel}
                     nonce={readCspNonce()}
                     loading={isLoading}
@@ -784,6 +817,7 @@ export default function ServerTable(props) {
                     autoHeight={measuresItself}
                 />
             </TableCard>
+            )}
 
             {footer?.({total, capped})}
         </TableFilterContext>

@@ -11,6 +11,11 @@ export const coreTexts = {
                 delivered: {label: 'Entregado', tooltip: 'El cliente ya lo recibió.'},
                 canceled: {label: 'Cancelado', tooltip: 'No se envió: lo cancelaron antes de salir del almacén.'},
             },
+            registrationStatus: {
+                approved: {label: 'Registro aprobado', tooltip: 'Ya puede operar.'},
+                documenting: {label: 'Registrado, pendiente de documentar', tooltip: 'Falta que suba sus documentos.'},
+                rejected: {label: 'Rechazado', tooltip: 'Sus documentos no pasaron la revisión.'},
+            },
         },
         validation: {
             fields: {
@@ -26,6 +31,11 @@ export const coreTexts = {
                 shipped: {label: 'On its way', tooltip: 'It left the warehouse and is with the carrier.'},
                 delivered: {label: 'Delivered', tooltip: 'The customer received it.'},
                 canceled: {label: 'Canceled', tooltip: 'Not shipped: it was canceled before leaving the warehouse.'},
+            },
+            registrationStatus: {
+                approved: {label: 'Registration approved', tooltip: 'It can operate now.'},
+                documenting: {label: 'Registered, documents pending', tooltip: 'It still has to upload its documents.'},
+                rejected: {label: 'Rejected', tooltip: 'Its documents did not pass the review.'},
             },
         },
         validation: {

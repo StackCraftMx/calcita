@@ -13,9 +13,23 @@ import Tooltip from '@mui/material/Tooltip';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import {MultiSelectColumnFilter, SortableFilterHeader, TextColumnFilter} from '@/DataTable/ColumnFilters';
+import {statusColumnWidthOf} from '@/DataTable/columnWidths.js';
+import StackedCell from '@/DataTable/StackedCell.jsx';
 import {useTableFilter} from '@/DataTable/filterContext.js';
 import {FILTER_KINDS, isFilterActive} from '@/DataTable/useTableState.js';
+import {labelOf, lookup} from '@/dictionaries/dictionaries.js';
+import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
+import DictionaryText from '@/ui/labels/DictionaryText.jsx';
+import StatusChip from '@/ui/labels/StatusChip.jsx';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+
+/** El campo de las columnas de la casa que no son datos: para nombrarlas en fixedColumn ({fixedColumn: [ACTIONS_COLUMN_FIELD, …]}). */
+export const DETAIL_COLUMN_FIELD = '__detail';
+export const ACTIONS_COLUMN_FIELD = '__actions';
+// el ancho de la columna del «⋯»: el botón de 34 px y su respiro
+const ACTIONS_COLUMN_WIDTH = 56;
+// la marca que deja una columna de datos apilados: con ella la tabla pone los renglones a su alto (ServerTable)
+export const COLUMN_STACKED_KEY = 'calcitaStacked';
 
 /** Cuántos valores tiene puestos esta columna (lo que muestra el badge). */
 function activeCountOf(kind, value) {
@@ -133,7 +147,7 @@ export function detailColumn({onOpen, ariaLabelOf, ...unknownOptions}) {
     // un nombre que no existe (label, tooltip) se perdía sin decir nada: se avisa mientras se programa
     warnUnknownProps('detailColumn', unknownOptions);
     return {
-        field: '__detail',
+        field: DETAIL_COLUMN_FIELD,
         headerName: '',
         sortable: false,
         filterable: false,
@@ -141,5 +155,79 @@ export function detailColumn({onOpen, ariaLabelOf, ...unknownOptions}) {
         width: 64,
         align: 'center',
         renderCell: ({row}) => <DetailCell row={row} onOpen={onOpen} ariaLabelOf={ariaLabelOf} />,
+    };
+}
+
+/**
+ * Columna de datos apilados: los que se leen de corrido en un solo lugar, uno debajo del otro, los que hagan falta (la
+ * empresa, su RFC y su régimen; el contacto, su correo y su teléfono). El primero es el principal (en negritas) y los demás
+ * van en gris. Cada dato va solo, si el encabezado ya dice qué son, o con su etiqueta arriba ({label, value}) si el
+ * encabezado nombra al grupo. Con orden y filtro en el servidor como textColumn, por el campo de la columna. La tabla pone
+ * los renglones a su alto sola.
+ *
+ *   stackedColumn({field: 'business_name', label: 'Empresa', entries: (row) => [row.business_name, row.rfc, row.regime]})
+ *   stackedColumn({field: 'created_at', label: 'Fechas', entries: (row) => [
+ *       {label: 'Alta', value: formatDate(row.created_at)},
+ *       {label: 'Último cambio', value: formatDate(row.updated_at)},
+ *   ]})
+ *
+ * @param {{field: string, label: string, entries: (row: any, value: any) => import('@/DataTable/StackedCell.jsx').StackedEntry[], sort?: boolean, filter?: boolean} & GridColumnProps} columnDeclaration
+ *     entries: los datos de cada renglón en orden; `value` es el de la columna ya con su valueFormatter. Un dato vacío
+ *     no se pinta (salvo el principal o uno con etiqueta: enseñan «—»)
+ */
+export function stackedColumn({field, label, entries, sort = true, filter = true, ...gridColumnProps}) {
+    return {
+        ...textColumn({field, label, sort, filter, ...gridColumnProps}),
+        [COLUMN_STACKED_KEY]: true,
+        renderCell: (params) => <StackedCell entries={entries(params.row, params.formattedValue ?? params.value)} />,
+    };
+}
+
+/**
+ * Columna de estatus desde un diccionario: el estatus con su color y su explicación (StatusChip), filtro con las facetas del
+ * servidor (como facetColumn) y un ancho que alcanza para la etiqueta más larga del diccionario. Con `t` el ancho se mide
+ * con las etiquetas en el idioma de la pantalla (sin él, 160 px o el `width` que se le dé).
+ *
+ *   statusColumn({field: 'status', label: 'Estado', dictionary: ORDER_STATUS, t})
+ *
+ * @param {{field: string, label: string, dictionary: Record<string, object>, t?: (key: string) => string, short?: boolean, variant?: 'dot'|'chip', sort?: boolean, filter?: boolean, facetKey?: string} & GridColumnProps} columnDeclaration
+ *     filter false: sin filtro en el encabezado (cuando el servidor no da facetas de este campo)
+ */
+export function statusColumn({field, label, dictionary, t, short = false, variant = 'dot', sort = true, filter = true, facetKey, ...gridColumnProps}) {
+    const labels = t ? Object.keys(dictionary).map((value) => labelOf(lookup(dictionary, value), t)) : [];
+    const width = gridColumnProps.width ?? (labels.length > 0 ? statusColumnWidthOf([label, ...labels], {variant}) : 160);
+    const renderOption = (value) => <DictionaryText dictionary={dictionary} value={value} />;
+    const base = filter
+        ? facetColumn({field, label, facetKey, renderOption, sort, ...gridColumnProps, width})
+        : textColumn({field, label, sort, filter: false, ...gridColumnProps, width});
+    return {
+        ...base,
+        renderCell: ({row}) => <StatusChip dictionary={dictionary} value={row[field]} short={short} variant={variant} />,
+    };
+}
+
+/**
+ * Columna con el menú «⋯» de cada renglón (ActionsMenu): las acciones van en su columna con un ícono, no con clic en toda
+ * la fila. Va de un ancho fijo, así se puede dejar pegada al deslizar: fixedColumn={[ACTIONS_COLUMN_FIELD, 'company']}.
+ *
+ *   actionsColumn({label: 'Acciones del cliente', actionsOf: (row) => [{key: 'open', label: 'Abrir', to: `/clientes/${row.id}`}]})
+ *
+ * @param {object} declaration
+ * @param {string} declaration.label el nombre del botón (lector de pantalla y su globo), ya traducido
+ * @param {(row: any) => Array<object>} declaration.actionsOf las acciones de ese renglón, con la forma de ActionsMenu
+ * @param {(row: any) => string} [declaration.labelOf] el nombre del botón por renglón («Acciones de Acme»)
+ * @param {number} [declaration.width] por omisión 56
+ */
+export function actionsColumn({label, actionsOf, labelOf: labelOfRow, width = ACTIONS_COLUMN_WIDTH, ...unknownOptions}) {
+    warnUnknownProps('actionsColumn', unknownOptions);
+    return {
+        field: ACTIONS_COLUMN_FIELD,
+        headerName: '',
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        width,
+        align: 'center',
+        renderCell: ({row}) => <ActionsMenu label={labelOfRow?.(row) ?? label} actions={actionsOf(row)} />,
     };
 }
