@@ -310,6 +310,11 @@ tema del proyecto y al final el `sx` que pase la pantalla. Los números se leen 
 Sirve con `createToolkitTheme` y con cualquier tema de MUI (el que ya tenía un sistema, tal cual): así un sistema puede
 dejar Calcita con su propia cara, parte por parte.
 
+El `sx` de la pantalla se **combina regla por regla** con el de la pieza, no la reemplaza: en la tabla,
+`gridSx={{'& .MuiDataGrid-cell': {alignItems: 'flex-start'}}}` cambia solo la alineación y la celda conserva lo demás.
+Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (una lista de sx, como pide MUI; nunca
+`{p: 2, ...sx}`, que pierde la llave entera cuando las dos traen la misma).
+
 <details>
 <summary>Las piezas, con su nombre en el tema y sus partes</summary>
 
