@@ -1606,6 +1606,18 @@ export const catalogPageTexts = {
                         theme: 'Sus partes en el tema: media, content, dots, actions.',
                     },
                 },
+                pathIndex: {
+                    title: '7. Direcciones con nombre y lo que se arma solo',
+                    description: 'Cada módulo publica sus direcciones en su archivo y un índice las junta: una pantalla lleva a la de otro módulo pidiéndola por nombre, sin importarlo. Lo que pide la ruta se sustituye, lo que sobra va como consulta y un nombre que no existe truena diciendo qué sí hay. Lo mismo para las direcciones del API, y para los textos de cada módulo.',
+                    extend: {
+                        index: 'El índice, armado con lo que da el glob de Vite: módulo nuevo, sus direcciones aparecen solas.',
+                        parts: 'La dirección con sus partes; lo que sobra se va como consulta (una pestaña, un filtro).',
+                        api: 'Las direcciones del API de cada módulo (uris.js), con el mismo índice.',
+                        fill: 'Ponerle sus partes a una ruta suelta.',
+                        base: 'El prefijo con que el servidor sirvió la página (<base href>): una compilación para cualquier prefijo.',
+                        texts: 'Los textos de cada módulo juntos por idioma; un texto repetido entre módulos truena.',
+                    },
+                },
             },
             themeAndGlass: {
                 title: 'Tema y vidrio',
@@ -3708,6 +3720,18 @@ export const catalogPageTexts = {
                         button: 'The «?» button to open it again, in the screen header.',
                         options: 'A title on top, without the checkbox, a notice per step and the starting step.',
                         theme: 'Its parts in the theme: media, content, dots, actions.',
+                    },
+                },
+                pathIndex: {
+                    title: '7. Named paths and what builds itself',
+                    description: 'Each module publishes its paths in its own file and an index joins them: a screen links to another module asking by name, without importing it. What the route asks for is filled in, what is left goes as a query and a name that does not exist throws saying what does. The same for API paths, and for each module texts.',
+                    extend: {
+                        index: 'The index, built from what the Vite glob gives: a new module, its paths show up by themselves.',
+                        parts: 'The path with its parts; what is left goes as a query (a tab, a filter).',
+                        api: 'Each module API paths (uris.js), with the same index.',
+                        fill: 'Fill the parts of a loose route.',
+                        base: 'The prefix the server used to serve the page (<base href>): one build for any prefix.',
+                        texts: 'Each module texts joined by language; a text repeated between modules throws.',
                     },
                 },
             },
