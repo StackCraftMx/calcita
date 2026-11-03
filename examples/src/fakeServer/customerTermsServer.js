@@ -99,7 +99,10 @@ function fieldErrorsOf(terms) {
         if (previous && Number(row.min_amount) <= Number(previous.min_amount)) {
             add(`volume_discounts.${index}.min_amount`, serverTextOf('customerTerms.discountsOrder'));
         }
-        if (previous && Number(row.discount_percent) <= Number(previous.discount_percent)) {
+        const percent = Number(row.discount_percent);
+        if (!Number.isFinite(percent) || percent < 0 || percent > 100) {
+            add(`volume_discounts.${index}.discount_percent`, serverTextOf('customerTerms.discountRange'));
+        } else if (previous && percent <= Number(previous.discount_percent)) {
             add(`volume_discounts.${index}.discount_percent`, serverTextOf('customerTerms.discountsOrder'));
         }
     });

@@ -83,6 +83,9 @@ export const CreditRequestPage = () => {
                     <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
                     <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
                                      placeholder="032 180 00011835971 9" autoComplete="off" />
+                    {/* el mensaje de «no coincide» es de esta pantalla: messages lo pone sin tocar la regla del esquema */}
+                    <FormMaskedField name="deposit_clabe_confirmation" mask={INPUT_MASK.clabe} label={t('credit.depositClabeConfirmation')}
+                                     messages={{sameAs: t('credit.depositClabeMismatch')}} autoComplete="off" />
                 </FormSection>
             ),
         },

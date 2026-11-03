@@ -62,7 +62,8 @@ export const ordersTexts = {
                     contact: 'Contactar al cliente',
                     email: 'Mandar un correo',
                 },
-                pagination: {page: 'Página {{page}}', first: 'Primera página', last: 'Última página', next: 'Página siguiente', previous: 'Página anterior'},
+                pagination: {page: 'Página {{page}}', first: 'Primera página', last: 'Última página', next: 'Página siguiente', previous: 'Página anterior',
+                    'start-ellipsis': 'Páginas anteriores', 'end-ellipsis': 'Páginas siguientes'},
             },
             drawer: {
                 status: 'Estado',
@@ -226,7 +227,8 @@ export const ordersTexts = {
                     contact: 'Contact the customer',
                     email: 'Send an email',
                 },
-                pagination: {page: 'Page {{page}}', first: 'First page', last: 'Last page', next: 'Next page', previous: 'Previous page'},
+                pagination: {page: 'Page {{page}}', first: 'First page', last: 'Last page', next: 'Next page', previous: 'Previous page',
+                    'start-ellipsis': 'Earlier pages', 'end-ellipsis': 'Later pages'},
             },
             drawer: {
                 status: 'Status',

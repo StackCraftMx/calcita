@@ -97,7 +97,8 @@ export const OrdersCards = () => {
                         // el menú «⋯» con secciones y submenús (se abren dentro del mismo menú, con «Regresar»)
                         actions={[
                             {type: ACTIONS_MENU_ROW.section, key: 'orderSection', label: t('cards.menu.order')},
-                            {key: 'open', label: t('cards.open'), icon: <OpenInNewRoundedIcon fontSize="small" />, onClick: () => navigate(orderDetailPathOf(order.id))},
+                            // una pantalla de la app con `to`: el clic normal navega sin recargar y Cmd/Ctrl+clic la abre en otra pestaña
+                            {key: 'open', label: t('cards.open'), icon: <OpenInNewRoundedIcon fontSize="small" />, to: orderDetailPathOf(order.id)},
                             {key: 'copy', label: t('cards.copyNumber'), icon: <ContentCopyRoundedIcon fontSize="small" />, onClick: () => copyNumber(order)},
                             {type: ACTIONS_MENU_ROW.divider, key: 'divider'},
                             {key: 'documents', label: t('cards.menu.documents'), icon: <DescriptionOutlinedIcon fontSize="small" />, children: [

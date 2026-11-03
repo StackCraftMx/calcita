@@ -135,6 +135,8 @@ export const customersTexts = {
                 guarantorPhone: 'Teléfono del aval',
                 depositClabe: 'CLABE para el depósito',
                 depositClabeHelp: 'Los 18 dígitos de la cuenta donde se deposita el crédito.',
+                depositClabeConfirmation: 'Confirme la CLABE',
+                depositClabeMismatch: 'No es la misma CLABE de arriba: revise cada dígito.',
                 documents: {
                     identification: 'Identificación oficial',
                     addressProof: 'Comprobante de domicilio',
@@ -299,6 +301,8 @@ export const customersTexts = {
                 guarantorPhone: 'Guarantor phone',
                 depositClabe: 'CLABE for the deposit',
                 depositClabeHelp: 'The 18 digits of the account where the credit is deposited.',
+                depositClabeConfirmation: 'Confirm the CLABE',
+                depositClabeMismatch: 'It is not the same CLABE as above: check every digit.',
                 documents: {
                     identification: 'Official ID',
                     addressProof: 'Proof of address',

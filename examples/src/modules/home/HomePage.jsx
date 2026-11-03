@@ -10,7 +10,8 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import {PageHeader, SectionCard, menuItemDescriptionOf, menuItemLabelOf, useAppMenu, useToolkitTranslation} from '@stackcraftmx/calcita';
+import Box from '@mui/material/Box';
+import {MarkedText, PageHeader, SectionCard, menuItemDescriptionOf, menuItemLabelOf, useAppMenu, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 import {APP_PATHS} from '@/core';
 
@@ -22,7 +23,9 @@ export const HomePage = () => {
 
     return (
         <>
-            <PageHeader eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+            {/* el subtítulo trae una palabra resaltada en su misma llave (<highlight>…</highlight>): MarkedText la pinta */}
+            <PageHeader eyebrow={t('eyebrow')} title={t('title')}
+                        subtitle={<MarkedText text={t('subtitle')} marks={{highlight: <Box component="strong" sx={{color: 'primary.main'}} />}} />} />
             <Alert severity="info" sx={{mb: 3}}>{t('toggleHint')}</Alert>
             <Grid container spacing={2}>
                 {examples.map((menuItem) => (
