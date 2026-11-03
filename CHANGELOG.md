@@ -4,6 +4,18 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.51.1] - 2026-11-03
+
+### Arreglado
+
+- `calcita check:texts` daba verde sin haber revisado nada: en un proyecto con el código fuera de `src/` contestaba «Revisé
+  0 llaves… Todo en su lugar». Ahora sin la carpeta del código o sin ningún archivo de textos sale con problema.
+- `calcita check:texts` no leía un archivo de textos que reexporta otro con `@/` (node no conoce el alias) y todas sus llaves
+  salían como faltantes: ahora `@/` apunta a la carpeta del código, como en Vite (Node 22.15 o más). Si aun así un archivo
+  no se lee, se dice cuál y no se comparan llaves (la lista saldría falsa). Lo reexportado por otro archivo de textos cuenta
+  una vez y no como repetido.
+- Tipos: `BackButton` y `BarActionButton` declaran `sx` (ya lo pasaban a su botón; el editor lo marcaba como de más).
+
 ## [0.51.0] - 2026-11-03
 
 ### Agregado
