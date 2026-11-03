@@ -2,11 +2,12 @@
 // estatus, sus insignias y sus acciones; en medio sus datos en grupos y el dato principal grande; abajo lo que va a todo lo
 // ancho y «Ver detalle», que despliega más. El orden es el que se da: nada se reacomoda solo. Mientras llega la lista,
 // su esqueleto con la misma forma.
+import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
-import {Countdown, IconBadge, RecordCard, RecordCardSkeleton, Tag, toastSuccess} from '@stackcraftmx/calcita';
+import {Countdown, IconBadge, RECORD_CARD_FOOTER_ALIGN, RecordCard, RecordCardSkeleton, Tag, toastSuccess} from '@stackcraftmx/calcita';
 
 // ─── Un registro de mentira (en su proyecto llega del API) ───
 const inHours = (hours: number) => new Date(Date.now() + hours * 3_600_000).toISOString();
@@ -65,7 +66,13 @@ const RecordCards = () => (
             trailing={<Tag label="Entregado" color="success" />}
             actions={[{key: 'copy', label: 'Copiar el folio', icon: <ContentCopyRoundedIcon fontSize="small" />, onClick: () => toastSuccess('Se copió PM-0318')}]}
         />
-        {/* 4. Mientras llega la lista */}
+        {/* 4. Dos controles abajo, juntos a la derecha: en una tarjeta ancha, en orillas opuestas se ven sueltos */}
+        <RecordCard eyebrow="SOL-0040" title="Mueblería Hidalgo" status={<Tag label="Por firmar" color="info" />}
+                    groups={[{facts: [{label: 'Solicitado', value: '$120,000.00'}, {label: 'Plazo', value: '24 meses'}]}]}
+                    footer={<Button size="small" variant="contained" onClick={() => toastSuccess('Mandar a firmar')}>Mandar a firmar</Button>}
+                    footerAlign={RECORD_CARD_FOOTER_ALIGN.end}
+                    details={<Typography variant="body2">Firma pendiente del representante legal.</Typography>} />
+        {/* 5. Mientras llega la lista */}
         <RecordCardSkeleton groups={2} />
     </Stack>
 );
