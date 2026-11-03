@@ -8,12 +8,17 @@
 // Para esas está el aviso de Calcita en la consola (onMissingText de ToolkitProvider).
 //
 // Lee los archivos de textos del proyecto (src/**/*Texts.js y src/**/texts.js: cada uno exporta {es: {...}, en: {...}}) con
-// node, así que no deben importar otros archivos; el que los junta (con import.meta.glob) se salta. Los namespaces de Calcita
-// (common, table, validation…) salen de su dist/.
+// node; el que los junta (con import.meta.glob) se salta. Si uno importa otro archivo, puede ser con ruta relativa o con el
+// alias @/, que aquí apunta a la carpeta del código, como en vite.config.js (trampa pagada: un texts.js que reexportaba con
+// @/ no se leía y sus 400 llaves salían como faltantes). Los namespaces de Calcita (common, table, validation…) salen de su dist/.
+//
+// Un verde falso es peor que un rojo: sin la carpeta, sin ningún archivo de textos o con uno que no se pudo leer, la revisión
+// sale con problema y no compara llaves (con un archivo sin leer, todas las suyas saldrían como faltantes).
 //
 // Solo node, sin dependencias (el CLI corre antes de que el proyecto tenga nada instalado): function (regla de la casa).
 // Pruebas en checkTexts.test.js.
-import {readdir, readFile} from 'node:fs/promises';
+import {readdir, readFile, stat} from 'node:fs/promises';
+import * as nodeModule from 'node:module';
 import {join, relative} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
@@ -26,6 +31,30 @@ const NAMESPACE_CALL = /useToolkitTranslation\(\s*\[?\s*(['"])([\w-]+)\1/g;
 // una llave escrita tal cual: t('list.title') o t("common:actions.save"); con lo que sigue, para ver si trae defaultValue
 const KEY_CALL = /\bt\(\s*(['"])([^'"`$\n]+?)\1([^)]{0,200})/g;
 const PLURAL_SUFFIXES = ['', '_zero', '_one', '_two', '_few', '_many', '_other'];
+
+// la carpeta del código de la revisión en curso, para el alias @/ de los archivos de textos
+let aliasFolderUrl = null;
+let isAliasRegistered = false;
+
+/**
+ * Que node entienda @/ al leer los archivos de textos, como Vite. Se registra una sola vez por proceso y lee aliasFolderUrl,
+ * la carpeta de la revisión en curso. registerHooks llegó en Node 22.15: con uno anterior, un archivo de textos que importe
+ * con @/ no se puede leer y se dice.
+ */
+function understandAlias() {
+    if (isAliasRegistered || typeof nodeModule.registerHooks !== 'function') {
+        return;
+    }
+    nodeModule.registerHooks({
+        resolve(specifier, context, nextResolve) {
+            if (aliasFolderUrl && specifier.startsWith('@/')) {
+                return nextResolve(new URL(specifier.slice(2), aliasFolderUrl).href, context);
+            }
+            return nextResolve(specifier, context);
+        },
+    });
+    isAliasRegistered = true;
+}
 
 /**
  * Los archivos de una carpeta y sus subcarpetas, sin node_modules ni dist.
@@ -128,18 +157,27 @@ async function packageTextsOf() {
  * @param {string} options.projectRoot la carpeta del proyecto
  * @param {string} [options.sourceFolder] dónde está el código (por omisión src)
  * @param {Record<string, object>} [options.packageTexts] los textos de Calcita (por omisión, los de su dist/)
- * @returns {Promise<{problems: string[], checkedKeys: number, textFiles: string[], languages: string[]}>}
+ * @returns {Promise<{problems: string[], checkedKeys: number, textFiles: string[], languages: string[], sourceFolder: string}>}
  */
 export async function checkTexts({projectRoot, sourceFolder = 'src', packageTexts}) {
     const sourceRoot = join(projectRoot, sourceFolder);
+    const nothingChecked = {checkedKeys: 0, textFiles: [], languages: [], sourceFolder};
+    const isFolder = await stat(sourceRoot).then((found) => found.isDirectory(), () => false);
+    if (!isFolder) {
+        return {...nothingChecked, problems: [`No existe la carpeta ${sourceFolder}/ en el proyecto: no hay código que revisar`]};
+    }
     const files = await filesOf(sourceRoot);
     const problems = [];
+    aliasFolderUrl = `${pathToFileURL(sourceRoot).href}/`;
+    understandAlias();
 
     // 1. los textos del proyecto
     const projectTexts = {};
     const duplicates = [];
     const textFiles = files.filter((file) => TEXT_FILE.test(file.replaceAll('\\', '/')));
     const readTextFiles = [];
+    const unreadTextFiles = [];
+    const addedTexts = new Set();
     for (const file of textFiles) {
         const fileName = relative(projectRoot, file);
         // el que JUNTA los textos (appTexts.js, con el glob de Vite) no es un archivo de textos: se salta
@@ -153,10 +191,27 @@ export async function checkTexts({projectRoot, sourceFolder = 'src', packageText
             if (exported.length === 0) {
                 problems.push(`${fileName}: no exporta textos con la forma {es: {...}, en: {...}}`);
             }
-            exported.forEach((fileTexts) => addTexts(projectTexts, fileTexts, duplicates, fileName));
+            // el mismo objeto que otro archivo ya reexportó (texts.js que reexporta documentFileTexts.js) se suma una vez:
+            // node da el mismo objeto por archivo, y sumarlo dos veces lo haría pasar por repetido
+            exported.filter((fileTexts) => !addedTexts.has(fileTexts)).forEach((fileTexts) => {
+                addedTexts.add(fileTexts);
+                addTexts(projectTexts, fileTexts, duplicates, fileName);
+            });
         } catch (error) {
-            problems.push(`${fileName}: no se pudo leer (${error.message.split('\n')[0]}); un archivo de textos no debe importar otros archivos`);
+            unreadTextFiles.push(fileName);
+            const reason = error.message.split('\n')[0];
+            const hint = isAliasRegistered
+                ? 'revise lo que importa: otro archivo va con ruta relativa o con @/'
+                : 'si importa con @/, esta revisión necesita Node 22.15 o más';
+            problems.push(`${fileName}: no se pudo leer (${reason}); ${hint}`);
         }
+    }
+    if (unreadTextFiles.length > 0) {
+        problems.push(`No revisé las llaves: sin ${unreadTextFiles.length === 1 ? 'ese archivo' : 'esos archivos'} de textos, sus llaves saldrían todas como faltantes`);
+        return {...nothingChecked, problems, textFiles: readTextFiles};
+    }
+    if (readTextFiles.length === 0) {
+        return {...nothingChecked, problems: [`No encontré archivos de textos (*Texts.js o texts.js) en ${sourceFolder}/: no hay con qué comparar`]};
     }
     problems.push(...duplicates.map((duplicate) => `texto repetido: ${duplicate}`));
 
@@ -205,5 +260,5 @@ export async function checkTexts({projectRoot, sourceFolder = 'src', packageText
         }
     }
 
-    return {problems, checkedKeys, textFiles: readTextFiles, languages};
+    return {problems, checkedKeys, textFiles: readTextFiles, languages, sourceFolder};
 }
