@@ -112,3 +112,24 @@ export function isPlainLeftClick(event, target) {
     }
     return event.button === MAIN_MOUSE_BUTTON && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !event.defaultPrevented;
 }
+
+/**
+ * El prefijo con que el servidor sirvió la página, leído al abrirla de su <base href> ('/ventas'), o null si la página no
+ * trae <base>. Así UNA compilación sirve detrás de cualquier prefijo que decida el servidor (Laravel lo pone con
+ * config('app.url'), un proxy con su ruta): el prefijo no se fija al compilar. Para el basename del router y para
+ * createBrowserNavigation({basePath}).
+ *
+ *   <base href="{{ rtrim(config('app.url'), '/') . '/' }}">          (en la vista que sirve la app)
+ *   createBrowserRouter(routes, {basename: documentBasePath() || '/'})
+ *
+ * OJO: con <base>, todo lo relativo de la página (imágenes, ligas «#sección») se lee desde ese prefijo.
+ *
+ * @param {{baseURI?: string, querySelector?: (selector: string) => unknown}} [currentDocument] por omisión el de la página
+ * @returns {string|null} '' en la raíz; null sin <base> (o sin navegador)
+ */
+export function documentBasePath(currentDocument = globalThis.document) {
+    if (!currentDocument?.querySelector?.('base[href]') || !currentDocument.baseURI) {
+        return null;
+    }
+    return normalizedBasePath(new URL(currentDocument.baseURI).pathname);
+}
