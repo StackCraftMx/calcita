@@ -594,6 +594,42 @@ El marco avisa cuando la persona encoge el menú (`onMenuCollapse`), abre el men
 sus pestañas (`onMobileTabsChange`), para guardar esas preferencias en el servidor del proyecto si se quiere; sus textos se
 cambian con `texts`.
 
+## La tabla de servidor (`/table`)
+
+`ServerTable` pagina, filtra y ordena en el servidor (`fetchPage` recibe `{filters, sortOrders, page, pageSize}` y regresa
+`{rows, total, facets}`); con `prefix` su estado va en la dirección. Lo que piden casi todas las listas de administración
+viene listo:
+
+```jsx
+import {ACTIONS_COLUMN_FIELD, ServerTable, actionsColumn, stackedColumn, statusColumn} from '@stackcraftmx/calcita/table';
+
+const columns = [
+    actionsColumn({label: 'Acciones', actionsOf: (row) => [{key: 'open', label: 'Abrir', to: `/clientes/${row.id}`}]}),
+    stackedColumn({field: 'business_name', label: 'Empresa', entries: (row) => [row.business_name, row.rfc, row.regime]}),
+    stackedColumn({field: 'created_at', label: 'Fechas', entries: (row) => [                       // con etiqueta
+        {label: 'Alta', value: formatDate(row.created_at)}, {label: 'Último cambio', value: formatDate(row.updated_at)},
+    ]}),
+    statusColumn({field: 'status', label: 'Estado', dictionary: REGISTRATION_STATUS, t}),           // el ancho, medido
+];
+
+<ServerTable prefix="clientes" fetchPage={fetchClients} columns={columns} ariaLabel="Clientes"
+             fixedColumn={[ACTIONS_COLUMN_FIELD, 'business_name']}                               // fijas al deslizar
+             renderCard={(row) => <RecordCard title={row.business_name} … />} />                 // también en tarjetas
+```
+
+- `stackedColumn`: los datos que se leen de corrido en una celda, uno debajo del otro, los que hagan falta (el primero en
+  negritas, los demás en gris). Cada dato va solo, si el encabezado ya dice qué son, o con su etiqueta arriba
+  (`{label, value, note}`) si el encabezado nombra al grupo. Un dato vacío no se pinta, salvo el principal o uno con
+  etiqueta, que enseñan «—» (`texts={{cells: {empty: '- - -'}}}` lo cambia). Los renglones toman su alto solos;
+  `getRowHeight` también acepta `'auto'`. `StackedCell` es la misma celda para un `renderCell` propio.
+- `statusColumn`: el estatus desde su diccionario, con filtro de facetas y, con `t`, el ancho de su etiqueta más larga.
+- `actionsColumn`: el «⋯» de cada renglón en su columna, de ancho fijo.
+- `fixedColumn` acepta una lista: cada una se pega donde termina la anterior (las que no son la última llevan `width`).
+- `renderCard`: la misma lista en tarjetas, con la misma búsqueda, filtros, orden y páginas; un botón cambia de vista y con
+  `prefix` la vista va en la dirección (`?clientes_view=cards`). `view`, `defaultView`, `onViewChange` y `showViewToggle`
+  para decidirlo desde la pantalla.
+- `gridSx` se combina con los estilos de la tabla regla por regla; `gridProps` pasa lo demás al DataGrid.
+
 ## Eventos y textos de cada componente
 
 Cada componente de la casa avisa hacia afuera todo lo que pasa adentro (`onSelect`, `onChange`, `onViewChange`,
