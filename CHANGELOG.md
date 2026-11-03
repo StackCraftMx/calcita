@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.47.1] - 2026-11-03
+
+### Arreglado
+
+- `ServerTable` en renglones altos: el DataGrid le da a cada celda una altura de línea igual al alto del renglón, y todo
+  texto que no trajera la suya quedaba a media celda o hasta abajo (con renglones de 100 px el primer dato bajaba 42 px y el
+  segundo se salía de la celda y no se veía). Las celdas ya se centran con flex: la altura de línea vuelve a la del texto.
+  En las tablas de siempre no cambia nada a la vista (medido píxel por píxel en Pedidos: solo el punto del estatus, 1 px).
+- `ServerTable` con `gridSx`: se combinaba DENTRO del objeto de estilos de la tabla y una llave igual reemplazaba la de la
+  tabla entera (pasar `'& .MuiDataGrid-cell': {alignItems: 'flex-start'}` borraba el `display: flex` sin avisar). Ahora va
+  después y se combina regla por regla; también el `sx` que llegue en `gridProps`.
+- `ServerTable` con `getRowHeight` que regresa `'auto'`: la tabla lo contaba con el alto de siempre y cortaba los renglones
+  de abajo. Ahora se mide sola (`autoHeight` del DataGrid); con `maxGridHeight` cuenta cada renglón con el
+  `getEstimatedRowHeight` que llegue en `gridProps`.
+- La misma trampa del `sx` en `RecordCard`, `RecordCardSkeleton`, `RouteTabs`, `CheckboxGroupInput`, `TransferListInput`,
+  `RepeatingFields`, `FileInput`, `FileUploadInput`, `AttachmentsInput`, `ImageInput`, `FileDropzone` y el chip de archivo:
+  el `sx` de la pantalla ahora va después del tema del proyecto y se combina regla por regla.
+
+### Agregado
+
+- `sxListOf(sx)`: el `sx` de la pantalla como lista, para ponerlo después del estilo propio sin perder llaves
+  (`sx={[{p: 2}, ...sxListOf(sx)]}`).
+
 ## [0.47.0] - 2026-11-02
 
 ### Agregado
