@@ -5,13 +5,21 @@
 // OJO: una dirección escrita a mano desde la raíz ('/favicon.svg', '/version.json') funciona en la raíz y se rompe detrás del
 // proxy: se arma con publicUrlOf.
 //
+// El prefijo también puede llegar al SERVIR la página, sin volver a construir: si la página trae <base href="/ventas/"> (Laravel
+// lo pone con config('app.url'), un proxy con su ruta), manda ese (documentBasePath). Para eso se construye con ASSET_URL=./
+// (archivos relativos a la página). Sin <base>, todo sigue como arriba.
+//
 // Funciones puras, no renderizan: function (regla de la casa).
+
+import {documentBasePath} from '@stackcraftmx/calcita';
 
 // en las pruebas de node no hay import.meta.env (es de Vite): ahí, la raíz
 const APP_BASE_URL = import.meta.env?.BASE_URL ?? '/';
+// el prefijo que puso el servidor en <base href> ('' en la raíz), o null si la página no trae <base>
+const SERVED_BASE_PATH = documentBasePath();
 
 /** El prefijo como lo pide el router: '/ventas' (sin la diagonal del final) o '/'. */
-export const ROUTER_BASENAME = APP_BASE_URL.replace(/\/$/, '') || '/';
+export const ROUTER_BASENAME = (SERVED_BASE_PATH ?? APP_BASE_URL.replace(/\/$/, '')) || '/';
 
 /**
  * La dirección de un archivo de public/ con el prefijo: 'favicon.svg' → '/ventas/favicon.svg'.
@@ -20,5 +28,5 @@ export const ROUTER_BASENAME = APP_BASE_URL.replace(/\/$/, '') || '/';
  * @returns {string}
  */
 export function publicUrlOf(path) {
-    return `${APP_BASE_URL}${path}`;
+    return SERVED_BASE_PATH === null ? `${APP_BASE_URL}${path}` : `${SERVED_BASE_PATH}/${path}`;
 }

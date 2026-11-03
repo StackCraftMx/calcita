@@ -14,6 +14,7 @@ import {argv, cwd, exit, stdin, stdout} from 'node:process';
 import {parseArgs} from 'node:util';
 
 import {askQuestions} from './askQuestions.js';
+import {checkTexts} from './checkTexts.js';
 import {makeComponent} from './makeComponent.js';
 import {makeForm} from './makeForm.js';
 import {makeModule} from './makeModule.js';
@@ -33,6 +34,8 @@ const HELP = `Calcita: proyectos y esqueletos con la forma de los ejemplos.
   calcita make:form <módulo> <Formulario>    un formulario con sus reglas y sus textos
   calcita make:component <Componente>        un componente en src/core (lo usan varios módulos)
        --module <módulo>                     … o solo de un módulo
+  calcita check:texts                        revisa que cada t('llave') exista en todos los idiomas, y que los idiomas tengan
+                                             las mismas llaves (lo que si no se descubre en la pantalla)
 
 Opciones:
   -y, --yes                 sin preguntas: lo recomendado, más lo que diga cada opción
@@ -125,6 +128,17 @@ async function runMakeComponent(componentName) {
     stdout.write('\nListo.\n');
 }
 
+async function runCheckTexts() {
+    const {problems, checkedKeys, textFiles, languages} = await checkTexts({projectRoot: cwd()});
+    stdout.write(`Revisé ${checkedKeys} llaves escritas en el código contra ${textFiles.length} archivos de textos (${languages.join(', ') || 'sin idiomas'}).\n`);
+    if (problems.length === 0) {
+        stdout.write('Todo en su lugar.\n');
+        return;
+    }
+    stdout.write(`\n${problems.map((problem) => `  ✗ ${problem}`).join('\n')}\n`);
+    throw new CliError(`${problems.length} problema(s) con los textos.`);
+}
+
 const COMMANDS = Object.freeze({
     'new': runNew,
     'init': () => runNew('.'),
@@ -132,6 +146,7 @@ const COMMANDS = Object.freeze({
     'make:page': runMakePage,
     'make:form': runMakeForm,
     'make:component': runMakeComponent,
+    'check:texts': runCheckTexts,
 });
 
 try {
