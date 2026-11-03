@@ -15,8 +15,10 @@ const BASE_DEPENDENCIES = Object.freeze([
 const HOOK_FORM_DEPENDENCIES = Object.freeze(['@hookform/resolvers', 'react-hook-form']);
 // la cuenta: las llaves de acceso (las pide @stackcraftmx/calcita/account) y el QR de la demostración
 const ACCOUNT_DEPENDENCIES = Object.freeze(['@simplewebauthn/browser', 'qrcode']);
-// las pruebas de pantalla (pnpm test): Vitest con jsdom como navegador y Testing Library para picar como una persona
+// las pruebas de pantalla (pnpm test): Vitest con jsdom como navegador y Testing Library para picar como una persona; y ESLint
+// (pnpm lint), que caza al escribir lo que si no se ve en la pantalla del cliente (una variable que no existe: «t is not defined»)
 const DEV_DEPENDENCIES = Object.freeze([
+    '@eslint/js', 'eslint', 'eslint-plugin-react-hooks', 'globals',
     '@testing-library/dom', '@testing-library/react', '@testing-library/user-event', '@vitejs/plugin-react', 'jsdom', 'vite', 'vitest',
 ]);
 
@@ -43,7 +45,7 @@ export function packageJsonOf({packageName, answers, calcitaPackage}) {
         version: '0.1.0',
         private: true,
         type: 'module',
-        scripts: {dev: 'vite', build: 'vite build', preview: 'vite preview', test: 'vitest run'},
+        scripts: {dev: 'vite', build: 'vite build', preview: 'vite preview', test: 'vitest run', lint: 'eslint .', 'check:texts': 'calcita check:texts'},
         dependencies: sortedByKey({'@stackcraftmx/calcita': `^${calcitaPackage.version}`, ...versionsOf(dependencyNames, calcitaPackage)}),
         devDependencies: sortedByKey(versionsOf([...DEV_DEPENDENCIES], calcitaPackage)),
         engines: {node: '>=22'},

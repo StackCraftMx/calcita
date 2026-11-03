@@ -9,6 +9,7 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import HelpCarouselDemo from '@/modules/catalog/demos/shell/HelpCarouselDemo.tsx';
+import PathIndexDemo from '@/modules/catalog/demos/shell/PathIndexDemo.tsx';
 import RouteTabsDemo from '@/modules/catalog/demos/shell/RouteTabsDemo.tsx';
 import ScreenCapsules from '@/modules/catalog/demos/shell/ScreenCapsules.tsx';
 
@@ -18,6 +19,7 @@ const loadCapsules = () => import('@/modules/catalog/demos/shell/ScreenCapsules.
 const loadBack = () => import('@/modules/catalog/demos/shell/BackToList.tsx?demo-source');
 const loadRouteTabs = () => import('@/modules/catalog/demos/shell/RouteTabsDemo.tsx?demo-source');
 const loadHelpCarousel = () => import('@/modules/catalog/demos/shell/HelpCarouselDemo.tsx?demo-source');
+const loadPathIndex = () => import('@/modules/catalog/demos/shell/PathIndexDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (shell.<sección>.extend.<id>)
@@ -79,6 +81,14 @@ const ROUTE_TABS_EXTENSIONS = [
     {id: 'onChange', option: 'onChange', example: 'onChange={(tab) => logTabView(tab.value)}'},
     {id: 'theme', option: 'theme.components.CalcitaRouteTabs', example: 'components: {CalcitaRouteTabs: {styleOverrides: {tab: {textTransform: \'none\'}}}}'},
 ];
+const PATH_INDEX_EXTENSIONS = [
+    {id: 'index', option: 'createPathIndex(glob)', example: "export const {pathOf} = createPathIndex(import.meta.glob('@/modules/**/paths.js', {eager: true}));"},
+    {id: 'parts', option: 'pathOf(nombre, partes)', example: "pathOf('admin:profile:detail', {groupId: 2, userId: 7675, tab: 'documentos'})"},
+    {id: 'api', option: "createPathIndex(glob, {exportName: 'uris'})", example: "api.get(uriOf('billing:invoice', {id}))  // las del API, igual"},
+    {id: 'fill', option: 'fillPath(ruta, partes)', example: "fillPath('/orders/:orderId', {orderId: 12})  // '/orders/12'"},
+    {id: 'base', option: 'documentBasePath()', example: "createBrowserRouter(routes, {basename: documentBasePath() || '/'})  // el prefijo del <base href>"},
+    {id: 'texts', option: 'combineTexts(archivos)', example: "combineTexts(Object.values(import.meta.glob('@/modules/**/*Texts.js', {eager: true})).flatMap(Object.values))"},
+];
 const HELP_CAROUSEL_EXTENSIONS = [
     {id: 'steps', option: 'steps[].title · content · image · media', example: "{title: 'Filtre', content: 'Los filtros se guardan…', image: '/ayuda/filtros.png', imageAlt: 'Los filtros'}"},
     {id: 'when', option: 'useHelpCarousel({helpKey, version, autoOpen})', example: "const help = useHelpCarousel({helpKey: 'reports', version: '2'});"},
@@ -107,6 +117,8 @@ export const FrameAndMenuPage = () => {
                          extensions={rowsOf('routeTabs', ROUTE_TABS_EXTENSIONS)} Demo={RouteTabsDemo} loadSource={loadRouteTabs} />
             <DemoSection title={t('shell.helpCarousel.title')} description={t('shell.helpCarousel.description')}
                          extensions={rowsOf('helpCarousel', HELP_CAROUSEL_EXTENSIONS)} Demo={HelpCarouselDemo} loadSource={loadHelpCarousel} />
+            <DemoSection title={t('shell.pathIndex.title')} description={t('shell.pathIndex.description')}
+                         extensions={rowsOf('pathIndex', PATH_INDEX_EXTENSIONS)} Demo={PathIndexDemo} loadSource={loadPathIndex} />
         </Stack>
     );
 };

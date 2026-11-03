@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {hashHrefOf, hashLocationOf, isPlainLeftClick, normalizedBasePath, pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
+import {documentBasePath, hashHrefOf, hashLocationOf, isPlainLeftClick, normalizedBasePath, pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
 
 test('el prefijo se limpia: con / al inicio y sin / al final; vacío es la raíz', () => {
     assert.equal(normalizedBasePath('portal/'), '/portal');
@@ -47,4 +47,12 @@ test('solo el clic normal se hace por dentro: con Cmd/Ctrl, Shift, el botón de 
     assert.equal(isPlainLeftClick({...plain, defaultPrevented: true}), false);
     assert.equal(isPlainLeftClick(plain, '_blank'), false);
     assert.equal(isPlainLeftClick(plain, '_self'), true);
+});
+
+test('el prefijo sale del <base href> de la página; sin <base>, null', () => {
+    const pageWithBase = (href) => ({baseURI: href, querySelector: () => ({href})});
+    assert.equal(documentBasePath(pageWithBase('https://ejemplo.mx/ventas/')), '/ventas');
+    assert.equal(documentBasePath(pageWithBase('https://ejemplo.mx/')), '');
+    assert.equal(documentBasePath({baseURI: 'https://ejemplo.mx/pedidos', querySelector: () => null}), null);
+    assert.equal(documentBasePath(undefined), null);
 });

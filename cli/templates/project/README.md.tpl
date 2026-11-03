@@ -55,6 +55,17 @@ clic o escribe con `user`. Pasa por lo mismo que la persona (permisos, menú, te
 módulo de ejemplo, y `make:module` arma la de cada módulo nuevo. Corren con Vitest y jsdom (un navegador de mentira): lo que
 depende de medir o pintar se revisa en un navegador de verdad.
 
+## Revisar antes de subir
+
+```bash
+pnpm lint          # ESLint: una variable que no existe, los hooks de React fuera de orden
+pnpm check:texts   # que cada t('llave') exista en todos los idiomas y que los idiomas tengan las mismas llaves
+```
+
+Las dos cazan al escribir lo que si no se descubre en la pantalla del cliente («t is not defined», «orders:tabs.documents»).
+Una llave armada con una variable no se puede revisar así: para esas, Calcita avisa en la consola del navegador (y
+`onMissingText` de `ToolkitProvider` se lo dice a su proyecto).
+
 ## Publicar una versión nueva
 
 `pnpm build` deja la app en `dist/`, con `version.json` (la versión de esa compilación). La app publicada lo vuelve a leer al
@@ -81,7 +92,16 @@ location /ventas/ {
 }
 ```
 
-Con otro prefijo se vuelve a construir.
+Con otro prefijo se vuelve a construir… o, si el prefijo lo decide el servidor al servir la página (Laravel con
+`config('app.url')`, un proxy con su ruta), se construye una sola vez con archivos relativos y la página trae su `<base>`:
+
+```bash
+ASSET_URL=./ pnpm build
+```
+
+```html
+<base href="/ventas/">   <!-- lo pone el servidor en index.html; el router y publicUrlOf lo leen al abrir -->
+```
 
 ## Crecer la app con el CLI
 

@@ -4,7 +4,8 @@
 //
 // OJO: constante de módulo. ToolkitProvider vuelve a configurar todo cuando cambia `texts`; un objeto nuevo en cada
 // pintada lo haría en cada pintada.
-import {combineTexts} from '@/app/combineTexts.js';
+// combineTexts es del paquete: un texto repetido entre módulos truena y los objetos de adentro (validation.fields) se suman
+import {combineTexts} from '@stackcraftmx/calcita';
 import {shellTexts} from '@/app/shellTexts.js';
 import {coreTexts} from '@/core';
 

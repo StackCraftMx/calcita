@@ -32,8 +32,15 @@ const DEMO_HOSTS = ['calcita.stackcraft.com.mx'];
 // la misma línea que lleva el .env del servidor. Vite pide sus archivos con el prefijo y lo deja en import.meta.env.BASE_URL,
 // de donde lo toman el router, las imágenes y version.json (src/core/publicPaths.js). Sin ella, todo en la raíz (el servidor de
 // desarrollo de siempre). Con otro prefijo hay que volver a construir.
+// ASSET_URL=./ : los archivos relativos a la página, para cuando el prefijo lo pone el servidor al servirla (<base href>):
+// una sola compilación sirve detrás de cualquier prefijo (src/core/publicPaths.js)
+const RELATIVE_BASE = './';
 const basePathOf = (assetUrl) => {
-    const prefix = (assetUrl ?? '').trim().replace(/^\/+|\/+$/g, '');
+    const trimmed = (assetUrl ?? '').trim();
+    if (trimmed === '.' || trimmed === RELATIVE_BASE) {
+        return RELATIVE_BASE;
+    }
+    const prefix = trimmed.replace(/^\/+|\/+$/g, '');
     return prefix ? `/${prefix}/` : '/';
 };
 const extraAllowedHosts = (process.env.EXAMPLES_ALLOWED_HOSTS ?? '').split(',').map((host) => host.trim()).filter(Boolean);

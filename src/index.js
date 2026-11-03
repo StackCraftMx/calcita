@@ -25,6 +25,9 @@ export {
 } from '@/toolkit/toolkitSettings.js';
 export {browserNavigation, createBrowserNavigation} from '@/toolkit/browserNavigation.js';
 export {createHashNavigation} from '@/toolkit/hashNavigation.js';
+export {documentBasePath, isPlainLeftClick} from '@/toolkit/navigationPaths.js';
+export {createPathIndex, fillPath} from '@/toolkit/pathIndex.js';
+export {combineTexts} from '@/toolkit/combineTexts.js';
 export {default as toolkitTextsEs} from '@/locales/es.js';
 export {default as toolkitTextsEn} from '@/locales/en.js';
 

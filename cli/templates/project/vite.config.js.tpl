@@ -21,8 +21,15 @@ const LARGEST_CHUNK_KILOBYTES = 1000;
 // misma línea que lleva el .env del servidor. Vite pide sus archivos con el prefijo, se lo pone a las rutas de index.html y lo
 // deja en import.meta.env.BASE_URL, de donde lo toman el router, las imágenes y version.json (src/core/publicPaths.js). Sin
 // ella, todo en la raíz. Con otro prefijo hay que volver a construir.
+// ASSET_URL=./ : los archivos relativos a la página, para cuando el prefijo lo pone el servidor al servirla (<base href>):
+// una sola compilación sirve detrás de cualquier prefijo (src/core/publicPaths.js)
+const RELATIVE_BASE = './';
 const basePathOf = (assetUrl) => {
-    const prefix = (assetUrl ?? '').trim().replace(/^\/+|\/+$/g, '');
+    const trimmed = (assetUrl ?? '').trim();
+    if (trimmed === '.' || trimmed === RELATIVE_BASE) {
+        return RELATIVE_BASE;
+    }
+    const prefix = trimmed.replace(/^\/+|\/+$/g, '');
     return prefix ? `/${prefix}/` : '/';
 };
 
