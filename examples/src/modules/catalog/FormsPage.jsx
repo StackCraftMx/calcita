@@ -17,6 +17,7 @@ import VolumePrices from '@/modules/catalog/demos/forms/VolumePrices.tsx';
 import ContactsHookForm from '@/modules/catalog/demos/forms/ContactsHookForm.tsx';
 import ChoosingMany from '@/modules/catalog/demos/forms/ChoosingMany.tsx';
 import TransferListDemo from '@/modules/catalog/demos/forms/TransferListDemo.tsx';
+import OwnErrorMessages from '@/modules/catalog/demos/forms/OwnErrorMessages.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -27,6 +28,7 @@ const loadRepeating = () => import('@/modules/catalog/demos/forms/VolumePrices.t
 const loadRepeatingHookForm = () => import('@/modules/catalog/demos/forms/ContactsHookForm.tsx?demo-source');
 const loadChoosingMany = () => import('@/modules/catalog/demos/forms/ChoosingMany.tsx?demo-source');
 const loadTransferList = () => import('@/modules/catalog/demos/forms/TransferListDemo.tsx?demo-source');
+const loadOwnMessages = () => import('@/modules/catalog/demos/forms/OwnErrorMessages.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -109,6 +111,15 @@ const TRANSFER_LIST_EXTENSIONS = [
     {id: 'theme', option: 'theme.components.CalcitaTransferListInput', example: 'components: {CalcitaTransferListInput: {styleOverrides: {list: {borderRadius: 4}}}}'},
 ];
 
+const OWN_MESSAGES_EXTENSIONS = [
+    {id: 'messages', option: 'messages (en el campo)', example: "<FormTextField name=\"rfc\" label=\"RFC\" messages={{rfc: 'Revise el RFC', required: 'Escriba el RFC'}} />"},
+    {id: 'fieldTexts', option: 'validation.fields.<campo>.<regla>', example: "texts={{es: {validation: {fields: {postal_code: {postalCode: 'Lleva 5 dígitos'}}}}}}"},
+    {id: 'label', option: '{{label}} · .label()', example: "Yup.string().label('RFC').required()  // «Escriba {{label}}»"},
+    {id: 'legacy', option: 'readValidationMessage', example: '<ToolkitProvider readValidationMessage={(error) => (error?.codigo ? {key: `legado:${error.codigo}`} : undefined)}>'},
+    {id: 'rules', option: 'sameAsFieldRule · percentRule · postalCodeRule', example: "Yup.string().test(sameAsFieldRule('clabe', {otherLabel: 'la CLABE'}))"},
+    {id: 'ownField', option: 'useValidationText({name, label, messages})', example: 'const errorText = useValidationText({name, label})(error);'},
+];
+
 export const FormsPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `forms.${section}`, extensions);
@@ -134,6 +145,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('choosingMany', CHOOSING_MANY_EXTENSIONS)} Demo={ChoosingMany} loadSource={loadChoosingMany} />
             <DemoSection title={t('forms.transferList.title')} description={t('forms.transferList.description')}
                          extensions={rowsOf('transferList', TRANSFER_LIST_EXTENSIONS)} Demo={TransferListDemo} loadSource={loadTransferList} />
+            <DemoSection title={t('forms.ownMessages.title')} description={t('forms.ownMessages.description')}
+                         extensions={rowsOf('ownMessages', OWN_MESSAGES_EXTENSIONS)} Demo={OwnErrorMessages} loadSource={loadOwnMessages} />
         </Stack>
     );
 };

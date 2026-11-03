@@ -34,6 +34,7 @@ const RECORD_CARD_EXTENSIONS = [
     {id: 'status', option: 'status · actions · onOpen', example: 'status={<StatusChip … />} actions={[{key, label, onClick}]} onOpen={() => navigate(…)}'},
     {id: 'groups', option: 'groups[].facts · highlight', example: "groups={[{title: 'Importe', facts: [{label: 'IVA', value: iva}]}]} highlight={{label: 'Total', value: total}}"},
     {id: 'order', option: 'trailing · columns', example: "trailing={<StatusChip … />} columns=\"1fr 1fr 0.8fr 1fr auto\"  // el orden obligatorio, tal cual"},
+    {id: 'menu', option: 'actions[].to · children · href · section · onClick(event)', example: "{key: 'open', label: 'Ver el pedido', to: `/orders/${order.id}`}  // Cmd+clic: otra pestaña"},
     {id: 'bottom', option: 'footer · details · onDetailsToggle', example: 'details={<Historial id={order.id} />}  // se monta al abrirlo'},
     {id: 'skeleton', option: '<RecordCardSkeleton>', example: '{isLoading && <RecordCardSkeleton groups={2} />}'},
     {id: 'theme', option: 'theme.components.CalcitaRecordCard', example: 'components: {CalcitaRecordCard: {styleOverrides: {highlight: {color: \'#0B5\'}}}}'},

@@ -74,6 +74,7 @@ const ROUTE_TABS_EXTENSIONS = [
     {id: 'path', option: 'tabs[].to · exact', example: "{to: `/customers/${id}/payments`, label: 'Pagos'}  // la activa sale de la ruta"},
     {id: 'query', option: 'mode="query" · paramName', example: '<RouteTabs mode={ROUTE_TABS_MODE.query} paramName="section" tabs={…} />'},
     {id: 'active', option: 'useActiveRouteTab', example: 'const activeTab = useActiveRouteTab(TABS, {mode: ROUTE_TABS_MODE.query});'},
+    {id: 'replace', option: 'replace', example: '<RouteTabs mode={ROUTE_TABS_MODE.query} replace={false} …/>  // con ?tab= reemplazan el historial por omisión'},
     {id: 'perTab', option: 'icon · badge · access · disabled · hidden', example: "{value: 'files', label: 'Documentos', badge: 2, access: {ability: 'files.view'}}"},
     {id: 'onChange', option: 'onChange', example: 'onChange={(tab) => logTabView(tab.value)}'},
     {id: 'theme', option: 'theme.components.CalcitaRouteTabs', example: 'components: {CalcitaRouteTabs: {styleOverrides: {tab: {textTransform: \'none\'}}}}'},
