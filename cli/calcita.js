@@ -129,8 +129,8 @@ async function runMakeComponent(componentName) {
 }
 
 async function runCheckTexts() {
-    const {problems, checkedKeys, textFiles, languages} = await checkTexts({projectRoot: cwd()});
-    stdout.write(`Revisé ${checkedKeys} llaves escritas en el código contra ${textFiles.length} archivos de textos (${languages.join(', ') || 'sin idiomas'}).\n`);
+    const {problems, checkedKeys, textFiles, languages, sourceFolder} = await checkTexts({projectRoot: cwd()});
+    stdout.write(`Revisé ${checkedKeys} llaves escritas en el código de ${sourceFolder}/ contra ${textFiles.length} archivos de textos (${languages.join(', ') || 'sin idiomas'}).\n`);
     if (problems.length === 0) {
         stdout.write('Todo en su lugar.\n');
         return;

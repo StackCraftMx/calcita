@@ -59,3 +59,41 @@ test('el archivo que junta los textos (con el glob de Vite) se salta: no es un a
     assert.deepEqual(problems, []);
     assert.deepEqual(textFiles, ['src/modules/orders/ordersTexts.js']);
 });
+
+test('un archivo de textos que reexporta otro con @/ se lee, y lo reexportado cuenta una vez (no como repetido)', async () => {
+    const projectRoot = await projectWith({
+        ordersTexts: {es: {orders: {title: 'Pedidos'}}, en: {orders: {title: 'Orders'}}},
+        pageCode: "const {t} = useToolkitTranslation('orders');\nt('title');\nt('files.pdf');\n",
+    });
+    // fileNameTexts.js también es un archivo de textos: se lee solo y otra vez por medio de texts.js
+    await writeFile(join(projectRoot, 'src/modules/orders/fileNameTexts.js'), "export const fileNameTexts = {es: {orders: {files: {pdf: 'PDF'}}}, en: {orders: {files: {pdf: 'PDF'}}}};\n");
+    await writeFile(join(projectRoot, 'src/modules/orders/texts.js'), "export {fileNameTexts} from '@/modules/orders/fileNameTexts.js';\n");
+    const {problems, checkedKeys} = await checkTexts({projectRoot, packageTexts: PACKAGE_TEXTS});
+    assert.deepEqual(problems, []);
+    assert.equal(checkedKeys, 2);
+});
+
+test('un archivo de textos que no se puede leer para la revisión: no sale la lista de llaves faltantes', async () => {
+    const projectRoot = await projectWith({
+        ordersTexts: {es: {orders: {title: 'Pedidos'}}, en: {orders: {title: 'Orders'}}},
+        pageCode: "const {t} = useToolkitTranslation('customers');\nt('title');\nt('detail.rfc');\n",
+    });
+    await mkdir(join(projectRoot, 'src/modules/customers'), {recursive: true});
+    await writeFile(join(projectRoot, 'src/modules/customers/texts.js'), "export {customerTexts} from '@/modules/customers/missing.js';\n");
+    const {problems, checkedKeys} = await checkTexts({projectRoot, packageTexts: PACKAGE_TEXTS});
+    assert.equal(checkedKeys, 0);
+    assert.equal(problems.length, 2);
+    assert.match(problems[0], /src\/modules\/customers\/texts\.js: no se pudo leer/);
+    assert.match(problems[1], /No revisé las llaves/);
+});
+
+test('sin archivos de textos o sin la carpeta del código no sale «todo en su lugar»: un verde falso es peor que un rojo', async () => {
+    const projectRoot = await mkdtemp(join(tmpdir(), 'calcita-textos-'));
+    const withoutFolder = await checkTexts({projectRoot, packageTexts: PACKAGE_TEXTS});
+    assert.match(withoutFolder.problems[0], /No existe la carpeta src\//);
+
+    await mkdir(join(projectRoot, 'src'), {recursive: true});
+    await writeFile(join(projectRoot, 'src/main.jsx'), "t('common:actions.save');\n");
+    const withoutTexts = await checkTexts({projectRoot, packageTexts: PACKAGE_TEXTS});
+    assert.match(withoutTexts.problems[0], /No encontré archivos de textos/);
+});

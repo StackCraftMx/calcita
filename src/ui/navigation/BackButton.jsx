@@ -35,6 +35,7 @@ const BackButtonRoot = piecePart(THEME_NAME, 'Root', Button);
  * @param {string} [props.listKey] la misma llave que usa useRememberListUrl en la lista
  * @param {string} [props.label] ya traducido; se usa cuando la página anterior no anotó su nombre o no hay historial
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {object} [props.sx] ajustes del botón (un margen, por ejemplo); lo demás que se le pase también llega al Button de MUI
  */
 function BackButtonContent(props) {
     const {fallbackTo, listKey, label, texts, ...buttonProps} = usePieceProps(props, THEME_NAME);
