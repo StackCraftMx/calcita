@@ -4,6 +4,26 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.52.0] - 2026-11-03
+
+### Agregado
+
+- `FormWizard` (formik y react-hook-form) para editar un registro por pasos: `initialStepKey` abre en el paso que diga el
+  servidor (una llave que no existe abre el primero y lo avisa en la consola), `orientation` (`WIZARD_ORIENTATION.vertical`:
+  un paso debajo del otro, con los campos y los botones dentro del paso abierto), `stepSelection`
+  (`WIZARD_STEP_SELECTION.free`: el título de otro paso se pulsa y salta directo; `.checked`: solo si el paso abierto no
+  tiene errores; `.none`, lo de siempre) y `onStepChange(stepKey, index)`. `steps[].completed` pone la palomita cuando los
+  títulos se pulsan. Sin estas opciones, igual que antes.
+- `WizardLayout`: `orientation` y `onStepSelect` (los títulos se vuelven botones); `skippedKeys` y `onSkip` ya no son
+  obligatorios (sin `onSkip` no sale «Omitir este paso»). Las reglas puras salen de la puerta principal: `openingStepOf`,
+  `stepSelectionActionOf`, `isStepCompleted`.
+- `RecordCard` `footerAlign` (`RECORD_CARD_FOOTER_ALIGN`): el footer y «Ver detalle» juntos a la izquierda (`start`) o a la
+  derecha (`end`); por omisión `spaceBetween`, como antes.
+- CLI: `calcita check:texts --source resources/js`, para el código fuera de `src/` (un Laravel).
+- Ejemplos: «11. Editar por pasos» en Formularios; en la solicitud de crédito, «Corregir la solicitud» la abre del servidor en
+  el paso que pide la mesa, en vertical y con los títulos que se pulsan; en Encabezados y tarjetas, una tarjeta con el pie a
+  la derecha.
+
 ## [0.51.1] - 2026-11-03
 
 ### Arreglado
