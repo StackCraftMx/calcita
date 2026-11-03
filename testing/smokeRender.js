@@ -15,7 +15,7 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation,
+    createHashNavigation, RECORD_CARD_FOOTER_ALIGN, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -198,6 +198,8 @@ const CASES = [
         actions: [{key: 'copy', label: 'Copiar', onClick: () => {}}], groups: [{title: 'Importe', facts: [{label: 'Subtotal', value: '$100.00'}, {label: 'IVA', value: '$16.00'}]}],
         highlight: {label: 'Total', value: '$116.00'}, footer: 'Entrega mañana', details: 'Historial'}), 'Total'],
     ['RecordCardSkeleton', h(RecordCardSkeleton, {groups: 3}), ''],
+    ['RecordCard con el pie a la derecha', h(RecordCard, {title: 'Ana López', footer: 'Entrega mañana', details: 'Historial',
+        footerAlign: RECORD_CARD_FOOTER_ALIGN.end}), 'justify-content:flex-end'],
     // el cajón de búsqueda abierto (va en un portal que no se pinta en el servidor: que no truene con todos sus tipos)
     ['FilterDrawer abierto no truena en el servidor', h(FilterDrawer, {open: true, onClose: () => {}, values: {}, onApply: () => {}, fields: [
         {name: 'status', label: 'Estado', kind: 'multiSelect', options: [{value: 'paid', label: 'Pagado'}]},
@@ -248,6 +250,16 @@ const CASES = [
     ['FormWizard con un paso opcional', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormWizard, {
         submitLabel: 'Enviar', steps: [{key: 'a', label: 'Datos', fields: ['email'], content: h(FormTextField, {name: 'email', label: 'Correo'})}, {key: 'b', label: 'Extra', optional: true, content: 'nada'}],
     })), 'Opcional'],
+    // vertical, con los títulos que se pulsan y abierto en el paso que dice el servidor: solo ese paso tiene sus campos
+    ['FormWizard vertical abierto en otro paso', h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormWizard, {
+        submitLabel: 'Enviar', orientation: WIZARD_ORIENTATION.vertical, stepSelection: WIZARD_STEP_SELECTION.free, initialStepKey: 'b',
+        steps: [{key: 'a', label: 'Datos', fields: ['email'], content: 'Campos del paso a'}, {key: 'b', label: 'Documentos', content: 'Campos del paso b'}],
+    })), 'Campos del paso b'],
+    // suelto, sin «Omitir» ni pasos omitidos (ya no son obligatorios)
+    ['WizardLayout sin omitir', h(WizardLayout, {
+        steps: [{key: 'a', label: 'Datos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}], activeIndex: 0,
+        onBack: () => {}, onNext: () => {}, onStepSelect: () => {}, submitButton: 'Enviar',
+    }), 'MuiStepButton'],
     ['BarList', h(BarList, {items: [{key: 'a', label: 'Producto A', value: 3}], emptyLabel: 'Sin datos'}), ''],
     ['ColumnChart', h(ColumnChart, {data: [{key: 'ene', value: 3, label: 'ene'}], periodLabel: 'Mes', valueLabel: 'Pedidos', ariaLabel: 'Pedidos por mes', emptyLabel: 'Sin datos'}), ''],
     // los colores salen del tema con su prefijo de variables: escritos como var(--mui-…) se perdían con un cssVarPrefix propio

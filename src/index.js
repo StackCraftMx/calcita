@@ -111,7 +111,7 @@ export {
     activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
     HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
-    LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RecordCard, RecordCardSkeleton, RouteTabs,
+    LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RECORD_CARD_FOOTER_ALIGN, RecordCard, RecordCardSkeleton, RouteTabs,
     TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
     StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher, useHelpCarousel,
@@ -133,6 +133,7 @@ export {default as RepeatingFields} from '@/inputs/RepeatingFields.jsx';
 export {useRowKeys} from '@/inputs/useRowKeys.js';
 export {default as SelectInput} from '@/inputs/SelectInput.jsx';
 export {default as WizardLayout} from '@/inputs/WizardLayout.jsx';
+export {WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, isStepCompleted, openingStepOf, stepSelectionActionOf} from '@/inputs/wizardSteps.js';
 export {default as TextInput} from '@/inputs/TextInput.jsx';
 export {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 export {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';

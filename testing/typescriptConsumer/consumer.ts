@@ -1,6 +1,6 @@
 // Un proyecto en TypeScript que usa el paquete (JavaScript con sus tipos generados del JSDoc). Solo se compila:
 //   npx tsc -p testing/typescriptConsumer/tsconfig.json
-import {RecordCard, RecordCardSkeleton, COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer, comparisonOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, HELP_CLOSE_REASON, HelpButton, HelpCarouselDialog, useHelpCarousel, ICON_BADGE_VARIANT, IconBadge, ROUTE_TABS_MODE, RouteTabs, useActiveRouteTab, dictionaryEntryOf, formatCurrency, labelOf, lookup, problemTitle, reportPublishedBuild, toolkitTextsEs} from '@stackcraftmx/calcita';
+import {RECORD_CARD_FOOTER_ALIGN, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout, RecordCard, RecordCardSkeleton, COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer, comparisonOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, HELP_CLOSE_REASON, HelpButton, HelpCarouselDialog, useHelpCarousel, ICON_BADGE_VARIANT, IconBadge, ROUTE_TABS_MODE, RouteTabs, useActiveRouteTab, dictionaryEntryOf, formatCurrency, labelOf, lookup, problemTitle, reportPublishedBuild, toolkitTextsEs} from '@stackcraftmx/calcita';
 import {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf, usePublishedBuildWatch} from '@stackcraftmx/calcita';
 import {VALUE_FORMAT, reportSheetOf} from '@stackcraftmx/calcita/excel';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
@@ -231,6 +231,7 @@ const recordCardPieces = [
         highlight: {label: 'Total', value: '$116.00', caption: 'Con IVA'}, details: 'Historial', onDetailsToggle: (isOpen: boolean) => isOpen,
         trailing: 'Entregado', columns: '1fr 1fr auto auto',
     }),
+    createElement(RecordCard, {title: 'Ana López', footer: 'Pujar', details: 'Historial', footerAlign: RECORD_CARD_FOOTER_ALIGN.end}),
     createElement(RecordCardSkeleton, {groups: 2, factsPerGroup: 3, withAvatar: false}),
 ];
 const keyCheck = (certificateBytes: ArrayBuffer, keyBytes: ArrayBuffer) => verifyEfirmaKey({certificateBytes, keyBytes, password: ''})
@@ -291,6 +292,17 @@ const screenCapsules = [
 ];
 // el botón de regresar acepta sx como cualquier botón (0.51.1: los tipos no lo decían y el editor lo marcaba)
 const backToCustomers = createElement(BackButton, {fallbackTo: '/customers', sx: {mb: 2}});
+// el formulario por pasos para editar: vertical, abierto en el paso que dice el servidor y con los títulos que se pulsan
+const editingWizard = createElement(FormWizard, {
+    submitLabel: 'Guardar', orientation: WIZARD_ORIENTATION.vertical, initialStepKey: 'documents', stepSelection: WIZARD_STEP_SELECTION.checked,
+    onStepChange: (stepKey: string, index: number) => `${stepKey}-${index}`,
+    steps: [{key: 'company', label: 'Empresa', fields: ['rfc'], content: null, completed: true}, {key: 'documents', label: 'Documentos', content: null}],
+});
+// suelto: sin skippedKeys ni onSkip
+const plainWizard = createElement(WizardLayout, {
+    steps: [{key: 'a', label: 'Datos', content: null}], activeIndex: 0, onBack: () => undefined, onNext: () => undefined,
+    onStepSelect: (index: number) => index, submitButton: null,
+});
 // algo propio dentro de BarActions sabe si quedó en una cápsula (solo ícono) o en el «⋯» del teléfono, y cómo cerrarlo
 const isInCapsule = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.capsule;
 const isInMoreMenu = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.menu;
@@ -501,5 +513,5 @@ const ownPieceElement = createElement(OwnPiece, {title: 'Hola', slots: {root: 'a
 const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
 
 export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
