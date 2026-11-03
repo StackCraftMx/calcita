@@ -12,6 +12,9 @@
 //
 // Navega con la navegación del proveedor (ToolkitProvider), no con un router en particular.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBackButton con defaultProps, styleOverrides de
+// sus partes (root) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -20,6 +23,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import {recallListUrl} from '@/lastListUrl.js';
 import {currentHistoryIndex, pageNameAt} from '@/navigationTrail.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBackButton)
+const THEME_NAME = 'CalcitaBackButton';
+const BackButtonRoot = piecePart(THEME_NAME, 'Root', Button);
 
 /**
  * @param {object} props
@@ -28,7 +36,8 @@ import {currentHistoryIndex, pageNameAt} from '@/navigationTrail.js';
  * @param {string} [props.label] ya traducido; se usa cuando la página anterior no anotó su nombre o no hay historial
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function BackButton({fallbackTo, listKey, label, texts, ...buttonProps}) {
+function BackButtonContent(props) {
+    const {fallbackTo, listKey, label, texts, ...buttonProps} = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
     const {useNavigate} = useToolkitNavigation();
     const navigate = useNavigate();
@@ -48,8 +57,12 @@ export default function BackButton({fallbackTo, listKey, label, texts, ...button
     };
 
     return (
-        <Button size="small" color="inherit" startIcon={<ArrowBackIcon />} onClick={goBack} {...buttonProps}>
+        <BackButtonRoot size="small" color="inherit" startIcon={<ArrowBackIcon />} onClick={goBack} {...buttonProps}>
             {previousPageName ? t(previousPageName.labelKey, previousPageName.params) : (label ?? t('actions.back'))}
-        </Button>
+        </BackButtonRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BackButton = withPieceSlots(BackButtonContent, THEME_NAME);
+export default BackButton;

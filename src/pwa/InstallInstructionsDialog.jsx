@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallInstructions)
@@ -49,7 +49,7 @@ export function variantHasInstructions(variant) {
  * @param {() => void} props.onClose
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallInstructionsDialog(props) {
+function InstallInstructionsDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallInstructions.defaultProps) y encima lo que llega aquí
     const {variant, open, onClose, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -76,3 +76,7 @@ export default function InstallInstructionsDialog(props) {
         </Dialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const InstallInstructionsDialog = withPieceSlots(InstallInstructionsDialogContent, THEME_NAME);
+export default InstallInstructionsDialog;

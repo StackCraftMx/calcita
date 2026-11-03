@@ -31,7 +31,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSessionsCard)
@@ -84,7 +84,7 @@ function SessionRow({session}) {
  * @param {() => void} [props.onClosed] p. ej. volver a pedir la lista
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SessionsCard(props) {
+function SessionsCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSessionsCard.defaultProps) y encima lo que llega aquí
     const {sessions, error = null, onCloseOthers, onClosed, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -128,3 +128,7 @@ export default function SessionsCard(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SessionsCard = withPieceSlots(SessionsCardContent, THEME_NAME);
+export default SessionsCard;

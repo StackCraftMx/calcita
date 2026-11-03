@@ -35,7 +35,7 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useValidationText} from '@/forms/useValidationText.js';
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -93,7 +93,7 @@ function gridColumnsOf(columns) {
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function RepeatingFields(props) {
+function RepeatingFieldsContent(props) {
     const {
         label, rowKeys, renderRow, rowLabelOf, rowActionsOf, columns = DEFAULT_COLUMNS, minRows = 1, maxRows = null, onAdd, onRemove,
         onClear, removeBlockedReasonOf, confirmRemoveOf, rowHasErrorOf, error, helperText, footer, addLabel, disabled = false, sx, messages, texts,
@@ -205,3 +205,7 @@ export default function RepeatingFields(props) {
         </RepeatingRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RepeatingFields = withPieceSlots(RepeatingFieldsContent, THEME_NAME);
+export default RepeatingFields;

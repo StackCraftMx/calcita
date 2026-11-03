@@ -28,7 +28,7 @@ import {useTheme} from '@mui/material/styles';
 
 import {MAP_PIN_SIZE, boundsOfMarkers, mapPinHtmlOf} from '@/maps/mapMarkers.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMapView)
@@ -125,7 +125,7 @@ function DefaultPopupContent({marker}) {
  * @param {import('react').ReactNode} [props.children] capas propias de react-leaflet (Circle, Polygon, GeoJSON…)
  * @param {object} [props.mapProps] lo demás de MapContainer de react-leaflet (scrollWheelZoom, minZoom…)
  */
-export default function MapView(props) {
+function MapViewContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMapView.defaultProps) y encima lo que llega aquí
     const {
     markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES, renderPopup, onMapClick,
@@ -179,3 +179,7 @@ export default function MapView(props) {
         </MapRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MapView = withPieceSlots(MapViewContent, THEME_NAME);
+export default MapView;

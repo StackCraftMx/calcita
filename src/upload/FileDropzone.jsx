@@ -31,7 +31,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import ModalWaiting from '@/feedback/ModalWaiting.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -68,7 +68,7 @@ const DropzoneExtra = piecePart(THEME_NAME, 'Extra', Box);
  * @param {object} [props.sx] ajustes del recuadro
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FileDropzone(props) {
+function FileDropzoneContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFileDropzone.defaultProps) y encima lo que llega aquí
     const {
         value = null, onChange, accept, maxSize, hint, buttonLabel, disabled = false, busy = false, busyModal = false, onReject, template,
@@ -124,3 +124,7 @@ export default function FileDropzone(props) {
         </DropzoneRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FileDropzone = withPieceSlots(FileDropzoneContent, THEME_NAME);
+export default FileDropzone;

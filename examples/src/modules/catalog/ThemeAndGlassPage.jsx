@@ -12,10 +12,12 @@ import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import AppearanceDemo from '@/modules/catalog/demos/theme/AppearanceDemo.tsx';
 import ThemeSwitchDemo from '@/modules/catalog/demos/theme/ThemeSwitchDemo.tsx';
+import PieceSlotsDemo from '@/modules/catalog/demos/theme/PieceSlotsDemo.tsx';
 
 const loadThemeSwitch = () => import('@/modules/catalog/demos/theme/ThemeSwitchDemo.tsx?demo-source');
 const loadAppearance = () => import('@/modules/catalog/demos/theme/AppearanceDemo.tsx?demo-source');
 const loadSetup = () => import('@/modules/catalog/demos/theme/ThemeSetup.ts?demo-source');
+const loadPieceSlots = () => import('@/modules/catalog/demos/theme/PieceSlotsDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (themeAndGlass.<sección>.extend.<id>)
@@ -50,6 +52,15 @@ const SETUP_EXTENSIONS = [
     {id: 'android', option: 'isAndroidDevice()', example: 'isAndroidDevice() ? minimalTheme : glassTheme'},
 ];
 
+const SLOTS_EXTENSIONS = [
+    {id: 'slots', option: 'slots={{parte: Componente}}', example: '<RecordCard slots={{avatar: StoreAvatar}} … />'},
+    {id: 'slotProps', option: 'slotProps={{parte: props}}', example: "<MetricCard slotProps={{value: {component: 'h2'}}} … />"},
+    {id: 'slotPropsFunction', option: 'slotProps={{parte: (props) => …}}', example: "slotProps={{root: (props) => ({'data-id': props.id})}}"},
+    {id: 'theme', option: 'components.Calcita… defaultProps.slots · slotProps', example: "CalcitaRecordCard: {defaultProps: {slotProps: {root: {elevation: 3}}}}"},
+    {id: 'merge', option: 'className · style · sx', example: "slotProps={{root: {sx: {borderColor: 'primary.main'}}}}  // se suma al de Calcita"},
+    {id: 'ownPiece', option: 'piecePart · usePieceProps · withPieceSlots', example: "const Root = piecePart('MiPieza', 'Root', Paper);  // una pieza propia, igual que las de Calcita"},
+];
+
 export const ThemeAndGlassPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `themeAndGlass.${section}`, extensions);
@@ -63,6 +74,8 @@ export const ThemeAndGlassPage = () => {
                          extensions={rowsOf('appearance', APPEARANCE_EXTENSIONS)} Demo={AppearanceDemo} loadSource={loadAppearance} />
             <CodeSection title={t('themeAndGlass.setup.title')} description={t('themeAndGlass.setup.description')}
                          extensions={rowsOf('setup', SETUP_EXTENSIONS)} loadSource={loadSetup} />
+            <DemoSection title={t('themeAndGlass.slots.title')} description={t('themeAndGlass.slots.description')}
+                         extensions={rowsOf('slots', SLOTS_EXTENSIONS)} Demo={PieceSlotsDemo} loadSource={loadPieceSlots} />
         </Stack>
     );
 };

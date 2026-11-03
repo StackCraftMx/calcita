@@ -8,7 +8,7 @@
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFullPageLoader)
@@ -19,7 +19,7 @@ const LoaderRoot = piecePart(THEME_NAME, 'Root', Box);
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FullPageLoader({texts, ...unknownProps} = {}) {
+function FullPageLoaderContent({texts, ...unknownProps} = {}) {
     warnUnknownProps('FullPageLoader', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
@@ -29,3 +29,6 @@ export default function FullPageLoader({texts, ...unknownProps} = {}) {
         </LoaderRoot>
     );
 }
+
+const FullPageLoader = withPieceSlots(FullPageLoaderContent, THEME_NAME);
+export default FullPageLoader;

@@ -22,7 +22,7 @@ import Typography from '@mui/material/Typography';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDateRangeFilter)
@@ -39,7 +39,7 @@ const RangeActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {string} [props.label] ya traducido; por defecto "Personalizado"
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function DateRangeFilter(props) {
+function DateRangeFilterContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDateRangeFilter.defaultProps) y encima lo que llega aquí
     const {from = '', to = '', onChange, label, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -96,3 +96,7 @@ export default function DateRangeFilter(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const DateRangeFilter = withPieceSlots(DateRangeFilterContent, THEME_NAME);
+export default DateRangeFilter;

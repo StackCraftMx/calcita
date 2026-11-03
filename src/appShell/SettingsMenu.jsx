@@ -17,7 +17,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
 import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
 import MenuLinks from '@/appShell/MenuLinks.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSettingsMenu)
@@ -32,7 +32,7 @@ const SettingsDivider = piecePart(THEME_NAME, 'Divider', Divider);
  * @param {import('react').ReactNode} [props.extraSettings] los ajustes del proyecto, debajo de los del paquete
  * @param {object[]} [props.menuLinks] las ligas propias (accountMenuItems), al final
  */
-export default function SettingsMenu(props) {
+function SettingsMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSettingsMenu.defaultProps) y encima lo que llega aquí
     const {showFontSize = true, showLanguage = true, showColorScheme = true, extraSettings, menuLinks = [], ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -61,3 +61,7 @@ export default function SettingsMenu(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SettingsMenu = withPieceSlots(SettingsMenuContent, THEME_NAME);
+export default SettingsMenu;

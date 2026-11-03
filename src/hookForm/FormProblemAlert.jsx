@@ -6,7 +6,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {useFormContext, useFormState} from 'react-hook-form';
 import Alert from '@mui/material/Alert';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaFormProblemAlert): el estilo del proyecto va
@@ -17,7 +17,7 @@ const ProblemAlert = piecePart(THEME_NAME, 'Root', Alert);
 /**
  * @param {{control?: object, sx?: object}} props control: el de useForm, si la pantalla no usa FormProvider
  */
-export default function FormProblemAlert({control, sx, ...unknownProps}) {
+function FormProblemAlertContent({control, sx, ...unknownProps}) {
     warnUnknownProps('FormProblemAlert', unknownProps);
     const formContext = useFormContext();
     const {errors} = useFormState({control: control ?? formContext?.control});
@@ -29,3 +29,6 @@ export default function FormProblemAlert({control, sx, ...unknownProps}) {
     }
     return <ProblemAlert severity="error" role="alert" sx={sx}>{message}</ProblemAlert>;
 }
+
+const FormProblemAlert = withPieceSlots(FormProblemAlertContent, THEME_NAME);
+export default FormProblemAlert;

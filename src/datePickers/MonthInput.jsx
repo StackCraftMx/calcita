@@ -5,6 +5,9 @@
 // que ya tiene; el año se cambia arriba. '' = vacío. Como la fecha, no se pasa por Date (que lo movería de mes según la
 // zona el día 1).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMonthInput con defaultProps, styleOverrides de
+// sus partes (picker) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
@@ -12,6 +15,11 @@ import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
 import {monthTextOf, pickerMonthOf} from '@/datePickers/pickerValues.js';
 import {usePickerField} from '@/datePickers/usePickerField.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMonthInput)
+const THEME_NAME = 'CalcitaMonthInput';
+const MonthInputPicker = piecePart(THEME_NAME, 'Picker', DatePicker);
 
 // primero el año y luego el mes: el selector abre en los meses y el año se cambia con su botón de arriba
 const MONTH_VIEWS = ['year', 'month'];
@@ -37,17 +45,18 @@ const MONTH_VIEWS = ['year', 'month'];
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function MonthInput({
-    name, label, value, onChange, onBlur, error, helperText = ' ', minMonth, maxMonth, disableFuture = false, disablePast = false,
-    disabled = false, inputRef, pickerProps, messages, texts,
-    ...unknownProps
-}) {
-    warnUnknownProps('MonthInput', unknownProps);
+function MonthInputContent(props) {
+    const {
+        name, label, value, onChange, onBlur, error, helperText = ' ', minMonth, maxMonth, disableFuture = false, disablePast = false,
+        disabled = false, inputRef, pickerProps, messages, texts,
+        ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'month', error, label, messages, texts});
 
     return (
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>
-            <DatePicker
+            <MonthInputPicker
                 {...pickerProps}
                 views={MONTH_VIEWS}
                 openTo="month"
@@ -72,3 +81,7 @@ export default function MonthInput({
         </PickerFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MonthInput = withPieceSlots(MonthInputContent, THEME_NAME);
+export default MonthInput;

@@ -29,7 +29,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {inboxDateOf} from '@/inbox/inboxDates.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageView)
@@ -102,7 +102,7 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
  * @param {(message: any) => import('react').ReactNode} [props.renderBody] el texto a su manera (HTML ya limpio por el proyecto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
  */
-export default function MessageView(props) {
+function MessageViewContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageView.defaultProps) y encima lo que llega aquí
     const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -161,3 +161,7 @@ export default function MessageView(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MessageView = withPieceSlots(MessageViewContent, THEME_NAME);
+export default MessageView;

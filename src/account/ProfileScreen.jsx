@@ -41,7 +41,7 @@ import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ProfileHeader from '@/ui/layout/ProfileHeader.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaProfileScreen)
@@ -129,7 +129,7 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete:
  *     {profile: {tabs: {data: 'Mis datos'}}}
  */
-export default function ProfileScreen(props) {
+function ProfileScreenContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileScreen.defaultProps) y encima lo que llega aquí
     const {
     showColorScheme = true, extraFields, extraTabs = [], hiddenTabs = [], onTabChange, onProfileSaved, texts,
@@ -181,3 +181,7 @@ export default function ProfileScreen(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ProfileScreen = withPieceSlots(ProfileScreenContent, THEME_NAME);
+export default ProfileScreen;

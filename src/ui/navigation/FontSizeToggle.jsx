@@ -15,7 +15,7 @@ import Tooltip from '@mui/material/Tooltip';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
 
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFontSizeToggle)
@@ -28,7 +28,7 @@ const FontSizeButton = piecePart(THEME_NAME, 'Button', IconButton);
  * @param {(level: string) => void} [props.onChange] la persona eligió otro tamaño (FONT_SIZE_LEVELS; para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function FontSizeToggle(props) {
+function FontSizeToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFontSizeToggle.defaultProps) y encima lo que llega aquí
     const {size = 'small', onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -65,3 +65,7 @@ export default function FontSizeToggle(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FontSizeToggle = withPieceSlots(FontSizeToggleContent, THEME_NAME);
+export default FontSizeToggle;

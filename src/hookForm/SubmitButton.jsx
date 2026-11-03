@@ -1,10 +1,18 @@
 // Botón de enviar de react-hook-form: se bloquea y muestra su indicador mientras se envía (un doble clic no manda dos
 // peticiones). Mismo look que el SubmitButton de formik.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSubmitButton con defaultProps, styleOverrides de
+// sus partes (root) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useFormContext, useFormState} from 'react-hook-form';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSubmitButton)
+const THEME_NAME = 'CalcitaSubmitButton';
+const SubmitButtonRoot = piecePart(THEME_NAME, 'Root', Button);
 
 /**
  * @param {object} props
@@ -17,14 +25,19 @@ import CircularProgress from '@mui/material/CircularProgress';
  * @param {boolean} [props.fullWidth]
  * @param {import('react').ReactNode} [props.startIcon]
  */
-export default function SubmitButton({children, disabled, isPending, control, ...buttonProps}) {
+function SubmitButtonContent(props) {
+    const {children, disabled, isPending, control, ...buttonProps} = usePieceProps(props, THEME_NAME);
     const formContext = useFormContext();
     const {isSubmitting} = useFormState({control: control ?? formContext?.control});
     const isBusy = Boolean(isPending ?? isSubmitting);
 
     return (
-        <Button type="submit" variant="contained" size="large" disabled={disabled || isBusy} aria-busy={isBusy} {...buttonProps}>
+        <SubmitButtonRoot type="submit" variant="contained" size="large" disabled={disabled || isBusy} aria-busy={isBusy} {...buttonProps}>
             {isBusy ? <CircularProgress size={22} color="inherit" /> : children}
-        </Button>
+        </SubmitButtonRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SubmitButton = withPieceSlots(SubmitButtonContent, THEME_NAME);
+export default SubmitButton;

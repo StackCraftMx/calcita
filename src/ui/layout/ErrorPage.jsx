@@ -26,7 +26,7 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SystemUpdateAltRoundedIcon from '@mui/icons-material/SystemUpdateAltRounded';
 import TravelExploreOutlinedIcon from '@mui/icons-material/TravelExploreOutlined';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaErrorPage)
@@ -62,7 +62,7 @@ const ICON_PIXELS = 56;
  * @param {object} [props.texts] los textos que cambian, con la forma de `errorPage` en los textos del paquete:
  *     {goHome: 'Volver al tablero', notFound: {title: '…'}}
  */
-export default function ErrorPage(props) {
+function ErrorPageContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaErrorPage.defaultProps) y encima lo que llega aquí
     const {
     kind, title, text, homePath = '/', onRetry, onGoHome, extraActions, actions, icon, children, texts,
@@ -92,3 +92,7 @@ export default function ErrorPage(props) {
         </ErrorRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ErrorPage = withPieceSlots(ErrorPageContent, THEME_NAME);
+export default ErrorPage;

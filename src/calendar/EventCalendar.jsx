@@ -41,7 +41,7 @@ import {paletteOf} from '@/theme/components/paletteOf.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SegmentedControl from '@/ui/filters/SegmentedControl.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEventCalendar)
@@ -122,7 +122,7 @@ function calendarStylesOf(theme) {
  *     que el calendario controla (las citas, la barra, los eventos de arriba) no se reemplaza desde aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
  */
-export default function EventCalendar(props) {
+function EventCalendarContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEventCalendar.defaultProps) y encima lo que llega aquí
     const {
     events, initialView = CALENDAR_VIEW.month, views = Object.values(CALENDAR_VIEW), onEventClick, onDateSelect, onEventChange, height = 'auto', ariaLabel,
@@ -197,3 +197,7 @@ export default function EventCalendar(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const EventCalendar = withPieceSlots(EventCalendarContent, THEME_NAME);
+export default EventCalendar;

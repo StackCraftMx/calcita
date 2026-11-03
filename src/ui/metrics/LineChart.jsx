@@ -28,7 +28,7 @@ import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLineChart)
@@ -58,7 +58,7 @@ const ACTIVE_DOT_RADIUS_PIXELS = 5;
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
-export default function LineChart(props) {
+function LineChartContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaLineChart.defaultProps) y encima lo que llega aquí
     const {
     data, series, periodLabel, ariaLabel, emptyLabel, height = 220, formatValue: formatValueProp, referenceLine, onSelect, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
@@ -132,3 +132,7 @@ export default function LineChart(props) {
         </Box>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const LineChart = withPieceSlots(LineChartContent, THEME_NAME);
+export default LineChart;

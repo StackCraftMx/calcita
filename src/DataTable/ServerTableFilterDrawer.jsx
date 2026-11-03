@@ -10,6 +10,9 @@
 // filterDefaults: la tabla solo guarda en la dirección lo que declara ahí. filterKinds: las listas se leen como lista. Los
 // chips dicen cada filtro en palabras y cada uno se quita con su ×.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaServerTableFilterDrawer con defaultProps, styleOverrides de
+// sus partes (button) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
 import Button from '@mui/material/Button';
@@ -20,6 +23,11 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import FilterDrawer from '@/ui/filters/FilterDrawer.jsx';
 import {activeDrawerFilterCountOf} from '@/ui/filters/filterDrawerFields.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaServerTableFilterDrawer)
+const THEME_NAME = 'CalcitaServerTableFilterDrawer';
+const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
 
 /**
  * @param {object} props
@@ -32,8 +40,9 @@ import {activeDrawerFilterCountOf} from '@/ui/filters/filterDrawerFields.js';
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos del cajón
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ServerTableFilterDrawer({fields, anchor, width, title, buttonLabel, onApply, children, texts, ...unknownProps}) {
-    warnUnknownProps('ServerTableFilterDrawer', unknownProps);
+function ServerTableFilterDrawerContent(props) {
+    const {fields, anchor, width, title, buttonLabel, onApply, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {filters, setFilters} = useTableFilter();
     const [isOpen, setIsOpen] = useState(false);
@@ -41,10 +50,10 @@ export default function ServerTableFilterDrawer({fields, anchor, width, title, b
 
     return (
         <>
-            <Button size="small" variant={activeCount > 0 ? 'contained' : 'outlined'} startIcon={<TuneRoundedIcon />}
+            <ServerTableFilterDrawerButton size="small" variant={activeCount > 0 ? 'contained' : 'outlined'} startIcon={<TuneRoundedIcon />}
                     aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
                 {activeCount > 0 ? t('filterDrawer.openWithCount', {count: activeCount}) : (buttonLabel ?? t('filterDrawer.open'))}
-            </Button>
+            </ServerTableFilterDrawerButton>
             <FilterDrawer open={isOpen} onClose={() => setIsOpen(false)} fields={fields} values={filters} anchor={anchor} width={width} title={title}
                           texts={texts}
                           onApply={(values) => {
@@ -56,3 +65,7 @@ export default function ServerTableFilterDrawer({fields, anchor, width, title, b
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ServerTableFilterDrawer = withPieceSlots(ServerTableFilterDrawerContent, THEME_NAME);
+export default ServerTableFilterDrawer;

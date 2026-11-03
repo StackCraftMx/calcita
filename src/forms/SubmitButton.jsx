@@ -7,22 +7,35 @@
 // pasa aquí si la máquina está en su estado de envío. La máquina además IGNORA un segundo envío en ese estado: el botón
 // deshabilitado es la cortesía, la máquina es la garantía.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSubmitButton con defaultProps, styleOverrides de
+// sus partes (root) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useFormikContext} from 'formik';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSubmitButton)
+const THEME_NAME = 'CalcitaSubmitButton';
+const SubmitButtonRoot = piecePart(THEME_NAME, 'Root', Button);
 
 /**
  * @param {{children: import('react').ReactNode, disabled?: boolean, isPending?: boolean} & Omit<import('@mui/material/Button').ButtonProps, 'type'|'children'>} props
  *     lo demás va al Button de MUI (sx, size, fullWidth…)
  */
-export default function SubmitButton({children, disabled, isPending, ...buttonProps}) {
+function SubmitButtonContent(props) {
+    const {children, disabled, isPending, ...buttonProps} = usePieceProps(props, THEME_NAME);
     const {isSubmitting} = useFormikContext();
     const isBusy = Boolean(isPending ?? isSubmitting);
 
     return (
-        <Button type="submit" variant="contained" size="large" disabled={disabled || isBusy} aria-busy={isBusy} {...buttonProps}>
+        <SubmitButtonRoot type="submit" variant="contained" size="large" disabled={disabled || isBusy} aria-busy={isBusy} {...buttonProps}>
             {isBusy ? <CircularProgress size={22} color="inherit" /> : children}
-        </Button>
+        </SubmitButtonRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SubmitButton = withPieceSlots(SubmitButtonContent, THEME_NAME);
+export default SubmitButton;

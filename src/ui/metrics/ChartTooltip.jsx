@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaChartTooltip)
 const THEME_NAME = 'CalcitaChartTooltip';
@@ -27,7 +27,7 @@ const CHART_TOOLTIP_OPACITY = 0.92;
  * @param {{active?: boolean, payload?: Array<{payload: any}>, render: (item: any) => import('react').ReactNode}} props
  *     active y payload los pone recharts; render recibe el renglón de data del punto o la columna
  */
-export default function ChartTooltip(props) {
+function ChartTooltipContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaChartTooltip.defaultProps) y encima lo que llega aquí
     // OJO: sin aviso de opciones desconocidas (warnUnknownProps) a propósito: recharts le pasa al globo todas las suyas
     // (offset, wrapperStyle, coordinate…) y el aviso salía con unas veinte opciones que el globo no necesita
@@ -43,3 +43,7 @@ export default function ChartTooltip(props) {
         </TooltipRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ChartTooltip = withPieceSlots(ChartTooltipContent, THEME_NAME);
+export default ChartTooltip;

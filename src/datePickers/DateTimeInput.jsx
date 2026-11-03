@@ -13,6 +13,9 @@
 //
 // Para una hora del día sin fecha («abre a las 09:00») va TimeInput; para una fecha sin hora, DateInput.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDateTimeInput con defaultProps, styleOverrides de
+// sus partes (picker) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
 
@@ -25,6 +28,11 @@ import {usePickerField} from '@/datePickers/usePickerField.js';
 import {intlLocaleOf} from '@/toolkit/toolkitSettings.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDateTimeInput)
+const THEME_NAME = 'CalcitaDateTimeInput';
+const DateTimeInputPicker = piecePart(THEME_NAME, 'Picker', DateTimePicker);
 
 // entre la ayuda de la pantalla y el nombre de la zona
 const HELPER_SEPARATOR = ' · ';
@@ -56,12 +64,13 @@ const HELPER_SEPARATOR = ' · ';
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function DateTimeInput({
-    name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
-    disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, messages, texts,
-    ...unknownProps
-}) {
-    warnUnknownProps('DateTimeInput', unknownProps);
+function DateTimeInputContent(props) {
+    const {
+        name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
+        disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, messages, texts,
+        ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'dateTime', error, label, messages, texts});
     const {languages} = useToolkitSettings();
     const shownTimeZone = timeZone ?? field.timeZone;
@@ -74,7 +83,7 @@ export default function DateTimeInput({
 
     return (
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>
-            <DateTimePicker
+            <DateTimeInputPicker
                 {...pickerProps}
                 timezone={shownTimeZone}
                 format={field.formats.dateTime}
@@ -101,3 +110,7 @@ export default function DateTimeInput({
         </PickerFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const DateTimeInput = withPieceSlots(DateTimeInputContent, THEME_NAME);
+export default DateTimeInput;

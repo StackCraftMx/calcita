@@ -34,7 +34,7 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {HEATMAP_LEVELS, calendarRangeOf, calendarWeeksOf, levelOf, todayInZone} from '@/ui/metrics/heatmapScale.js';
 import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCalendarHeatmap)
@@ -100,7 +100,7 @@ function levelFill(theme, tone, level) {
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CalendarHeatmap(props) {
+function CalendarHeatmapContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaCalendarHeatmap.defaultProps) y encima lo que llega aquí
     const {startsOn, endsOn, days = NO_DAYS, ariaLabel, valueLabel, describeValue, summary, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -215,3 +215,7 @@ export default function CalendarHeatmap(props) {
         </Box>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CalendarHeatmap = withPieceSlots(CalendarHeatmapContent, THEME_NAME);
+export default CalendarHeatmap;

@@ -24,7 +24,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import {List} from 'react-window';
 
 import {filterPages, pageNumbersOf} from '@/DataTable/goToPageOptions.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -137,7 +137,7 @@ function PageListbox({children: pageOptions, ref, pageCount, pageListRef, pageIn
  * @param {(page: number) => void} props.onChange
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function GoToPage(props) {
+function GoToPageContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGoToPage.defaultProps) y encima lo que llega aquí
     const {page, pageCount, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -196,3 +196,7 @@ export default function GoToPage(props) {
         </GoToRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const GoToPage = withPieceSlots(GoToPageContent, THEME_NAME);
+export default GoToPage;

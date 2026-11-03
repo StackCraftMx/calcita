@@ -9,7 +9,7 @@
 // Genérico del paquete: function (regla de la casa).
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaTag)
 const THEME_NAME = 'CalcitaTag';
@@ -25,7 +25,7 @@ const TagChip = piecePart(THEME_NAME, 'Root', Chip);
  * @param {() => void} [props.onDelete]
  * @param {object} [props.sx]
  */
-export default function Tag(props) {
+function TagContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTag.defaultProps) y encima lo que llega aquí
     const {label, tooltip, color = 'default', variant = 'outlined', size = 'small', onDelete, sx, ...chipProps} = usePieceProps(props, THEME_NAME);
     const chip = (
@@ -39,3 +39,7 @@ export default function Tag(props) {
     }
     return <Tooltip title={tooltip}>{chip}</Tooltip>;
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const Tag = withPieceSlots(TagContent, THEME_NAME);
+export default Tag;

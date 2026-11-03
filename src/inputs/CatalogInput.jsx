@@ -10,6 +10,9 @@
 // Por qué no un <select>: con catálogos de cientos de opciones no se puede usar; y con texto libre la gente inventa claves.
 // Se enseñan a lo más MAX_VISIBLE_OPTIONS coincidencias: con miles, la lista completa congela la pantalla.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaCatalogInput con defaultProps, styleOverrides de
+// sus partes (field) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -21,6 +24,11 @@ import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCatalogInput)
+const THEME_NAME = 'CalcitaCatalogInput';
+const CatalogInputField = piecePart(THEME_NAME, 'Field', Autocomplete);
 
 const MAX_VISIBLE_OPTIONS = 100;
 // la opción de «Elegir todos»: no es del catálogo y nunca llega al formulario
@@ -60,12 +68,13 @@ function plainTextOf(text) {
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CatalogInput({
-    name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
-    multiple = false, selectAll = false, checkboxes = false, limitTags, messages, texts,
-    ...unknownProps
-}) {
-    warnUnknownProps('CatalogInput', unknownProps);
+function CatalogInputContent(props) {
+    const {
+        name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
+        multiple = false, selectAll = false, checkboxes = false, limitTags, messages, texts,
+        ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
     const validationTextOf = useValidationText({name, label, messages});
@@ -96,7 +105,7 @@ export default function CatalogInput({
 
     return (
         <FieldFrame inputId={inputId} label={label}>
-            <Autocomplete
+            <CatalogInputField
                 id={inputId}
                 multiple={multiple}
                 disableCloseOnSelect={multiple}
@@ -164,3 +173,7 @@ export default function CatalogInput({
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CatalogInput = withPieceSlots(CatalogInputContent, THEME_NAME);
+export default CatalogInput;

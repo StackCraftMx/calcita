@@ -27,7 +27,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
 import {useAccessChecker} from '@/access/useCan.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {activeRouteTabOf, queryTabOf, searchWithTab} from '@/ui/navigation/routeTabMatching.js';
@@ -79,7 +79,7 @@ export function useActiveRouteTab(tabs, {mode = ROUTE_TABS_MODE.path, paramName 
  * @param {(tab: object) => void} [props.onChange] avisa la pestaña que se eligió (la navegación ya la hace la liga)
  * @param {object} [props.sx]
  */
-export default function RouteTabs(props) {
+function RouteTabsContent(props) {
     const {tabs, ariaLabel, mode = ROUTE_TABS_MODE.path, paramName = DEFAULT_PARAM_NAME, replace, onChange, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {useLocation, Link} = useToolkitNavigation();
@@ -110,3 +110,7 @@ export default function RouteTabs(props) {
         </RouteTabsRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RouteTabs = withPieceSlots(RouteTabsContent, THEME_NAME);
+export default RouteTabs;

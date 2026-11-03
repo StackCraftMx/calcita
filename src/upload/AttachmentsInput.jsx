@@ -26,7 +26,7 @@ import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -73,8 +73,10 @@ const AttachmentsLimits = piecePart(THEME_NAME, 'Limits', Typography);
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {Record<string, import('react').ElementType>} [props.slots] otro componente en lugar de una parte (root, actions, list…)
+ * @param {Record<string, object>} [props.slotProps] props de más para una parte
  */
-export default function AttachmentsInput(props) {
+function AttachmentsInputContent(props) {
     const {
         name, label, value = [], onChange, onBlur, onRemove, accept, maxSize, maxFiles, maxTotalSize, error, helperText, buttonLabel,
         showButton = true, pickerRef, disabled = false, busy = false, onReject, template, actions, sx, messages, texts,
@@ -149,3 +151,10 @@ export default function AttachmentsInput(props) {
 
     return label ? <FieldFrame inputId={buttonId} label={label}>{content}</FieldFrame> : content;
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+// OJO: con su tipo propio, el genérico (T: el tipo de cada archivo) que la envoltura borraría; slots y slotProps van en su
+// documentación
+/** @type {typeof AttachmentsInputContent} */
+const AttachmentsInput = withPieceSlots(AttachmentsInputContent, THEME_NAME);
+export default AttachmentsInput;

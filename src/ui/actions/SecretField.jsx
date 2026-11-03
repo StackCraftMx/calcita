@@ -4,6 +4,9 @@
 // Tapado porque la pantalla se comparte, se graba o la ve quien pasa por atrás; el botón de copiar evita seleccionarlo a
 // mano y dejar un carácter afuera. Si el navegador no deja copiar, se destapa para copiarlo a mano.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSecretField con defaultProps, styleOverrides de
+// sus partes (field) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -18,6 +21,11 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSecretField)
+const THEME_NAME = 'CalcitaSecretField';
+const SecretFieldField = piecePart(THEME_NAME, 'Field', TextField);
 
 const COPIED_FEEDBACK_MILLISECONDS = 2000;
 const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -31,8 +39,9 @@ const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
  * @param {(isRevealed: boolean) => void} [props.onRevealChange] se destapó o se tapó (para registrar quién vio el secreto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function SecretField({value, label, helperText = ' ', onCopied, onRevealChange, texts, ...unknownProps}) {
-    warnUnknownProps('SecretField', unknownProps);
+function SecretFieldContent(props) {
+    const {value, label, helperText = ' ', onCopied, onRevealChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
     const inputId = `secret-${generatedId}`;
@@ -58,7 +67,7 @@ export default function SecretField({value, label, helperText = ' ', onCopied, o
 
     return (
         <FieldFrame inputId={inputId} label={label}>
-            <TextField
+            <SecretFieldField
                 id={inputId}
                 fullWidth
                 size="small"
@@ -88,3 +97,7 @@ export default function SecretField({value, label, helperText = ' ', onCopied, o
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SecretField = withPieceSlots(SecretFieldContent, THEME_NAME);
+export default SecretField;

@@ -37,7 +37,7 @@ import {
     normalizeRecoveryCode, normalizeTotpCode,
 } from '@/forms/security/securityRules.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSecondStepForm)
@@ -73,7 +73,7 @@ function isOutOfAttempts(error) {
  *     useFormikContext (p. ej. el atajo de los ejemplos)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function SecondStepForm(props) {
+function SecondStepFormContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSecondStepForm.defaultProps) y encima lo que llega aquí
     const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -174,3 +174,7 @@ export default function SecondStepForm(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SecondStepForm = withPieceSlots(SecondStepFormContent, THEME_NAME);
+export default SecondStepForm;

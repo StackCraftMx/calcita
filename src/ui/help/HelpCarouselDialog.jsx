@@ -28,7 +28,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -59,7 +59,7 @@ const HelpActions = piecePart(THEME_NAME, 'Actions', DialogActions);
  * @param {number} [props.initialStep]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function HelpCarouselDialog(props) {
+function HelpCarouselDialogContent(props) {
     const {
         open, onClose, steps, title, showDontShowAgain = true, onStepChange, initialStep = 0, texts,
         ...unknownProps
@@ -165,3 +165,7 @@ export default function HelpCarouselDialog(props) {
         </Dialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const HelpCarouselDialog = withPieceSlots(HelpCarouselDialogContent, THEME_NAME);
+export default HelpCarouselDialog;

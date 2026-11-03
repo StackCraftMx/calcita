@@ -15,7 +15,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import HeaderFilterPopover from '@/DataTable/ColumnFilters/HeaderFilterPopover.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSortableFilterHeader)
@@ -38,7 +38,7 @@ const SortableClearButton = piecePart(THEME_NAME, 'ClearButton', ButtonBase);
  * @param {() => void} [props.onClear]
  * @param {import('react').ReactNode} [props.children] el filtro de la columna
  */
-export default function SortableFilterHeader(props) {
+function SortableFilterHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSortableFilterHeader.defaultProps) y encima lo que llega aquí
     const {
     label, sortable = true, sortEntry, onSort, onClearSort, filterable = true, activeCount, onClear, children,
@@ -84,3 +84,7 @@ export default function SortableFilterHeader(props) {
         </SortableRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SortableFilterHeader = withPieceSlots(SortableFilterHeaderContent, THEME_NAME);
+export default SortableFilterHeader;

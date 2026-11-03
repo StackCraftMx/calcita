@@ -18,7 +18,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {Children, useEffect, useRef, useState} from 'react';
 import Box from '@mui/material/Box';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaScrollableRow)
 const THEME_NAME = 'CalcitaScrollableRow';
@@ -48,7 +48,7 @@ const DRAG_THRESHOLD_PIXELS = 5;
  * @param {boolean} [props.fadeEdges]
  * @param {import('react').Ref<HTMLElement>} [props.ref]
  */
-export default function ScrollableRow(props) {
+function ScrollableRowContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaScrollableRow.defaultProps) y encima lo que llega aquí
     const {
         children, gap = 1, py = 0.5, sx, enableDragScroll = true, enableWheelToX = true, fadeEdges = true, ref, ...boxProps
@@ -201,3 +201,7 @@ export default function ScrollableRow(props) {
         </RowRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ScrollableRow = withPieceSlots(ScrollableRowContent, THEME_NAME);
+export default ScrollableRow;

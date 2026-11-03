@@ -13,7 +13,7 @@
 // Pieza genérica: function (regla de la casa).
 import {isValidElement} from 'react';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -68,7 +68,7 @@ function visibleEntriesOf(entries) {
  * @param {StackedEntry[]} props.entries los datos en orden: el primero es el principal (negritas)
  * @returns {import('react').JSX.Element}
  */
-export default function StackedCell(props) {
+function StackedCellContent(props) {
     const {entries, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps('StackedCell', unknownProps);
     const {t} = useToolkitTranslation('table');
@@ -97,3 +97,6 @@ export default function StackedCell(props) {
         </StackedRoot>
     );
 }
+
+const StackedCell = withPieceSlots(StackedCellContent, THEME_NAME);
+export default StackedCell;

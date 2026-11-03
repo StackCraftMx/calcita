@@ -31,7 +31,7 @@ import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {
     ChartLegend, ChartTable, ReferenceCaption, highestValueOf, resolvedSeriesOf, useChartColors, valueAxisWidthOf,
 } from '@/ui/metrics/chartParts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColumnChart)
@@ -64,7 +64,7 @@ const SINGLE_SERIES_KEY = 'value';
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
  */
-export default function ColumnChart(props) {
+function ColumnChartContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColumnChart.defaultProps) y encima lo que llega aquí
     const {
     data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue: formatValueProp,
@@ -134,3 +134,7 @@ export default function ColumnChart(props) {
         </Box>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ColumnChart = withPieceSlots(ColumnChartContent, THEME_NAME);
+export default ColumnChart;

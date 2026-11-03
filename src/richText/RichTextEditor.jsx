@@ -27,7 +27,7 @@ import {richTextContentSxOf} from '@/richText/richTextContentSx.js';
 import {richTextExtensionsOf} from '@/richText/richTextExtensions.js';
 import {DEFAULT_RICH_TEXT_FEATURES, normalizedHtmlOf} from '@/richText/richTextRules.js';
 import RichTextToolbar from '@/richText/RichTextToolbar.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -62,7 +62,7 @@ const DEFAULT_MIN_HEIGHT = 160;
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `richText` en los textos del paquete
  */
-export default function RichTextEditor(props) {
+function RichTextEditorContent(props) {
     const {
         name, label, value, onChange, onBlur, placeholder, error, helperText = ' ', maxLength, features = DEFAULT_RICH_TEXT_FEATURES, extensions,
         toolbarActions, onEditorReady, minHeight = DEFAULT_MIN_HEIGHT, disabled = false, sx, messages, texts,
@@ -137,3 +137,7 @@ export default function RichTextEditor(props) {
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RichTextEditor = withPieceSlots(RichTextEditorContent, THEME_NAME);
+export default RichTextEditor;

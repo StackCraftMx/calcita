@@ -22,7 +22,7 @@ import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 
 import {nextColorModeOf} from '@/ui/navigation/colorMode.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaColorSchemeToggle)
@@ -36,7 +36,7 @@ const SchemeButton = piecePart(THEME_NAME, 'Button', IconButton);
  * @param {(mode: 'light'|'dark'|'system') => void} [props.onChange] la persona cambió el modo (para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ColorSchemeToggle(props) {
+function ColorSchemeToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorSchemeToggle.defaultProps) y encima lo que llega aquí
     const {size = 'small', inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -67,3 +67,7 @@ export default function ColorSchemeToggle(props) {
         </Tooltip>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ColorSchemeToggle = withPieceSlots(ColorSchemeToggleContent, THEME_NAME);
+export default ColorSchemeToggle;

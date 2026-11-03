@@ -11,7 +11,7 @@
 // Genérico del paquete: function (regla de la casa).
 import Typography from '@mui/material/Typography';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {countdownClockOf} from '@/ui/countdown/countdownParts.js';
@@ -34,7 +34,7 @@ const CountdownRoot = piecePart(THEME_NAME, 'Root', Typography);
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function Countdown(props) {
+function CountdownContent(props) {
     const {
         until, label, onComplete, completedText, showSeconds = true, children, variant = 'body1', sx, texts,
         ...unknownProps
@@ -59,3 +59,7 @@ export default function Countdown(props) {
         </CountdownRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const Countdown = withPieceSlots(CountdownContent, THEME_NAME);
+export default Countdown;

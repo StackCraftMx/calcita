@@ -52,7 +52,7 @@ import {toastError} from '@/feedback/toast.jsx';
 import {accentTextStylesOf} from '@/theme/glassSurface.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {FILE_REJECTION, parseFileSize, resolveAccept} from '@/upload/fileRules.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPondDropzone)
@@ -194,7 +194,7 @@ function pondThemeSxOf(theme) {
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FileDropzone(props) {
+function FileDropzoneContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPondDropzone.defaultProps) y encima lo que llega aquí
     const {
     value = null, onChange, accept, maxSize, multiple = false, maxFiles, maxTotalSize, name, hint, buttonLabel, disabled = false,
@@ -391,3 +391,7 @@ export default function FileDropzone(props) {
         </PondRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FileDropzone = withPieceSlots(FileDropzoneContent, THEME_NAME);
+export default FileDropzone;

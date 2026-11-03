@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 
 import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDetailHeader)
@@ -36,7 +36,7 @@ const DetailActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {import('react').ReactNode} [props.actions] botones a la derecha
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
  */
-export default function DetailHeader(props) {
+function DetailHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDetailHeader.defaultProps) y encima lo que llega aquí
     const {title, eyebrow, badges, actions, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -58,3 +58,7 @@ export default function DetailHeader(props) {
         </DetailRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const DetailHeader = withPieceSlots(DetailHeaderContent, THEME_NAME);
+export default DetailHeader;

@@ -22,7 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaConfirmDialog)
@@ -46,7 +46,7 @@ const ConfirmActions = piecePart(THEME_NAME, 'Actions', DialogActions);
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ConfirmDialog(props) {
+function ConfirmDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaConfirmDialog.defaultProps) y encima lo que llega aquí
     const {
     open, title, description, confirmLabel, cancelLabel, tone = 'primary',
@@ -89,3 +89,7 @@ export default function ConfirmDialog(props) {
         </Dialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ConfirmDialog = withPieceSlots(ConfirmDialogContent, THEME_NAME);
+export default ConfirmDialog;

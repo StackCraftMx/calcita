@@ -14,7 +14,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {isValidElement} from 'react';
 import Box from '@mui/material/Box';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaWordmark)
@@ -41,7 +41,7 @@ export function isWordmarkPair(wordmark) {
  * @param {import('react').ReactNode | {light?: import('react').ReactNode, dark?: import('react').ReactNode}} props.children el
  *     logo (una <img>, un <svg> o lo que pinte el proyecto) o uno para cada modo: {light, dark}
  */
-export default function Wordmark(props) {
+function WordmarkContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWordmark.defaultProps) y encima lo que llega aquí
     const {children, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -60,3 +60,7 @@ export default function Wordmark(props) {
         </WordmarkRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const Wordmark = withPieceSlots(WordmarkContent, THEME_NAME);
+export default Wordmark;

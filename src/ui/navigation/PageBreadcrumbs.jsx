@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageBreadcrumbs)
@@ -29,7 +29,7 @@ const BreadcrumbsCurrent = piecePart(THEME_NAME, 'Current', Typography);
  * @param {Array<{label: string, to?: string}>} props.items textos ya traducidos
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageBreadcrumbs(props) {
+function PageBreadcrumbsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageBreadcrumbs.defaultProps) y encima lo que llega aquí
     const {items, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -63,3 +63,7 @@ export default function PageBreadcrumbs(props) {
         </ScrollableRow>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PageBreadcrumbs = withPieceSlots(PageBreadcrumbsContent, THEME_NAME);
+export default PageBreadcrumbs;

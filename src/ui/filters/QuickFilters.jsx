@@ -19,7 +19,7 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaQuickFilters)
@@ -71,7 +71,7 @@ function compactCount(count) {
  * @param {import('react').ReactNode} [props.extra] al final de la tira (p. ej. un rango de fechas)
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function QuickFilters(props) {
+function QuickFiltersContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaQuickFilters.defaultProps) y encima lo que llega aquí
     const {value, onChange, options = [], caption, ariaLabel, extra, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -141,3 +141,7 @@ export default function QuickFilters(props) {
         </QuickRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const QuickFilters = withPieceSlots(QuickFiltersContent, THEME_NAME);
+export default QuickFilters;

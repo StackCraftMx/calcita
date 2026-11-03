@@ -186,6 +186,12 @@ const CASES = [
     ['StackedCell con datos solos, con etiqueta y vacíos', h(StackedCell, {
         entries: ['Acme', '', {label: 'Régimen', value: 'Moral', note: 'nuevo'}, {label: 'Teléfono', value: null}],
     }), 'title="—"'],
+    // las tarjetas dentro de la tabla toman los slotProps de la tabla (mismo nombre en el tema): sin eso los borraban
+    ['ServerTable pasa sus slotProps a sus tarjetas', h(NuqsTestingAdapter, null, h(ServerTable, {
+        fetchPage: async () => ({rows: [], total: 0}), queryKey: 'slots', ariaLabel: 'Clientes', defaultView: TABLE_VIEW.cards,
+        columns: [textColumn({field: 'name', label: 'Empresa'})], renderCard: (row) => h(RecordCard, {title: row.name}),
+        slotProps: {cards: {'data-probe': 'cards-from-table'}},
+    })), 'data-probe="cards-from-table"'],
     // los renglones que se repiten: dos contactos con su número y «Agregar»; con el mínimo, «Limpiar» en vez de «Quitar»
     // la tarjeta de un registro con sus grupos, su dato principal y su detalle; y su esqueleto
     ['RecordCard completa', h(RecordCard, {title: 'Ana López', eyebrow: 'P-1203', avatar: 'Ana López', status: 'Pagado', onOpen: () => {},
@@ -217,6 +223,17 @@ const CASES = [
     ['MarkedText con una palabra resaltada y un «<b>» de un dato tal cual', h(MarkedText, {
         text: 'Con <highlight>financiamiento</highlight> y <b>Ana</b>', marks: {highlight: h('strong')},
     }), '<strong>financiamiento</strong>'],
+    // slots y slotProps (0.51): una parte cambiada por otro componente y props de más para otra; también desde el tema
+    ['RecordCard con slots y slotProps de la pantalla', h(RecordCard, {
+        title: 'Ana López', avatar: 'Ana López',
+        slots: {avatar: ({children}) => h('span', {'data-own-avatar': 'sí'}, children)},
+        slotProps: {root: {className: 'tarjeta-propia', 'data-root': 'sí'}, titles: {'data-titles': 'sí'}},
+    }), 'data-own-avatar="sí"'],
+    ['RecordCard con slotProps desde el tema', h(RecordCard, {title: 'Ana López'}), 'data-desde-el-tema="sí"',
+        createTheme({components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {'data-desde-el-tema': 'sí'}}}}}})],
+    ['RecordCard dentro de otra: la de adentro no toma los slots de la de afuera', h(RecordCard, {
+        title: 'Afuera', slots: {titles: ({children}) => h('div', {'data-titulos-afuera': 'sí'}, children)},
+    }, h(RecordCard, {title: 'Adentro'})), 'data-titulos-afuera="sí"'],
     // una sola opción con un valor que es número (un recordatorio de 60 minutos): tumbaba la pantalla (new Set(60))
     ['SelectInput de una opción con valor numérico', h(MultiSelectInput, {label: 'Recordatorio', value: 60, onChange: () => {},
         options: [{value: 15, label: '15 minutos antes'}, {value: 60, label: 'Una hora antes'}]}), 'Una hora antes'],
@@ -333,6 +350,20 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
     } catch (error) {
         failures += 1;
         console.log(`TRUENA ${name}: ${error.message.split('\n')[0]}`);
+    }
+}
+
+// los slots de una pieza son SOLO suyos: una tarjeta dentro de otra pinta sus títulos de siempre (el propio sale una vez)
+{
+    const nestedHtml = renderToString(h(ThemeProvider, {theme: defaultTheme}, h(ToolkitProvider, {texts: PROJECT_TEXTS}, h(RecordCard, {
+        title: 'Afuera', slots: {titles: ({children}) => h('div', {'data-titulos-afuera': 'sí'}, children)},
+    }, h(RecordCard, {title: 'Adentro'})))));
+    const ownTitlesCount = nestedHtml.split('data-titulos-afuera').length - 1;
+    if (ownTitlesCount === 1 && nestedHtml.includes('Adentro')) {
+        console.log('OK     la tarjeta de adentro no toma los slots de la de afuera');
+    } else {
+        failures += 1;
+        console.log(`FALLA  la tarjeta de adentro tomó los slots de la de afuera (${ownTitlesCount} veces)`);
     }
 }
 

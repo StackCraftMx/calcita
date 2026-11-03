@@ -32,7 +32,7 @@ import {initialsOf} from '@/appShell/menuItemText.js';
 import {REMINDER_UNIT, isOpenableMeetingUrl, reminderOf} from '@/calendar/calendarEvents.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEventDetails)
@@ -78,7 +78,7 @@ function DetailRow({Icon, label, children}) {
  * @param {string} [props.titleId] el id del título: la ventana que lo contiene se nombra con él (aria-labelledby)
  * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
  */
-export default function EventDetails(props) {
+function EventDetailsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEventDetails.defaultProps) y encima lo que llega aquí
     const {event, actions, titleId, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -147,3 +147,7 @@ export default function EventDetails(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const EventDetails = withPieceSlots(EventDetailsContent, THEME_NAME);
+export default EventDetails;

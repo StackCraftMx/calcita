@@ -21,7 +21,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaHeaderFilter)
@@ -33,7 +33,7 @@ const FilterPanel = piecePart(THEME_NAME, 'Panel', Box);
 /**
  * @param {{activeCount?: number, onClear: () => void, children: import('react').ReactNode}} props children = el filtro
  */
-export default function HeaderFilterPopover(props) {
+function HeaderFilterPopoverContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaHeaderFilter.defaultProps) y encima lo que llega aquí
     const {activeCount = 0, onClear, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -79,3 +79,7 @@ export default function HeaderFilterPopover(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const HeaderFilterPopover = withPieceSlots(HeaderFilterPopoverContent, THEME_NAME);
+export default HeaderFilterPopover;

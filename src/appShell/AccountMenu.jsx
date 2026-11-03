@@ -26,7 +26,7 @@ import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
 import MenuLinks from '@/appShell/MenuLinks.jsx';
 import {MONOGRAM_GRAY, WHITE_LABEL} from '@/theme/components/glassComponents.js';
 import {isGlassTheme} from '@/theme/glassSurface.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAccountMenu)
@@ -46,7 +46,7 @@ const AccountSettings = piecePart(THEME_NAME, 'Settings', Box);
  * @param {boolean} [props.isSigningOut]
  * @param {import('react').ReactNode} [props.settings] los ajustes de la app, entre los datos de la persona y sus ligas
  */
-export default function AccountMenu(props) {
+function AccountMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAccountMenu.defaultProps) y encima lo que llega aquí
     const {user, profilePath, accountMenuItems = [], onSignOut, isSigningOut = false, settings, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -104,3 +104,7 @@ export default function AccountMenu(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const AccountMenu = withPieceSlots(AccountMenuContent, THEME_NAME);
+export default AccountMenu;

@@ -84,7 +84,7 @@ export default function TextInput(props) {
     const {
         name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
         uppercase = false, normalizeOnBlur, inputRef, clearable = true, messages, texts, ...textFieldProps
-    } = usePieceProps(props, THEME_NAME);
+    } = usePieceProps(props, THEME_NAME, {ownSlotProps: true});  // su slotProps es el del TextField de MUI (input, htmlInput…)
     const {t} = useToolkitTranslation('common', texts);
     // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
     const validationTextOf = useValidationText({name, label, messages});

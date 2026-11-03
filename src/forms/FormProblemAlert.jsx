@@ -8,7 +8,7 @@
 // Genérico del paquete: function (regla de la casa).
 import {useFormikContext} from 'formik';
 import Alert from '@mui/material/Alert';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaFormProblemAlert): el estilo del proyecto va
@@ -19,7 +19,7 @@ const ProblemAlert = piecePart(THEME_NAME, 'Root', Alert);
 /**
  * @param {{sx?: object}} props
  */
-export default function FormProblemAlert({sx, ...unknownProps}) {
+function FormProblemAlertContent({sx, ...unknownProps}) {
     warnUnknownProps('FormProblemAlert', unknownProps);
     const {status} = useFormikContext();
 
@@ -29,3 +29,6 @@ export default function FormProblemAlert({sx, ...unknownProps}) {
     }
     return <ProblemAlert severity="error" role="alert" sx={sx}>{status}</ProblemAlert>;
 }
+
+const FormProblemAlert = withPieceSlots(FormProblemAlertContent, THEME_NAME);
+export default FormProblemAlert;

@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 
 import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageHeader)
@@ -32,7 +32,7 @@ const HeaderAction = piecePart(THEME_NAME, 'Action', Box);
  * @param {import('react').ReactNode} [props.action] normalmente un <Button variant="contained" shape="pill">
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
  */
-export default function PageHeader(props) {
+function PageHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeader.defaultProps) y encima lo que llega aquí
     const {title, eyebrow, subtitle, action, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -53,3 +53,7 @@ export default function PageHeader(props) {
         </HeaderRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PageHeader = withPieceSlots(PageHeaderContent, THEME_NAME);
+export default PageHeader;

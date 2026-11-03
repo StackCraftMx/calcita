@@ -482,6 +482,22 @@ const servedBase: string | null = documentBasePath();
 const appTexts = combineTexts([{es: {orders: {title: 'Pedidos'}}}, {en: {orders: {title: 'Orders'}}}]);
 const plainClick: boolean = isPlainLeftClick({button: 0}, '_self');
 
-export {allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+// lo de la 0.51: slots y slotProps en las piezas, y una pieza propia con el mismo mecanismo
+import {TextInput, piecePart as ownPiecePart, usePieceProps as useOwnPieceProps, withPieceSlots as withOwnPieceSlots} from '@stackcraftmx/calcita';
+const cardWithSlots = createElement(RecordCard, {
+    title: 'Sucursal Centro', slots: {avatar: 'span'}, slotProps: {root: {className: 'propia'}, titles: (partProps: object) => ({...partProps})},
+});
+const textWithMuiSlotProps = createElement(TextInput, {label: 'RFC', value: '', onChange: () => {}, slotProps: {htmlInput: {maxLength: 13}}});
+const OwnRoot = ownPiecePart('MiPieza', 'Root', 'section');
+function OwnPieceContent(props: {title: string}) {
+    const {title} = useOwnPieceProps(props, 'MiPieza');
+    return createElement(OwnRoot, null, title);
+}
+const OwnPiece = withOwnPieceSlots(OwnPieceContent, 'MiPieza');
+const ownPieceElement = createElement(OwnPiece, {title: 'Hola', slots: {root: 'article'}});
+// @ts-expect-error a la pieza propia le falta su title
+const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
+
+export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

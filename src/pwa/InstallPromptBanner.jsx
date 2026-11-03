@@ -25,7 +25,7 @@ import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallPromptBanner)
@@ -45,7 +45,7 @@ const TAB_BAR_GAP_PIXELS = 8;
  * @param {() => void} [props.onDismiss] dijo «Ahora no» (o cerró los pasos): no se le vuelve a ofrecer en este navegador
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallPromptBanner(props) {
+function InstallPromptBannerContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallPromptBanner.defaultProps) y encima lo que llega aquí
     const {message, onInstallChoice, onShowSteps, onDismiss, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -105,3 +105,7 @@ export default function InstallPromptBanner(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const InstallPromptBanner = withPieceSlots(InstallPromptBannerContent, THEME_NAME);
+export default InstallPromptBanner;

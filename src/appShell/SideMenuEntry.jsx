@@ -43,7 +43,7 @@ import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {accentTextStylesOf, glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenuEntry)
@@ -86,7 +86,7 @@ const RAIL_BUTTON_RADIUS_PIXELS = 10;
  * @param {Record<string, number>} [props.menuBadges] los conteos del servidor por badgeKey (menuBadgeOf)
  * @param {number} [props.depth]
  */
-export default function SideMenuEntry(props) {
+function SideMenuEntryContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSideMenuEntry.defaultProps) y encima lo que llega aquí
     const {menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -184,3 +184,7 @@ export default function SideMenuEntry(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SideMenuEntry = withPieceSlots(SideMenuEntryContent, THEME_NAME);
+export default SideMenuEntry;

@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 import {startDownload} from '@/downloads/downloadQueue.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -39,7 +39,7 @@ const TemplateButtonRoot = piecePart(THEME_NAME, 'Root', Button);
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`
  */
-export default function TemplateDownloadButton(props) {
+function TemplateDownloadButtonContent(props) {
     const {
         href, fileName, request, format, label, onDownload, variant = 'text', size, disabled = false, startIcon, sx, texts,
         ...unknownProps
@@ -75,3 +75,7 @@ export default function TemplateDownloadButton(props) {
         </TemplateButtonRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const TemplateDownloadButton = withPieceSlots(TemplateDownloadButtonContent, THEME_NAME);
+export default TemplateDownloadButton;

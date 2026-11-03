@@ -42,7 +42,7 @@ import {
 import {DESKTOP_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import useFittingActionCount from '@/appShell/useFittingActionCount.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarActions): el grupo sin cápsula (bare, o en la
@@ -112,7 +112,7 @@ const PhoneFloatingCapsule = ({phoneSlot, label, sx, texts, children, ...rest}) 
  *     exclusivos): los otros se esconden, como el modo de edición del iPhone deja solo lo de lo elegido. Lo usa SelectionActions
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function BarActions(props) {
+function BarActionsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarActions.defaultProps) y encima lo que llega aquí
     const {children, label, order, sx, inlineSx, bare = false, exclusive = false, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -170,3 +170,7 @@ export default function BarActions(props) {
         target,
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BarActions = withPieceSlots(BarActionsContent, THEME_NAME);
+export default BarActions;

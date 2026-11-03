@@ -43,7 +43,7 @@ import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSelectionActions)
@@ -109,7 +109,7 @@ function bottomCapsuleSxOf(theme) {
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {selection: {clear, actionsLabel, summaryLabel}}
  * @param {object} [props.sx] estilos del renglón
  */
-export default function SelectionActions(props) {
+function SelectionActionsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectionActions.defaultProps) y encima lo que llega aquí
     const {countText, actions = [], onClear, phoneLayout = SELECTION_PHONE_LAYOUT.top, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -208,3 +208,7 @@ export default function SelectionActions(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SelectionActions = withPieceSlots(SelectionActionsContent, THEME_NAME);
+export default SelectionActions;

@@ -25,7 +25,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -56,7 +56,7 @@ const IGNORED_CLOSE_REASONS = new Set(['backdropClick', 'escapeKeyDown']);
  * @param {string} [props.declineLabel] ya traducido; por omisión «No acepto»
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function TermsAcceptanceDialog(props) {
+function TermsAcceptanceDialogContent(props) {
     const {
         open, version, onAccept, onDecline, title, children, pdfSrc, requireReading = true, checkboxLabel, acceptLabel, declineLabel, texts,
         ...unknownProps
@@ -138,3 +138,7 @@ export default function TermsAcceptanceDialog(props) {
         </Dialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const TermsAcceptanceDialog = withPieceSlots(TermsAcceptanceDialogContent, THEME_NAME);
+export default TermsAcceptanceDialog;
