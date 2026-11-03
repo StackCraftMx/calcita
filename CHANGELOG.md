@@ -4,6 +4,25 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.51.0] - 2026-11-03
+
+### Agregado
+
+- `slots` y `slotProps` en todas las piezas con nombre en el tema, como en MUI: una parte se cambia por otro componente
+  (`slots={{avatar: StoreAvatar}}`) o recibe props de más (`slotProps={{root: {elevation: 3}}}`, también como función),
+  con el nombre de la parte de styleOverrides. Desde la pantalla o, para toda la app, desde el tema (`defaultProps`).
+  `className`, `style` y `sx` se suman a los de Calcita; una pieza dentro de otra igual no toma los de la de afuera (las
+  tarjetas de `ServerTable` sí toman los de su tabla: `withPieceSlots(…, {sharedWithParent: true})`). `TextInput` conserva su
+  `slotProps` para el `TextField` de MUI.
+- Nombre en el tema (y slots) para 16 piezas que no lo tenían: `CalcitaFieldFrame` (root, label), `CalcitaNumberInput`,
+  `CalcitaCatalogInput`, `CalcitaDateInput`, `CalcitaDateTimeInput`, `CalcitaTimeInput`, `CalcitaMonthInput`,
+  `CalcitaBackButton`, `CalcitaCopyButton`, `CalcitaSecretField`, `CalcitaHelpButton`, `CalcitaRecordCardSkeleton`,
+  `CalcitaServerTableFilterDrawer`, `CalcitaBarActionButton` y `CalcitaSubmitButton` (formik y react-hook-form); con las de
+  antes son 130 en el README.
+- `piecePart`, `usePieceProps`, `withPieceSlots` y `mergedSlotProps` salen de la puerta principal: una pieza propia del
+  proyecto con el mismo mecanismo (nombre en el tema, partes, slots).
+- Ejemplos: «4. Cambiar una parte de una pieza» en Tema y vidrio.
+
 ## [0.50.0] - 2026-11-03
 
 ### Agregado
