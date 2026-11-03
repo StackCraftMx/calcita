@@ -48,6 +48,8 @@ import {
     EMPTY_ROW_SELECTION, canSelectAllMatching, checkedIdsOf, rowSelectionOf, selectionAfterCheck,
 } from '@/DataTable/rowSelection.js';
 import {buildTableActors, tableMachine} from '@/DataTable/tableMachine.js';
+import {fixedColumnOffsetsOf, fixedFieldsOf} from '@/DataTable/fixedColumns.js';
+import {createLogger} from '@/observability/logger.js';
 import {useDebouncedFilter} from '@/DataTable/useDebouncedFilter.js';
 import {FILTER_KINDS, isFilterActive, useTableState} from '@/DataTable/useTableState.js';
 import BarSearch from '@/appShell/BarSearch.jsx';
@@ -117,6 +119,10 @@ const AUTO_ROW_HEIGHT = 'auto';
 // la altura de línea de las celdas: la del texto de la tabla (la hereda de la raíz del DataGrid, que pone la letra del
 // tema), no la del renglón (ver la trampa en los estilos del DataGrid)
 const CELL_LINE_HEIGHT = 'inherit';
+
+const log = createLogger('table');
+// las columnas fijas sin ancho fijo de las que ya se avisó (una vez por columna en toda la app)
+const warnedFixedColumns = new Set();
 const DATA_GRID_DENSITY = 'compact';
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
 // dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
@@ -156,38 +162,46 @@ const CHECKBOX_COLUMN_WIDTH_PIXELS = GRID_CHECKBOX_SELECTION_COL_DEF.width;
  * Con renglones que se eligen, la casilla también se queda pegada, antes que la columna fija: si no, al deslizar la fija
  * tapaba la casilla.
  *
+ * Con varias columnas fijas (fixedColumn={['actions', 'company']}) cada una se pega donde termina la anterior
+ * (fixedColumnOffsetsOf) y la raya que separa lo fijo de lo que se desliza va solo en la última.
+ *
  * @param {object} theme tema de MUI
- * @param {string} field campo de la columna que se queda fija
+ * @param {Array<{field: string, left: number, isLast: boolean}>} fixedColumns las columnas fijas con su lugar
  * @param {{withCheckboxColumn?: boolean}} [options]
  * @returns {object} estilos para el sx del DataGrid
  */
-function fixedColumnSxOf(theme, field, {withCheckboxColumn = false} = {}) {
+function fixedColumnSxOf(theme, fixedColumns, {withCheckboxColumn = false} = {}) {
     // un tema con variables CSS (cssVariables) las trae en theme.vars; el tema por omisión de MUI, solo en theme.palette
     const {palette} = theme.vars ?? theme;
     const paper = palette.background.paper;
     const divider = `1px solid ${palette.divider}`;
-    // la banda del encabezado que lleva solo a esta columna: el DataGrid la marca con sus campos entre |- y -|
-    const ownBandHeader = `.MuiDataGrid-columnHeader[data-fields="|-${field}-|"]`;
     const isMaterialContent = Boolean(theme.toolkit?.glass?.surfaces);
     // abajo la capa (el papel o el material) y encima el color del renglón (el ::before)
     const stickyBackground = {backgroundColor: 'inherit', ...(isMaterialContent ? materialBackgroundOf(theme, {thick: true}) : {backgroundImage: `linear-gradient(${paper}, ${paper})`})};
     const headerBackground = isMaterialContent ? materialBackgroundOf(theme, {thick: true}) : {backgroundColor: paper};
     const rowColorLayer = {content: '""', position: 'absolute', inset: 0, zIndex: -1, backgroundColor: 'inherit'};
-    const fixedLeft = withCheckboxColumn ? CHECKBOX_COLUMN_WIDTH_PIXELS : 0;
     const checkboxCell = `.MuiDataGrid-cell[data-field="${GRID_CHECKBOX_SELECTION_FIELD}"]`;
     const checkboxHeader = `.MuiDataGrid-columnHeader[data-field="${GRID_CHECKBOX_SELECTION_FIELD}"]`;
 
-    return {
-        '& :where(.MuiDataGrid-row)': {backgroundColor: isMaterialContent ? 'transparent' : paper},
-        [`& .MuiDataGrid-cell[data-field="${field}"]`]: {
-            position: 'sticky', left: fixedLeft, zIndex: FIXED_CELL_Z_INDEX, borderRight: divider,
+    const columnRules = {};
+    for (const {field, left, isLast} of fixedColumns) {
+        // la banda del encabezado que lleva solo a esta columna: el DataGrid la marca con sus campos entre |- y -|
+        const ownBandHeader = `.MuiDataGrid-columnHeader[data-fields="|-${field}-|"]`;
+        const edge = isLast ? {borderRight: divider} : {};
+        columnRules[`& .MuiDataGrid-cell[data-field="${field}"]`] = {
+            position: 'sticky', left, zIndex: FIXED_CELL_Z_INDEX, ...edge,
             ...stickyBackground,
             '&::before': rowColorLayer,
-        },
-        [`& :where(.MuiDataGrid-columnHeader[data-field="${field}"], ${ownBandHeader})`]: headerBackground,
-        [`& .MuiDataGrid-columnHeader[data-field="${field}"], & ${ownBandHeader}`]: {
-            position: 'sticky', left: fixedLeft, zIndex: FIXED_HEADER_Z_INDEX, borderRight: divider,
-        },
+        };
+        columnRules[`& :where(.MuiDataGrid-columnHeader[data-field="${field}"], ${ownBandHeader})`] = headerBackground;
+        columnRules[`& .MuiDataGrid-columnHeader[data-field="${field}"], & ${ownBandHeader}`] = {
+            position: 'sticky', left, zIndex: FIXED_HEADER_Z_INDEX, ...edge,
+        };
+    }
+
+    return {
+        '& :where(.MuiDataGrid-row)': {backgroundColor: isMaterialContent ? 'transparent' : paper},
+        ...columnRules,
         ...(withCheckboxColumn && {
             [`& ${checkboxCell}`]: {position: 'sticky', left: 0, zIndex: FIXED_CELL_Z_INDEX, ...stickyBackground, '&::before': rowColorLayer},
             [`& :where(${checkboxHeader})`]: headerBackground,
@@ -311,8 +325,9 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     alineación y la celda conserva lo demás de la tabla (antes reemplazaba el objeto entero y la celda perdía su display)
  * @param {number} [props.maxGridHeight] alto máximo del contenedor; sin él la tabla crece con sus renglones (default)
  * @param {string} [props.ariaLabel] nombre de la tabla para lectores de pantalla
- * @param {string} [props.fixedColumn] campo de la columna que se queda pegada a la izquierda al deslizar de lado (como
- *     fixedSelectColumn de mui-datatables)
+ * @param {string|string[]} [props.fixedColumn] campo de la columna que se queda pegada a la izquierda al deslizar de lado
+ *     (como fixedSelectColumn de mui-datatables), o una lista para varias: ['actions', 'company'] pega las dos, una tras
+ *     otra. Las que no son la última necesitan su `width` en la columna (con flex no se sabe cuánto correr la siguiente)
  * @param {Array<{key: string, label: string, icon?: import('react').ReactNode, color?: 'inherit'|'primary'|'secondary'|'error'|'info'|'success'|'warning', isDisabled?: (selection: RowSelection) => boolean, onClick: (selection: RowSelection, helpers: {clearSelection: () => void, refresh: () => void}) => unknown}>} [props.selectionActions]
  *     con ellas cada renglón lleva su casilla y, al elegir, sale la barra de los elegidos con estas acciones. label ya
  *     traducido; onClick recibe la selección (con isAllMatching mande `filters`, no `ids`) y cómo quitar la selección y volver
@@ -562,6 +577,18 @@ export default function ServerTable(props) {
         rowsHeight += typeof requestedRowHeight === 'number' ? requestedRowHeight : ROW_HEIGHT_PIXELS;
     }
     const measuresItself = hasAutoHeightRows && !maxGridHeight;
+    // las columnas fijas con su lugar; la primera va después de la casilla de elegir renglones (fixedColumns.js)
+    const fixedColumns = fixedColumnOffsetsOf(fixedFieldsOf(fixedColumn), columns, {startLeft: isSelectable ? CHECKBOX_COLUMN_WIDTH_PIXELS : 0});
+    const fixedWithUnknownWidth = fixedColumns.filter((fixed) => fixed.hasUnknownWidth).map((fixed) => fixed.field).join(',');
+    useEffect(() => {
+        // una sola vez por columna: la que sigue de una fija sin ancho fijo podría quedar encima de ella
+        for (const field of fixedWithUnknownWidth ? fixedWithUnknownWidth.split(',') : []) {
+            if (!warnedFixedColumns.has(field)) {
+                warnedFixedColumns.add(field);
+                log.warn(`La columna fija «${field}» no es la última y no trae un width fijo: la siguiente se corre su minWidth y podría encimarse. Póngale width.`);
+            }
+        }
+    }, [fixedWithUnknownWidth]);
     // la tabla crece con los renglones de la página y NO tiene scroll vertical propio (un solo scroll, el
     // de la página). La paginación del servidor ya acota cuántos renglones hay; maxGridHeight queda solo para quien
     // de verdad necesite un tope (un diálogo con altura fija)
@@ -710,7 +737,7 @@ export default function ServerTable(props) {
                     // el conteo de los elegidos lo dice la barra de arriba; el del pie del DataGrid sobraría
                     hideFooterSelectedRowCount
                     // con columna fija se dibuja todo: si no, la fija desaparecería al deslizar a la derecha (fixedColumnSxOf)
-                    disableVirtualization={Boolean(fixedColumn)}
+                    disableVirtualization={fixedColumns.length > 0}
                     density={DATA_GRID_DENSITY}
                     localeText={{...gridText, noRowsLabel: emptyLabel ?? t('empty.default')}}
                     slotProps={{
@@ -749,7 +776,7 @@ export default function ServerTable(props) {
                         // cebra: el color del hover del tema
                         [`& .${STRIPED_ROW_CLASS}`]: {bgcolor: 'action.hover'},
                         [`& .${STRIPED_ROW_CLASS}:hover`]: {bgcolor: 'action.selected'},
-                    }, (gridTheme) => (fixedColumn ? fixedColumnSxOf(gridTheme, fixedColumn, {withCheckboxColumn: isSelectable}) : {})]}
+                    }, (gridTheme) => (fixedColumns.length > 0 ? fixedColumnSxOf(gridTheme, fixedColumns, {withCheckboxColumn: isSelectable}) : {})]}
                     // lo de la pantalla va DESPUÉS y se combina regla por regla con lo de arriba (MUI junta la lista de sx): con
                     // `...gridSx` dentro del mismo objeto, una llave igual reemplazaba la de la tabla entera (la celda perdía su
                     // display: flex y alignItems ya no hacía nada). También el sx que llegue en gridProps

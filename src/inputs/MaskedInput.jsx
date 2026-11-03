@@ -32,6 +32,8 @@ const NUMERIC_ONLY = /^[^AXH]*$/;
  * @param {string} [props.placeholder] ya traducido; por omisión ninguno (un ejemplo con la forma ayuda: «555 123 4567»)
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.disabled]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación: gana al de
+ *     Calcita y al de los textos
  * @param {object} [props.slotProps]
  * @param {object} [props.texts]
  */
@@ -90,7 +92,7 @@ export default function MaskedInput({mask, value, onChange, inputRef, slotProps,
 // máscara ya decide cómo se escribe
 const TEXT_INPUT_PROPS = new Set([
     'name', 'label', 'onBlur', 'error', 'helperText', 'placeholder', 'startAdornment', 'endAdornment', 'clearable', 'autoComplete', 'autoFocus',
-    'disabled', 'required', 'fullWidth', 'id', 'sx', 'texts',
+    'disabled', 'required', 'fullWidth', 'id', 'sx', 'messages', 'texts',
 ]);
 
 /**

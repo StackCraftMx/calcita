@@ -21,7 +21,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -57,19 +57,23 @@ const FileInputEmpty = piecePart(THEME_NAME, 'Empty', Typography);
  *     plantilla» junto al botón
  * @param {import('react').ReactNode} [props.actions] botones suyos en el mismo renglón
  * @param {object} [props.sx] ajustes del renglón
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function FileInput(props) {
     const {
         name, label, value = null, onChange, onBlur, accept, maxSize, error, helperText = ' ', buttonLabel, emptyText, disabled = false,
-        busy = false, onReject, template, actions, sx, texts,
+        busy = false, onReject, template, actions, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const buttonId = `${name ?? 'file'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const isLocked = disabled || busy;
     const change = (file) => {
         onChange(file);

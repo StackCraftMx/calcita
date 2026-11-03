@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, MarkedText, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -195,6 +195,12 @@ const CASES = [
         options: [{value: 'a', label: 'Centro'}, {value: 'b', label: 'Polanco'}]}), 'Elegidos'],
     ['SelectInput varias con casillas y Elegir todos', h(MultiSelectInput, {label: 'Días', value: ['mon'], onChange: () => {}, multiple: true, selectAll: true, checkboxes: true,
         options: [{value: 'mon', label: 'Lunes'}, {value: 'tue', label: 'Martes'}]}), 'Lunes'],
+    ['MarkedText con una palabra resaltada y un «<b>» de un dato tal cual', h(MarkedText, {
+        text: 'Con <highlight>financiamiento</highlight> y <b>Ana</b>', marks: {highlight: h('strong')},
+    }), '<strong>financiamiento</strong>'],
+    // una sola opción con un valor que es número (un recordatorio de 60 minutos): tumbaba la pantalla (new Set(60))
+    ['SelectInput de una opción con valor numérico', h(MultiSelectInput, {label: 'Recordatorio', value: 60, onChange: () => {},
+        options: [{value: 15, label: '15 minutos antes'}, {value: 60, label: 'Una hora antes'}]}), 'Una hora antes'],
     ['FormRepeatingFields con dos renglones', h(Formik, {initialValues: {contacts: [{name: 'Ana'}, {name: 'Luis'}]}, onSubmit: () => {}}, () => h(FormRepeatingFields, {
         name: 'contacts', label: 'Contactos', emptyRow: {name: ''}, maxRows: 5, rowLabelOf: (index) => `Contacto ${index + 1}`,
         renderRow: ({nameOf}) => h(FormTextField, {name: nameOf('name'), label: 'Nombre'}),

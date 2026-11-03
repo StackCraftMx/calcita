@@ -46,6 +46,8 @@ export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme
 export {toolkitComponents} from '@/theme/toolkitComponents.js';
 export {mergeComponents} from '@/theme/mergeComponents.js';
 export {sxListOf} from '@/theme/themePieces.js';
+export {default as MarkedText} from '@/ui/labels/MarkedText.jsx';
+export {parseMarkedText} from '@/ui/labels/markedTextPieces.js';
 export {CSS_TOKENS, cssTokenDeclarationsOf, cssTokenOf} from '@/theme/cssTokens.js';
 export {
     GLASS_INSET_PIXELS, GLASS_MENU_RADIUS_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassDropOf, glassStylesOf, glassSurfaceOf,
@@ -131,7 +133,8 @@ export {default as WizardLayout} from '@/inputs/WizardLayout.jsx';
 export {default as TextInput} from '@/inputs/TextInput.jsx';
 export {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 export {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
-export {translateValidationMessage} from '@/forms/validationMessages.js';
+export {fieldKeyOf, normalizedValidationMessage, ruleMessageOf, translateValidationMessage} from '@/forms/validationMessages.js';
+export {useValidationText} from '@/forms/useValidationText.js';
 
 // ─── tiempo y documentos: la cuenta regresiva y un PDF en una ventana ─────────
 export {default as Countdown} from '@/ui/countdown/Countdown.jsx';

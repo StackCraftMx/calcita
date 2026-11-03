@@ -8,11 +8,10 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
-import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -36,19 +35,22 @@ const SEPARATORS_ROOM = 6;
  * @param {number} [props.maxDigits] tope de dígitos (por omisión 17)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
- * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
+ * @param {object} [props.texts] se acepta como en los demás campos; este no tiene textos propios (su error usa `messages`)
  */
 export default function NumberInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-    disabled = false, inputRef, texts,
+    disabled = false, inputRef, messages, texts: unusedTexts,
     ...unknownProps
 }) {
     warnUnknownProps('NumberInput', unknownProps);
-    const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'number'}-${generatedId}`;
     const [isTyping, setIsTyping] = useState(false);
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const valueText = value === null || value === undefined ? '' : String(value);
     // escribiendo: lo que hay; fuera del campo: con sus decimales completos
     const shownText = groupThousands(isTyping ? valueText : completeDecimals(valueText, decimals));

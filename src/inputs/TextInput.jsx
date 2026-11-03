@@ -27,7 +27,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 
@@ -75,19 +75,23 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {string} [props.id]
  * @param {object} [props.slotProps]
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function TextInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTextInput.defaultProps) y encima lo que llega aquí
     const {
         name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
-        uppercase = false, normalizeOnBlur, inputRef, clearable = true, texts, ...textFieldProps
+        uppercase = false, normalizeOnBlur, inputRef, clearable = true, messages, texts, ...textFieldProps
     } = usePieceProps(props, THEME_NAME);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const [isRevealed, setIsRevealed] = useState(false);
     const generatedId = useId();
     const inputId = textFieldProps.id ?? `${name ?? 'text'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const isPassword = type === 'password';
     const revealLabel = isRevealed ? t('form.hidePassword') : t('form.showPassword');
 

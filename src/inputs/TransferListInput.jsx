@@ -29,7 +29,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftRounded';
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
@@ -130,19 +130,23 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function TransferListInput(props) {
     const {
         name, label, value, onChange, onBlur, options, availableTitle, chosenTitle, searchable, listHeight = DEFAULT_LIST_HEIGHT, error,
-        helperText = ' ', disabled = false, sx, texts,
+        helperText = ' ', disabled = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'transfer'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const chosenValues = Array.isArray(value) ? value : [];
     // lo marcado para pasar, de cada lado
     const [markedAvailable, setMarkedAvailable] = useState([]);

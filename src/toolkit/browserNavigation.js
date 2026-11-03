@@ -18,7 +18,7 @@
 // de #, que no recarga).
 import {createElement, useSyncExternalStore} from 'react';
 
-import {pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
+import {isPlainLeftClick, pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
 
 const HISTORY_BACK = -1;
 
@@ -47,16 +47,22 @@ function currentHref() {
  * La navegación del navegador, con o sin prefijo.
  *
  * @param {{basePath?: string}} [options] basePath: donde vive la app detrás de un proxy ('/portal'); sin él, la raíz
- * @returns {{useNavigate: () => (destination: string|number) => void, useLocation: () => {pathname: string, search: string, key: string}, Link: import('react').ElementType}}
+ * @returns {{useNavigate: () => (destination: string|number, options?: {replace?: boolean}) => void, useLocation: () => {pathname: string, search: string, key: string}, Link: import('react').ElementType}}
  */
 export function createBrowserNavigation({basePath = ''} = {}) {
-    // cambia de página: -1 regresa en el historial; una ruta de la app abre esa ruta con el prefijo
-    const navigate = (destination) => {
+    // cambia de página: -1 regresa en el historial; una ruta de la app abre esa ruta con el prefijo. Con {replace: true} la
+    // página nueva toma el lugar de la actual en el historial (como react-router): «atrás» ya no pasa por ella
+    const navigate = (destination, options) => {
         if (destination === HISTORY_BACK) {
             window.history.back();
             return;
         }
-        window.location.assign(pathWithBase(basePath, destination));
+        const href = pathWithBase(basePath, destination);
+        if (options?.replace) {
+            window.location.replace(href);
+            return;
+        }
+        window.location.assign(href);
     };
 
     // la página actual como la da react-router (la ruta SIN el prefijo, la búsqueda y una llave por página)
@@ -66,8 +72,19 @@ export function createBrowserNavigation({basePath = ''} = {}) {
         return {pathname: url ? pathWithoutBase(basePath, url.pathname) : '/', search: url?.search ?? '', key: href};
     };
 
-    // el enlace sin router: un <a> con la dirección real
-    const BrowserLink = ({to, ...props}) => createElement('a', {href: pathWithBase(basePath, to), ...props});
+    // el enlace sin router: un <a> con la dirección real. Con `replace`, el clic normal reemplaza la página en el historial;
+    // Cmd/Ctrl+clic y el botón de en medio siguen abriendo otra pestaña
+    const BrowserLink = ({to, replace, onClick, ...props}) => {
+        const href = pathWithBase(basePath, to);
+        const handleClick = (event) => {
+            onClick?.(event);
+            if (replace && isPlainLeftClick(event, props.target)) {
+                event.preventDefault();
+                window.location.replace(href);
+            }
+        };
+        return createElement('a', {href, ...props, onClick: handleClick});
+    };
 
     return Object.freeze({useNavigate: () => navigate, useLocation: useBrowserLocation, Link: BrowserLink});
 }

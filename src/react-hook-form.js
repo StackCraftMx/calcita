@@ -24,6 +24,7 @@ export {default as FormRepeatingFields} from '@/hookForm/FormRepeatingFields.jsx
 export {default as FormTransferListField} from '@/hookForm/FormTransferListField.jsx';
 // las reglas de listas son las mismas de /forms (no dependen de formik): sirven con yupResolver
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
+export {percentRule, sameAsFieldRule} from '@/forms/fieldRules.js';
 export {default as FormSelectField} from '@/hookForm/FormSelectField.jsx';
 export {default as FormWizard} from '@/hookForm/FormWizard.jsx';
 export {default as FormTextField} from '@/hookForm/FormTextField.jsx';

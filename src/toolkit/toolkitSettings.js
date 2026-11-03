@@ -11,6 +11,7 @@
 // Las llaves usan la forma de i18next: «namespace:llave.anidada», {{variable}} y plurales con _one / _other.
 //
 // Funciones puras, no renderizan: function (regla de la casa).
+import {createLogger} from '@/observability/logger.js';
 import es from '@/locales/es.js';
 import en from '@/locales/en.js';
 
@@ -68,13 +69,15 @@ let currentSettings = Object.freeze({
     buildId: '',
     // los idiomas que ofrece la app (DEFAULT_LANGUAGES)
     languages: DEFAULT_LANGUAGES,
+    // a quién avisarle de un texto que no existe (reportMissingText); sin él, un aviso en la consola
+    onMissingText: null,
 });
 
 /**
  * Cambia la configuración que leen las funciones del paquete. La llama ToolkitProvider; un proyecto sin React (o una
  * prueba) la puede llamar directo.
  *
- * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, hourCycle?: 'h23'|'h12', appName?: string, buildId?: string, languages?: Array<{code: string, label: string, locale?: string}>}} settings
+ * @param {{language?: string, texts?: object, translate?: Function|null, timeZone?: string, currency?: string, hourCycle?: 'h23'|'h12', appName?: string, buildId?: string, languages?: Array<{code: string, label: string, locale?: string}>, onMissingText?: Function|null}} settings
  * @returns {void}
  */
 export function configureToolkit(settings) {
@@ -188,11 +191,12 @@ export function componentTextOf(layers, namespace, key, values, language) {
 /**
  * El texto de una llave con una configuración dada (la del proveedor o la vigente).
  *
- * @param {{language: string, texts: object, translate: Function|null}} settings
+ * @param {{language: string, texts: object, translate: Function|null, onMissingText?: Function|null}} settings
  * @param {string} defaultNamespace el namespace cuando la llave no trae uno («table», «common», «problems»...)
  * @param {string} key «llave» o «namespace:llave»
- * @param {object} [values] las variables del texto y, para el plural, count
- * @returns {string} la llave misma si no hay texto, para que se note qué falta
+ * @param {object} [values] las variables del texto y, para el plural, count. Con `defaultValue` el texto es opcional: si no
+ *     existe se usa ese y no se avisa
+ * @returns {string} la llave misma si no hay texto, para que se note qué falta (y se avisa: reportMissingText)
  */
 export function translateWith(settings, defaultNamespace, key, values) {
     const [namespace, plainKey] = key.includes(NAMESPACE_SEPARATOR) ? key.split(NAMESPACE_SEPARATOR, 2) : [defaultNamespace, key];
@@ -213,7 +217,35 @@ export function translateWith(settings, defaultNamespace, key, values) {
     if (typeof values?.defaultValue === 'string') {
         return interpolate(values.defaultValue, values);
     }
+    reportMissingText(settings, namespace, plainKey);
     return `${namespace}${NAMESPACE_SEPARATOR}${plainKey}`;
+}
+
+const log = createLogger('texts');
+// los textos que faltan de los que ya se avisó en la consola: uno por idioma y llave, no uno por cada pintada
+const warnedMissingTexts = new Set();
+
+/**
+ * Avisa que un texto no existe. Sin aviso, la pantalla enseñaba la llave («profile:tabs.documents») y nadie se enteraba
+ * hasta verla. Con onMissingText del proyecto (ToolkitProvider) se le avisa a él cada vez y decide (mandarlo a Sentry,
+ * tronar una prueba); sin él, un aviso en la consola, una sola vez por idioma y llave (el nivel lo pone setLogLevel).
+ *
+ * @param {{language: string, onMissingText?: Function|null}} settings
+ * @param {string} namespace
+ * @param {string} key
+ * @returns {void}
+ */
+function reportMissingText(settings, namespace, key) {
+    if (settings.onMissingText) {
+        settings.onMissingText({namespace, key, language: settings.language});
+        return;
+    }
+    const missingId = `${settings.language}${NAMESPACE_SEPARATOR}${namespace}${NAMESPACE_SEPARATOR}${key}`;
+    if (warnedMissingTexts.has(missingId)) {
+        return;
+    }
+    warnedMissingTexts.add(missingId);
+    log.warn(`No hay texto para «${namespace}${NAMESPACE_SEPARATOR}${key}» en «${settings.language}»: la pantalla enseña la llave`);
 }
 
 /**

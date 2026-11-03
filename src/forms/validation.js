@@ -6,6 +6,8 @@
 //
 // Uso en un esquema: Yup.string().required().email()  → sin textos pegados.
 // Mensaje propio de un campo: .required({key: 'auth:login.emailRequired'}) o .test('x', {key: 'modulo:llave'}, fn).
+// O sin tocar el esquema: cada mensaje lleva su regla y su campo, y la pantalla (messages del campo) o los textos del
+// proyecto (validation:fields.<campo>.<regla>) ponen el suyo (translateValidationMessage, en validationMessages.js).
 //
 // IMPORTANTE: toda llave de aquí existe en los textos del paquete, namespace validation de locales/{es,en}.js (lo revisa
 // validation.test.js). La validación de aquí es para no gastar un viaje al servidor en lo obvio; la que protege es la
@@ -18,51 +20,67 @@ import * as Yup from 'yup';
 
 const NAMESPACE = 'validation';
 
-/** {key: 'validation:<nombre>', values} */
-function messageKey(name, values) {
-    return values === undefined ? {key: `${NAMESPACE}:${name}`} : {key: `${NAMESPACE}:${name}`, values};
+/**
+ * Un mensaje de yup como llave: {key: 'validation:<nombre>', values, rule, path}.
+ *
+ * `rule` (la regla de yup que falló: required, min, matches…) y `path` (el campo) dejan que la pantalla o los textos del
+ * proyecto pongan un mensaje propio para ese campo y esa regla sin tocar el esquema (translateValidationMessage). `label`
+ * (el de .label('RFC') del esquema) va en los valores, para los textos que dicen el nombre del campo.
+ *
+ * @param {string} name el nombre del texto en el namespace validation
+ * @param {string} rule la regla de yup
+ * @param {(params: object) => object} [valuesOf] los valores del texto, sacados de lo que da yup (min, max…)
+ * @returns {(params?: object) => {key: string, values: object, rule: string, path?: string}}
+ */
+function messageOf(name, rule, valuesOf) {
+    return (params = {}) => {
+        const values = {...(valuesOf ? valuesOf(params) : {}), ...(params.label ? {label: params.label} : {})};
+        // OJO: con .label('RFC') yup cambia params.path por el nombre visible; el campo de verdad viene en originalPath
+        const fieldPath = params.originalPath ?? params.path;
+        return {key: `${NAMESPACE}:${name}`, values, rule, ...(fieldPath ? {path: fieldPath} : {})};
+    };
 }
 
-/** El locale de yup: cada mensaje por defecto es una llave del namespace validation. */
+/** El locale de yup: cada mensaje por defecto es una llave del namespace validation, con su regla y su campo. */
 export const YUP_LOCALE = Object.freeze({
     mixed: {
-        default: messageKey('default'),
-        required: messageKey('required'),
-        defined: messageKey('required'),
-        notNull: messageKey('required'),
-        notType: messageKey('notType'),
-        oneOf: ({values}) => messageKey('oneOf', {values: String(values)}),
-        notOneOf: ({values}) => messageKey('notOneOf', {values: String(values)}),
+        default: messageOf('default', 'default'),
+        required: messageOf('required', 'required'),
+        defined: messageOf('required', 'defined'),
+        notNull: messageOf('required', 'notNull'),
+        notType: messageOf('notType', 'notType'),
+        oneOf: messageOf('oneOf', 'oneOf', ({values}) => ({values: String(values)})),
+        notOneOf: messageOf('notOneOf', 'notOneOf', ({values}) => ({values: String(values)})),
     },
     string: {
-        length: ({length}) => messageKey('stringLength', {count: length}),
-        min: ({min}) => messageKey('stringMin', {count: min}),
-        max: ({max}) => messageKey('stringMax', {count: max}),
-        matches: messageKey('matches'),
-        email: messageKey('email'),
-        url: messageKey('url'),
-        uuid: messageKey('uuid'),
-        trim: messageKey('trim'),
-        lowercase: messageKey('lowercase'),
-        uppercase: messageKey('uppercase'),
+        length: messageOf('stringLength', 'length', ({length}) => ({count: length})),
+        min: messageOf('stringMin', 'min', ({min}) => ({count: min})),
+        max: messageOf('stringMax', 'max', ({max}) => ({count: max})),
+        matches: messageOf('matches', 'matches'),
+        email: messageOf('email', 'email'),
+        url: messageOf('url', 'url'),
+        uuid: messageOf('uuid', 'uuid'),
+        trim: messageOf('trim', 'trim'),
+        lowercase: messageOf('lowercase', 'lowercase'),
+        uppercase: messageOf('uppercase', 'uppercase'),
     },
     number: {
-        min: ({min}) => messageKey('numberMin', {min}),
-        max: ({max}) => messageKey('numberMax', {max}),
-        lessThan: ({less}) => messageKey('lessThan', {less}),
-        moreThan: ({more}) => messageKey('moreThan', {more}),
-        positive: messageKey('positive'),
-        negative: messageKey('negative'),
-        integer: messageKey('integer'),
+        min: messageOf('numberMin', 'min', ({min}) => ({min})),
+        max: messageOf('numberMax', 'max', ({max}) => ({max})),
+        lessThan: messageOf('lessThan', 'lessThan', ({less}) => ({less})),
+        moreThan: messageOf('moreThan', 'moreThan', ({more}) => ({more})),
+        positive: messageOf('positive', 'positive'),
+        negative: messageOf('negative', 'negative'),
+        integer: messageOf('integer', 'integer'),
     },
     date: {
-        min: ({min}) => messageKey('dateMin', {min: String(min)}),
-        max: ({max}) => messageKey('dateMax', {max: String(max)}),
+        min: messageOf('dateMin', 'min', ({min}) => ({min: String(min)})),
+        max: messageOf('dateMax', 'max', ({max}) => ({max: String(max)})),
     },
     array: {
-        min: ({min}) => messageKey('arrayMin', {count: min}),
-        max: ({max}) => messageKey('arrayMax', {count: max}),
-        length: ({length}) => messageKey('arrayLength', {count: length}),
+        min: messageOf('arrayMin', 'min', ({min}) => ({count: min})),
+        max: messageOf('arrayMax', 'max', ({max}) => ({count: max})),
+        length: messageOf('arrayLength', 'length', ({length}) => ({count: length})),
     },
 });
 
