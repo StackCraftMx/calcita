@@ -1,7 +1,11 @@
-// Pestañas por ruta: cada pestaña es una dirección, así se puede compartir la liga a una pestaña, regresar con «atrás» y
-// abrirla en otra pestaña del navegador. Dos modos (mode):
-//   path    cada pestaña es una página de las rutas del proyecto (to); la activa sale de la dirección
-//   query   pestañas dentro de una misma pantalla, guardadas en la consulta (?tab=pagos); useActiveRouteTab dice cuál pintar
+// Pestañas por ruta: cada pestaña es una dirección, así se puede compartir la liga a una pestaña y abrirla en otra pestaña
+// del navegador. Dos modos (mode):
+//   path    cada pestaña es una página de las rutas del proyecto (to); la activa sale de la dirección. Son lugares: cada una
+//           deja su paso en el historial y «atrás» regresa a la anterior
+//   query   pestañas dentro de una misma pantalla, guardadas en la consulta (?tab=pagos); useActiveRouteTab dice cuál pintar.
+//           Son la misma ficha vista por otro lado: por omisión REEMPLAZAN la entrada del historial, así «atrás» (y el
+//           BackButton) sacan de la ficha en vez de pasear por sus pestañas (trampa pagada: con ocho pestañas, «Volver a la
+//           lista» daba un paso por cada pestaña abierta). `replace` lo cambia en cualquiera de los dos modos
 //
 // Cada pestaña puede traer su ícono, un conteo (badge), su permiso (access, con la regla de ToolkitProvider: la que no se
 // puede ver no sale) o estar apagada. Usa la navegación que conectó el proyecto (react-router, Next o la del navegador).
@@ -70,16 +74,19 @@ export function useActiveRouteTab(tabs, {mode = ROUTE_TABS_MODE.path, paramName 
  * @param {string} props.ariaLabel ya traducido: de qué son estas pestañas (para el lector de pantalla)
  * @param {'path'|'query'} [props.mode] ROUTE_TABS_MODE
  * @param {string} [props.paramName] con mode query: el nombre en la consulta (por omisión 'tab')
+ * @param {boolean} [props.replace] si cambiar de pestaña reemplaza la entrada del historial en lugar de agregar una. Por
+ *     omisión sí con mode query (vistas de la misma ficha) y no con mode path (páginas distintas)
  * @param {(tab: object) => void} [props.onChange] avisa la pestaña que se eligió (la navegación ya la hace la liga)
  * @param {object} [props.sx]
  */
 export default function RouteTabs(props) {
-    const {tabs, ariaLabel, mode = ROUTE_TABS_MODE.path, paramName = DEFAULT_PARAM_NAME, onChange, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {tabs, ariaLabel, mode = ROUTE_TABS_MODE.path, paramName = DEFAULT_PARAM_NAME, replace, onChange, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {useLocation, Link} = useToolkitNavigation();
     const location = useLocation();
     const visibleTabs = visibleTabsOf(tabs, useAccessChecker());
     const isQuery = mode === ROUTE_TABS_MODE.query;
+    const replacesHistory = replace ?? isQuery;
     const activeKey = isQuery ? queryTabOf(visibleTabs, location.search, paramName) : activeRouteTabOf(visibleTabs, location.pathname);
 
     return (
@@ -97,7 +104,7 @@ export default function RouteTabs(props) {
                 );
                 return (
                     <RouteTab key={key} value={key} label={label} icon={tab.icon} iconPosition="start" disabled={tab.disabled}
-                              component={Link} to={href} onClick={() => onChange?.(tab)} ownSx={{minHeight: 48}} />
+                              component={Link} to={href} replace={replacesHistory} onClick={() => onChange?.(tab)} ownSx={{minHeight: 48}} />
                 );
             })}
         </RouteTabsRoot>

@@ -47,15 +47,17 @@ function pickerValueOf(calendarDate) {
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableDate, slots,
  *     slotProps…); value y onChange son del campo
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function DateInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
-    openTo = 'day', disabled = false, inputRef, pickerProps, texts,
+    openTo = 'day', disabled = false, inputRef, pickerProps, messages, texts,
     ...unknownProps
 }) {
     warnUnknownProps('DateInput', unknownProps);
-    const {language, inputId, errorText, formats} = usePickerField({name, kind: 'date', error, texts});
+    const {language, inputId, errorText, formats} = usePickerField({name, kind: 'date', error, label, messages, texts});
 
     return (
         <PickerFrame inputId={inputId} label={label} language={language}>

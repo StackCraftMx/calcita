@@ -17,7 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -56,18 +56,22 @@ function plainTextOf(text) {
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» (o los que coinciden con lo buscado) arriba de la lista
  * @param {boolean} [props.checkboxes] con multiple: una casilla en cada opción
  * @param {number} [props.limitTags] con multiple: cuántos chips se ven sin foco; los demás como «+3 más»
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function CatalogInput({
     name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
-    multiple = false, selectAll = false, checkboxes = false, limitTags, texts,
+    multiple = false, selectAll = false, checkboxes = false, limitTags, messages, texts,
     ...unknownProps
 }) {
     warnUnknownProps('CatalogInput', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'catalog'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     // con varias, en el orden en que se eligieron (el de la lista de claves)
     const selectedOption = multiple
         ? (Array.isArray(value) ? value : []).map((code) => options.find((option) => option.code === code)).filter(Boolean)

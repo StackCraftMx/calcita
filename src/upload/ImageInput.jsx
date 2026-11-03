@@ -23,7 +23,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Stack from '@mui/material/Stack';
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -92,19 +92,23 @@ function usePreviewUrl(value) {
  * @param {boolean} [props.busy] candado mientras se sube
  * @param {(file: File, reason: string) => void} [props.onReject] reason es uno de FILE_REJECTION; sin él, un aviso
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function ImageInput(props) {
     const {
         name, label, value = null, onChange, onBlur, shape = IMAGE_SHAPE.circle, size = DEFAULT_PREVIEW_SIZE, alt, placeholder,
-        accept = 'image', maxSize, error, helperText = ' ', chooseLabel, removeLabel, disabled = false, busy = false, onReject, sx, texts,
+        accept = 'image', maxSize, error, helperText = ' ', chooseLabel, removeLabel, disabled = false, busy = false, onReject, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const previewId = `${name ?? 'image'}-${generatedId}`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const isLocked = disabled || busy;
     const previewUrl = usePreviewUrl(value);
     const change = (file) => {

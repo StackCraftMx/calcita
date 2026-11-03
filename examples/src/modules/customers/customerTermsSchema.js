@@ -3,7 +3,7 @@
 //
 // OJO: función y no constante, por lo mismo que newCustomerSchema.js (yup toma los mensajes al armar el esquema).
 import {formatCurrency} from '@stackcraftmx/calcita';
-import {Yup, listTotalAtMostRule, orderedInListRule, uniqueInListRule} from '@stackcraftmx/calcita/forms';
+import {Yup, listTotalAtMostRule, orderedInListRule, percentRule, uniqueInListRule} from '@stackcraftmx/calcita/forms';
 
 /** Hasta cuántos renglones de cada lista. */
 export const CUSTOMER_TERMS_LIMITS = Object.freeze({branches: 8, discounts: 5, contacts: 5});
@@ -33,7 +33,7 @@ export function buildCustomerTermsSchema(currency) {
         volume_discounts: Yup.array().max(CUSTOMER_TERMS_LIMITS.discounts).of(Yup.object({
             min_amount: Yup.string().required().test(uniqueInListRule('volume_discounts', 'min_amount'))
                 .test(orderedInListRule('volume_discounts', 'min_amount', {displayOf: (amount) => formatCurrency(Number(amount))})),
-            discount_percent: Yup.string().required()
+            discount_percent: Yup.string().required().test(percentRule())
                 .test(orderedInListRule('volume_discounts', 'discount_percent', {displayOf: (percent) => `${percent} %`})),
         })),
         contacts: Yup.array().min(1).max(CUSTOMER_TERMS_LIMITS.contacts).of(Yup.object({

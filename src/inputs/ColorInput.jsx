@@ -18,7 +18,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
@@ -50,23 +50,27 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
  * @param {boolean} [props.checkContrast] avisa si casi no se lee sobre blanco (por omisión sí)
  * @param {boolean} [props.disabled]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function ColorInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorInput.defaultProps) y encima lo que llega aquí
     const {
-    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, texts,
+    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, messages, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'color'}-${generatedId}`;
     const color = value ?? '';
     const isValidColor = HEX_COLOR.test(color);
     const contrastRatio = isValidColor ? contrastOnWhite(color) : null;
     const suggestion = checkContrast && isValidColor && contrastRatio < MIN_CONTRAST ? readableVariantOf(color) : null;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const contrastText = contrastRatio && checkContrast ? t('form.colorContrast', {ratio: contrastRatio.toFixed(RATIO_DECIMALS)}) : helperText;
     const choose = (nextColor) => onChange(nextColor.toUpperCase());
 

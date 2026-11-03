@@ -10,7 +10,8 @@
 //   - su propio renglón de arriba con `header` (título, conteo y controles en uno), algo junto al conteo con `toolbarExtra`,
 //     algo arriba de los accesos rápidos con `beforeQuickFilters`, y el pie con `footer`;
 //   - cómo se pinta cada celda con las columnas (renderCell, valueFormatter) y cada renglón con getRowClassName;
-//   - qué renglones se ven sin volver a consultar con isRowVisible, y la columna pegada con fixedColumn.
+//   - qué renglones se ven sin volver a consultar con isRowVisible, y las columnas pegadas con fixedColumn (el folio y el
+//     cliente: al deslizar de lado no se pierde de quién es el renglón; la que no es la última lleva width).
 //   - «Ir a página N» junto al paginador con `showGoToPage` (por omisión escondido).
 //   - fechas ya puestas como accesos rápidos («Hoy», «Últimos 7 días»…) y, al final de esa tira, el chip «Personalizado»
 //     (DateRangeFilter). Son el MISMO filtro («cuándo»): elegir un periodo quita el rango y elegir un rango quita el
@@ -146,7 +147,7 @@ const OrdersTableDemo = () => {
         <ServerTable fetchPage={fetchOrdersPage} queryKey="orders" columns={columns} filterDefaults={FILTER_DEFAULTS}
                      filterKinds={FILTER_KINDS_OF_TABLE} chipConfig={chipConfig} quickFilters={quickFilters}
                      searchPlaceholder="Buscar por folio o cliente" countLabel={(total) => `${formatNumber(total)} pedidos`}
-                     emptyLabel="No hay pedidos con esos filtros" ariaLabel="Pedidos" fixedColumn="number" defaultPageSize={10} striped />
+                     emptyLabel="No hay pedidos con esos filtros" ariaLabel="Pedidos" fixedColumn={['number', 'customer']} defaultPageSize={10} striped />
     );
 };
 

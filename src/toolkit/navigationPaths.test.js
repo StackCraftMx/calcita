@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {hashHrefOf, hashLocationOf, normalizedBasePath, pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
+import {hashHrefOf, hashLocationOf, isPlainLeftClick, normalizedBasePath, pathWithBase, pathWithoutBase} from '@/toolkit/navigationPaths.js';
 
 test('el prefijo se limpia: con / al inicio y sin / al final; vacío es la raíz', () => {
     assert.equal(normalizedBasePath('portal/'), '/portal');
@@ -35,4 +35,16 @@ test('con #, la página es lo que va después del # y sin nada es el inicio', ()
 test('el enlace con # solo para rutas de la app', () => {
     assert.equal(hashHrefOf('/pedidos'), '#/pedidos');
     assert.equal(hashHrefOf('https://otro.sitio'), 'https://otro.sitio');
+});
+
+test('solo el clic normal se hace por dentro: con Cmd/Ctrl, Shift, el botón de en medio o _blank lo hace el navegador', () => {
+    const plain = {button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false, defaultPrevented: false};
+    assert.equal(isPlainLeftClick(plain), true);
+    assert.equal(isPlainLeftClick({...plain, metaKey: true}), false);
+    assert.equal(isPlainLeftClick({...plain, ctrlKey: true}), false);
+    assert.equal(isPlainLeftClick({...plain, shiftKey: true}), false);
+    assert.equal(isPlainLeftClick({...plain, button: 1}), false);
+    assert.equal(isPlainLeftClick({...plain, defaultPrevented: true}), false);
+    assert.equal(isPlainLeftClick(plain, '_blank'), false);
+    assert.equal(isPlainLeftClick(plain, '_self'), true);
 });

@@ -40,7 +40,7 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 
 import {startDownload} from '@/downloads/downloadQueue.js';
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import {newIdentifier} from '@/identifiers.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {fieldErrorsOf} from '@/problems.js';
@@ -118,17 +118,21 @@ function uploadErrorTextOf(error) {
  * @param {() => void} [props.onRemove] la persona quitó el archivo
  * @param {(status: string) => void} [props.onStatusChange] uno de FILE_UPLOAD_STATUS, cada vez que cambia
  * @param {object} [props.sx] ajustes del renglón
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function FileUploadInput(props) {
     const {
         name, label, value = '', onChange, onBlur, upload, idOf = (result) => result?.id, uploadedFile = null, download, accept, maxSize,
         limitsText, error, helperText = ' ', disabled = false, actions, onUploaded, onUploadFailed, onCancel, onRemove, onStatusChange,
-        sx, texts,
+        sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const {formatFileSize} = useFormatters();
     const generatedId = useId();
     const inputId = `${name ?? 'file-upload'}-${generatedId}`;
@@ -228,7 +232,7 @@ export default function FileUploadInput(props) {
     const statusLabel = status === FILE_UPLOAD_STATUS.uploading
         ? t('upload.status.uploading', {percent: progress ?? 0})
         : t(`upload.status.${status}`);
-    const validationText = translateValidationMessage(t, error);
+    const validationText = validationTextOf(error);
     const errorText = rejectedText
         ?? (uploadSnapshot.matches('failed') ? uploadErrorTextOf(problem) ?? t('upload.failed') : null)
         ?? (isUploading ? null : validationText);

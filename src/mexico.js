@@ -6,9 +6,9 @@
 //
 //   isValidRfc('SAT970701NN3') · Yup.string().test(clabeRule()) · readCfdi(xmlText) · <EfirmaFields onVerifyKey={api.verifyEfirma} />
 export {
-    RFC_KIND, clabeCheckDigitOf, curpCheckDigitOf, isValidClabe, isValidCurp, isValidRfc, rfcCheckDigitOf, rfcKindOf,
+    RFC_KIND, clabeCheckDigitOf, curpCheckDigitOf, isValidClabe, isValidCurp, isValidPostalCode, isValidRfc, rfcCheckDigitOf, rfcKindOf,
 } from '@/mexico/mexicoIdentifiers.js';
-export {clabeRule, curpRule, rfcRule} from '@/mexico/mexicoRules.js';
+export {clabeRule, curpRule, postalCodeRule, rfcRule} from '@/mexico/mexicoRules.js';
 export {CERTIFICATE_STATUS, certificateStatusOf, readCertificate} from '@/mexico/certificateReader.js';
 export {CFDI_VOUCHER_TYPE, readCfdi, readCfdiFile} from '@/mexico/cfdiReader.js';
 export {EFIRMA_KEY_PROBLEM, EfirmaKeyError, verifyEfirmaKey} from '@/mexico/efirmaKey.js';

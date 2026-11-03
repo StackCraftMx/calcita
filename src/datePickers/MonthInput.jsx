@@ -33,15 +33,17 @@ const MONTH_VIEWS = ['year', 'month'];
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableMonth, slots,
  *     slotProps…); value y onChange son del campo
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function MonthInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minMonth, maxMonth, disableFuture = false, disablePast = false,
-    disabled = false, inputRef, pickerProps, texts,
+    disabled = false, inputRef, pickerProps, messages, texts,
     ...unknownProps
 }) {
     warnUnknownProps('MonthInput', unknownProps);
-    const field = usePickerField({name, kind: 'month', error, texts});
+    const field = usePickerField({name, kind: 'month', error, label, messages, texts});
 
     return (
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>

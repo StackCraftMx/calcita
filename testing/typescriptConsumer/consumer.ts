@@ -419,6 +419,36 @@ const tallRowsTable = createElement(ServerTable, {
     getRowHeight: () => 'auto' as const, gridSx: [{'& .MuiDataGrid-cell': {alignItems: 'flex-start'}}],
 });
 
-export {screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+// lo de la 0.48: menú con destinos, pestañas que reemplazan, varias columnas fijas, textos que faltan, texto con marcas y
+// mensajes de validación propios
+import {MarkedText, ToolkitProvider as Provider048, parseMarkedText, translateValidationMessage, useValidationText, createBrowserNavigation as browserNavigation048} from '@stackcraftmx/calcita';
+import {percentRule, sameAsFieldRule} from '@stackcraftmx/calcita/forms';
+import {percentRule as hookPercentRule} from '@stackcraftmx/calcita/react-hook-form';
+import {isValidPostalCode, postalCodeRule} from '@stackcraftmx/calcita/mexico';
+const menuWithDestination = createElement(ActionsMenu, {label: 'Acciones', actions: [
+    {key: 'open', label: 'Abrir', to: '/orders/1'},
+    {key: 'log', label: 'Anotar', onClick: (event) => event.metaKey},
+]});
+const replacingTabs = createElement(RouteTabs, {ariaLabel: 'Secciones', mode: ROUTE_TABS_MODE.query, replace: false, tabs: [{value: 'a', label: 'A'}]});
+const twoFixedColumns = createElement(ServerTable, {
+    queryKey: 'fixed', fetchPage: async () => ({rows: [], total: 0}), columns: [], ariaLabel: 'Fijas', fixedColumn: ['actions', 'company'],
+});
+const missingTexts: string[] = [];
+const legacyProvider = createElement(Provider048, {
+    onMissingText: ({namespace, key, language}) => { missingTexts.push(`${language}:${namespace}:${key}`); },
+    readValidationMessage: (error: unknown) => (typeof error === 'object' && error !== null && 'codigo' in error ? {key: 'legado:requerido'} : undefined),
+    children: 'isla',
+});
+const headline = createElement(MarkedText, {text: 'Con <highlight>todo</highlight>', marks: {highlight: createElement('strong'), em: 'em', tip: (children) => children}});
+const markedPieces = parseMarkedText('Con <highlight>todo</highlight>', ['highlight']);
+const readMessage: string | undefined = translateValidationMessage((key) => key, {msg: 'legado:requerido'}, {label: 'RFC', messages: {required: 'Escriba el RFC'}, fieldName: 'rfc'});
+const validationHook = useValidationText;
+const fieldRules = [sameAsFieldRule('password', {otherLabel: 'la contraseña'}), percentRule({max: 30}), hookPercentRule(), postalCodeRule()].map((rule) => rule.message.key);
+const postalOk: boolean = isValidPostalCode('06600');
+const replaceNavigation = browserNavigation048().useNavigate()('/pedidos', {replace: true});
+// @ts-expect-error fixedColumn es un campo o una lista de campos
+const wrongFixed = createElement(ServerTable, {queryKey: 'x', fetchPage: async () => ({rows: [], total: 0}), columns: [], ariaLabel: 'x', fixedColumn: 3});
+
+export {menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

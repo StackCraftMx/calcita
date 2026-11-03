@@ -48,3 +48,13 @@ test('la CLABE: 18 dígitos y su dígito (pesos 3, 7, 1)', () => {
     assert.equal(isValidClabe('032180000118359718'), false);
     assert.equal(isValidClabe('0321800001183597'), false);
 });
+
+test('código postal: 5 dígitos que no empiezan con 00 (los espacios no cuentan)', async () => {
+    const {isValidPostalCode} = await import('@/mexico/mexicoIdentifiers.js');
+    assert.equal(isValidPostalCode('06600'), true);
+    assert.equal(isValidPostalCode('64 000'), true);
+    assert.equal(isValidPostalCode('00123'), false);
+    assert.equal(isValidPostalCode('6460'), false);
+    assert.equal(isValidPostalCode('646000'), false);
+    assert.equal(isValidPostalCode(''), false);
+});

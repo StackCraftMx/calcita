@@ -33,7 +33,7 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import {FormSectionContext} from '@/inputs/formLayoutContext.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -89,23 +89,27 @@ function gridColumnsOf(columns) {
  * @param {string} [props.addLabel] ya traducido; por omisión «Agregar»
  * @param {boolean} [props.disabled]
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function RepeatingFields(props) {
     const {
         label, rowKeys, renderRow, rowLabelOf, rowActionsOf, columns = DEFAULT_COLUMNS, minRows = 1, maxRows = null, onAdd, onRemove,
-        onClear, removeBlockedReasonOf, confirmRemoveOf, rowHasErrorOf, error, helperText, footer, addLabel, disabled = false, sx, texts,
+        onClear, removeBlockedReasonOf, confirmRemoveOf, rowHasErrorOf, error, helperText, footer, addLabel, disabled = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({label, messages});
     // el renglón que se va a quitar y por qué se pregunta: {index, kind: 'confirm' | 'blocked', reason}
     const [pendingRemoval, setPendingRemoval] = useState(null);
     const blockedTitleId = `${useId()}-blocked-title`;
     const rowCount = rowKeys.length;
     const isAtMinimum = rowCount <= minRows;
     const isAtMaximum = maxRows != null && rowCount >= maxRows;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const titleOf = (index) => rowLabelOf?.(index) ?? t('repeating.row', {number: index + 1});
 
     // quitar (o limpiar, si ya está en el mínimo): primero lo que diga la pantalla

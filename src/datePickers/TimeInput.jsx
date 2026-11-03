@@ -31,15 +31,17 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del TimePicker de MUI X que aquí no tiene nombre (views, shouldDisableTime,
  *     slots, slotProps…); value y onChange son del campo
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function TimeInput({
     name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep = DEFAULT_MINUTES_STEP, disabled = false, inputRef,
-    pickerProps, texts,
+    pickerProps, messages, texts,
     ...unknownProps
 }) {
     warnUnknownProps('TimeInput', unknownProps);
-    const field = usePickerField({name, kind: 'time', error, texts});
+    const field = usePickerField({name, kind: 'time', error, label, messages, texts});
 
     return (
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>

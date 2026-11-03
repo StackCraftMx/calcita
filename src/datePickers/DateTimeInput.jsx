@@ -52,15 +52,17 @@ const HELPER_SEPARATOR = ' · ';
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DateTimePicker de MUI X que aquí no tiene nombre (views, shouldDisableDate,
  *     slots, slotProps…); value y onChange son del campo
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function DateTimeInput({
     name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
-    disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, texts,
+    disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, messages, texts,
     ...unknownProps
 }) {
     warnUnknownProps('DateTimeInput', unknownProps);
-    const field = usePickerField({name, kind: 'dateTime', error, texts});
+    const field = usePickerField({name, kind: 'dateTime', error, label, messages, texts});
     const {languages} = useToolkitSettings();
     const shownTimeZone = timeZone ?? field.timeZone;
     const zoneText = showTimeZone ? (timeZoneLabel ?? timeZoneNameOf(shownTimeZone, intlLocaleOf(field.language, languages))) : null;

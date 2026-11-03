@@ -6,8 +6,12 @@
 //                actions={[{key: 'delete', label: 'Borrar', icon: <DeleteOutlineIcon fontSize="small" />, color: 'error', onClick: remove}]} />
 //
 // Tan flexible como un menú de sistema (cada renglón es uno de estos):
-//   {key, label, icon?, description?, color?, disabled?, onClick}   una acción
-//   {key, label, href, download?}                                   una liga (bajar un documento, abrir otra página)
+//   {key, label, icon?, description?, color?, disabled?, onClick}   una acción; onClick recibe el evento del clic
+//   {key, label, to, replace?}                                      una pantalla de la app, con la navegación del proyecto
+//                                                                   (react-router, Next o la del navegador): el clic normal
+//                                                                   navega sin recargar y Cmd/Ctrl+clic o el botón de en
+//                                                                   medio la abren en otra pestaña, como cualquier liga
+//   {key, label, href, download?}                                   una liga de afuera (bajar un documento, otro sistema)
 //   {key, label, children: [...]}                                   un submenú: se abre DENTRO del mismo menú, con «‹ Regresar»
 //                                                                   arriba (igual en el teléfono); también con → y ←
 //   {type: 'section', key, label}                                   un título de sección
@@ -34,6 +38,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -69,7 +74,7 @@ function levelOf(actions, path) {
 /**
  * @param {object} props
  * @param {string} props.label el nombre del botón (lector de pantalla y su tooltip), ya traducido
- * @param {Array<{key: string, type?: string, label?: string, icon?: import('react').ReactNode, description?: string, color?: string, disabled?: boolean, onClick?: () => void, href?: string, download?: string|boolean, children?: object[], render?: (helpers: {close: () => void}) => import('react').ReactNode}>} [props.actions]
+ * @param {Array<{key: string, type?: string, label?: string, icon?: import('react').ReactNode, description?: string, color?: string, disabled?: boolean, onClick?: (event: import('react').MouseEvent<HTMLElement>) => void, to?: string, replace?: boolean, href?: string, download?: string|boolean, children?: object[], render?: (helpers: {close: () => void}) => import('react').ReactNode}>} [props.actions]
  * @param {import('react').ReactNode} [props.icon] otro ícono para el botón (por omisión «⋯»)
  * @param {'small'|'medium'} [props.size]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
@@ -79,6 +84,8 @@ export default function ActionsMenu(props) {
     const {label, actions, icon, size = 'small', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // las pantallas de la app (to) van con el enlace de la navegación del proyecto: así el clic normal no recarga la app
+    const {Link} = useToolkitNavigation();
     const [anchor, setAnchor] = useState(null);
     // los submenús abiertos (llaves), del primero al último
     const [path, setPath] = useState([]);
@@ -137,11 +144,18 @@ export default function ActionsMenu(props) {
                         return <li key={item.key}>{item.render({close})}</li>;
                     }
                     const hasChildren = Boolean(item.children?.length);
+                    // a dónde lleva el renglón: una pantalla de la app (to), una liga de afuera (href) o nada (una acción)
+                    let destinationProps = {};
+                    if (item.to) {
+                        destinationProps = {component: Link, to: item.to, ...(item.replace && {replace: true})};
+                    } else if (item.href) {
+                        destinationProps = {component: 'a', href: item.href, download: item.download};
+                    }
                     return (
                         <ActionsItem
                             key={item.key}
                             disabled={item.disabled}
-                            {...(item.href && {component: 'a', href: item.href, download: item.download})}
+                            {...destinationProps}
                             aria-haspopup={hasChildren ? 'menu' : undefined}
                             onKeyDown={(event) => {
                                 if (hasChildren && event.key === 'ArrowRight') {
@@ -149,13 +163,14 @@ export default function ActionsMenu(props) {
                                     setPath((current) => [...current, item.key]);
                                 }
                             }}
-                            onClick={() => {
+                            onClick={(event) => {
                                 if (hasChildren) {
                                     setPath((current) => [...current, item.key]);
                                     return;
                                 }
                                 close();
-                                item.onClick?.();
+                                // con el evento la pantalla decide (saber si fue con Cmd/Ctrl, o detener una liga propia)
+                                item.onClick?.(event);
                             }}
                             ownSx={item.color ? {color: `${item.color}.main`} : undefined}
                         >

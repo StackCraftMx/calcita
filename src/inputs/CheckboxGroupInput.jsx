@@ -17,7 +17,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
@@ -44,19 +44,23 @@ const CheckboxGroupOption = piecePart(THEME_NAME, 'Option', FormControlLabel);
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function CheckboxGroupInput(props) {
     const {
-        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, sx, texts,
+        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const groupId = `${name ?? 'checkbox-group'}-${generatedId}`;
     const labelId = `${groupId}-label`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const checkedValues = Array.isArray(value) ? value : [];
     const selectAllState = selectAllStateOf(checkedValues, options.filter((option) => !option.disabled).map((option) => option.value));
     // la lista en el orden de las opciones, no en el que se fueron marcando (así viaja siempre igual)

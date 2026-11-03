@@ -31,6 +31,12 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  *     tipos de archivo del proyecto para las descargas, además de Excel, CSV y PDF (downloads/fileTypes.js)
  * @param {(language: string) => void} [props.onLanguageChange] lo llama LanguageToggle; el proyecto cambia su idioma
  * @param {object} [props.texts] textos propios por idioma, con la forma de locales/ ({es: {table: {...}}})
+ * @param {(error: unknown) => unknown} [props.readValidationMessage] cómo leer los mensajes de validación de un sistema que ya
+ *     existe (su propio setLocale de yup, su forma de error): regresa un texto, {key, values} o undefined para la lectura de
+ *     siempre. Ej. ({msg, values}) de muchos sistemas con i18next ya se entiende solo; esto es para lo demás
+ * @param {(missing: {namespace: string, key: string, language: string}) => void} [props.onMissingText] avisa cada texto que
+ *     no existe (la pantalla enseña la llave): para mandarlo a Sentry o tronar una prueba. Sin él, Calcita avisa en la
+ *     consola una vez por idioma y llave
  * @param {(namespace: string, key: string, values?: object) => string|undefined} [props.translate] traductor del
  *     proyecto (por ejemplo i18next); undefined deja el texto del paquete
  * @param {string} [props.timeZone] zona de las fechas (por omisión la del navegador)
@@ -47,7 +53,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language, languages, onLanguageChange, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
+    language, languages, onLanguageChange, onMissingText, readValidationMessage, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
     children,
     ...unknownProps
 }) => {
@@ -58,6 +64,8 @@ export const ToolkitProvider = ({
         language: language ?? parent?.language ?? DEFAULT_LANGUAGE,
         languages: languages ?? parent?.languages ?? DEFAULT_LANGUAGES,
         onLanguageChange: onLanguageChange ?? parent?.onLanguageChange ?? null,
+        onMissingText: onMissingText ?? parent?.onMissingText ?? null,
+        readValidationMessage: readValidationMessage ?? parent?.readValidationMessage ?? null,
         texts: texts ?? parent?.texts ?? {},
         translate: translate ?? parent?.translate ?? null,
         timeZone: timeZone ?? parent?.timeZone ?? browserTimeZone(),
@@ -68,7 +76,7 @@ export const ToolkitProvider = ({
         buildId: buildId ?? parent?.buildId ?? '',
         canAccess: canAccess ?? parent?.canAccess ?? allowOnlyUnrestricted,
         fileTypes: fileTypes ?? parent?.fileTypes ?? null,
-    }), [parent, language, languages, onLanguageChange, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
+    }), [parent, language, languages, onLanguageChange, onMissingText, readValidationMessage, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
         fileTypes]);
 
     // solo el de la raíz: un proveedor de adentro le cambiaba el idioma y la zona a las funciones sueltas de toda la app.
@@ -78,6 +86,7 @@ export const ToolkitProvider = ({
         configureToolkit({
             language: settings.language, texts: settings.texts, translate: settings.translate, timeZone: settings.timeZone, currency: settings.currency,
             hourCycle: settings.hourCycle, appName: settings.appName, buildId: settings.buildId, languages: settings.languages,
+            onMissingText: settings.onMissingText,
         });
     }
 

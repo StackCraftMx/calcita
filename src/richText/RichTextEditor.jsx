@@ -21,7 +21,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {richTextContentSxOf} from '@/richText/richTextContentSx.js';
 import {richTextExtensionsOf} from '@/richText/richTextExtensions.js';
@@ -58,20 +58,24 @@ const DEFAULT_MIN_HEIGHT = 160;
  * @param {number} [props.minHeight] el alto mínimo del texto en px; por omisión 160
  * @param {boolean} [props.disabled]
  * @param {object} [props.sx]
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `richText` en los textos del paquete
  */
 export default function RichTextEditor(props) {
     const {
         name, label, value, onChange, onBlur, placeholder, error, helperText = ' ', maxLength, features = DEFAULT_RICH_TEXT_FEATURES, extensions,
-        toolbarActions, onEditorReady, minHeight = DEFAULT_MIN_HEIGHT, disabled = false, sx, texts,
+        toolbarActions, onEditorReady, minHeight = DEFAULT_MIN_HEIGHT, disabled = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('richText', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const contentId = `${name ?? 'rich-text'}-${generatedId}`;
     const labelId = `${contentId}-label`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     // lo último de afuera, sin rearmar el editor cada vez que la pantalla pinta otra función
     const latest = useRef({onChange, onBlur, onEditorReady});
     latest.current = {onChange, onBlur, onEditorReady};

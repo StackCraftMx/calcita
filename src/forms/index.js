@@ -12,6 +12,7 @@ export {default as FormProblemAlert} from '@/forms/FormProblemAlert.jsx';
 export {default as FormRepeatingFields} from '@/forms/FormRepeatingFields.jsx';
 export {default as FormTransferListField} from '@/forms/FormTransferListField.jsx';
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
+export {percentRule, sameAsFieldRule} from '@/forms/fieldRules.js';
 export {default as FormSelectField} from '@/forms/FormSelectField.jsx';
 export {default as FormServerProblem} from '@/forms/FormServerProblem.jsx';
 export {default as FormTextField} from '@/forms/FormTextField.jsx';

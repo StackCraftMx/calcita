@@ -21,7 +21,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import {translateValidationMessage} from '@/forms/validationMessages.js';
+import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
@@ -52,23 +52,27 @@ const WITHOUT_CHECKMARK = Object.freeze({'&.Mui-selected::after': {content: 'non
  * @param {boolean} [props.multiple] elegir varias opciones
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» arriba de la lista
  * @param {boolean} [props.checkboxes] con multiple: una casilla en cada opción
+ * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
+ *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 export default function SelectInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
     const {
     name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false,
-    selectAll = false, checkboxes = false, texts,
+    selectAll = false, checkboxes = false, messages, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
+    const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'select'}-${generatedId}`;
     // OJO: la lista desplegable de MUI es un div y no un <input>: el `for` de la etiqueta no la une. Se nombra con su etiqueta
     // por aria-labelledby (labelId); sin esto el lector de pantalla no decía «Ciudad», solo lo elegido
     const labelId = `${inputId}-label`;
-    const errorText = translateValidationMessage(t, error);
+    const errorText = validationTextOf(error);
     const placeholderText = (
         <Typography component="span"
                     // OJO: el placeholder de un select activo se lee (text.secondary); text.disabled solo con el campo inactivo
@@ -82,7 +86,11 @@ export default function SelectInput(props) {
         return options.find((option) => option.value === selectedValue)?.label ?? placeholderText;
     };
     const currentValue = multiple ? (Array.isArray(value) ? value : []) : (value ?? '');
-    const selectAllState = selectAllStateOf(currentValue, options.filter((option) => !option.disabled).map((option) => option.value));
+    // «Elegir todos» solo existe con varias. OJO, trampa pagada: se calculaba también con una sola, y un valor que es número
+    // (un recordatorio de 60 minutos) tumbaba la pantalla: new Set(60) no es una lista
+    const selectAllState = multiple
+        ? selectAllStateOf(currentValue, options.filter((option) => !option.disabled).map((option) => option.value))
+        : null;
     // OJO: con multiple, el autollenado del navegador puede mandar el valor como texto separado por comas (lo dice MUI)
     const handleChange = (event) => {
         const nextValue = event.target.value;

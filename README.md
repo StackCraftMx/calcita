@@ -97,11 +97,41 @@ Sin nada más, todo sale en español, con la zona horaria del navegador, montos 
 | `canAccess` | quién ve qué (menú, rutas, botones): la regla del proyecto, normalmente `createAccessChecker(...)` | solo lo que no tiene regla |
 | `buildId` | la compilación del front que corre en la pestaña, para el aviso de versión nueva | ninguna (sin aviso) |
 | `fileTypes` | tipos de archivo propios para las descargas (su ícono y su color), además de Excel, CSV y PDF | los de la casa |
+| `onMissingText` | a quién avisarle de un texto que no existe (la pantalla enseña la llave): mandarlo a Sentry, tronar una prueba | un aviso en la consola, una vez por idioma y llave |
+| `readValidationMessage` | cómo leer los mensajes de validación de un sistema que ya existe (ver «Mensajes de error propios») | `{key}`, `{msg}`, `{message}` y texto |
 
 Un `ToolkitProvider` dentro de otro (una parte de la app en otro idioma, una vista previa) toma del de afuera lo que no le
 digan, y lo de adentro usa el suyo: el más cercano. No le cambia nada al resto de la app. Dentro de un componente,
 `useFormatters()` da los formatos (`formatDate`, `formatCurrency`…) con el idioma, la zona y la moneda del proveedor más
 cercano; los sueltos usan los del proveedor de la raíz.
+
+**Fuera de un componente** (una función que arma columnas, un diccionario, un aviso): `translateToolkit(namespace, llave,
+valores)` y los formatos sueltos (`formatDate`, `formatCurrency`, `formatNumber`…) usan el idioma, la zona y la moneda del
+proveedor de la raíz, ya actualizados en la misma pintada en que cambian. Así una función auxiliar no tiene que recibir `t`
+ni los formatos por parámetro:
+
+```js
+import {formatDate, translateToolkit} from '@stackcraftmx/calcita';
+
+export const columnsOf = () => [
+    textColumn({field: 'registered_at', label: translateToolkit('clients', 'columns.registered'), valueFormatter: (value) => formatDate(value)}),
+];
+```
+
+Dos cuidados: con dos proveedores (dos islas en otro idioma) los sueltos usan el de la raíz; y si la pantalla guarda el
+resultado (`useMemo(() => columnsOf(), [])`), ponga el idioma en las dependencias o se queda en el de antes.
+
+Un texto que no existe se pinta con su llave (`clients:columns.registered`) y Calcita lo avisa en la consola una vez; con
+`onMissingText` se le avisa al proyecto. Un texto opcional se pide con `defaultValue` (`t('tips.extra', {defaultValue: ''})`)
+y no avisa.
+
+Para un texto con una palabra resaltada, una sola llave con marcas y `MarkedText` (como `<Trans>` de react-i18next, sin
+i18next). No pinta HTML: solo las marcas que se nombran; lo demás sale como texto.
+
+```jsx
+// es: {home: {headline: 'Optimiza tu negocio con <highlight>financiamiento</highlight> inteligente'}}
+<MarkedText text={t('home.headline')} marks={{highlight: <Box component="strong" sx={{color: 'primary.main'}} />}} />
+```
 
 Con react-router y i18next:
 
@@ -537,11 +567,16 @@ estatus, insignias, botón para abrirlo y menú «⋯»; en el cuerpo sus datos 
 principal grande; abajo lo que va a todo lo ancho y «Ver detalle», que despliega más. El orden es el que se da y nada se
 reacomoda solo: para un orden obligatorio, `trailing` pone el estatus al final y `columns` fija el ancho de cada columna.
 `RecordCardSkeleton` es su esqueleto. El menú «⋯» (`ActionsMenu`) acepta secciones, separadores, ligas, renglones propios y
-submenús (`children`), que se abren dentro del mismo menú con «Regresar».
+submenús (`children`), que se abren dentro del mismo menú con «Regresar». Un renglón con `to` es una pantalla de la app: va
+con la navegación del proyecto, así el clic normal no recarga la app y Cmd/Ctrl+clic o el botón de en medio la abren en otra
+pestaña (`href` es para lo de afuera). `onClick` recibe el evento del clic.
 
-Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una pestaña y
-«atrás» regresa a la anterior); por ruta (cada pestaña su página) o en la consulta (`mode="query"`, `?tab=pagos`, con
-`useActiveRouteTab` para pintar el panel), con ícono, conteo y permiso por pestaña. Junto al título de un registro van su
+Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una
+pestaña); por ruta (cada pestaña su página, y «atrás» regresa a la anterior) o en la consulta (`mode="query"`, `?tab=pagos`,
+con `useActiveRouteTab` para pintar el panel), con ícono, conteo y permiso por pestaña. Las de la consulta son vistas de la
+misma ficha: por omisión reemplazan la entrada del historial, así «atrás» y el `BackButton` salen de la ficha en vez de pasear
+por sus pestañas (`replace={false}` lo apaga; en las de ruta, `replace` lo prende). Las tres navegaciones de Calcita (la del
+navegador, la de `#` y la de Next) y react-router saben reemplazar. Junto al título de un registro van su
 estatus (`StatusChip`) y sus insignias (`IconBadge`): un ícono y un texto corto con el
 color de lo que significan («Envío asegurado», «Pago con tarjeta»), con borde, tenue o sin caja. Mejor desde un diccionario:
 la entrada trae su ícono (`dictionaryEntryOf(value, keyPrefix, color, {icon})`) y la insignia saca de ahí texto,
@@ -876,6 +911,35 @@ import {FormRow, FormSection} from '@stackcraftmx/calcita';
 
 Los campos van directo dentro de la `FormSection` (sin Grid ni Stack en medio): la línea entre renglones se dibuja entre
 hermanos.
+
+### Mensajes de error propios (sin tocar el esquema)
+
+Los mensajes de `buildYupLocale()` son llaves que se traducen al pintarse, y cada uno lleva **su regla y su campo**. Cuando
+el negocio pide un mensaje muy específico no hace falta tocar el esquema ni los mensajes de Calcita. El primero que exista
+gana:
+
+1. el de la pantalla, en el campo: `<FormTextField name="rfc" messages={{matches: 'El RFC lleva 12 o 13 caracteres'}} />`;
+2. el de los textos del proyecto para ese campo y esa regla, en todas las pantallas:
+   `{es: {validation: {fields: {rfc: {matches: 'El RFC lleva 12 o 13 caracteres'}}}}}` (dentro de una lista,
+   `contacts[2].email` busca `contacts.email`);
+3. el general de Calcita (o el del esquema: `.required({key: 'clientes:rfcObligatorio'})`).
+
+Los textos pueden decir el nombre del campo: `{{label}}` (el de `.label('RFC')` del esquema o, si no, la etiqueta del campo).
+
+**Un sistema que ya existe** con su propio `setLocale` de yup: Calcita entiende sola `{key, values}`, `{msg, values}` (la de
+muchos sistemas con i18next), `{message: 'texto'}`, el error entero de react-hook-form y un texto ya escrito. Para otra
+forma, una función en el proveedor; los esquemas viejos entran sin reescribirse:
+
+```jsx
+<ToolkitProvider readValidationMessage={(error) => (error?.codigo ? {key: `legado:${error.codigo}`, values: error.datos} : undefined)}>
+```
+
+Una forma que no entiende no se pinta como «[object Object]»: sale el mensaje general y se avisa en la consola. Un campo
+propio del proyecto usa lo mismo con `useValidationText({label, messages})`.
+
+Reglas listas, con su mensaje en el idioma activo: `sameAsFieldRule('password', {otherLabel: 'la contraseña'})` (confirmar
+una contraseña, una CLABE o un correo), `percentRule({max: 30})` y, en `/mexico`, `postalCodeRule()` junto a `rfcRule()`,
+`curpRule()` y `clabeRule()`.
 
 ### Campos con máscara
 

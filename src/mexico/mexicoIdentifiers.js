@@ -157,3 +157,16 @@ export function isValidClabe(clabe) {
     const clean = (clabe ?? '').replace(/\s/g, '');
     return CLABE_PATTERN.test(clean) && clabeCheckDigitOf(clean) === clean.at(-1);
 }
+
+// el código postal de México: 5 dígitos; no hay códigos que empiecen con 00 (los estados van del 01 al 99)
+const POSTAL_CODE_PATTERN = /^(?!00)\d{5}$/;
+
+/**
+ * ¿El código postal está bien escrito? 5 dígitos (los espacios no cuentan) que no empiezan con 00.
+ *
+ * @param {string|null|undefined} postalCode
+ * @returns {boolean}
+ */
+export function isValidPostalCode(postalCode) {
+    return POSTAL_CODE_PATTERN.test((postalCode ?? '').replace(/\s/g, ''));
+}

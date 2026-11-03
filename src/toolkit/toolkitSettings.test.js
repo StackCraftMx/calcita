@@ -88,3 +88,34 @@ test('los idiomas del proyecto: cada uno con su locale; uno sin locale usa su c�
     // los de la casa aunque el proyecto no los liste
     assert.equal(intlLocaleOf('en', [{code: 'pt', label: 'Português'}]), 'en-US');
 });
+
+test('un texto que no existe se le avisa al proyecto con onMissingText y la pantalla enseña la llave', () => {
+    const missing = [];
+    const settings = {language: 'es', texts: {}, translate: null, onMissingText: (entry) => missing.push(entry)};
+    assert.equal(translateWith(settings, 'profile', 'tabs.documents'), 'profile:tabs.documents');
+    assert.deepEqual(missing, [{namespace: 'profile', key: 'tabs.documents', language: 'es'}]);
+});
+
+test('un texto opcional (con defaultValue) no se avisa aunque no exista', () => {
+    const missing = [];
+    const settings = {language: 'es', texts: {}, translate: null, onMissingText: (entry) => missing.push(entry)};
+    assert.equal(translateWith(settings, 'profile', 'tabs.optional', {defaultValue: ''}), '');
+    assert.deepEqual(missing, []);
+});
+
+test('sin onMissingText se avisa en la consola una sola vez por idioma y llave', async () => {
+    const {addLogSink} = await import('@/observability/logger.js');
+    const warnings = [];
+    const removeSink = addLogSink((entry) => {
+        if (entry.namespace === 'texts') {
+            warnings.push(entry.message);
+        }
+    });
+    const settings = {language: 'es', texts: {}, translate: null};
+    translateWith(settings, 'app', 'common.saveOnce');
+    translateWith(settings, 'app', 'common.saveOnce');
+    translateWith({...settings, language: 'en'}, 'app', 'common.saveOnce');
+    removeSink();
+    assert.equal(warnings.length, 2);
+    assert.match(warnings[0], /app:common\.saveOnce/);
+});

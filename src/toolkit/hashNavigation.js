@@ -9,7 +9,7 @@
 // Funciones genéricas: function (regla de la casa).
 import {createElement, useSyncExternalStore} from 'react';
 
-import {hashHrefOf, hashLocationOf} from '@/toolkit/navigationPaths.js';
+import {hashHrefOf, hashLocationOf, isPlainLeftClick} from '@/toolkit/navigationPaths.js';
 
 const HISTORY_BACK = -1;
 
@@ -28,17 +28,22 @@ function currentHref() {
 }
 
 /**
- * @returns {{useNavigate: () => (destination: string|number) => void, useLocation: () => {pathname: string, search: string, key: string}, Link: import('react').ElementType}}
+ * @returns {{useNavigate: () => (destination: string|number, options?: {replace?: boolean}) => void, useLocation: () => {pathname: string, search: string, key: string}, Link: import('react').ElementType}}
  */
 export function createHashNavigation() {
-    // -1 regresa en el historial; una ruta de la app cambia lo que va después del # (sin recargar)
-    const navigate = (destination) => {
+    // -1 regresa en el historial; una ruta de la app cambia lo que va después del # (sin recargar). Con {replace: true}
+    // toma el lugar de la actual en el historial
+    const navigate = (destination, options) => {
         if (destination === HISTORY_BACK) {
             window.history.back();
             return;
         }
         const href = hashHrefOf(destination);
         if (href.startsWith('#')) {
+            if (options?.replace) {
+                window.location.replace(href);
+                return;
+            }
             window.location.hash = href;
             return;
         }
@@ -53,7 +58,18 @@ export function createHashNavigation() {
         return {pathname, search, key: href};
     };
 
-    const HashLink = ({to, ...props}) => createElement('a', {href: hashHrefOf(to), ...props});
+    // con `replace`, el clic normal reemplaza la entrada del historial; Cmd/Ctrl+clic abre otra pestaña como siempre
+    const HashLink = ({to, replace, onClick, ...props}) => {
+        const href = hashHrefOf(to);
+        const handleClick = (event) => {
+            onClick?.(event);
+            if (replace && isPlainLeftClick(event, props.target)) {
+                event.preventDefault();
+                window.location.replace(href);
+            }
+        };
+        return createElement('a', {href, ...props, onClick: handleClick});
+    };
 
     return Object.freeze({useNavigate: () => navigate, useLocation: useHashLocation, Link: HashLink});
 }

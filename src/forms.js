@@ -11,5 +11,6 @@ export {
     FormMaskedField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormServerProblem, FormTransferListField,
     FormTextField, FormWizard, RECOVERY_CODE_PATTERN, SECOND_STEP_METHOD, SecondStepForm, SignInForm, SubmitButton, TOTP_CODE_PATTERN,
     TwoStepVerificationCard, Yup, applyServerProblem, buildYupLocale, formLevelMessageOf, normalizeRecoveryCode, normalizeTotpCode,
-    listTotalAtMostRule, listTotalOf, orderedInListRule, splitRowFieldErrors, splitServerFieldErrors, translateValidationMessage, uniqueInListRule, useFormikField,
+    listTotalAtMostRule, listTotalOf, orderedInListRule, percentRule, sameAsFieldRule, splitRowFieldErrors, splitServerFieldErrors, translateValidationMessage,
+    uniqueInListRule, useFormikField,
 } from '@/forms/index.js';

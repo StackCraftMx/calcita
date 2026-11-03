@@ -13,6 +13,7 @@ import {PageHeading, SectionCard, useToolkitTranslation} from '@stackcraftmx/cal
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import TranslationCalls from '@/modules/catalog/demos/translations/TranslationCalls.tsx';
+import MarkedTextDemo from '@/modules/catalog/demos/translations/MarkedTextDemo.tsx';
 // el de i18next va como texto: los ejemplos no instalan i18next y no se puede revisar ni construir
 import i18nextSetup from '@/modules/catalog/demos/translations/i18nextSetup.js?raw';
 
@@ -21,6 +22,7 @@ const loadAppProviders = () => import('@/modules/catalog/demos/translations/AppP
 const I18NEXT_SOURCES = Object.freeze({js: i18nextSetup});
 const loadCalls = () => import('@/modules/catalog/demos/translations/TranslationCalls.tsx?demo-source');
 const loadLegacySystem = () => import('@/modules/catalog/demos/translations/LegacySystemSetup.tsx?demo-source');
+const loadMarkedText = () => import('@/modules/catalog/demos/translations/MarkedTextDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (translations.<sección>.extend.<id>)
@@ -30,11 +32,12 @@ const CALLS_EXTENSIONS = [
     {id: 'values', option: '{{variable}}', example: "t('greeting', {name: user.name})"},
     {id: 'plurals', option: 'count · _one · _other', example: "t('pending', {count: total})"},
     {id: 'defaultValue', option: 'defaultValue', example: "t('help.optional', {defaultValue: ''})"},
+    {id: 'outside', option: 'translateToolkit · formatDate (fuera de un componente)', example: "const columnsOf = () => [textColumn({field: 'total', label: translateToolkit('orders', 'columns.total')})];"},
 ];
 const TEXTS_EXTENSIONS = [
     {id: 'shape', option: '{es: {namespace: {…}}, en: {…}}', example: "es: {orders: {title: 'Pedidos'}}"},
     {id: 'override', option: 'common.actions.cancel', example: "es: {common: {actions: {cancel: 'Regresar'}}}"},
-    {id: 'missing', option: '(lo que falte)', example: "t('orders.nueva')  // → 'orders.nueva' si no existe"},
+    {id: 'missing', option: '(lo que falte)', example: "t('orders.nueva')  // → 'orders.nueva' si no existe, y avisa en la consola una vez"},
     {id: 'newLanguage', option: 'toolkitTextsEs', example: 'texts={{pt: {...portugueseToolkitTexts, orders: {…}}}}  // traducidos de toolkitTextsEs'},
 ];
 const PROVIDER_EXTENSIONS = [
@@ -50,6 +53,14 @@ const PROVIDER_EXTENSIONS = [
     {id: 'canAccess', option: 'canAccess', example: '<AccountProvider …>{(canAccess) => <ToolkitProvider canAccess={canAccess}>…}'},
     {id: 'nested', option: '<ToolkitProvider> dentro de otro', example: '<ToolkitProvider language="en"><InvoicePreview /></ToolkitProvider>'},
     {id: 'componentTexts', option: 'texts · <ComponentTexts>', example: "<ServerTable texts={{count: {records_other: '{{total}} pedidos'}}} …>"},
+    {id: 'onMissingText', option: 'onMissingText', example: "onMissingText={({namespace, key, language}) => Sentry.captureMessage(`Falta ${namespace}:${key} en ${language}`)}"},
+    {id: 'readValidationMessage', option: 'readValidationMessage', example: "readValidationMessage={(error) => (error?.codigo ? {key: `legado:${error.codigo}`} : undefined)}"},
+];
+const MARKED_EXTENSIONS = [
+    {id: 'marks', option: 'marks: elemento · etiqueta · función', example: "marks={{highlight: <Box component=\"strong\" sx={{color: 'primary.main'}} />, em: 'em', tip: (children) => <Tooltip title=\"…\"><span>{children}</span></Tooltip>}}"},
+    {id: 'shape', option: '<marca>…</marca> · <marca/>', example: "'Lea los <terms>términos <strong>vigentes</strong></terms><br/>y acepte'"},
+    {id: 'safe', option: 'solo las marcas que se nombran', example: "t('greeting', {name: '<b>Ana</b>'})  // sale «<b>Ana</b>» tal cual"},
+    {id: 'pure', option: 'parseMarkedText(texto, nombres)', example: "parseMarkedText('Con <highlight>todo</highlight>', ['highlight'])"},
 ];
 const LEGACY_EXTENSIONS = [
     {id: 'hash', option: 'createHashNavigation()', example: '<ToolkitProvider navigation={createHashNavigation()}>  // /app.php#/ventas'},
@@ -87,6 +98,8 @@ export const TranslationsPage = () => {
                          extensions={rowsOf('i18next', I18NEXT_EXTENSIONS)} sources={I18NEXT_SOURCES} />
             <CodeSection title={t('translations.legacy.title')} description={t('translations.legacy.description')}
                          extensions={rowsOf('legacy', LEGACY_EXTENSIONS)} loadSource={loadLegacySystem} />
+            <DemoSection title={t('translations.marked.title')} description={t('translations.marked.description')}
+                         extensions={rowsOf('marked', MARKED_EXTENSIONS)} Demo={MarkedTextDemo} loadSource={loadMarkedText} />
         </Stack>
     );
 };

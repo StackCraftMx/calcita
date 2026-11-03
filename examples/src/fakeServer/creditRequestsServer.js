@@ -71,6 +71,10 @@ function fieldErrorsOf(request) {
     if (!isValidClabe(request.deposit_clabe)) {
         errors.deposit_clabe = [serverTextOf('creditRequests.clabeInvalid')];
     }
+    // la CLABE escrita dos veces tiene que ser la misma (el «confirmed» de Laravel)
+    if (request.deposit_clabe_confirmation !== request.deposit_clabe) {
+        errors.deposit_clabe_confirmation = [serverTextOf('creditRequests.clabeConfirmation')];
+    }
     // cada documento, con el id de uno que de verdad se subió: no se confía en lo que manda la pantalla
     for (const field of REQUIRED_DOCUMENT_FIELDS) {
         if (!request[field]) {

@@ -93,3 +93,22 @@ export function hashLocationOf(hash) {
 export function hashHrefOf(destination) {
     return isAppPath(destination) ? `${HASH_SIGN}${destination}` : destination;
 }
+
+// el botón principal del ratón (el izquierdo)
+const MAIN_MOUSE_BUTTON = 0;
+
+/**
+ * Si un clic en un enlace es el normal: el botón principal, sin Cmd/Ctrl/Shift/Alt y sin que nadie lo haya detenido.
+ * Solo ese se hace por dentro (cambiar de pantalla, reemplazar el historial); con Cmd/Ctrl+clic, Shift+clic o el botón de en
+ * medio el navegador hace lo suyo (otra pestaña, otra ventana), como con cualquier liga.
+ *
+ * @param {{button?: number, metaKey?: boolean, ctrlKey?: boolean, shiftKey?: boolean, altKey?: boolean, defaultPrevented?: boolean}} event
+ * @param {string} [target] el target del enlace: con _blank tampoco se hace por dentro
+ * @returns {boolean}
+ */
+export function isPlainLeftClick(event, target) {
+    if (target && target !== '_self') {
+        return false;
+    }
+    return event.button === MAIN_MOUSE_BUTTON && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && !event.defaultPrevented;
+}
