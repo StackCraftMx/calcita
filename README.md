@@ -56,8 +56,9 @@ entrar y las del módulo de ejemplo, y `make:module` arma la de cada módulo nue
 Y dos revisiones para antes de subir: `pnpm lint` (ESLint: una variable que no existe, «t is not defined», se caza al
 escribir) y `pnpm check:texts` (`calcita check:texts`: que cada `t('llave')` escrita tal cual exista en todos los idiomas y
 que los idiomas tengan las mismas llaves). Sirve también en un proyecto que no salió del CLI: lee `src/**/*Texts.js` y
-`src/**/texts.js`. Un archivo de textos puede reexportar otro con ruta relativa o con `@/` (aquí apunta a la carpeta del
-código, como en Vite; pide Node 22.15 o más). Nunca da un verde falso: sin la carpeta, sin ningún archivo de textos o con uno
+`src/**/texts.js`; con el código en otra carpeta, `calcita check:texts --source resources/js` (un Laravel). Un archivo de
+textos puede reexportar otro con ruta relativa o con `@/` (aquí apunta a la carpeta del código, como en Vite; pide Node 22.15
+o más). Nunca da un verde falso: sin la carpeta, sin ningún archivo de textos o con uno
 que no se pudo leer, sale con problema y no compara llaves.
 
 ## Arrancar en un proyecto que ya existe
@@ -599,7 +600,8 @@ el servidor del proyecto); `HelpButton` es el «?» que la vuelve a abrir.
 
 Para listas donde una tabla se queda corta, `RecordCard`: arriba quién es (avatar con iniciales, folio, nombre) con su
 estatus, insignias, botón para abrirlo y menú «⋯»; en el cuerpo sus datos en grupos (`groups`, o `content` libre) y el dato
-principal grande; abajo lo que va a todo lo ancho y «Ver detalle», que despliega más. El orden es el que se da y nada se
+principal grande; abajo lo que va a todo lo ancho y «Ver detalle», que despliega más (`footerAlign` los junta a la
+izquierda o a la derecha; por omisión «Ver detalle» va en la otra orilla). El orden es el que se da y nada se
 reacomoda solo: para un orden obligatorio, `trailing` pone el estatus al final y `columns` fija el ancho de cada columna.
 `RecordCardSkeleton` es su esqueleto. El menú «⋯» (`ActionsMenu`) acepta secciones, separadores, ligas, renglones propios y
 submenús (`children`), que se abren dentro del mismo menú con «Regresar». Un renglón con `to` es una pantalla de la app: va
@@ -987,6 +989,20 @@ import {Form, Formik, FormNumberField, FormProblemAlert, FormTextField, SubmitBu
 formik y yup los instala el proyecto (`pnpm add formik yup`); `Formik`, `Form` y `Yup` también se pueden importar de
 `@stackcraftmx/calcita/forms`, que es la misma copia. `FormWizard` parte un formulario en pasos, con pasos opcionales (hay
 uno para formik y otro para react-hook-form); los ejemplos traen los dos.
+
+Para editar un registro de varios pasos (se entra a corregir un dato suelto, no a recorrer todo), el mismo `FormWizard`:
+
+```jsx
+<FormWizard steps={steps} submitLabel="Guardar cambios"
+            initialStepKey={review.stepKey}                   // abre en el paso que dice el servidor
+            orientation={WIZARD_ORIENTATION.vertical}         // un paso debajo del otro, con sus campos adentro
+            stepSelection={WIZARD_STEP_SELECTION.free}        // los títulos se pulsan: salta directo (o .checked: solo sin errores)
+            onStepChange={(stepKey) => setSearchParams({step: stepKey})} />
+```
+
+Con los títulos que se pulsan, la palomita de un paso la pone la pantalla (`steps[].completed`): «antes» ya no quiere decir
+«hecho». Al enviar, el formulario regresa al primer paso con error, como siempre. Sin estas opciones se porta igual que
+antes. `WizardLayout` suelto acepta lo mismo (`orientation`, `onStepSelect`); `skippedKeys` y `onSkip` ya no son obligatorios.
 
 Para que el formulario se vea como los de Apple (Ajustes, la hoja «Nuevo evento» de Calendario), los campos van dentro de
 una `FormSection`: cada uno se vuelve un renglón, con la etiqueta a la izquierda y el valor a la derecha, sin la caja de
