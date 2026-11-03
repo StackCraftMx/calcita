@@ -34,6 +34,7 @@ const BarActionButtonMenuItem = piecePart(THEME_NAME, 'MenuItem', MenuItem);
  * @param {(event: object) => void} [props.onClick]
  * @param {boolean} [props.disabled]
  * @param {'inherit'|'primary'|'secondary'|'success'|'error'|'info'|'warning'} [props.color] por omisión primary
+ * @param {object} [props.sx] ajustes del botón; lo demás que se le pase también llega al botón (o al renglón del «⋯»)
  */
 function BarActionButtonContent(props) {
     const {label, icon, onClick, disabled, color = 'primary', ...buttonProps} = usePieceProps(props, THEME_NAME);
