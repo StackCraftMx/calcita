@@ -53,6 +53,11 @@ El proyecto trae pruebas de pantalla (`pnpm test`, Vitest con jsdom y Testing Li
 dirección con el servidor de mentira (`openScreen` en `src/testing`) y pica como una persona. Vienen las del inicio, la de
 entrar y las del módulo de ejemplo, y `make:module` arma la de cada módulo nuevo.
 
+Y dos revisiones para antes de subir: `pnpm lint` (ESLint: una variable que no existe, «t is not defined», se caza al
+escribir) y `pnpm check:texts` (`calcita check:texts`: que cada `t('llave')` escrita tal cual exista en todos los idiomas y
+que los idiomas tengan las mismas llaves). Sirve también en un proyecto que no salió del CLI: lee `src/**/*Texts.js` y
+`src/**/texts.js`.
+
 ## Arrancar en un proyecto que ya existe
 
 ```bash
@@ -719,6 +724,29 @@ location /ventas/ {
     try_files $uri $uri/ /ventas/index.html;
 }
 ```
+
+Si el prefijo lo decide el servidor al servir la página (Laravel con `config('app.url')`, un proxy con su ruta), se construye
+UNA vez con archivos relativos (`ASSET_URL=./`) y la página trae `<base href="/ventas/">`: `documentBasePath()` lo lee al
+abrirla (`null` si no hay `<base>`) y el proyecto de `calcita new` ya lo usa para el router y `publicUrlOf`.
+
+## Direcciones con nombre y textos que se juntan solos
+
+Cuando una pantalla lleva a la de otro módulo (el detalle de un cliente regresa a la lista de donde salió), cada módulo
+publica sus direcciones en su archivo y un índice las junta; se piden por nombre, sin importar el otro módulo:
+
+```js
+// src/app/appPaths.js — el glob tiene que ser un texto literal: Vite lo resuelve al compilar
+export const {pathOf} = createPathIndex(import.meta.glob('@/modules/**/paths.js', {eager: true}));
+
+pathOf('admin:profile:detail', {groupId: 2, userId: 7675, tab: 'documentos'})   // '/admin/user/detail/2/7675?tab=documentos'
+```
+
+Lo que la ruta pide (`:userId`) se sustituye y lo que sobra va como consulta; un nombre que no existe o una parte que falta
+truena y dice qué sí hay. Las direcciones del API de cada módulo, igual: `createPathIndex(glob, {exportName: 'uris'})`.
+`fillPath(ruta, partes)` llena una suelta.
+
+Los textos de cada módulo se juntan con `combineTexts`: por idioma y namespace, los objetos de adentro se suman
+(`validation.fields` de dos módulos) y un texto repetido entre módulos truena en vez de pisarse.
 
 ## La petición de la casa
 
