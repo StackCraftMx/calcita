@@ -26,7 +26,7 @@ import ChartTooltip from '@/ui/metrics/ChartTooltip.jsx';
 import TableToggle, {CHART_VIEW} from '@/ui/metrics/TableToggle.jsx';
 import {BAR_MIN_POINT_SIZE, barLabelValueOf} from '@/ui/metrics/barListLabels.js';
 import {useChartColors} from '@/ui/metrics/chartParts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarList)
@@ -59,7 +59,7 @@ function ValueLabel({x, y, width, height, value, colors, formatNumber}) {
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function BarList(props) {
+function BarListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarList.defaultProps) y encima lo que llega aquí
     const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -122,3 +122,7 @@ export default function BarList(props) {
         </Box>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BarList = withPieceSlots(BarListContent, THEME_NAME);
+export default BarList;

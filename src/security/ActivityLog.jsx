@@ -32,7 +32,7 @@ import SyncLockOutlinedIcon from '@mui/icons-material/SyncLockOutlined';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActivityLog)
@@ -78,7 +78,7 @@ const LOADING_HEIGHT_PIXELS = 160;
  * @param {string|null} [props.error] ya traducido si no se pudieron traer
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function ActivityLog(props) {
+function ActivityLogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActivityLog.defaultProps) y encima lo que llega aquí
     const {events, error = null, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -111,3 +111,7 @@ export default function ActivityLog(props) {
         </SectionCard>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ActivityLog = withPieceSlots(ActivityLogContent, THEME_NAME);
+export default ActivityLog;

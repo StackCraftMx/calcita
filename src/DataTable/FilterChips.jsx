@@ -23,7 +23,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 import ScrollableRow from '@/ui/layout/ScrollableRow.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaFilterChips)
@@ -41,7 +41,7 @@ const ChipsClearButton = piecePart(THEME_NAME, 'ClearButton', Button);
  * @param {number} [props.quickActiveCount] accesos rápidos puestos que no tienen chip aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function FilterChips(props) {
+function FilterChipsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFilterChips.defaultProps) y encima lo que llega aquí
     const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -78,3 +78,7 @@ export default function FilterChips(props) {
         </ChipsRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FilterChips = withPieceSlots(FilterChipsContent, THEME_NAME);
+export default FilterChips;

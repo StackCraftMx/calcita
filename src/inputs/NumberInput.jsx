@@ -6,6 +6,9 @@
 //
 // Mientras se escribe se respeta lo tecleado (no completa decimales a medias); al salir se completan con ceros.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaNumberInput con defaultProps, styleOverrides de
+// sus partes (field) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -15,6 +18,11 @@ import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaNumberInput)
+const THEME_NAME = 'CalcitaNumberInput';
+const NumberInputField = piecePart(THEME_NAME, 'Field', TextField);
 
 // lo que caben los separadores y el punto además de los dígitos
 const SEPARATORS_ROOM = 6;
@@ -39,12 +47,13 @@ const SEPARATORS_ROOM = 6;
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] se acepta como en los demás campos; este no tiene textos propios (su error usa `messages`)
  */
-export default function NumberInput({
-    name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-    disabled = false, inputRef, messages, texts: unusedTexts,
-    ...unknownProps
-}) {
-    warnUnknownProps('NumberInput', unknownProps);
+function NumberInputContent(props) {
+    const {
+        name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
+        disabled = false, inputRef, messages, texts: unusedTexts,
+        ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
     const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
@@ -57,7 +66,7 @@ export default function NumberInput({
 
     return (
         <FieldFrame inputId={inputId} label={label}>
-            <TextField
+            <NumberInputField
                 name={name}
                 id={inputId}
                 inputRef={inputRef}
@@ -102,3 +111,7 @@ export default function NumberInput({
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const NumberInput = withPieceSlots(NumberInputContent, THEME_NAME);
+export default NumberInput;

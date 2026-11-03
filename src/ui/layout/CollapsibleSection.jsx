@@ -25,7 +25,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCollapsibleSection)
@@ -59,7 +59,7 @@ const HEADER_SX = {
  *     adentro hasta que se abre)
  * @param {import('react').ReactNode} props.children
  */
-export default function CollapsibleSection(props) {
+function CollapsibleSectionContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaCollapsibleSection.defaultProps) y encima lo que llega aquí
     const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -89,3 +89,7 @@ export default function CollapsibleSection(props) {
         </CollapsibleRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CollapsibleSection = withPieceSlots(CollapsibleSectionContent, THEME_NAME);
+export default CollapsibleSection;

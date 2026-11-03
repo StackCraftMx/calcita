@@ -8,6 +8,9 @@
 //
 // value puede ser una función: se llama al picar (arma el renglón solo si de verdad se copia).
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaCopyButton con defaultProps, styleOverrides de
+// sus partes (button) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useRef, useState} from 'react';
 import Box from '@mui/material/Box';
@@ -19,6 +22,11 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCopyButton)
+const THEME_NAME = 'CalcitaCopyButton';
+const CopyButtonButton = piecePart(THEME_NAME, 'Button', IconButton);
 
 // cuánto se queda la confirmación (copiado o no se pudo) antes de regresar al ícono de copiar
 const FEEDBACK_MILLISECONDS = 2000;
@@ -40,8 +48,9 @@ const VISUALLY_HIDDEN_SX = {position: 'absolute', width: '1px', height: '1px', o
  * @param {(error: unknown) => void} [props.onCopyFailed] el navegador no dejó copiar (el botón ya lo dice en rojo)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CopyButton({value, label, size = 'small', onCopied, onCopyFailed, texts, ...unknownProps}) {
-    warnUnknownProps('CopyButton', unknownProps);
+function CopyButtonContent(props) {
+    const {value, label, size = 'small', onCopied, onCopyFailed, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const [copyState, setCopyState] = useState(COPY_STATE.idle);
     const resetTimer = useRef(null);
@@ -75,9 +84,9 @@ export default function CopyButton({value, label, size = 'small', onCopied, onCo
             {/* la confirmación se queda abierta mientras dura, aunque el cursor ya no esté encima; arriba y no a un lado, para no
                 tapar el dato de junto */}
             <Tooltip title={feedbackText} open={copyState === COPY_STATE.idle ? undefined : true} placement="top">
-                <IconButton size={size} aria-label={buttonLabel} onClick={copy} sx={{color: COLOR_BY_STATE[copyState]}}>
+                <CopyButtonButton size={size} aria-label={buttonLabel} onClick={copy} sx={{color: COLOR_BY_STATE[copyState]}}>
                     <StateIcon fontSize="inherit" />
-                </IconButton>
+                </CopyButtonButton>
             </Tooltip>
             <Box component="span" role="status" aria-live="polite" sx={VISUALLY_HIDDEN_SX}>
                 {copyState === COPY_STATE.idle ? '' : feedbackText}
@@ -85,3 +94,7 @@ export default function CopyButton({value, label, size = 'small', onCopied, onCo
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CopyButton = withPieceSlots(CopyButtonContent, THEME_NAME);
+export default CopyButton;

@@ -23,7 +23,7 @@ import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppearanceSettings)
@@ -89,7 +89,7 @@ export function SettingSection({label, value, options, onChange}) {
  * @param {(mode: 'light'|'dark'|'system') => void} [props.onColorSchemeChange] la persona eligió otro modo
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function AppearanceSettings(props) {
+function AppearanceSettingsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAppearanceSettings.defaultProps) y encima lo que llega aquí
     const {
     showFontSize = true, showLanguage = true, showColorScheme = true, onFontSizeChange, onColorSchemeChange, texts,
@@ -140,3 +140,7 @@ export default function AppearanceSettings(props) {
         </Fragment>
     ));
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const AppearanceSettings = withPieceSlots(AppearanceSettingsContent, THEME_NAME);
+export default AppearanceSettings;

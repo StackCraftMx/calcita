@@ -21,7 +21,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import {Money} from '@/money/money.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -46,7 +46,7 @@ const DEFAULT_CURRENCY = 'MXN';
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `mexico` en los textos del paquete
  */
-export default function CfdiSummary(props) {
+function CfdiSummaryContent(props) {
     const {cfdi, expectedReceiverRfc, showConcepts = true, actions, sx, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('mexico', texts);
@@ -120,3 +120,7 @@ export default function CfdiSummary(props) {
         </SummaryRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CfdiSummary = withPieceSlots(CfdiSummaryContent, THEME_NAME);
+export default CfdiSummary;

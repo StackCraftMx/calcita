@@ -23,7 +23,7 @@ import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import FileChip from '@/upload/FileChip.jsx';
@@ -61,7 +61,7 @@ const FileInputEmpty = piecePart(THEME_NAME, 'Empty', Typography);
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FileInput(props) {
+function FileInputContent(props) {
     const {
         name, label, value = null, onChange, onBlur, accept, maxSize, error, helperText = ' ', buttonLabel, emptyText, disabled = false,
         busy = false, onReject, template, actions, sx, messages, texts,
@@ -114,3 +114,7 @@ export default function FileInput(props) {
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FileInput = withPieceSlots(FileInputContent, THEME_NAME);
+export default FileInput;

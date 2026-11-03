@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 
 import AuditTrailTable from '@/DataTable/AuditTrailTable.jsx';
 import ContentDialog from '@/ui/layout/ContentDialog.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAuditTrailDialog)
@@ -36,7 +36,7 @@ const AuditDescription = piecePart(THEME_NAME, 'Description', Typography);
  *     consulta)
  * @param {(row: any) => string|null} [props.eventSuffixOf] complemento del evento de un renglón (AuditTrailTable)
  */
-export default function AuditTrailDialog(props) {
+function AuditTrailDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAuditTrailDialog.defaultProps) y encima lo que llega aquí
     const {
     open, onClose, title, subtitle, subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], header = null, eventSuffixOf = null,
@@ -62,3 +62,7 @@ export default function AuditTrailDialog(props) {
         </ContentDialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const AuditTrailDialog = withPieceSlots(AuditTrailDialogContent, THEME_NAME);
+export default AuditTrailDialog;

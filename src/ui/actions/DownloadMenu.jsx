@@ -33,7 +33,7 @@ import {startDownload} from '@/downloads/downloadQueue.js';
 import {useFileTypes} from '@/downloads/fileTypes.js';
 import ConfirmDialog from '@/feedback/ConfirmDialog.jsx';
 import {useConfirmAction} from '@/feedback/useConfirmAction.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDownloadMenu)
@@ -68,7 +68,7 @@ const DownloadButton = piecePart(THEME_NAME, 'Button', Button);
  * virtualiza y vuelve a pintar sus celdas; el diálogo se perdía al elegir el formato). Ahí el menú solo avisa qué formato
  * se eligió y la pantalla abre SU confirmación (useConfirmAction) fuera de la tabla.
  */
-export default function DownloadMenu(props) {
+function DownloadMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDownloadMenu.defaultProps) y encima lo que llega aquí
     const {
     formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, onFailed, onCanceled, variant = 'button', ariaLabel,
@@ -193,3 +193,7 @@ export default function DownloadMenu(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const DownloadMenu = withPieceSlots(DownloadMenuContent, THEME_NAME);
+export default DownloadMenu;

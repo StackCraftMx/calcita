@@ -30,7 +30,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 import {DESKTOP_MEDIA_QUERY, PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInboxLayout)
@@ -91,7 +91,7 @@ function FolderRow({folder, isSelected, onSelect, t}) {
  * @param {import('react').ReactNode} [props.foldersHeader] arriba de las carpetas en escritorio (un botón «Redactar»)
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
  */
-export default function InboxLayout(props) {
+function InboxLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInboxLayout.defaultProps) y encima lo que llega aquí
     const {
     folders, labels = [], selectedFolderId, onSelectFolder, toolbar, list, detail, isDetailOpen = false, onCloseDetail, foldersHeader, texts,
@@ -148,3 +148,7 @@ export default function InboxLayout(props) {
         </InboxRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const InboxLayout = withPieceSlots(InboxLayoutContent, THEME_NAME);
+export default InboxLayout;

@@ -49,7 +49,7 @@ import {accentTextStylesOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurf
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMobileTabBar)
@@ -227,7 +227,7 @@ function useFittingTabCount(capsule, minTabPixels) {
  * @param {(keys: string[]|null) => void} [props.onPinnedTabsChange] la persona eligió sus pestañas (null: regresó a las de
  *     omisión)
  */
-export default function MobileTabBar(props) {
+function MobileTabBarContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMobileTabBar.defaultProps) y encima lo que llega aquí
     const {menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -364,3 +364,7 @@ export default function MobileTabBar(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MobileTabBar = withPieceSlots(MobileTabBarContent, THEME_NAME);
+export default MobileTabBar;

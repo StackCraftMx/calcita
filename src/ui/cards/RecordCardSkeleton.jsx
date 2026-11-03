@@ -1,15 +1,22 @@
 // El esqueleto de RecordCard mientras llega la lista: la misma forma (avatar, títulos, grupos de datos y dato principal),
 // así la página no brinca cuando aparecen las tarjetas de verdad. Para un lector de pantalla dice «Cargando».
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaRecordCardSkeleton con defaultProps (p. ej.
+// {groups: 3}), styleOverrides de su parte root y slots/slotProps.
+//
 // Genérico del paquete: function (regla de la casa).
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
-import {sxListOf} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+
+// el nombre de la pieza en el tema y su parte (theme.components.CalcitaRecordCardSkeleton)
+const THEME_NAME = 'CalcitaRecordCardSkeleton';
+const RecordCardSkeletonRoot = piecePart(THEME_NAME, 'Root', Paper);
 
 /**
  * @param {object} props
@@ -20,11 +27,12 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function RecordCardSkeleton({groups = 2, factsPerGroup = 3, withAvatar = true, withHighlight = true, sx, texts, ...unknownProps}) {
-    warnUnknownProps('RecordCardSkeleton', unknownProps);
+function RecordCardSkeletonContent(props) {
+    const {groups = 2, factsPerGroup = 3, withAvatar = true, withHighlight = true, sx, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     return (
-        <Paper variant="outlined" role="status" aria-label={t('recordCard.loading')} sx={[{p: {xs: 2, sm: 2.5}}, ...sxListOf(sx)]}>
+        <RecordCardSkeletonRoot variant="outlined" role="status" aria-label={t('recordCard.loading')} ownSx={{p: {xs: 2, sm: 2.5}}} sx={sx}>
             <Stack direction="row" sx={{gap: 1.5, alignItems: 'center'}}>
                 {withAvatar && <Skeleton variant="circular" width={44} height={44} />}
                 <Box sx={{flex: 1}}>
@@ -41,6 +49,10 @@ export default function RecordCardSkeleton({groups = 2, factsPerGroup = 3, withA
                 ))}
                 {withHighlight && <Box><Skeleton width="60%" /><Skeleton height={36} /></Box>}
             </Box>
-        </Paper>
+        </RecordCardSkeletonRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RecordCardSkeleton = withPieceSlots(RecordCardSkeletonContent, THEME_NAME);
+export default RecordCardSkeleton;

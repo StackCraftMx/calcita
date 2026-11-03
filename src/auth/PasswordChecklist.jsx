@@ -15,7 +15,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 import {DEFAULT_PASSWORD_POLICY, passwordChecksOf} from '@/auth/passwordRules.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPasswordChecklist)
@@ -37,7 +37,7 @@ const SCREEN_READER_ONLY_SX = {
  * @param {string} [props.id]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function PasswordChecklist(props) {
+function PasswordChecklistContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPasswordChecklist.defaultProps) y encima lo que llega aquí
     const {password, policy = DEFAULT_PASSWORD_POLICY, id, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -60,3 +60,7 @@ export default function PasswordChecklist(props) {
         </Box>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PasswordChecklist = withPieceSlots(PasswordChecklistContent, THEME_NAME);
+export default PasswordChecklist;

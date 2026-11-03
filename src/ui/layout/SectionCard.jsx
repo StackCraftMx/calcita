@@ -10,7 +10,7 @@
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSectionCard)
@@ -25,7 +25,7 @@ const SectionTitle = piecePart(THEME_NAME, 'Title', Typography);
  * @param {import('react').ReactNode} [props.action] botón o liga a la derecha del título
  * @param {import('react').ReactNode} props.children
  */
-export default function SectionCard(props) {
+function SectionCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSectionCard.defaultProps) y encima lo que llega aquí
     const {title, action, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -39,3 +39,7 @@ export default function SectionCard(props) {
         </SectionRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SectionCard = withPieceSlots(SectionCardContent, THEME_NAME);
+export default SectionCard;

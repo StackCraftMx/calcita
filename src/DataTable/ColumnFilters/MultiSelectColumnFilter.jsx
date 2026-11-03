@@ -20,7 +20,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import {useFormatters} from '@/toolkit/useFormatters.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMultiSelectFilter)
@@ -37,7 +37,7 @@ const SEARCHABLE_FROM_OPTIONS = 8;
  * @param {Array<{value: string, total: number}>} [props.options] faceta del servidor
  * @param {(value: string) => import('react').ReactNode} [props.renderOption] cómo se lee el valor (diccionario)
  */
-export default function MultiSelectColumnFilter(props) {
+function MultiSelectColumnFilterContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMultiSelectFilter.defaultProps) y encima lo que llega aquí
     const {value = [], onChange, options = [], renderOption, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -83,3 +83,7 @@ export default function MultiSelectColumnFilter(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MultiSelectColumnFilter = withPieceSlots(MultiSelectColumnFilterContent, THEME_NAME);
+export default MultiSelectColumnFilter;

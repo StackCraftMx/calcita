@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import {richTextContentSxOf} from '@/richText/richTextContentSx.js';
 import {richTextExtensionsOf} from '@/richText/richTextExtensions.js';
 import {DEFAULT_RICH_TEXT_FEATURES} from '@/richText/richTextRules.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaRichTextView)
@@ -26,7 +26,7 @@ const ViewRoot = piecePart(THEME_NAME, 'Root', Box);
  * @param {Array<object>} [props.extensions] las extensiones de Tiptap del proyecto (las mismas que tiene su editor)
  * @param {object} [props.sx]
  */
-export default function RichTextView(props) {
+function RichTextViewContent(props) {
     const {value, features = DEFAULT_RICH_TEXT_FEATURES, extensions, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const editor = useEditor({
@@ -42,3 +42,7 @@ export default function RichTextView(props) {
         </ViewRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RichTextView = withPieceSlots(RichTextViewContent, THEME_NAME);
+export default RichTextView;

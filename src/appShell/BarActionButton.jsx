@@ -7,6 +7,9 @@
 // Lo demás va al botón (disabled, color, component y to para una liga…). Sin ícono, en la cápsula va su texto (un botón sin
 // relleno) y en el «⋯» el renglón sin ícono: mejor un texto que un botón vacío.
 //
+// Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarActionButton con defaultProps, styleOverrides de
+// sus partes (button, iconButton, menuItem) y slots/slotProps para cambiarlas.
+//
 // Genérico del paquete: function (regla de la casa).
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -16,6 +19,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 
 import {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+
+// el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarActionButton)
+const THEME_NAME = 'CalcitaBarActionButton';
+const BarActionButtonButton = piecePart(THEME_NAME, 'Button', Button);
+const BarActionButtonIconButton = piecePart(THEME_NAME, 'IconButton', IconButton);
+const BarActionButtonMenuItem = piecePart(THEME_NAME, 'MenuItem', MenuItem);
 
 /**
  * @param {object} props
@@ -25,7 +35,8 @@ import {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} f
  * @param {boolean} [props.disabled]
  * @param {'inherit'|'primary'|'secondary'|'success'|'error'|'info'|'warning'} [props.color] por omisión primary
  */
-export default function BarActionButton({label, icon, onClick, disabled, color = 'primary', ...buttonProps}) {
+function BarActionButtonContent(props) {
+    const {label, icon, onClick, disabled, color = 'primary', ...buttonProps} = usePieceProps(props, THEME_NAME);
     const placement = useBarActionsPlacement();
     const closeMenu = useCloseBarActionsMenu();
 
@@ -36,10 +47,10 @@ export default function BarActionButton({label, icon, onClick, disabled, color =
             onClick?.(event);
         };
         return (
-            <MenuItem onClick={pickFromMenu} disabled={disabled} {...buttonProps}>
+            <BarActionButtonMenuItem onClick={pickFromMenu} disabled={disabled} {...buttonProps}>
                 {icon && <ListItemIcon>{icon}</ListItemIcon>}
                 <ListItemText inset={!icon}>{label}</ListItemText>
-            </MenuItem>
+            </BarActionButtonMenuItem>
         );
     }
     if (placement === BAR_ACTIONS_PLACEMENT.capsule && icon) {
@@ -48,10 +59,14 @@ export default function BarActionButton({label, icon, onClick, disabled, color =
         return (
             <Tooltip title={label}>
                 <span>
-                    <IconButton aria-label={label} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{icon}</IconButton>
+                    <BarActionButtonIconButton aria-label={label} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{icon}</BarActionButtonIconButton>
                 </span>
             </Tooltip>
         );
     }
-    return <Button startIcon={icon} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{label}</Button>;
+    return <BarActionButtonButton startIcon={icon} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{label}</BarActionButtonButton>;
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BarActionButton = withPieceSlots(BarActionButtonContent, THEME_NAME);
+export default BarActionButton;

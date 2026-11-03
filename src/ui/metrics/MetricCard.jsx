@@ -27,7 +27,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {alpha} from '@mui/material/styles';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -95,7 +95,7 @@ function TrendChip({trend, texts}) {
  * @param {() => void} [props.onClick] la tarjeta entera como botón, cuando no lleva a otra pantalla (to)
  * @param {object} [props.texts] los textos que cambian, con la forma de `metricCard`: {trend: {up: 'subió'}}
  */
-export default function MetricCard(props) {
+function MetricCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMetricCard.defaultProps) y encima lo que llega aquí
     const {
         label, value, caption, tone = 'info', valueColor, isLoading = false, to, trend, icon, children, onClick, texts,
@@ -165,3 +165,7 @@ export default function MetricCard(props) {
         </CardRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MetricCard = withPieceSlots(MetricCardContent, THEME_NAME);
+export default MetricCard;

@@ -21,7 +21,7 @@ import MenuItem from '@mui/material/MenuItem';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {DEFAULT_LANGUAGES} from '@/toolkit/toolkitSettings.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaLanguageToggle)
@@ -37,7 +37,7 @@ export const LANGUAGES = Object.freeze(DEFAULT_LANGUAGES.map((entry) => entry.co
  * @param {(language: string) => void} [props.onChange] además de avisar a ToolkitProvider, cada que se elige un idioma
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {language: {switchToNamed, choose}}
  */
-export default function LanguageToggle(props) {
+function LanguageToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaLanguageToggle.defaultProps) y encima lo que llega aquí
     const {inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -82,3 +82,7 @@ export default function LanguageToggle(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const LanguageToggle = withPieceSlots(LanguageToggleContent, THEME_NAME);
+export default LanguageToggle;

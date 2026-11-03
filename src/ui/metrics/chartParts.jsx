@@ -26,7 +26,7 @@ import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaChart)
@@ -128,7 +128,7 @@ export function highestValueOf(data, series, referenceLine) {
  * @param {(value: number) => string} props.formatValue
  * @param {number} props.height
  */
-export function ChartTable({data, series, periodLabel, formatValue, height, ...unknownProps}) {
+function ChartTableContent({data, series, periodLabel, formatValue, height, ...unknownProps}) {
     warnUnknownProps('ChartTable', unknownProps);
     return (
         <ChartTableArea ownSx={{maxHeight: height, overflowY: 'auto'}}>
@@ -160,7 +160,7 @@ export function ChartTable({data, series, periodLabel, formatValue, height, ...u
  * @param {boolean} [props.showsDash] la muestra con el trazo de su línea (LineChart); sin él, un cuadro de color
  * @param {string} props.ariaLabel
  */
-export function ChartLegend({series, showsDash = false, ariaLabel, ...unknownProps}) {
+function ChartLegendContent({series, showsDash = false, ariaLabel, ...unknownProps}) {
     warnUnknownProps('ChartLegend', unknownProps);
     if (series.length < 2) {
         return null;
@@ -189,7 +189,7 @@ export function ChartLegend({series, showsDash = false, ariaLabel, ...unknownPro
  *
  * @param {{referenceLine?: {value: number, label: string}}} props
  */
-export function ReferenceCaption({referenceLine, ...unknownProps}) {
+function ReferenceCaptionContent({referenceLine, ...unknownProps}) {
     warnUnknownProps('ReferenceCaption', unknownProps);
     if (!referenceLine) {
         return null;
@@ -201,3 +201,8 @@ export function ReferenceCaption({referenceLine, ...unknownProps}) {
         </ChartReference>
     );
 }
+
+// las tres con slots desde el tema (theme.components.CalcitaChart.defaultProps.slots): son de adentro de las gráficas
+export const ChartTable = withPieceSlots(ChartTableContent, THEME_NAME);
+export const ChartLegend = withPieceSlots(ChartLegendContent, THEME_NAME);
+export const ReferenceCaption = withPieceSlots(ReferenceCaptionContent, THEME_NAME);

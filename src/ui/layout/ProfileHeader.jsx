@@ -21,7 +21,7 @@ import {initialsOf} from '@/appShell/menuItemText.js';
 import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaProfileHeader)
@@ -65,7 +65,7 @@ const coverOf = (theme) => {
  * @param {string[]} [props.chips] sus perfiles o etiquetas, ya traducidos
  * @param {import('react').ReactNode} [props.actions] los botones de la derecha
  */
-export default function ProfileHeader(props) {
+function ProfileHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileHeader.defaultProps) y encima lo que llega aquí
     const {name, email, subtitle, avatarUrl, chips = [], actions, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -99,3 +99,7 @@ export default function ProfileHeader(props) {
         </ProfileRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ProfileHeader = withPieceSlots(ProfileHeaderContent, THEME_NAME);
+export default ProfileHeader;

@@ -55,7 +55,7 @@ import CopyButton from '@/ui/actions/CopyButton.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
 import SectionCard from '@/ui/layout/SectionCard.jsx';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTwoStepVerification)
@@ -256,7 +256,7 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  *     navegador la guarde (p. ej. el de la demostración: la llave queda de verdad en el llavero de la persona)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
  */
-export default function TwoStepVerificationCard(props) {
+function TwoStepVerificationCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTwoStepVerification.defaultProps) y encima lo que llega aquí
     const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -372,3 +372,7 @@ export default function TwoStepVerificationCard(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const TwoStepVerificationCard = withPieceSlots(TwoStepVerificationCardContent, THEME_NAME);
+export default TwoStepVerificationCard;

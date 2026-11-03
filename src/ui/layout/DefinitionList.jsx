@@ -12,7 +12,7 @@
 // chip, un texto en monoespaciada...).
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaDefinitionList)
@@ -29,7 +29,7 @@ const DefinitionValue = piecePart(THEME_NAME, 'Value', Typography);
  * @param {'columns'|'stacked'} [props.layout]
  * @param {number} [props.labelWidth] ancho en px de la columna del dato (solo columns)
  */
-export default function DefinitionList(props) {
+function DefinitionListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDefinitionList.defaultProps) y encima lo que llega aquí
     const {entries, layout = 'columns', labelWidth = 150, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -53,3 +53,7 @@ export default function DefinitionList(props) {
         </DefinitionRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const DefinitionList = withPieceSlots(DefinitionListContent, THEME_NAME);
+export default DefinitionList;

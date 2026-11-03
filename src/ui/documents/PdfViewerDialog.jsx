@@ -19,7 +19,7 @@ import Box from '@mui/material/Box';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import ContentDialog from '@/ui/layout/ContentDialog.jsx';
@@ -66,7 +66,7 @@ function usePdfUrl(src) {
  * @param {() => void} [props.onDownload] al descargar (para registrarlo, por ejemplo)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function PdfViewerDialog(props) {
+function PdfViewerDialogContent(props) {
     const {open, onClose, title, src, fileName, actions, onDownload, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -94,3 +94,7 @@ export default function PdfViewerDialog(props) {
         </ContentDialog>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PdfViewerDialog = withPieceSlots(PdfViewerDialogContent, THEME_NAME);
+export default PdfViewerDialog;

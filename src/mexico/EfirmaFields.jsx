@@ -27,7 +27,7 @@ import Typography from '@mui/material/Typography';
 import TextInput from '@/inputs/TextInput.jsx';
 import {CERTIFICATE_STATUS, certificateStatusOf, readCertificate} from '@/mexico/certificateReader.js';
 import {EfirmaKeyError, verifyEfirmaKey} from '@/mexico/efirmaKey.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -62,7 +62,7 @@ const EMPTY_VALUE = Object.freeze({certificateFile: null, keyFile: null, passwor
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `mexico` en los textos del paquete
  */
-export default function EfirmaFields(props) {
+function EfirmaFieldsContent(props) {
     const {
         value = EMPTY_VALUE, onChange, expectedRfc, onCertificateRead, onVerifyKey, verifyLabel, disabled = false, sx, texts,
         ...unknownProps
@@ -162,3 +162,7 @@ export default function EfirmaFields(props) {
         </EfirmaRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const EfirmaFields = withPieceSlots(EfirmaFieldsContent, THEME_NAME);
+export default EfirmaFields;

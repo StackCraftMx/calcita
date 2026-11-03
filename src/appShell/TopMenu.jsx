@@ -18,7 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTopMenu)
@@ -78,7 +78,7 @@ function TopMenuEntry({menuItem, activeItem}) {
 /**
  * @param {{menuItems: object[], activeItem: object|null}} props
  */
-export default function TopMenu(props) {
+function TopMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTopMenu.defaultProps) y encima lo que llega aquí
     const {menuItems, activeItem, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -92,3 +92,7 @@ export default function TopMenu(props) {
         </TopMenuRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const TopMenu = withPieceSlots(TopMenuContent, THEME_NAME);
+export default TopMenu;

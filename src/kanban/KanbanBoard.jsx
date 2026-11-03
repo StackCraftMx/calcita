@@ -58,7 +58,7 @@ import {DUE_STATUS, dueStatusOf, tagOf, todayIsoDateOf} from '@/kanban/kanbanCar
 import {cardsOfColumn, isOverLimit} from '@/kanban/kanbanMoves.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaKanbanBoard)
@@ -260,7 +260,7 @@ function QuickAdd({columnTitle, onAdd, onClose, t}) {
  * @param {string} props.ariaLabel ya traducido
  * @param {object} [props.texts] los textos que cambian, con la forma de `kanban` en los textos del paquete
  */
-export default function KanbanBoard(props) {
+function KanbanBoardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaKanbanBoard.defaultProps) y encima lo que llega aquí
     const {
     columns, cards, onMove, renderCard, onCardClick, onAddCard, cardActions, columnActions, onCardComplete, onColumnCollapse, ariaLabel, texts,
@@ -424,3 +424,7 @@ export default function KanbanBoard(props) {
         </DragDropContext>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const KanbanBoard = withPieceSlots(KanbanBoardContent, THEME_NAME);
+export default KanbanBoard;

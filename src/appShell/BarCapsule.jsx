@@ -18,7 +18,7 @@ import Box from '@mui/material/Box';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaBarCapsule)
 const THEME_NAME = 'CalcitaBarCapsule';
@@ -55,7 +55,7 @@ export function monochromeButtonsSxOf(color) {
  * @param {Omit<import('react').HTMLAttributes<HTMLDivElement>, 'children'> & {children: import('react').ReactNode, sx?: object|Function|Array<any>}} props
  *     children: los botones del grupo; sx: estilos propios, encima de los de la cápsula
  */
-export default function BarCapsule(props) {
+function BarCapsuleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarCapsule.defaultProps) y encima lo que llega aquí
     const {children, sx, role = 'group', ...rest} = usePieceProps(props, THEME_NAME);
     // el estilo de la cápsula va abajo (ownSx): encima el del tema del proyecto y, al final, el sx de la pantalla
@@ -72,3 +72,7 @@ export default function BarCapsule(props) {
         </CapsuleRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BarCapsule = withPieceSlots(BarCapsuleContent, THEME_NAME);
+export default BarCapsule;

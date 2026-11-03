@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 
 import {rangeEndAfterStartChange, rangeEndOptionsOf} from '@/periodRanges.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPeriodRangeSelector)
@@ -70,7 +70,7 @@ function PeriodSelect({id, label, value, options, onChange}) {
  * @param {string} props.toLabel ya traducido
  * @param {(range: {from: string, to: string}) => void} props.onChange
  */
-export default function PeriodRangeSelector(props) {
+function PeriodRangeSelectorContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPeriodRangeSelector.defaultProps) y encima lo que llega aquí
     const {id, options, from, to, fromLabel, toLabel, onChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -85,3 +85,7 @@ export default function PeriodRangeSelector(props) {
         </PeriodRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PeriodRangeSelector = withPieceSlots(PeriodRangeSelectorContent, THEME_NAME);
+export default PeriodRangeSelector;

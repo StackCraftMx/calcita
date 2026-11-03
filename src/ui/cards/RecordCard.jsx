@@ -33,7 +33,7 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
@@ -81,7 +81,7 @@ const RecordCardDetails = piecePart(THEME_NAME, 'Details', Box);
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function RecordCard(props) {
+function RecordCardContent(props) {
     const {
         title, eyebrow, subtitle, avatar, status, actions, groups = [], highlight, trailing, columns, footer, details, detailsLabel, defaultDetailsOpen = false,
         onDetailsToggle, onOpen, openLabel, header, children, sx, texts,
@@ -194,3 +194,7 @@ export default function RecordCard(props) {
         </RecordCardRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const RecordCard = withPieceSlots(RecordCardContent, THEME_NAME);
+export default RecordCard;

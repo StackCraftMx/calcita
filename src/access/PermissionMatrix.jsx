@@ -24,7 +24,7 @@ import Typography from '@mui/material/Typography';
 
 import {groupStateOf, withPermission, withPermissionGroup} from '@/access/permissionGroups.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPermissionMatrix)
@@ -97,7 +97,7 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
  * @param {boolean} [props.readOnly] un perfil que no se puede cambiar (el de administración)
  * @param {object} [props.texts] los textos que cambian, con la forma de `access` en los textos del paquete
  */
-export default function PermissionMatrix(props) {
+function PermissionMatrixContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPermissionMatrix.defaultProps) y encima lo que llega aquí
     const {groups, value, onChange, readOnly = false, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -110,3 +110,7 @@ export default function PermissionMatrix(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PermissionMatrix = withPieceSlots(PermissionMatrixContent, THEME_NAME);
+export default PermissionMatrix;

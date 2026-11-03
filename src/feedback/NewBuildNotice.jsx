@@ -29,7 +29,7 @@ import {GLASS_PANEL_GAP_PIXELS, aboveMobileTabBarOf} from '@/appShell/shellSizes
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {APP_BAR_HEIGHT} from '@/ui/layout/appBarHeight.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaNewBuildNotice)
@@ -99,7 +99,7 @@ function floatingSxOf(theme) {
  * @param {'ribbon'|'floating'} [props.variant] franja o cápsula flotante (NEW_BUILD_NOTICE_VARIANT); por omisión franja
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function NewBuildNotice(props) {
+function NewBuildNoticeContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaNewBuildNotice.defaultProps) y encima lo que llega aquí
     const {message, reloadLabel, onReload = reloadPage, variant = NEW_BUILD_NOTICE_VARIANT.ribbon, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -136,3 +136,7 @@ export default function NewBuildNotice(props) {
         </NoticeBanner>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const NewBuildNotice = withPieceSlots(NewBuildNoticeContent, THEME_NAME);
+export default NewBuildNotice;

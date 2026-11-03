@@ -19,7 +19,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import BarActions from '@/appShell/BarActions.jsx';
 import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarSearch)
@@ -45,7 +45,7 @@ const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
  * @param {() => void} [props.onBlur]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef] la caja, para enfocarla desde afuera (un atajo «/»)
  */
-export default function BarSearch(props) {
+function BarSearchContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarSearch.defaultProps) y encima lo que llega aquí
     const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -123,3 +123,7 @@ export default function BarSearch(props) {
         </BarActions>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const BarSearch = withPieceSlots(BarSearchContent, THEME_NAME);
+export default BarSearch;

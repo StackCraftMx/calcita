@@ -17,7 +17,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import Typography from '@mui/material/Typography';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaWizardLayout)
@@ -43,7 +43,7 @@ const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {import('react').ReactNode} [props.problemAlert] el aviso de errores del servidor, arriba de los botones del último paso
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
-export default function WizardLayout(props) {
+function WizardLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
     steps, activeIndex, skippedKeys, isSubmitting = false, onBack, onNext, onSkip, submitButton, problemAlert, texts,
@@ -99,3 +99,7 @@ export default function WizardLayout(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const WizardLayout = withPieceSlots(WizardLayoutContent, THEME_NAME);
+export default WizardLayout;

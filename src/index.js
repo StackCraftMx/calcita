@@ -48,7 +48,7 @@ export {MINIMAL_BACKGROUND, MINIMAL_TONES} from '@/theme/components/minimalCompo
 export {STACKCRAFT, stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 export {toolkitComponents} from '@/theme/toolkitComponents.js';
 export {mergeComponents} from '@/theme/mergeComponents.js';
-export {sxListOf} from '@/theme/themePieces.js';
+export {mergedSlotProps, piecePart, sxListOf, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 export {default as MarkedText} from '@/ui/labels/MarkedText.jsx';
 export {parseMarkedText} from '@/ui/labels/markedTextPieces.js';
 export {CSS_TOKENS, cssTokenDeclarationsOf, cssTokenOf} from '@/theme/cssTokens.js';

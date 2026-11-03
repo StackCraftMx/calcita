@@ -26,7 +26,7 @@ import {passkeysSupported, signWithPasskey} from '@/security/passkeys.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInScreen)
@@ -44,7 +44,7 @@ const SignInAlert = piecePart(THEME_NAME, 'Alert', Alert);
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInScreen(props) {
+function SignInScreenContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInScreen.defaultProps) y encima lo que llega aquí
     const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -126,3 +126,7 @@ export default function SignInScreen(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SignInScreen = withPieceSlots(SignInScreenContent, THEME_NAME);
+export default SignInScreen;

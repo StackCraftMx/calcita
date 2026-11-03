@@ -19,7 +19,7 @@ import Divider from '@mui/material/Divider';
 import AccountMenu from '@/appShell/AccountMenu.jsx';
 import SettingsMenu from '@/appShell/SettingsMenu.jsx';
 import AppearanceSettings from '@/appShell/AppearanceSettings.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaHeaderTools)
@@ -41,7 +41,7 @@ const ToolsRoot = piecePart(THEME_NAME, 'Root', Box);
  * @param {() => void} [props.onSignOut]
  * @param {boolean} [props.isSigningOut]
  */
-export default function HeaderTools(props) {
+function HeaderToolsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaHeaderTools.defaultProps) y encima lo que llega aquí
     const {
     headerActions, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, user, profilePath, accountMenuItems, onSignOut, isSigningOut,
@@ -72,3 +72,7 @@ export default function HeaderTools(props) {
         </ToolsRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const HeaderTools = withPieceSlots(HeaderToolsContent, THEME_NAME);
+export default HeaderTools;

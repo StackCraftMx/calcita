@@ -25,7 +25,7 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {useFilePicker} from '@/upload/useFilePicker.js';
@@ -96,7 +96,7 @@ function usePreviewUrl(value) {
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ImageInput(props) {
+function ImageInputContent(props) {
     const {
         name, label, value = null, onChange, onBlur, shape = IMAGE_SHAPE.circle, size = DEFAULT_PREVIEW_SIZE, alt, placeholder,
         accept = 'image', maxSize, error, helperText = ' ', chooseLabel, removeLabel, disabled = false, busy = false, onReject, sx, messages, texts,
@@ -160,3 +160,7 @@ export default function ImageInput(props) {
         </FieldFrame>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ImageInput = withPieceSlots(ImageInputContent, THEME_NAME);
+export default ImageInput;

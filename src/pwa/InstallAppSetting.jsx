@@ -19,7 +19,7 @@ import {INSTALL_VARIANT} from '@/pwa/installInstructions.js';
 import InstallInstructionsDialog from '@/pwa/InstallInstructionsDialog.jsx';
 import {useInstallPrompt} from '@/pwa/useInstallPrompt.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaInstallAppSetting)
@@ -30,7 +30,7 @@ const InstallRoot = piecePart(THEME_NAME, 'Root', Box);
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function InstallAppSetting({texts, ...unknownProps} = {}) {
+function InstallAppSettingContent({texts, ...unknownProps} = {}) {
     warnUnknownProps('InstallAppSetting', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {variant, promptInstall} = useInstallPrompt();
@@ -59,3 +59,6 @@ export default function InstallAppSetting({texts, ...unknownProps} = {}) {
         </ComponentTexts>
     );
 }
+
+const InstallAppSetting = withPieceSlots(InstallAppSettingContent, THEME_NAME);
+export default InstallAppSetting;

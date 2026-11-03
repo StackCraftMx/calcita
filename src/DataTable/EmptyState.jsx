@@ -16,7 +16,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaEmptyState)
@@ -31,7 +31,7 @@ const EmptyIcon = piecePart(THEME_NAME, 'Icon', Box);
  * @param {() => void} [props.onClearFilters]
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
  */
-export default function EmptyState(props) {
+function EmptyStateContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEmptyState.defaultProps) y encima lo que llega aquí
     const {filtered = false, label, onClearFilters, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -52,3 +52,7 @@ export default function EmptyState(props) {
         </EmptyRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const EmptyState = withPieceSlots(EmptyStateContent, THEME_NAME);
+export default EmptyState;

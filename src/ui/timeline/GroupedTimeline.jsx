@@ -36,7 +36,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
 import {TIMELINE_EMPHASIS, timelineDotOf} from '@/ui/timeline/timelineDot.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaGroupedTimeline)
@@ -79,7 +79,7 @@ const ALTERNATE_TIMELINE = {m: 0, px: 0, py: 0.5};
  * @param {(groupKey: string, isExpanded: boolean) => void} [props.onGroupToggle] la persona abrió o plegó un grupo (por ejemplo,
  *     para pedir sus eventos hasta que se abre)
  */
-export default function GroupedTimeline(props) {
+function GroupedTimelineContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGroupedTimeline.defaultProps) y encima lo que llega aquí
     const {groups, onGroupToggle, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -181,3 +181,7 @@ export default function GroupedTimeline(props) {
         </Stack>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const GroupedTimeline = withPieceSlots(GroupedTimelineContent, THEME_NAME);
+export default GroupedTimeline;

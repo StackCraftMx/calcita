@@ -88,7 +88,7 @@ import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
 import {PANEL_RADIUS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaAppLayout)
@@ -491,7 +491,7 @@ const AppLayoutFrame = ({
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete (para todo el marco)
  * @param {import('react').ReactNode} props.children el contenido
  */
-export const AppLayout = (props) => {
+const AppLayoutContent = (props) => {
     // lo que el proyecto puso en su tema (components.CalcitaAppLayout.defaultProps) y encima lo que llega aquí
     const {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
@@ -524,3 +524,6 @@ export const AppLayout = (props) => {
         </ComponentTexts>
     );
 };
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+export const AppLayout = withPieceSlots(AppLayoutContent, THEME_NAME);

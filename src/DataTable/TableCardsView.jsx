@@ -17,7 +17,7 @@ import ViewAgendaOutlinedIcon from '@mui/icons-material/ViewAgendaOutlined';
 
 import EmptyState from '@/DataTable/EmptyState.jsx';
 import {TABLE_VIEW} from '@/DataTable/useTableView.js';
-import {piecePart} from '@/theme/themePieces.js';
+import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import RecordCardSkeleton from '@/ui/cards/RecordCardSkeleton.jsx';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 
@@ -35,7 +35,7 @@ const MAX_SKELETON_CARDS = 3;
  *
  * @param {{view: 'table'|'cards', onChange: (view: 'table'|'cards') => void}} props
  */
-export function TableViewToggle({view, onChange}) {
+function TableViewToggleContent({view, onChange}) {
     const {t} = useToolkitTranslation('table');
     return (
         <TableViewToggleGroup size="small" exclusive value={view} aria-label={t('views.label')}
@@ -65,7 +65,7 @@ export function TableViewToggle({view, onChange}) {
  * @param {import('react').ReactNode} [props.skeleton] el esqueleto de una tarjeta (por omisión RecordCardSkeleton)
  * @param {string} [props.ariaLabel] el nombre de la lista para el lector de pantalla
  */
-export default function TableCardsView({
+function TableCardsViewContent({
     rows, renderCard, rowIdOf, isLoading, page, pageCount, onPageChange, hasActiveFilters, emptyLabel, onClearFilters, skeleton, ariaLabel,
 }) {
     const {t} = useToolkitTranslation('table');
@@ -94,3 +94,8 @@ export default function TableCardsView({
         </>
     );
 }
+
+// dentro de ServerTable (mismo nombre en el tema) usan los slots de la tabla; solas, los suyos
+const TableCardsView = withPieceSlots(TableCardsViewContent, THEME_NAME, {sharedWithParent: true});
+export const TableViewToggle = withPieceSlots(TableViewToggleContent, THEME_NAME, {sharedWithParent: true});
+export default TableCardsView;

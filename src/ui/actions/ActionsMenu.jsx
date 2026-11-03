@@ -37,7 +37,7 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -79,7 +79,7 @@ function levelOf(actions, path) {
  * @param {'small'|'medium'} [props.size]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function ActionsMenu(props) {
+function ActionsMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActionsMenu.defaultProps) y encima lo que llega aquí
     const {label, actions, icon, size = 'small', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -184,3 +184,7 @@ export default function ActionsMenu(props) {
         </>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ActionsMenu = withPieceSlots(ActionsMenuContent, THEME_NAME);
+export default ActionsMenu;

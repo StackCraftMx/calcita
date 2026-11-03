@@ -24,7 +24,7 @@ import Typography from '@mui/material/Typography';
 import {menuItemLabelOf} from '@/appShell/menuItemText.js';
 import {PINNABLE_TAB_LIMIT, menuItemKeyOf} from '@/navigation/appMenu.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaTabBarEditor)
@@ -43,7 +43,7 @@ const EditorFooter = piecePart(THEME_NAME, 'Footer', Box);
  * @param {(keys: string[]) => void} props.onDone con las elegidas, en el orden del menú
  * @param {() => void} props.onReset regresar a las del proyecto
  */
-export default function TabBarEditor(props) {
+function TabBarEditorContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTabBarEditor.defaultProps) y encima lo que llega aquí
     const {menuItems, pinnedKeys, onDone, onReset, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -87,3 +87,7 @@ export default function TabBarEditor(props) {
         </EditorRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const TabBarEditor = withPieceSlots(TabBarEditorContent, THEME_NAME);
+export default TabBarEditor;

@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import {FLOATING_BOTTOM_SPACE_CSS_VARIABLE} from '@/appShell/shellSizes.js';
 import {DEFAULT_COOKIE_CONSENT_KEY, useCookieConsent} from '@/legal/useCookieConsent.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -49,7 +49,7 @@ const NOTICE_Z_INDEX = 1200;
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function CookieNotice(props) {
+function CookieNoticeContent(props) {
     const {
         version = '1', storageKey = DEFAULT_COOKIE_CONSENT_KEY, text, policyHref, onPolicyClick, policyLabel, acceptLabel, onAccept, actions, sx,
         texts,
@@ -96,3 +96,7 @@ export default function CookieNotice(props) {
         </NoticeRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const CookieNotice = withPieceSlots(CookieNoticeContent, THEME_NAME);
+export default CookieNotice;

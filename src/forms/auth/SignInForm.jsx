@@ -26,7 +26,7 @@ import FormTextField from '@/forms/FormTextField.jsx';
 import SubmitButton from '@/forms/SubmitButton.jsx';
 import {applyServerProblem} from '@/forms/applyServerProblem.js';
 import {Yup} from '@/forms/validation.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSignInForm)
@@ -48,7 +48,7 @@ function RememberMeField({label}) {
  * @param {string} [props.initialEmail]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
  */
-export default function SignInForm(props) {
+function SignInFormContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInForm.defaultProps) y encima lo que llega aquí
     const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -87,3 +87,7 @@ export default function SignInForm(props) {
         </Formik>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const SignInForm = withPieceSlots(SignInFormContent, THEME_NAME);
+export default SignInForm;

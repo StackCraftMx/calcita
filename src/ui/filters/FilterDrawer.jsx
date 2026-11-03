@@ -30,7 +30,7 @@ import FieldFrame from '@/inputs/FieldFrame.jsx';
 import NumberInput from '@/inputs/NumberInput.jsx';
 import SelectInput from '@/inputs/SelectInput.jsx';
 import TextInput from '@/inputs/TextInput.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {
@@ -147,7 +147,7 @@ function DrawerField({field, values, setValue, invalidRanges, t}) {
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos (una nota, un enlace)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
-export default function FilterDrawer(props) {
+function FilterDrawerContent(props) {
     const {
         open, onClose, fields, values, onApply, anchor = FILTER_DRAWER_ANCHOR.right, width = DEFAULT_WIDTH, title, applyLabel,
         closeOnApply = true, children, texts,
@@ -206,3 +206,7 @@ export default function FilterDrawer(props) {
         </Drawer>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const FilterDrawer = withPieceSlots(FilterDrawerContent, THEME_NAME);
+export default FilterDrawer;

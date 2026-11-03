@@ -14,7 +14,7 @@
 import Paper from '@mui/material/Paper';
 
 import {PANEL_RADIUS, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaGlassPanel)
 const THEME_NAME = 'CalcitaGlassPanel';
@@ -42,7 +42,7 @@ function floatingSurfaceOf(theme) {
  * @param {object|Function|Array} [props.sx] estilos propios: se suman y ganan
  * @param {import('react').ElementType} [props.component] por omisión 'div'
  */
-export default function GlassPanel(props) {
+function GlassPanelContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGlassPanel.defaultProps) y encima lo que llega aquí
     const {children, sx, ...paperProps} = usePieceProps(props, THEME_NAME);
     return (
@@ -51,3 +51,7 @@ export default function GlassPanel(props) {
         </PanelRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const GlassPanel = withPieceSlots(GlassPanelContent, THEME_NAME);
+export default GlassPanel;

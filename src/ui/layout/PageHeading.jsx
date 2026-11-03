@@ -30,7 +30,7 @@ import {useRegisterPageTitle} from '@/appShell/pageTitle.jsx';
 import {menuBreadcrumbsOf} from '@/navigation/appMenu.js';
 import PageBreadcrumbs from '@/ui/navigation/PageBreadcrumbs.jsx';
 import DocumentTitle from '@/ui/navigation/DocumentTitle.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaPageHeading)
@@ -54,7 +54,7 @@ const MIN_BREADCRUMBS = 2;
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
  */
-export default function PageHeading(props) {
+function PageHeadingContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeading.defaultProps) y encima lo que llega aquí
     const {title, description, breadcrumbs, actions, documentTitle, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -91,3 +91,7 @@ export default function PageHeading(props) {
         </HeadingRoot>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const PageHeading = withPieceSlots(PageHeadingContent, THEME_NAME);
+export default PageHeading;

@@ -35,7 +35,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {tagOf} from '@/ui/labels/tagOf.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import ActionsMenu from '@/ui/actions/ActionsMenu.jsx';
-import {piecePart, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaMessageList)
@@ -78,7 +78,7 @@ const AVATAR_PIXELS = 40;
  * @param {string} [props.emptyText] ya traducido; por omisión el del paquete
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
  */
-export default function MessageList(props) {
+function MessageListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageList.defaultProps) y encima lo que llega aquí
     const {
     messages, selectedId = null, onSelect, onToggleStar, selectedIds = [], onSelectionChange, messageActions, renderMessage, emptyText, texts,
@@ -173,3 +173,7 @@ export default function MessageList(props) {
         </List>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const MessageList = withPieceSlots(MessageListContent, THEME_NAME);
+export default MessageList;

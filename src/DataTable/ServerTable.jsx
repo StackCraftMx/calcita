@@ -63,7 +63,7 @@ import {useFormatters} from '@/toolkit/useFormatters.js';
 import {materialBackgroundOf} from '@/theme/glassSurface.js';
 import QuickFilters from '@/ui/filters/QuickFilters.jsx';
 import Tag from '@/ui/labels/Tag.jsx';
-import {piecePart, sxListOf, usePieceProps} from '@/theme/themePieces.js';
+import {piecePart, sxListOf, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaServerTable)
@@ -364,7 +364,7 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     (src/locales/es.js), ya en el idioma de la pantalla: {selection: {clear: 'Deseleccionar'}, empty: {filtered: '…'}}.
  *     También les llegan a sus filtros de columna, sus chips y su barra de elegidos
  */
-export default function ServerTable(props) {
+function ServerTableContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaServerTable.defaultProps) y encima lo que llega aquí
     const {
     fetchPage,
@@ -824,3 +824,7 @@ export default function ServerTable(props) {
         </ComponentTexts>
     );
 }
+
+// lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)
+const ServerTable = withPieceSlots(ServerTableContent, THEME_NAME);
+export default ServerTable;
