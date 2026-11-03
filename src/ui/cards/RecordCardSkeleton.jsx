@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
+import {sxListOf} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -23,7 +24,7 @@ export default function RecordCardSkeleton({groups = 2, factsPerGroup = 3, withA
     warnUnknownProps('RecordCardSkeleton', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     return (
-        <Paper variant="outlined" role="status" aria-label={t('recordCard.loading')} sx={{p: {xs: 2, sm: 2.5}, ...sx}}>
+        <Paper variant="outlined" role="status" aria-label={t('recordCard.loading')} sx={[{p: {xs: 2, sm: 2.5}}, ...sxListOf(sx)]}>
             <Stack direction="row" sx={{gap: 1.5, alignItems: 'center'}}>
                 {withAvatar && <Skeleton variant="circular" width={44} height={44} />}
                 <Box sx={{flex: 1}}>

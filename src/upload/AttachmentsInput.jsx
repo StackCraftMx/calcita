@@ -111,8 +111,9 @@ export default function AttachmentsInput(props) {
         <AttachmentsRoot aria-busy={busy} {...picker.dropHandlers}
                          ownSx={{
                              borderRadius: 1, outline: picker.isDragging ? 2 : 0, outlineStyle: 'dashed', outlineColor: 'primary.main',
-                             bgcolor: picker.isDragging ? 'action.hover' : 'transparent', ...sx,
-                         }}>
+                             bgcolor: picker.isDragging ? 'action.hover' : 'transparent',
+                         }}
+                         sx={sx}>
             <input {...picker.inputProps} name={name} aria-hidden="true" tabIndex={-1} />
             {(showButton || template || actions) && (
                 <AttachmentsActions direction="row" ownSx={{alignItems: 'center', flexWrap: 'wrap', gap: 1}}>

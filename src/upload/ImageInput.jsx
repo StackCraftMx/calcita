@@ -117,7 +117,7 @@ export default function ImageInput(props) {
     return (
         <FieldFrame inputId={previewId} label={label}>
             <div>
-                <ImageRoot direction="row" aria-busy={busy} ownSx={{alignItems: 'center', gap: 2, ...sx}}>
+                <ImageRoot direction="row" aria-busy={busy} ownSx={{alignItems: 'center', gap: 2}} sx={sx}>
                     <input {...picker.inputProps} name={name} aria-hidden="true" tabIndex={-1} />
                     <ImagePreview
                         id={previewId}

@@ -45,3 +45,22 @@ export function piecePart(name, slot, component = 'div') {
 export function usePieceProps(props, name) {
     return useThemeProps({props, name});
 }
+
+/**
+ * El sx de la pantalla como lista, para ponerlo DESPUÉS del de la pieza sin mezclarlo dentro del mismo objeto.
+ *
+ * OJO, trampa pagada: `{...estiloDeLaPieza, ...sx}` reemplaza la llave entera cuando las dos traen la misma
+ * ('& .MuiDataGrid-cell': la pieza ponía display flex y la pantalla solo quería alinear arriba: se perdía el flex sin
+ * avisar). En una lista, MUI aplica cada elemento encima del anterior y se combinan regla por regla.
+ *
+ *   sx={[{p: 2}, ...sxListOf(sx)]}
+ *
+ * @param {object|Function|Array<object|Function|boolean|null|undefined>|null|undefined} sx
+ * @returns {Array<object|Function|boolean|null|undefined>}
+ */
+export function sxListOf(sx) {
+    if (sx === undefined || sx === null) {
+        return [];
+    }
+    return Array.isArray(sx) ? sx : [sx];
+}

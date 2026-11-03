@@ -130,7 +130,7 @@ export default function RepeatingFields(props) {
     };
 
     return (
-        <RepeatingRoot spacing={1.5} ownSx={{minWidth: 0, ...sx}}>
+        <RepeatingRoot spacing={1.5} ownSx={{minWidth: 0}} sx={sx}>
             {label && <Typography variant="subtitle2" component="h3">{label}</Typography>}
             {rowKeys.map((rowKey, index) => {
                 const removeText = isAtMinimum ? t('repeating.clear', {row: titleOf(index)}) : t('repeating.remove', {row: titleOf(index)});

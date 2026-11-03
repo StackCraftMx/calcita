@@ -265,8 +265,8 @@ export default function FileUploadInput(props) {
                     px: 0.5, mx: -0.5, borderRadius: 1,
                     outline: picker.isDragging ? 2 : 0, outlineStyle: 'dashed', outlineColor: 'primary.main',
                     bgcolor: picker.isDragging ? 'action.hover' : 'transparent',
-                    ...sx,
                 }}
+                sx={sx}
             >
                 <input {...picker.inputProps} id={inputId} name={name} aria-labelledby={label ? labelId : undefined} />
                 {shownFile && (
