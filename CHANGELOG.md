@@ -4,6 +4,50 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.48.0] - 2026-11-03
+
+### Agregado
+
+- `ActionsMenu`: renglones con `to` (y `replace`), una pantalla de la app con la navegación del proyecto: el clic normal no
+  recarga la app y Cmd/Ctrl+clic o el botón de en medio la abren en otra pestaña. `onClick` recibe el evento del clic.
+- `RouteTabs`: `replace`. Con `mode="query"` (`?tab=`) las pestañas reemplazan la entrada del historial por omisión: son
+  vistas de la misma ficha y «atrás» (y el `BackButton`) salen de ella en vez de pasear por las pestañas. Las de ruta siguen
+  dejando su paso.
+- La navegación del navegador y la de `#` saben reemplazar: `navigate(destino, {replace: true})` y `<Link replace>` (con
+  Cmd/Ctrl+clic siguen abriendo otra pestaña). `isPlainLeftClick` dice si un clic es el normal.
+- `ServerTable`: `fixedColumn` acepta una lista (`['actions', 'company']`): cada columna se pega donde termina la anterior y la
+  raya va solo en la última. Las que no son la última llevan su `width`; si no, avisa en la consola una vez.
+- Textos que no existen: la pantalla sigue enseñando la llave, y ahora Calcita avisa en la consola una vez por idioma y llave
+  (el nivel lo pone `setLogLevel`). Con `onMissingText` en `ToolkitProvider` se le avisa al proyecto (Sentry, una prueba). Un
+  texto pedido con `defaultValue` es opcional y no avisa.
+- `MarkedText`: un texto traducido con palabras resaltadas en una sola llave (`<highlight>…</highlight>`), como `<Trans>` de
+  react-i18next sin i18next. No pinta HTML: solo las marcas que se nombran. `parseMarkedText` es la lectura sin React.
+- Mensajes de error propios sin tocar el esquema: cada mensaje de `buildYupLocale()` lleva su regla y su campo, y el texto sale
+  del primero que exista: el de la pantalla (`messages` en cualquier campo de la casa), el de los textos del proyecto para ese
+  campo (`validation.fields.<campo>.<regla>`) o el general. `{{label}}` en los textos dice el nombre del campo.
+- Mensajes de un sistema que ya existe: Calcita entiende `{key}`, `{msg}` (el `setLocale` de muchos sistemas con i18next),
+  `{message}`, el error entero de react-hook-form y un texto; para otra forma, `readValidationMessage` en `ToolkitProvider`.
+  Una forma desconocida ya no se pinta «[object Object]»: sale el mensaje general y se avisa. `useValidationText` para un
+  campo propio; `ruleMessageOf`, `normalizedValidationMessage` y `fieldKeyOf` sueltos.
+- Reglas: `sameAsFieldRule` (confirmar una contraseña, una CLABE, un correo) y `percentRule` en `/forms` y `/react-hook-form`;
+  `postalCodeRule` e `isValidPostalCode` en `/mexico`.
+- Ejemplos: «10. Mensajes de error propios» en Formularios, «6. Una palabra resaltada» en Traducciones, dos columnas fijas en
+  la tabla de Hecho en Calcita, «Abrir el pedido» con destino en las tarjetas de Pedidos, «Confirme la CLABE» en la solicitud
+  de crédito (con su mensaje propio y revisada por el servidor), el descuento entre 0 y 100 % en las condiciones del cliente y
+  el inicio con su palabra resaltada.
+
+### Arreglado
+
+- `SelectInput` de una sola opción con un valor que es número (un recordatorio de 60 minutos) tumbaba la pantalla: el cálculo
+  de «Elegir todos» corría también sin `multiple`.
+- `MaskedInput` no dejaba pasar `messages` al campo de texto.
+- Ejemplos: la paginación de las tarjetas de Pedidos ponía la llave como nombre de los «…» (lo encontró el aviso nuevo).
+
+### Cambiado
+
+- Las reglas de `/mexico` (`rfcRule`, `curpRule`, `clabeRule`) traen en su mensaje el nombre de la regla (`rule`), además de
+  `key`: la forma de antes sigue igual.
+
 ## [0.47.1] - 2026-11-03
 
 ### Arreglado
