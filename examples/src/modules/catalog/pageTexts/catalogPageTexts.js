@@ -1664,6 +1664,18 @@ export const catalogPageTexts = {
                         android: 'Arrancar con el minimalista en Android (allá el vidrio se ve ajeno y pesa en teléfonos baratos).',
                     },
                 },
+                slots: {
+                    title: '4. Cambiar una parte de una pieza',
+                    description: 'Como en MUI: con slots se pone otro componente en lugar de una parte de una pieza de Calcita (el avatar de la tarjeta, por ejemplo) y con slotProps se le dan props de más. Desde la pantalla o, para toda la app, desde el tema. Lo mismo en todas las piezas con nombre en el tema (TextInput guarda su slotProps para el campo de MUI).',
+                    extend: {
+                        slots: 'Otro componente en lugar de una parte; recibe lo que la parte iba a recibir (sus hijos, sus props).',
+                        slotProps: 'Props de más para una parte: ganan a las de Calcita.',
+                        slotPropsFunction: 'Una función que recibe las props de la parte y da las de más.',
+                        theme: 'Para toda la app, en el tema: defaultProps con slots y slotProps.',
+                        merge: 'className, style y sx se suman a los de Calcita en vez de reemplazarlos.',
+                        ownPiece: 'Una pieza propia del proyecto con el mismo mecanismo: nombre en el tema, partes y slots.',
+                    },
+                },
             },
             errorsAndLogs: {
                 title: 'Errores y registro',
@@ -3778,6 +3790,18 @@ export const catalogPageTexts = {
                         overrides: 'The rest of a MUI theme: corners, spacing, screen sizes.',
                         selector: 'How light or dark is chosen on the page (a class by default).',
                         android: 'Start with the minimal style on Android (glass looks foreign there and is heavy on cheap phones).',
+                    },
+                },
+                slots: {
+                    title: '4. Change one part of a piece',
+                    description: 'Like in MUI: slots puts another component in place of a part of a Calcita piece (the card avatar, for example) and slotProps gives it extra props. From the screen or, for the whole app, from the theme. The same in every piece named in the theme (TextInput keeps its slotProps for the MUI field).',
+                    extend: {
+                        slots: 'Another component in place of a part; it gets what the part would get (its children, its props).',
+                        slotProps: 'Extra props for a part: they win over Calcita ones.',
+                        slotPropsFunction: 'A function that receives the part props and returns the extra ones.',
+                        theme: 'For the whole app, in the theme: defaultProps with slots and slotProps.',
+                        merge: 'className, style and sx are added to Calcita ones instead of replacing them.',
+                        ownPiece: 'A piece of your own with the same mechanism: name in the theme, parts and slots.',
                     },
                 },
             },
