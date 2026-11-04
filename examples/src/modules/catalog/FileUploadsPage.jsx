@@ -1,6 +1,6 @@
 // Hecho en Calcita · subir archivos: FileDropzone revisa tipo y peso antes de subir y uploadWithProgress lo manda con
 // su avance; FileInput (del tamaño de un campo), AttachmentsInput (varios, como en un correo), ImageInput (una foto con su
-// vista previa), TemplateDownloadButton (la plantilla) y useFilePicker (para armar uno propio).
+// vista previa), TemplateDownloadButton (la plantilla), useFilePicker (para armar uno propio) y la subida por trozos de FilePond.
 //
 // Cada sección dice para qué sirve en una línea, enseña el código mínimo (JS y TS, para copiar) y trae su tabla «Cómo se
 // extiende».
@@ -12,6 +12,8 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import AttachmentsDemo from '@/modules/catalog/demos/upload/AttachmentsDemo.tsx';
+import ChunkedMiniDemo from '@/modules/catalog/demos/upload/ChunkedMiniDemo.tsx';
+import ChunkedPondDemo from '@/modules/catalog/demos/upload/ChunkedPondDemo.tsx';
 import FileInputDemo from '@/modules/catalog/demos/upload/FileInputDemo.tsx';
 import FileUploadDemo from '@/modules/catalog/demos/upload/FileUploadDemo.tsx';
 import ImageInputDemo from '@/modules/catalog/demos/upload/ImageInputDemo.tsx';
@@ -27,6 +29,8 @@ const loadAttachments = () => import('@/modules/catalog/demos/upload/Attachments
 const loadImage = () => import('@/modules/catalog/demos/upload/ImageInputDemo.tsx?demo-source');
 const loadTemplate = () => import('@/modules/catalog/demos/upload/TemplateDemo.tsx?demo-source');
 const loadOwnPicker = () => import('@/modules/catalog/demos/upload/OwnPickerDemo.tsx?demo-source');
+const loadChunked = () => import('@/modules/catalog/demos/upload/ChunkedPondDemo.tsx?demo-source');
+const loadChunkedMini = () => import('@/modules/catalog/demos/upload/ChunkedMiniDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (uploads.<sección>.extend.<id>)
@@ -100,6 +104,22 @@ const OWN_PICKER_EXTENSIONS = [
     {id: 'parts', option: 'inputProps · open · dropHandlers · isDragging', example: '<input {...picker.inputProps} />  <Card onClick={picker.open} {...picker.dropHandlers}>'},
     {id: 'screen', option: 'screenFiles · fileAppearanceOf', example: "screenFiles(files, {resolvedAccept: resolveAccept('pdf'), maxFiles: 3})"},
 ];
+const CHUNKED_EXTENSIONS = [
+    {id: 'chunks', option: 'chunkUploads · chunkForce', example: 'chunkUploads chunkForce  // todo por trozos, también lo chico'},
+    {id: 'size', option: 'chunkSize', example: 'chunkSize="1 MB"  ·  chunkSize={1_000_000}'},
+    {id: 'retries', option: 'chunkRetryDelays', example: 'chunkRetryDelays={[500, 1000, 3000]}  ·  chunkRetryDelays={null}'},
+    {id: 'patchUrl', option: 'createPondServer({url, patchUrl})', example: "createPondServer({url: '/upload', patchUrl: '/upload?patch='})"},
+    {id: 'headers', option: 'createPondServer({headers})', example: "headers: {Authorization: `Bearer ${token}`, 'X-Upload-Context': JSON.stringify(datos)}"},
+    {id: 'toProblem', option: 'createPondServer({toProblem})', example: 'toProblem: (body) => ({title: body.message})'},
+    {id: 'sendRequest', option: 'createPondServer({sendRequest})', example: 'sendRequest: (url, body, {method, headers, signal}) => fetch(url, {method, headers, body, signal})'},
+    {id: 'pondProps', option: 'pondProps', example: 'pondProps={{maxParallelUploads: 1, onprocessfiles: avisarAlTerminar}}'},
+];
+const CHUNKED_MINI_EXTENSIONS = [
+    {id: 'create', option: 'createChunkedUpload({url, patchUrl, chunkSize, chunkRetryDelays})', example: "upload={createChunkedUpload({url: '/upload', chunkSize: '1 MB'})}"},
+    {id: 'toProblem', option: 'toProblem · headers · sendRequest', example: "createChunkedUpload({url: '/upload', toProblem: (body) => ({detail: body.message, errors: body.errors})})"},
+    {id: 'onlyLarge', option: 'upload={(file, options) => …}', example: 'upload={(file, options) => (file.size > LIMITE ? porTrozos : subidaNormal)(file, options)}'},
+    {id: 'forms', option: 'FormFileUploadField', example: "<FormFileUploadField name=\"backup_id\" label=\"Respaldo\" upload={porTrozos} />  // formik o react-hook-form"},
+];
 
 export const FileUploadsPage = () => {
     const {t} = useToolkitTranslation('catalog');
@@ -124,6 +144,10 @@ export const FileUploadsPage = () => {
                          extensions={rowsOf('template', TEMPLATE_EXTENSIONS)} Demo={TemplateDemo} loadSource={loadTemplate} />
             <DemoSection title={t('uploads.ownPicker.title')} description={t('uploads.ownPicker.description')}
                          extensions={rowsOf('ownPicker', OWN_PICKER_EXTENSIONS)} Demo={OwnPickerDemo} loadSource={loadOwnPicker} />
+            <DemoSection title={t('uploads.chunked.title')} description={t('uploads.chunked.description')}
+                         extensions={rowsOf('chunked', CHUNKED_EXTENSIONS)} Demo={ChunkedPondDemo} loadSource={loadChunked} />
+            <DemoSection title={t('uploads.chunkedMini.title')} description={t('uploads.chunkedMini.description')}
+                         extensions={rowsOf('chunkedMini', CHUNKED_MINI_EXTENSIONS)} Demo={ChunkedMiniDemo} loadSource={loadChunkedMini} />
         </Stack>
     );
 };
