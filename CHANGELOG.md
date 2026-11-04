@@ -4,6 +4,16 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.52.1] - 2026-11-03
+
+### Arreglado
+
+- `DateInput`, `DateTimeInput`, `TimeInput` y `MonthInput`: el `format` (y en fecha con hora y en hora, el `ampm`) que la
+  pantalla pasa en `pickerProps` se perdía, porque el de la casa iba después y lo pisaba sin avisar. Ahora gana el de la
+  pantalla (`pickerProps={{format: 'DD/MMM/YYYY'}}` enseña «16/jul/2029»); sin él, igual que antes.
+- README: qué instalar para cada entrada aparte (las fechas piden `@mui/x-date-pickers` y `dayjs`) y que al subir de versión
+  basta con volver a prender el servidor de Vite (no hace falta borrar `node_modules/.vite`).
+
 ## [0.52.0] - 2026-11-03
 
 ### Agregado
