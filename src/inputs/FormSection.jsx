@@ -25,20 +25,36 @@
 // primero queda escondida. OJO: antes la línea se dibujaba entre dos hermanos seguidos y con un Grid en medio desaparecían
 // todas (lo señalaron en una revisión: obligaba a «la forma Calcita»).
 //
+// En el teléfono la etiqueta se lleva el 38 % del renglón y un nombre largo («Correo adicional (notificaciones)») se parte en
+// tres renglones: con labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone} la etiqueta sube arriba del campo por debajo de `sm`
+// (como en los formularios de iOS y de Android); en pantallas más anchas, igual que siempre. Por omisión `side`, como antes.
+//
+// Un renglón con `required` lleva un asterisco en la etiqueta (requiredMark.js: en el estilo, así la etiqueta sigue diciendo lo
+// mismo y el lector de pantalla no lo lee; el campo ya dice que es obligatorio).
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFormSection (sus partes root, title, card y
-// footer) y components.CalcitaFormRow (root, label y control), con styleOverrides y defaultProps. Los colores de los campos,
+// footer) y components.CalcitaFormRow (root, label y control; el asterisco es '&[data-required]::after' de label), con
+// styleOverrides y defaultProps. Los colores de los campos,
 // más fácil con createToolkitTheme({fields}).
 //
 // Genérico del paquete: function (regla de la casa).
-import {useId} from 'react';
+import {useId, useMemo} from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import {styled, useThemeProps} from '@mui/material/styles';
 
-import {FormSectionContext} from '@/inputs/formLayoutContext.js';
+import {FormSectionContext, useFormSectionLayout} from '@/inputs/formLayoutContext.js';
+import {REQUIRED_LABEL_ATTRIBUTE, requiredMarkSxOf} from '@/inputs/requiredMark.js';
 import {PANEL_RADIUS, accentTextStylesOf, fieldVariablesOf, fieldWellFromVariablesOf} from '@/theme/glassSurface.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
+
+/**
+ * Dónde va la etiqueta de cada renglón: a la izquierda siempre (side, lo de siempre) o arriba del campo en el teléfono
+ * (topOnPhone: por debajo de `sm` en el tema; más ancho, a la izquierda).
+ */
+export const FORM_LABEL_PLACEMENT = Object.freeze({side: 'side', topOnPhone: 'topOnPhone'});
 
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
@@ -88,8 +104,12 @@ const SECTION_THEME_NAME = 'CalcitaFormSection';
 const ROW_THEME_NAME = 'CalcitaFormRow';
 
 // el renglón: la etiqueta a la izquierda y el campo a la derecha, con la línea de arriba y los tonos de los campos
-const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root'})(({theme}) => {
+// ownerState: dónde va la etiqueta (también lo recibe un styleOverrides del tema que sea función); no llega al DOM
+const isPartProp = (propName) => propName !== 'ownerState';
+
+const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root', shouldForwardProp: isPartProp})(({theme, ownerState}) => {
     const palette = (theme.vars ?? theme).palette;
+    const isTopOnPhone = ownerState?.labelPlacement === FORM_LABEL_PLACEMENT.topOnPhone;
     return theme.unstable_sx({
         position: 'relative',
         display: 'flex',
@@ -103,12 +123,20 @@ const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root'})(({theme}) 
         // los tonos de los campos (los del proyecto con createToolkitTheme fields, o los de Apple) para sus campos
         ...fieldVariablesOf(theme),
         ...rowControlSxOf(theme),
+        // en el teléfono, la etiqueta arriba y el campo a todo lo ancho debajo
+        ...(isTopOnPhone && {[theme.breakpoints.down('sm')]: {flexDirection: 'column', alignItems: 'stretch', gap: 0.5}}),
     });
 });
 
-const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label'})(({theme}) => theme.unstable_sx({
+const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label', shouldForwardProp: isPartProp})(({theme, ownerState}) => theme.unstable_sx({
     flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels, pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary',
+    ...(ownerState?.labelPlacement === FORM_LABEL_PLACEMENT.topOnPhone && {
+        [theme.breakpoints.down('sm')]: {flex: 'none', maxWidth: 'none', pt: 0},
+    }),
+    // el asterisco de lo obligatorio: aquí, debajo de lo que el proyecto ponga en su tema
+    ...(ownerState?.requiredMark && requiredMarkSxOf(ownerState.requiredMark)),
 }));
+
 
 const FormRowControl = styled(Box, {name: ROW_THEME_NAME, slot: 'Control'})({
     flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 40,
@@ -138,15 +166,24 @@ const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'F
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {string} [props.htmlFor] el id del campo que nombra la etiqueta
  * @param {string} [props.labelId] el id de la etiqueta (para un campo que la nombra con aria-labelledby)
+ * @param {boolean} [props.required] el asterisco en la etiqueta (el lector de pantalla no lo lee: el campo ya lo dice)
  * @param {import('react').ReactNode} props.children
  */
 export function FormRow(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormRow.defaultProps) y encima lo que llega aquí
-    const {label, htmlFor, labelId, children, ...unknownProps} = useThemeProps({props, name: ROW_THEME_NAME});
+    const {label, htmlFor, labelId, required = false, children, ...unknownProps} = useThemeProps({props, name: ROW_THEME_NAME});
     warnUnknownProps(ROW_THEME_NAME, unknownProps);
+    const {t} = useToolkitTranslation('common');
+    // dónde va la etiqueta lo pide la sección; un FormRow fuera de una sección, a la izquierda
+    const sectionLayout = useFormSectionLayout();
+    const ownerState = {
+        labelPlacement: sectionLayout ? sectionLayout.labelPlacement : FORM_LABEL_PLACEMENT.side,
+        requiredMark: required ? t('form.requiredMark') : null,
+    };
     return (
-        <FormRowRoot className={FORM_ROW_CLASS}>
-            <FormRowLabel component="label" id={labelId} htmlFor={htmlFor} variant="body1">
+        <FormRowRoot className={FORM_ROW_CLASS} ownerState={ownerState}>
+            <FormRowLabel component="label" id={labelId} htmlFor={htmlFor} variant="body1" ownerState={ownerState}
+                          {...(required && {[REQUIRED_LABEL_ATTRIBUTE]: 'true'})}>
                 {label}
             </FormRowLabel>
             <FormRowControl>
@@ -160,15 +197,18 @@ export function FormRow(props) {
  * @param {object} props
  * @param {string} [props.title] ya traducido; va arriba de la tarjeta
  * @param {import('react').ReactNode} [props.footer] la explicación, abajo de la tarjeta
+ * @param {string} [props.labelPlacement] uno de FORM_LABEL_PLACEMENT: side (por omisión, la etiqueta a la izquierda) o
+ *     topOnPhone (arriba del campo por debajo de `sm`)
  * @param {import('react').ReactNode} props.children los campos, directo o dentro de un Grid, un Stack o un componente propio
  */
 export default function FormSection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormSection.defaultProps) y encima lo que llega aquí
-    const {title, footer, children, ...unknownProps} = useThemeProps({props, name: SECTION_THEME_NAME});
+    const {title, footer, labelPlacement = FORM_LABEL_PLACEMENT.side, children, ...unknownProps} = useThemeProps({props, name: SECTION_THEME_NAME});
     warnUnknownProps(SECTION_THEME_NAME, unknownProps);
     const titleId = useId();
+    const layout = useMemo(() => ({labelPlacement}), [labelPlacement]);
     return (
-        <FormSectionContext value>
+        <FormSectionContext value={layout}>
             <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined}>
                 {title && (
                     <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary">

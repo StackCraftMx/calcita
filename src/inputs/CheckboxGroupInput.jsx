@@ -43,6 +43,7 @@ const CheckboxGroupOption = piecePart(THEME_NAME, 'Option', FormControlLabel);
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {object} [props.sx]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -50,7 +51,7 @@ const CheckboxGroupOption = piecePart(THEME_NAME, 'Option', FormControlLabel);
  */
 function CheckboxGroupInputContent(props) {
     const {
-        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, sx, messages, texts,
+        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, required = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -74,7 +75,7 @@ function CheckboxGroupInputContent(props) {
         : [...checkedValues, optionValue]);
 
     return (
-        <FieldFrame inputId={`${groupId}-first`} labelId={labelId} label={label}>
+        <FieldFrame inputId={`${groupId}-first`} labelId={labelId} label={label} required={required}>
             <div>
                 <CheckboxGroupRoot row={row} role="group" aria-labelledby={labelId} ownSx={{columnGap: 2}} sx={sx}>
                     {selectAll && (

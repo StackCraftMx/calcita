@@ -33,7 +33,7 @@ export {default as toolkitTextsEn} from '@/locales/en.js';
 
 // ─── avisos, confirmaciones y descargas ──────────────────────────────────────
 export {
-    ConfirmDialog, ModalWaiting, NEW_BUILD_NOTICE_VARIANT, NewBuildNotice, StaleBuildBoundary, TOAST_DEFAULT_OPTIONS, Toaster, confirmActionMachine, dismissToast, errorsObjectToMessage,
+    ConfirmDialog, ModalWaiting, NEW_BUILD_NOTICE_VARIANT, NewBuildNotice, StaleBuildBoundary, TOAST_DEFAULT_OPTIONS, TOASTER_POSITION, Toaster, confirmActionMachine, dismissToast, errorsObjectToMessage,
     toastDefault, toastError, toastInfo, toastLoading, toastProblem, toastPromise, toastSuccess, toastWarn, useConfirmAction,
 } from '@/feedback/index.js';
 export {
@@ -124,7 +124,7 @@ export {default as ColorInput} from '@/inputs/ColorInput.jsx';
 export {default as FieldFrame} from '@/inputs/FieldFrame.jsx';
 export {default as MaskedInput} from '@/inputs/MaskedInput.jsx';
 export {INPUT_MASK, isMaskComplete, maskPatternOf, maskedTextOf, rawValueOf} from '@/inputs/inputMasks.js';
-export {FORM_ROW_CLASS, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
+export {FORM_LABEL_PLACEMENT, FORM_ROW_CLASS, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
 export {default as CheckboxGroupInput} from '@/inputs/CheckboxGroupInput.jsx';
 export {default as NumberInput} from '@/inputs/NumberInput.jsx';
 export {default as TransferListInput} from '@/inputs/TransferListInput.jsx';

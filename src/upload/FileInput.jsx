@@ -51,6 +51,7 @@ const FileInputEmpty = piecePart(THEME_NAME, 'Empty', Typography);
  * @param {string} [props.buttonLabel] ya traducido; por omisión «Elegir archivo»
  * @param {string} [props.emptyText] ya traducido; por omisión «Ningún archivo elegido»
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {boolean} [props.busy] candado mientras se sube: no se puede elegir, soltar ni quitar
  * @param {(file: File, reason: string) => void} [props.onReject] reason es uno de FILE_REJECTION; sin él, un aviso
  * @param {Parameters<typeof import('@/upload/TemplateDownloadButton.jsx').default>[0]} [props.template] «Descargar la
@@ -63,7 +64,7 @@ const FileInputEmpty = piecePart(THEME_NAME, 'Empty', Typography);
  */
 function FileInputContent(props) {
     const {
-        name, label, value = null, onChange, onBlur, accept, maxSize, error, helperText = ' ', buttonLabel, emptyText, disabled = false,
+        name, label, value = null, onChange, onBlur, accept, maxSize, error, helperText = ' ', buttonLabel, emptyText, disabled = false, required = false,
         busy = false, onReject, template, actions, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -82,7 +83,7 @@ function FileInputContent(props) {
     const picker = useFilePicker({accept, maxSize, disabled: isLocked, onAccept: change, onReject, texts});
 
     return (
-        <FieldFrame inputId={buttonId} label={label}>
+        <FieldFrame inputId={buttonId} label={label} required={required}>
             <div>
                 <FileInputRoot
                     direction="row"

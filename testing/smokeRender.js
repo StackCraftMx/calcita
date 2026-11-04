@@ -15,13 +15,14 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, RECORD_CARD_FOOTER_ALIGN, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, RECORD_CARD_FOOTER_ALIGN, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
 import {
-    ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard,
+    ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormSchemaProvider, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard, Yup,
 } from '@stackcraftmx/calcita/forms';
+import {Formik as FormikBase} from 'formik';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
@@ -330,6 +331,26 @@ const CASES = [
     // el formato que pasa la pantalla gana al de la casa (antes el de la casa lo pisaba): el mes en letras no deja dudas
     ['DateInput con el formato de la pantalla', h(DateInput, {label: 'Vigencia', value: '2029-07-16', onChange: () => {}, pickerProps: {format: 'DD/MMM/YYYY'}}), '>jul<'],
     ['TimeInput con el reloj de la pantalla', h(TimeInput, {label: 'Hora de inicio', value: '15:30', onChange: () => {}, pickerProps: {format: 'hh:mm a', ampm: true}}), '>03<'],
+    ['DateInput con format con nombre', h(DateInput, {label: 'Vigencia', value: '2029-07-16', onChange: () => {}, format: 'DD/MMM/YYYY'}), '>jul<'],
+    // lo obligatorio a la vista: el asterisco en la etiqueta (antes no salía en ninguno y 16 campos avisaban que no conocían required)
+    ['TextInput obligatorio con su asterisco', h(TextInput, {label: 'Razón social', value: '', onChange: () => {}, required: true}), 'data-required="true"'],
+    // el asterisco va en el estilo: la etiqueta dice lo mismo que antes (así la encuentran las pruebas y el lector de pantalla)
+    ['la etiqueta obligatoria sigue diciendo lo mismo', h(TextInput, {label: 'Razón social', value: '', onChange: () => {}, required: true}), '>Razón social</label>'],
+    ['el asterisco no se lee en voz alta', h(TextInput, {label: 'Razón social', value: '', onChange: () => {}, required: true}), 'content:"*"/""'],
+    ['DateInput obligatorio con su asterisco', h(DateInput, {label: 'Vigencia', value: '', onChange: () => {}, required: true}), 'data-required="true"'],
+    ['CheckboxGroupInput obligatorio con su asterisco', h(CheckboxGroupInput, {label: 'Avisos por', value: [], onChange: () => {}, required: true,
+        options: [{value: 'email', label: 'Correo'}]}), 'data-required="true"'],
+    ['renglón obligatorio con su asterisco', h(FormSection, {title: 'Empresa'}, h(NumberInput, {label: 'Empleados', value: '', onChange: () => {}, required: true})), 'data-required="true"'],
+    ['formik con requiredFromSchema: el asterisco sale del esquema', h(ToolkitProvider, {requiredFromSchema: true}, h(Formik, {
+        initialValues: {company: ''}, validationSchema: Yup.object({company: Yup.string().required()}), onSubmit: () => {},
+    }, h(FormTextField, {name: 'company', label: 'Razón social'}))), 'data-required="true"'],
+    ['FormSection con la etiqueta arriba en el teléfono', h(FormSection, {title: 'Contacto', labelPlacement: FORM_LABEL_PLACEMENT.topOnPhone},
+        h(TextInput, {label: 'Correo adicional (notificaciones)', value: '', onChange: () => {}})), 'align-items:stretch'],
+    ['WizardLayout sin «Anterior» en el primer paso', h(WizardLayout, {
+        steps: [{key: 'a', label: 'Datos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}], activeIndex: 0, hideBackOnFirstStep: true,
+        onBack: () => {}, onNext: () => {}, submitButton: 'Enviar',
+    }), 'Siguiente'],
+    ['Toaster en otra esquina y con lo de sonner', h(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000}), 'aria-live'],
 ];
 
 // los avisos de Calcita (una opción que una pieza no conoce): ningún caso debe dar uno, porque cada caso usa las opciones como
@@ -366,6 +387,76 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         failures += 1;
         console.log(`TRUENA ${name}: ${error.message.split('\n')[0]}`);
     }
+}
+
+// lo de antes, igual por omisión: sin requiredFromSchema el esquema no pone asterisco, sin labelPlacement no hay renglón
+// apilado y sin hideBackOnFirstStep «Anterior» sale apagado en el primer paso
+{
+    const htmlOf = (element) => renderToString(h(ThemeProvider, {theme: defaultTheme}, h(ToolkitProvider, {texts: PROJECT_TEXTS}, element)));
+    const schemaForm = (requiredFromSchema) => h(ToolkitProvider, {requiredFromSchema}, h(Formik, {
+        initialValues: {company: '', rfc: ''}, validationSchema: Yup.object({company: Yup.string().required(), rfc: Yup.string()}), onSubmit: () => {},
+    }, h('div', null, h(FormTextField, {name: 'company', label: 'Razón social'}), h(FormTextField, {name: 'rfc', label: 'RFC'}), h(FormTextField, {name: 'rfc', label: 'RFC pedido', required: true}))));
+    // el Formik importado directo de 'formik' no comparte su esquema: la pantalla lo da con FormSchemaProvider
+    const companySchema = Yup.object({company: Yup.string().required()});
+    const baseFormikForm = (withProvider) => h(ToolkitProvider, {requiredFromSchema: true}, h(FormikBase, {initialValues: {company: ''}, validationSchema: companySchema, onSubmit: () => {}},
+        withProvider ? h(FormSchemaProvider, {schema: companySchema}, h(FormTextField, {name: 'company', label: 'Razón social'})) : h(FormTextField, {name: 'company', label: 'Razón social'})));
+    const wizardOf = (extra) => h(WizardLayout, {
+        steps: [{key: 'a', label: 'Datos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}], activeIndex: 0,
+        onBack: () => {}, onNext: () => {}, submitButton: 'Enviar', ...extra,
+    });
+    const asterisksOf = (html) => html.split('data-required="true"').length - 1;
+    const checks = [
+        ['sin requiredFromSchema, solo el que la pantalla marca', asterisksOf(htmlOf(schemaForm(false))) === 1],
+        ['con requiredFromSchema, el del esquema y el que marca la pantalla', asterisksOf(htmlOf(schemaForm(true))) === 2],
+        ['el Formik de formik solo, sin FormSchemaProvider: sin asterisco', asterisksOf(htmlOf(baseFormikForm(false))) === 0],
+        ['el Formik de formik con FormSchemaProvider: con asterisco', asterisksOf(htmlOf(baseFormikForm(true))) === 1],
+        ['FormSection de siempre sin la etiqueta apilada', !htmlOf(h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}}))).includes('align-items:stretch')],
+        ['WizardLayout de siempre con «Anterior» apagado', htmlOf(wizardOf({})).includes('Anterior')],
+        ['WizardLayout con hideBackOnFirstStep sin «Anterior»', !htmlOf(wizardOf({hideBackOnFirstStep: true})).includes('Anterior')],
+        ['WizardLayout con hideBackOnFirstStep: «Anterior» de vuelta en el segundo paso', htmlOf(wizardOf({hideBackOnFirstStep: true, activeIndex: 1})).includes('Anterior')],
+    ];
+    for (const [name, isFine] of checks) {
+        if (!isFine) {
+            failures += 1;
+        }
+        console.log(`${isFine ? 'OK    ' : 'FALLA '} ${name}`);
+    }
+}
+
+// cada campo de la casa entiende required: su asterisco y ningún aviso de «no conoce la opción» (antes 16 lo avisaban)
+{
+    const noop = () => {};
+    const requiredFields = [
+        ['TextInput', h(TextInput, {label: 'Razón social', value: '', onChange: noop, required: true})],
+        ['NumberInput', h(NumberInput, {label: 'Importe', value: '', onChange: noop, required: true})],
+        ['SelectInput', h(MultiSelectInput, {label: 'Plazo', value: '', onChange: noop, options: [{value: '12', label: '12 meses'}], required: true})],
+        ['CatalogInput', h(CatalogInput, {label: 'Estado', value: '', onChange: noop, options: [{code: 'JAL', label: 'Jalisco'}], required: true})],
+        ['ColorInput', h(ColorInput, {label: 'Color', value: '', onChange: noop, required: true})],
+        ['CheckboxGroupInput', h(CheckboxGroupInput, {label: 'Avisos', value: [], onChange: noop, options: [{value: 'email', label: 'Correo'}], required: true})],
+        ['TransferListInput', h(TransferListInput, {label: 'Sucursales', value: [], onChange: noop, options: [{value: 'a', label: 'Centro'}], required: true})],
+        ['MaskedInput', h(MaskedInput, {label: 'Teléfono', mask: INPUT_MASK.phone, value: '', onChange: noop, required: true})],
+        ['DateInput', h(DateInput, {label: 'Vigencia', value: '', onChange: noop, required: true})],
+        ['DateTimeInput', h(DateTimeInput, {label: 'Posponer hasta', value: '', onChange: noop, required: true})],
+        ['TimeInput', h(TimeInput, {label: 'Hora', value: '', onChange: noop, required: true})],
+        ['MonthInput', h(MonthInput, {label: 'Mes', value: '', onChange: noop, required: true})],
+        ['FileInput', h(FileInput, {label: 'Constancia', value: null, onChange: noop, required: true})],
+        ['FileUploadInput', h(FileUploadInput, {label: 'Identificación', value: '', onChange: noop, upload: async () => ({id: 'file-1'}), required: true})],
+        ['ImageInput', h(ImageInput, {label: 'Foto', value: null, onChange: noop, required: true})],
+        ['AttachmentsInput', h(AttachmentsInput, {label: 'Adjuntos', value: [], onChange: noop, required: true})],
+        ['RichTextEditor', h(RichTextEditor, {label: 'Notas', value: '', onChange: noop, required: true})],
+    ];
+    const missing = [];
+    for (const [fieldName, element] of requiredFields) {
+        const warningsBefore = calcitaWarnings.length;
+        const html = renderToString(h(ThemeProvider, {theme: defaultTheme}, h(ToolkitProvider, {texts: PROJECT_TEXTS}, element)));
+        if (!html.includes('data-required="true"') || !html.includes('content:"*"') || calcitaWarnings.length > warningsBefore) {
+            missing.push(`${fieldName}${calcitaWarnings.length > warningsBefore ? ` (${calcitaWarnings.slice(warningsBefore).join(' | ')})` : ' (sin asterisco)'}`);
+        }
+    }
+    if (missing.length) {
+        failures += 1;
+    }
+    console.log(`${missing.length ? 'FALLA ' : 'OK    '} los ${requiredFields.length} campos con required: asterisco y sin aviso${missing.length ? ` · ${missing.join(', ')}` : ''}`);
 }
 
 // los slots de una pieza son SOLO suyos: una tarjeta dentro de otra pinta sus títulos de siempre (el propio sale una vez)

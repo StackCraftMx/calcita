@@ -129,6 +129,7 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {object} [props.sx]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -137,7 +138,7 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
 function TransferListInputContent(props) {
     const {
         name, label, value, onChange, onBlur, options, availableTitle, chosenTitle, searchable, listHeight = DEFAULT_LIST_HEIGHT, error,
-        helperText = ' ', disabled = false, sx, messages, texts,
+        helperText = ' ', disabled = false, required = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -210,7 +211,7 @@ function TransferListInputContent(props) {
         </div>
     );
     // sin etiqueta va solo (la pantalla pone el título a su manera)
-    return label ? <FieldFrame inputId={inputId} label={label}>{field}</FieldFrame> : field;
+    return label ? <FieldFrame inputId={inputId} label={label} required={required}>{field}</FieldFrame> : field;
 }
 
 // lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)

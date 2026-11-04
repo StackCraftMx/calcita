@@ -49,6 +49,7 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
  * @param {string} [props.helperText] cuando no hay color
  * @param {boolean} [props.checkContrast] avisa si casi no se lee sobre blanco (por omisión sí)
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -57,7 +58,7 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
 function ColorInputContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorInput.defaultProps) y encima lo que llega aquí
     const {
-    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, inputRef, messages, texts,
+    name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, required = false, inputRef, messages, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -75,7 +76,7 @@ function ColorInputContent(props) {
     const choose = (nextColor) => onChange(nextColor.toUpperCase());
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} label={label} required={required}>
             <Stack spacing={1}>
                 {/* un solo campo: la muestra redonda al inicio (el «color well» de Apple) y el código al lado. Picar la muestra
                     abre el selector de colores del sistema (un input type=color invisible encima de ella). Antes eran dos cajas
@@ -88,6 +89,7 @@ function ColorInputContent(props) {
                     fullWidth
                     value={color}
                     disabled={disabled}
+                    required={required}
                     placeholder="#RRGGBB"
                     onChange={(event) => choose(event.target.value)}
                     onBlur={onBlur}

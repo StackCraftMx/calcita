@@ -6,10 +6,10 @@ import {useFormikField} from '@/forms/useFormikField.js';
 import AttachmentsInput from '@/upload/AttachmentsInput.jsx';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/upload/AttachmentsInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
- *     AttachmentsInput (accept, maxFiles, maxTotalSize, template…), sin value / onChange / onBlur / error
+ * @param {{name: string} & Omit<Parameters<typeof import('@/upload/AttachmentsInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/upload/AttachmentsInput.jsx').default>[0], 'onChange'|'onBlur'>>} props las de
+ *     AttachmentsInput (accept, maxFiles, maxTotalSize, template…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormAttachmentsField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, inputProps);
     return <AttachmentsInput {...inputProps} {...fieldProps} />;
 }

@@ -136,6 +136,7 @@ export default Object.freeze({
             "showPassword": "Show password",
             "hidePassword": "Hide password",
             "clear": "Clear the text",
+            "requiredMark": "*",
             "selectPlaceholder": "Choose an option",
             "copy": "Copy",
             "copied": "Copied",

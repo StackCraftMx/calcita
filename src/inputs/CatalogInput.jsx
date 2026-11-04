@@ -59,6 +59,7 @@ function plainTextOf(text) {
  * @param {string} [props.placeholder] la pista con el campo vacío, ya traducida (p. ej. «Busque un estado»): sin ella, en un
  *     formulario agrupado el campo vacío solo enseña su botón y no se entiende qué es
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y aria-required en el campo (sin required: con varias opciones elegidas el texto queda vacío y el navegador no dejaría enviar)
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.multiple] elegir varias claves
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» (o los que coinciden con lo buscado) arriba de la lista
@@ -70,7 +71,7 @@ function plainTextOf(text) {
  */
 function CatalogInputContent(props) {
     const {
-        name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, inputRef, placeholder,
+        name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, required = false, inputRef, placeholder,
         multiple = false, selectAll = false, checkboxes = false, limitTags, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -104,7 +105,7 @@ function CatalogInputContent(props) {
     const showsSelectAll = multiple && selectAll;
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} label={label} required={required}>
             <CatalogInputField
                 id={inputId}
                 multiple={multiple}
@@ -167,7 +168,7 @@ function CatalogInputContent(props) {
                 } : undefined}
                 onBlur={onBlur}
                 renderInput={(inputProps) => (
-                    <TextField {...inputProps} name={name} inputRef={inputRef} placeholder={placeholder} error={Boolean(errorText)} helperText={errorText ?? helperText} />
+                    <TextField {...inputProps} inputProps={{...inputProps.inputProps, 'aria-required': required || undefined}} name={name} inputRef={inputRef} placeholder={placeholder} error={Boolean(errorText)} helperText={errorText ?? helperText} />
                 )}
             />
         </FieldFrame>

@@ -39,6 +39,9 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  *     consola una vez por idioma y llave
  * @param {(namespace: string, key: string, values?: object) => string|undefined} [props.translate] traductor del
  *     proyecto (por ejemplo i18next); undefined deja el texto del paquete
+ * @param {boolean} [props.requiredFromSchema] los campos de formik leen del esquema de yup del formulario (validationSchema)
+ *     qué es obligatorio y le ponen su asterisco: el esquema manda y la pantalla no los marca a mano. Lo que la pantalla diga
+ *     con required gana. Por omisión no (cada campo con su required, como antes)
  * @param {string} [props.timeZone] zona de las fechas (por omisión la del navegador)
  * @param {string} [props.currency] moneda de los montos, código ISO 4217 (por omisión MXN)
  * @param {'h23'|'h12'} [props.hourCycle] la hora de 24 horas («15:10», por omisión) o de 12 con a.m. y p.m. («3:10 p.m.»):
@@ -53,7 +56,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language, languages, onLanguageChange, onMissingText, readValidationMessage, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
+    language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
     children,
     ...unknownProps
 }) => {
@@ -66,6 +69,7 @@ export const ToolkitProvider = ({
         onLanguageChange: onLanguageChange ?? parent?.onLanguageChange ?? null,
         onMissingText: onMissingText ?? parent?.onMissingText ?? null,
         readValidationMessage: readValidationMessage ?? parent?.readValidationMessage ?? null,
+        requiredFromSchema: requiredFromSchema ?? parent?.requiredFromSchema ?? false,
         texts: texts ?? parent?.texts ?? {},
         translate: translate ?? parent?.translate ?? null,
         timeZone: timeZone ?? parent?.timeZone ?? browserTimeZone(),
@@ -76,7 +80,7 @@ export const ToolkitProvider = ({
         buildId: buildId ?? parent?.buildId ?? '',
         canAccess: canAccess ?? parent?.canAccess ?? allowOnlyUnrestricted,
         fileTypes: fileTypes ?? parent?.fileTypes ?? null,
-    }), [parent, language, languages, onLanguageChange, onMissingText, readValidationMessage, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
+    }), [parent, language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
         fileTypes]);
 
     // solo el de la raíz: un proveedor de adentro le cambiaba el idioma y la zona a las funciones sueltas de toda la app.

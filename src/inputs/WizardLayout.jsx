@@ -52,6 +52,8 @@ const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {Set<string>} [props.skippedKeys] los pasos omitidos
  * @param {boolean} [props.isSubmitting] mientras se envía, «Anterior» se apaga
  * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
+ * @param {boolean} [props.hideBackOnFirstStep] en el primer paso no se pinta «Anterior» (no hay a dónde volver); por omisión
+ *     sale apagado, como antes
  * @param {() => void} props.onBack
  * @param {() => void} props.onNext
  * @param {() => void} [props.onSkip] sin él no sale «Omitir este paso»
@@ -64,7 +66,7 @@ function WizardLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
         steps, activeIndex, skippedKeys = NO_SKIPPED_KEYS, isSubmitting = false, orientation = WIZARD_ORIENTATION.horizontal,
-        onBack, onNext, onSkip, onStepSelect, submitButton, problemAlert, texts,
+        hideBackOnFirstStep = false, onBack, onNext, onSkip, onStepSelect, submitButton, problemAlert, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -73,6 +75,7 @@ function WizardLayoutContent(props) {
     const isLastStep = activeIndex === steps.length - 1;
     const isVertical = orientation === WIZARD_ORIENTATION.vertical;
     const isSelectable = typeof onStepSelect === 'function';
+    const isBackHidden = hideBackOnFirstStep && activeIndex === 0;
 
     // el título de un paso: con onStepSelect es un botón (se pulsa y se llega con Tab); sin él, solo informa
     const stepTitleOf = (step, index) => {
@@ -91,10 +94,14 @@ function WizardLayoutContent(props) {
 
     // los botones del paso abierto: en fila van abajo de los campos; en vertical, dentro del paso
     const actions = (
-        <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: 'space-between'}}>
-            <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting} onClick={onBack}>
-                {t('wizard.back')}
-            </Button>
+        // sin «Anterior», los de seguir se quedan a la derecha (solos, space-between los mandaba a la izquierda; un margen
+        // automático no sirve: Stack les pone margin 0 a sus hijos con más fuerza)
+        <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: isBackHidden ? 'flex-end' : 'space-between'}}>
+            {!isBackHidden && (
+                <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting} onClick={onBack}>
+                    {t('wizard.back')}
+                </Button>
+            )}
             <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5}>
                 {activeStep.optional && !isLastStep && onSkip && (
                     <Button variant="text" onClick={onSkip}>{t('wizard.skip')}</Button>

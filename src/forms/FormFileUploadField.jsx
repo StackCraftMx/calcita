@@ -6,10 +6,10 @@ import {useFormikField} from '@/forms/useFormikField.js';
 import FileUploadInput from '@/upload/FileUploadInput.jsx';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/upload/FileUploadInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
- *     FileUploadInput (upload, accept, maxSize, download…), sin value / onChange / onBlur / error
+ * @param {{name: string} & Omit<Parameters<typeof import('@/upload/FileUploadInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/upload/FileUploadInput.jsx').default>[0], 'onChange'|'onBlur'>>} props las de
+ *     FileUploadInput (upload, accept, maxSize, download…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormFileUploadField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, inputProps);
     return <FileUploadInput {...inputProps} {...fieldProps} />;
 }

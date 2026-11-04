@@ -6,10 +6,10 @@ import {useFormikField} from '@/forms/useFormikField.js';
 import MaskedInput from '@/inputs/MaskedInput.jsx';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/MaskedInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props
+ * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/MaskedInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/inputs/MaskedInput.jsx').default>[0], 'onChange'|'onBlur'>>} props
  *     las de MaskedInput (mask, label, helperText, placeholder…)
  */
 export default function FormMaskedField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, inputProps);
     return <MaskedInput {...inputProps} {...fieldProps} />;
 }

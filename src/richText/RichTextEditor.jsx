@@ -57,6 +57,7 @@ const DEFAULT_MIN_HEIGHT = 160;
  * @param {(editor: import('@tiptap/react').Editor) => void} [props.onEditorReady] el editor de Tiptap, al estar listo
  * @param {number} [props.minHeight] el alto mínimo del texto en px; por omisión 160
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y aria-required en el editor (no es un <input>: el navegador no sabe revisarlo)
  * @param {object} [props.sx]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -65,7 +66,7 @@ const DEFAULT_MIN_HEIGHT = 160;
 function RichTextEditorContent(props) {
     const {
         name, label, value, onChange, onBlur, placeholder, error, helperText = ' ', maxLength, features = DEFAULT_RICH_TEXT_FEATURES, extensions,
-        toolbarActions, onEditorReady, minHeight = DEFAULT_MIN_HEIGHT, disabled = false, sx, messages, texts,
+        toolbarActions, onEditorReady, minHeight = DEFAULT_MIN_HEIGHT, disabled = false, required = false, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -87,12 +88,12 @@ function RichTextEditorContent(props) {
         // OJO: sin esto, al pintar en el servidor (Next) el editor avisa que no hay documento todavía
         immediatelyRender: false,
         editorProps: {
-            attributes: {id: contentId, role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': labelId, ...(errorText && {'aria-invalid': 'true'})},
+            attributes: {id: contentId, role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': labelId, ...(required && {'aria-required': 'true'}), ...(errorText && {'aria-invalid': 'true'})},
         },
         onUpdate: ({editor: current}) => latest.current.onChange(normalizedHtmlOf(current.getHTML())),
         onBlur: () => latest.current.onBlur?.(),
         onCreate: ({editor: current}) => latest.current.onEditorReady?.(current),
-    }, [features.join(','), placeholder, maxLength, Boolean(errorText)]);
+    }, [features.join(','), placeholder, maxLength, Boolean(errorText), required]);
 
     // lo que llega de afuera (el formulario se reinició, llegó del servidor) entra sin avisar otro cambio
     useEffect(() => {
@@ -107,7 +108,7 @@ function RichTextEditorContent(props) {
     const characters = useEditorState({editor, selector: ({editor: current}) => current?.storage.characterCount?.characters() ?? 0});
 
     return (
-        <FieldFrame inputId={contentId} labelId={labelId} label={label}>
+        <FieldFrame inputId={contentId} labelId={labelId} label={label} required={required}>
             <div>
                 <EditorRoot variant="outlined" ownSx={(theme) => ({
                     borderRadius: 2, overflow: 'hidden', opacity: disabled ? 0.6 : 1,
