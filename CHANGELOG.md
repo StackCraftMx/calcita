@@ -4,6 +4,38 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.53.0] - 2026-11-03
+
+### Agregado
+
+- Lo obligatorio, a la vista: `required` pone un asterisco en la etiqueta en los 17 campos de la casa (antes no salía en
+  ninguno, y 16 avisaban en la consola que no conocían la opción). El asterisco va en el estilo de la etiqueta: su texto no
+  cambia (las pruebas que buscan el campo por su etiqueta lo siguen encontrando) y el lector de pantalla no lo lee; el campo
+  lo dice con `required` o, donde el navegador no sabe revisarlo, con `aria-required`. Se cambia desde el tema
+  (`'&[data-required]::after'` de la etiqueta) o con el texto `common.form.requiredMark`.
+- `ToolkitProvider requiredFromSchema`: los campos de formik leen del esquema de yup qué es obligatorio (también con `.when`
+  y con una lista `.min(1)`); lo que la pantalla diga con `required` gana. Por omisión no. El `Formik` de
+  `@stackcraftmx/calcita/forms` comparte el esquema con los campos (formik no lo hace); con el de `'formik'`,
+  `FormSchemaProvider`. La regla sin React: `isRequiredInSchema`.
+- `FormSection labelPlacement` (`FORM_LABEL_PLACEMENT.topOnPhone`): en el teléfono la etiqueta sube arriba del campo; por
+  omisión `side`, como antes.
+- `DateInput`, `DateTimeInput`, `TimeInput` y `MonthInput`: `format` con nombre (`'DD/MMM/YYYY'` enseña «16/jul/2029»), también
+  desde el tema.
+- `FormWizard` (formik y react-hook-form) y `WizardLayout`: `hideBackOnFirstStep` no pinta «Anterior» en el primer paso; por
+  omisión sale apagado, como antes.
+- `Toaster` acepta lo de sonner (`position` con `TOASTER_POSITION`, `duration`, `visibleToasts`, `offset`, `toastOptions`…);
+  sin nada, abajo a la izquierda como antes.
+- Ejemplos: en Formularios «12. Lo obligatorio, a la vista» y «13. En el teléfono, la etiqueta arriba»; en Fechas «9. El formato
+  a su gusto y lo obligatorio»; en Confirmar y avisar «3. Dónde salen los avisos». En la app de ejemplo, los formularios de
+  formik con su asterisco desde el esquema, el alta de cliente con la etiqueta arriba en el teléfono y la fecha con el mes en
+  letras, y la solicitud de crédito sin «Anterior» en el primer paso.
+
+### Arreglado
+
+- Los campos de formik y de react-hook-form (los 29) pisaban el `onChange` y el `onBlur` que les pasaba la pantalla: el del
+  formulario iba después y el de la pantalla nunca corría. Ahora corren los dos, primero el del formulario y luego el de la
+  pantalla con el valor nuevo; los tipos ya los aceptan.
+
 ## [0.52.1] - 2026-11-03
 
 ### Arreglado
