@@ -1259,6 +1259,62 @@ import {FormFileUploadField} from '@stackcraftmx/calcita/forms';
 omisión `result.id`). Lo del negocio (Aprobado, Falta información) va junto al estado con `actions`, y `onStatusChange`
 dice en qué va cada renglón para contar «2 de 3 cargados».
 
+### Por trozos, con FilePond
+
+Para archivos grandes o servidores que solo reciben por trozos: la zona de `/filepond` con `createPondServer` sube cada
+archivo con el protocolo de trozos de FilePond (un POST da el folio, cada trozo va en su PATCH a `patchUrl` + folio, uno
+detrás de otro, y un HEAD dice hasta dónde llegó para retomar). Las opciones llevan los nombres de FilePond, así que un
+backend que ya recibía trozos de FilePond no cambia.
+
+```jsx
+import {FileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
+
+const backupServer = createPondServer({
+    url: '/upload',
+    patchUrl: '/upload?patch=',
+    headers: {Authorization: `Bearer ${token}`, 'X-Upload-Context': JSON.stringify({branch: 'Querétaro'})},
+    // un backend que contesta {message, errors} en lugar de RFC 9457: la tarjeta enseña el title
+    toProblem: (body) => ({title: body.message, detail: body.message, errors: body.errors}),
+});
+
+<FileDropzone value={file} onChange={setFile} server={backupServer} apiRef={pondApi}
+              chunkUploads chunkForce chunkSize="1 MB" chunkRetryDelays={[500, 1000, 3000]}
+              pondProps={{maxParallelUploads: 1}} />
+```
+
+- La barra es honesta: cuenta lo que el servidor ya guardó y no dice 100 % hasta que guardó el último trozo (hay servidores
+  que esperan medio segundo por trozo). Nunca regresa, ni cuando un trozo se reintenta.
+- Un trozo sin respuesta o con 5xx se reintenta con las esperas de `chunkRetryDelays` (`null` o `[]`, sin reintentos); un 4xx
+  es el servidor diciendo que no y su motivo sale en la tarjeta en seguida. Con el botón de reintentar de la tarjeta, sigue
+  desde el último trozo completo, con el mismo folio.
+- `chunkSize` va en bytes o con unidades, como `maxSize` (por omisión 5 MB, el de FilePond); `chunkForce` manda por trozos
+  también lo chico.
+- Los headers van en las tres peticiones y por trozos viajan en UTF-8 (el nombre del archivo también): páselos como texto
+  normal. Un sistema que los convertía a mano para una versión vieja de FilePond (`unescape(encodeURIComponent(...))`) ya no
+  debe hacerlo: convertidos dos veces, los acentos llegan rotos.
+- `sendRequest` cambia por dónde viaja cada petición (su cliente, o uno de mentira para probar sin servidor); por omisión es
+  `uploadWithProgress`, que ahora también acepta `method`.
+- `pondProps` pasa cualquier otra opción de FilePond tal cual. Lo que la zona ya maneja gana (los tipos y pesos, los textos,
+  el candado de `disabled`/`busy`), y sus eventos (`onupdatefiles`, `onprocessfile`, `onwarning`, `onerror`, `beforeAddFile`)
+  corren después de los de la zona.
+
+El cargador mini también sube por trozos: `createChunkedUpload` arma la función `upload` de `FileUploadInput` y
+`FormFileUploadField` con el mismo protocolo, las mismas opciones (`patchUrl`, `chunkSize`, `chunkRetryDelays`, `headers`,
+`toProblem`, `sendRequest`) y sus estados de siempre. Con el último byte enviado la barra llega a 100 % y el renglón dice
+«Procesando» hasta que el servidor guardó el último trozo; al renglón llega el folio como id.
+
+```jsx
+import {FileUploadInput, createChunkedUpload} from '@stackcraftmx/calcita';
+
+const uploadBackup = createChunkedUpload({url: '/upload', patchUrl: '/upload?patch=', chunkSize: '1 MB',
+    toProblem: (body) => ({title: body.message, detail: body.message, errors: body.errors})});
+
+<FileUploadInput label="Respaldo de la base" value={backupId} onChange={setBackupId} upload={uploadBackup} />
+```
+
+Todo va por trozos (uno chico, en un solo trozo). Si solo los grandes deben ir así, la pantalla elige:
+`upload={(file, options) => (file.size > LIMITE ? uploadBackup : subidaNormal)(file, options)}`.
+
 ## Documentos, avisos legales y cuenta regresiva
 
 - `PdfViewerDialog`: un PDF en una ventana con el visor del navegador (sin librerías), con «Abrir en otra pestaña» y
