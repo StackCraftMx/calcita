@@ -21,6 +21,7 @@ import OwnErrorMessages from '@/modules/catalog/demos/forms/OwnErrorMessages.tsx
 import EditingWizard from '@/modules/catalog/demos/forms/EditingWizard.tsx';
 import RequiredFromSchema from '@/modules/catalog/demos/forms/RequiredFromSchema.tsx';
 import PhoneLabels from '@/modules/catalog/demos/forms/PhoneLabels.tsx';
+import DocumentsWizard from '@/modules/catalog/demos/forms/DocumentsWizard.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -35,6 +36,7 @@ const loadOwnMessages = () => import('@/modules/catalog/demos/forms/OwnErrorMess
 const loadEditingWizard = () => import('@/modules/catalog/demos/forms/EditingWizard.tsx?demo-source');
 const loadRequiredFromSchema = () => import('@/modules/catalog/demos/forms/RequiredFromSchema.tsx?demo-source');
 const loadPhoneLabels = () => import('@/modules/catalog/demos/forms/PhoneLabels.tsx?demo-source');
+const loadDocumentsWizard = () => import('@/modules/catalog/demos/forms/DocumentsWizard.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -91,6 +93,13 @@ const PHONE_LABELS_EXTENSIONS = [
     {id: 'placement', option: 'labelPlacement · FORM_LABEL_PLACEMENT', example: '<FormSection title="Representante" labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}>'},
     {id: 'theme', option: 'CalcitaFormSection defaultProps', example: "components: {CalcitaFormSection: {defaultProps: {labelPlacement: 'topOnPhone'}}}"},
     {id: 'breakpoint', option: 'theme.breakpoints sm', example: 'createTheme({breakpoints: {values: {sm: 640}}})  // dónde empieza el teléfono'},
+];
+const DOCUMENTS_STEP_EXTENSIONS = [
+    {id: 'reason', option: 'steps[].nextDisabledReason', example: "nextDisabledReason: missing > 0 ? `Faltan ${missing} documentos` : null  // formik y react-hook-form"},
+    {id: 'layoutReason', option: '<WizardLayout nextDisabledReason>', example: '<WizardLayout … nextDisabledReason={reason} submitButton={<Button disabled={Boolean(reason)}>Enviar</Button>} />'},
+    {id: 'reasonTheme', option: 'CalcitaWizardLayout nextReason', example: "components: {CalcitaWizardLayout: {styleOverrides: {nextReason: {color: 'red'}}}}"},
+    {id: 'labelWidth', option: 'labelWidth · FORM_LABEL_WIDTH', example: '<FormSection labelWidth={FORM_LABEL_WIDTH.auto} labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}>  // o labelWidth="320px" · {280}'},
+    {id: 'sectionSx', option: 'FormSection sx', example: '<FormSection sx={{mb: 3}}>'},
 ];
 const HOOK_WIZARD_EXTENSIONS = [
     {id: 'entry', option: "FormWizard de '@stackcraftmx/calcita/react-hook-form'", example: '<FormProvider {...form}><form onSubmit={form.handleSubmit(send)}><FormWizard … /></form></FormProvider>'},
@@ -184,6 +193,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('requiredMarks', REQUIRED_EXTENSIONS)} Demo={RequiredFromSchema} loadSource={loadRequiredFromSchema} />
             <DemoSection title={t('forms.phoneLabels.title')} description={t('forms.phoneLabels.description')}
                          extensions={rowsOf('phoneLabels', PHONE_LABELS_EXTENSIONS)} Demo={PhoneLabels} loadSource={loadPhoneLabels} />
+            <DemoSection title={t('forms.documentsStep.title')} description={t('forms.documentsStep.description')}
+                         extensions={rowsOf('documentsStep', DOCUMENTS_STEP_EXTENSIONS)} Demo={DocumentsWizard} loadSource={loadDocumentsWizard} />
         </Stack>
     );
 };

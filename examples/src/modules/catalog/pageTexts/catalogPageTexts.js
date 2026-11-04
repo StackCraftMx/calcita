@@ -1593,6 +1593,17 @@ export const catalogPageTexts = {
                         breakpoint: 'Dónde empieza el teléfono: el sm de los breakpoints de su tema.',
                     },
                 },
+                documentsStep: {
+                    title: '14. Un expediente: no avanza sin sus documentos',
+                    description: 'Un paso que todavía no se puede dejar lo dice con su motivo: «Siguiente» se ve apagado y, al pasar el cursor o al llegar con Tab, sale por qué (en el teléfono va escrito arriba de los botones). Los nombres de los documentos son largos: con la columna de las etiquetas en auto, el nombre se lleva lo que sobre y el cargador solo lo que ocupa. Escriba la razón social, pase a «Documentos» y cargue los dos obligatorios.',
+                    extend: {
+                        reason: 'El motivo del paso, ya traducido. Mientras lo tenga, «Siguiente» no avanza; en el último paso se apaga el de enviar; con stepSelection checked tampoco se salta hacia adelante. null: como siempre.',
+                        layoutReason: 'Lo mismo en el armazón suelto, para un asistente propio. En el último paso el botón de enviar es suyo: apáguelo usted.',
+                        reasonTheme: 'El motivo escrito del teléfono, desde el tema.',
+                        labelWidth: 'Lo ancho de la columna de las etiquetas de esa sección: auto (lo que sobre), un ancho de CSS o un número en px. Por omisión el 38 % hasta 200 px, como siempre; las demás secciones no cambian. En el teléfono, con auto, júntelo con topOnPhone.',
+                        sectionSx: 'Los estilos de la sección en esa pantalla, como en las demás piezas.',
+                    },
+                },
             },
             shell: {
                 title: 'Marco y menú',
@@ -1985,8 +1996,11 @@ export const catalogPageTexts = {
                     label: 'Pedidos en CSV',
                     ok: 'Descargar pedidos',
                     failing: 'Descargar un reporte que no existe',
+                    postLabel: 'Plantilla de documentos de la empresa',
+                    post: 'Descargar la plantilla (POST)',
                     extend: {
                         download: 'Trae el archivo y el nombre que mandó el servidor.',
+                        post: 'Un archivo que el servidor arma con datos de la pantalla (de quién es): con POST y su cuerpo, igual que en post. El avance, el nombre y la revisión del Excel no cambian. Por omisión GET.',
                         progress: 'El avance mientras baja (el panel lo enseña solo).',
                         fallbackFileName: 'El nombre del archivo si el servidor no lo manda.',
                         downloadTimeout: 'Un tiempo máximo (por omisión, sin límite: un archivo grande puede tardar).',
@@ -3802,6 +3816,17 @@ export const catalogPageTexts = {
                         breakpoint: 'Where phones start: the sm of your theme breakpoints.',
                     },
                 },
+                documentsStep: {
+                    title: '14. A file: no moving on without its documents',
+                    description: 'A step that cannot be left yet says so with its reason: «Siguiente» looks disabled and, when you hover it or reach it with Tab, it says why (on phones it is written above the buttons). Document names are long: with the label column on auto, the name takes what is left and the uploader only what it needs. Type the company name, go to «Documentos» and upload the two required ones.',
+                    extend: {
+                        reason: 'The step reason, already translated. While it has one, «Siguiente» does not move on; on the last step the submit button is disabled; with stepSelection checked you cannot jump forward either. null: as always.',
+                        layoutReason: 'The same in the bare layout, for a wizard of your own. On the last step the submit button is yours: disable it yourself.',
+                        reasonTheme: 'The written reason on phones, from the theme.',
+                        labelWidth: 'How wide the label column of that section is: auto (what is left), a CSS width or a number in px. By default 38 % up to 200 px, as always; other sections do not change. On phones, pair auto with topOnPhone.',
+                        sectionSx: 'The section styles on that screen, as in the other pieces.',
+                    },
+                },
             },
             shell: {
                 title: 'Frame and menu',
@@ -4194,8 +4219,11 @@ export const catalogPageTexts = {
                     label: 'Orders in CSV',
                     ok: 'Download orders',
                     failing: 'Download a report that does not exist',
+                    postLabel: 'Company documents template',
+                    post: 'Download the template (POST)',
                     extend: {
                         download: 'Brings the file and the name the server sent.',
+                        post: 'A file the server builds with data from the screen (whose it is): with POST and its body, as in post. Progress, name and the Excel check do not change. GET by default.',
                         progress: 'The progress while it downloads (the panel shows it by itself).',
                         fallbackFileName: 'The file name if the server does not send one.',
                         downloadTimeout: 'A maximum time (no limit by default: a big file can take a while).',
