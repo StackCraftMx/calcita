@@ -4,6 +4,24 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.55.0] - 2026-11-04
+
+### Agregado
+
+- Un paso que todavía no se puede dejar: `nextDisabledReason` en `WizardLayout` y `steps[].nextDisabledReason` en los dos
+  `FormWizard` (formik y react-hook-form), con el motivo ya traducido. «Siguiente» se ve apagado, no avanza y el motivo sale
+  en un aviso al pasar el cursor o al llegar con Tab (el botón se sigue alcanzando con el teclado); en el teléfono va escrito
+  arriba de los botones (parte `nextReason` en el tema). En los `FormWizard` también se apaga «Enviar» en el último paso y,
+  con `stepSelection` `checked`, no se salta a un paso de adelante. Sin la opción, como antes.
+- `FormSection`: `labelWidth` para lo ancho de la columna de las etiquetas en esa sección: `FORM_LABEL_WIDTH.auto` (el nombre
+  se lleva lo que sobre y el campo lo que ocupa: una lista de documentos con su cargador), un ancho de CSS o un número en px.
+  Por omisión el 38 % hasta 200 px, como antes; en el teléfono, `auto` va mejor junto con `topOnPhone`. Y `sx`, como las
+  demás piezas (antes avisaba que no lo conocía).
+- `api.download` acepta `method` y `body`: un archivo que el servidor arma con datos de la pantalla va con POST sin perder el
+  avance, el nombre del Content-Disposition ni la revisión del Excel cortado. Por omisión GET, como antes.
+- Ejemplos: en Formularios «14. Un expediente: no avanza sin sus documentos»; en la API, la plantilla que se descarga con POST;
+  en la solicitud de crédito, el paso «Documentos» no avanza sin los obligatorios y sus nombres largos caben en su renglón.
+
 ## [0.54.0] - 2026-11-04
 
 ### Agregado
