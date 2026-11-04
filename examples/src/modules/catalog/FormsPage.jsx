@@ -19,6 +19,8 @@ import ChoosingMany from '@/modules/catalog/demos/forms/ChoosingMany.tsx';
 import TransferListDemo from '@/modules/catalog/demos/forms/TransferListDemo.tsx';
 import OwnErrorMessages from '@/modules/catalog/demos/forms/OwnErrorMessages.tsx';
 import EditingWizard from '@/modules/catalog/demos/forms/EditingWizard.tsx';
+import RequiredFromSchema from '@/modules/catalog/demos/forms/RequiredFromSchema.tsx';
+import PhoneLabels from '@/modules/catalog/demos/forms/PhoneLabels.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -31,6 +33,8 @@ const loadChoosingMany = () => import('@/modules/catalog/demos/forms/ChoosingMan
 const loadTransferList = () => import('@/modules/catalog/demos/forms/TransferListDemo.tsx?demo-source');
 const loadOwnMessages = () => import('@/modules/catalog/demos/forms/OwnErrorMessages.tsx?demo-source');
 const loadEditingWizard = () => import('@/modules/catalog/demos/forms/EditingWizard.tsx?demo-source');
+const loadRequiredFromSchema = () => import('@/modules/catalog/demos/forms/RequiredFromSchema.tsx?demo-source');
+const loadPhoneLabels = () => import('@/modules/catalog/demos/forms/PhoneLabels.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -48,17 +52,20 @@ const FORMIK_EXTENSIONS = [
     {id: 'serverProblem', option: 'applyServerProblem(error, helpers)', example: 'catch (error) { applyServerProblem(error, {...formikHelpers, values}); }'},
     {id: 'problemAlert', option: '<FormProblemAlert />', example: '<FormProblemAlert />'},
     {id: 'submit', option: '<SubmitButton>', example: '<SubmitButton>Guardar</SubmitButton>'},
+    {id: 'screenEvents', option: 'onChange · onBlur', example: '<FormSelectField name="kind" … onChange={(kind) => loadRatesFor(kind)} />'},
 ];
 const HOOK_FORM_EXTENSIONS = [
     {id: 'entry', option: "'@stackcraftmx/calcita/react-hook-form'", example: "import {FormTextField, SubmitButton} from '@stackcraftmx/calcita/react-hook-form';"},
     {id: 'setup', option: 'useForm · yupResolver · FormProvider', example: 'const form = useForm({resolver: yupResolver(schema), defaultValues});'},
     {id: 'multiple', option: 'multiple', example: '<FormCatalogField name="zones" label="Estados" options={states} multiple />'},
     {id: 'serverProblem', option: 'applyServerProblem(error, form)', example: 'catch (error) { applyServerProblem(error, form); }'},
+    {id: 'screenEvents', option: 'onChange · onBlur', example: '<FormTextField name="name" label="Nombre" onChange={setInvoiceName} />'},
 ];
 const WIZARD_EXTENSIONS = [
     {id: 'steps', option: 'steps[].key · label · content', example: "{key: 'company', label: 'Empresa', content: <CompanyFields />}"},
     {id: 'fields', option: 'steps[].fields', example: "fields: ['company', 'rfc']"},
     {id: 'optional', option: 'steps[].optional', example: 'optional: true'},
+    {id: 'hideBackOnFirstStep', option: 'hideBackOnFirstStep', example: '<FormWizard steps={steps} hideBackOnFirstStep />  // sin «Anterior» en el primer paso'},
     {id: 'submitLabel', option: 'submitLabel', example: '<FormWizard steps={steps} submitLabel="Enviar solicitud" />'},
     {id: 'texts', option: 'texts', example: "texts={{wizard: {next: 'Continuar', skip: 'Ahora no'}}}"},
     {id: 'layout', option: '<WizardLayout>', example: '<WizardLayout steps={steps} activeIndex={index} skippedKeys={skipped} onNext={next} onBack={back} onSkip={skip} submitButton={…} />'},
@@ -70,6 +77,20 @@ const EDITING_WIZARD_EXTENSIONS = [
     {id: 'completed', option: 'steps[].completed', example: "{key: 'company', label: 'Empresa', completed: true, …}"},
     {id: 'onStepChange', option: 'onStepChange(stepKey, index)', example: "onStepChange={(stepKey) => setSearchParams({step: stepKey})}"},
     {id: 'layout', option: '<WizardLayout orientation onStepSelect>', example: '<WizardLayout … orientation="vertical" onStepSelect={(index) => setActiveIndex(index)} />'},
+];
+const REQUIRED_EXTENSIONS = [
+    {id: 'provider', option: 'ToolkitProvider requiredFromSchema', example: '<ToolkitProvider requiredFromSchema>  // una vez, en la raíz'},
+    {id: 'required', option: 'required', example: '<FormTextField name="rfc" label="RFC" required />  // gana al esquema'},
+    {id: 'formikImport', option: 'Formik de Calcita · FormSchemaProvider', example: '<FormSchemaProvider schema={schema}>…</FormSchemaProvider>  // con el Formik de formik'},
+    {id: 'hookForm', option: 'react-hook-form: required', example: '<FormTextField name="email" label="Correo" required />'},
+    {id: 'mark', option: "CalcitaFieldFrame · CalcitaFormRow label '&[data-required]::after'", example: "components: {CalcitaFormRow: {styleOverrides: {label: {'&[data-required]::after': {color: 'red'}}}}}"},
+    {id: 'markText', option: "texts common.form.requiredMark", example: "texts={{es: {common: {form: {requiredMark: '(obligatorio)'}}}}}"},
+    {id: 'pure', option: 'isRequiredInSchema(schema, name, values)', example: "isRequiredInSchema(schema, 'contacts.2.email', values)"},
+];
+const PHONE_LABELS_EXTENSIONS = [
+    {id: 'placement', option: 'labelPlacement · FORM_LABEL_PLACEMENT', example: '<FormSection title="Representante" labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}>'},
+    {id: 'theme', option: 'CalcitaFormSection defaultProps', example: "components: {CalcitaFormSection: {defaultProps: {labelPlacement: 'topOnPhone'}}}"},
+    {id: 'breakpoint', option: 'theme.breakpoints sm', example: 'createTheme({breakpoints: {values: {sm: 640}}})  // dónde empieza el teléfono'},
 ];
 const HOOK_WIZARD_EXTENSIONS = [
     {id: 'entry', option: "FormWizard de '@stackcraftmx/calcita/react-hook-form'", example: '<FormProvider {...form}><form onSubmit={form.handleSubmit(send)}><FormWizard … /></form></FormProvider>'},
@@ -159,6 +180,10 @@ export const FormsPage = () => {
                          extensions={rowsOf('ownMessages', OWN_MESSAGES_EXTENSIONS)} Demo={OwnErrorMessages} loadSource={loadOwnMessages} />
             <DemoSection title={t('forms.editingWizard.title')} description={t('forms.editingWizard.description')}
                          extensions={rowsOf('editingWizard', EDITING_WIZARD_EXTENSIONS)} Demo={EditingWizard} loadSource={loadEditingWizard} />
+            <DemoSection title={t('forms.requiredMarks.title')} description={t('forms.requiredMarks.description')}
+                         extensions={rowsOf('requiredMarks', REQUIRED_EXTENSIONS)} Demo={RequiredFromSchema} loadSource={loadRequiredFromSchema} />
+            <DemoSection title={t('forms.phoneLabels.title')} description={t('forms.phoneLabels.description')}
+                         extensions={rowsOf('phoneLabels', PHONE_LABELS_EXTENSIONS)} Demo={PhoneLabels} loadSource={loadPhoneLabels} />
         </Stack>
     );
 };

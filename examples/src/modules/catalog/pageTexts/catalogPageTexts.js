@@ -891,6 +891,16 @@ export const catalogPageTexts = {
                         toaster: 'Donde salen los avisos: va UNA vez en la raíz de la app.',
                     },
                 },
+                placement: {
+                    title: '3. Dónde salen los avisos',
+                    description: 'En la esquina que no tape nada de su app: abajo a la izquierda (por omisión) estorba si ahí está el pie del menú, y abajo a la derecha taparía el «Siguiente» de un formulario. Elija una esquina y pulse «Avisar».',
+                    extend: {
+                        position: 'La esquina, con los nombres de sonner: arriba o abajo, a la izquierda, al centro o a la derecha.',
+                        sonner: 'Lo demás de sonner pasa tal cual: cuánto dura cada aviso, cuántos se ven a la vez y la separación de la orilla.',
+                        defaults: 'Lo que Calcita pone por omisión: los colores de cada tipo, la ✕ para cerrar y el modo claro u oscuro de la app.',
+                        toasterId: 'Un segundo lugar para avisos (un panel, una vista previa): el Toaster lleva id y el aviso dice a cuál va.',
+                    },
+                },
             },
             cards: {
                 title: 'Encabezados y tarjetas',
@@ -1270,6 +1280,16 @@ export const catalogPageTexts = {
                         hook: 'Solo las partes, para armar la suya; y la función sin React.',
                     },
                 },
+                letterMonth: {
+                    title: '9. El formato a su gusto y lo obligatorio',
+                    description: 'Con el mes en letras, «16/jul/2029» no se presta a dudas: un 03/04 se lee distinto según de dónde sea quien mire. El formato usa los códigos de dayjs y lo que viaja no cambia. Con required, el asterisco en la etiqueta, como en los demás campos.',
+                    extend: {
+                        format: 'Cómo se ve, con los códigos de dayjs (DD día, MMM mes en letras, YYYY año, HH:mm hora). En los cuatro campos.',
+                        theme: 'El mismo formato en toda la app, una vez en el tema.',
+                        pickerProps: 'También desde pickerProps, como lo demás del selector de MUI X: ahora gana al de la casa (antes se perdía).',
+                        required: 'Obligatoria: el asterisco en la etiqueta.',
+                    },
+                },
             },
             richText: {
                 title: 'Texto con formato',
@@ -1405,6 +1425,7 @@ export const catalogPageTexts = {
                         serverProblem: 'Pone cada error del servidor en su campo y el aviso general arriba del formulario.',
                         problemAlert: 'El aviso general del servidor arriba del formulario (lo que no es de un campo).',
                         submit: 'El botón de guardar: espera solo mientras se guarda y no deja mandar dos veces.',
+                        screenEvents: 'Su propio onChange y onBlur también corren, después de los de formik y con el valor nuevo (antes se perdían sin avisar).',
                     },
                 },
                 hookForm: {
@@ -1415,6 +1436,7 @@ export const catalogPageTexts = {
                         multiple: 'Varias opciones igual que con formik: multiple en la lista o en el catálogo.',
                         setup: 'Cómo se arma: useForm con las reglas de yup (yupResolver) y FormProvider alrededor.',
                         serverProblem: 'El error del servidor a su campo: se le pasa lo que regresó useForm.',
+                        screenEvents: 'Su propio onChange y onBlur también corren, después de los de react-hook-form y con el valor nuevo (antes se perdían sin avisar).',
                     },
                 },
                 wizard: {
@@ -1425,6 +1447,7 @@ export const catalogPageTexts = {
                         fields: 'Los campos que revisa «Siguiente» en ese paso.',
                         optional: 'El paso se puede omitir.',
                         submitLabel: 'El texto del botón del último paso.',
+                        hideBackOnFirstStep: 'En el primer paso no se pinta «Anterior»: no hay a dónde volver. Por omisión sale apagado, como antes.',
                         texts: 'Los textos de los botones y de los pasos («Siguiente», «Omitir este paso», «Paso 2 de 4»).',
                         layout: 'Lo que se ve, suelto: para armar su propio asistente con otra librería de formularios o sin ninguna.',
                     },
@@ -1522,6 +1545,28 @@ export const catalogPageTexts = {
                         completed: 'La palomita del paso. Cuando los títulos se pulsan, «antes» ya no quiere decir «hecho»: la pone la pantalla, que sabe qué datos están completos.',
                         onStepChange: 'Avisa cada cambio de paso: por ejemplo, para guardarlo en la dirección y abrir ahí al recargar.',
                         layout: 'Lo que se ve, suelto: los dos acomodos y los títulos que se pulsan, para un asistente propio.',
+                    },
+                },
+                requiredMarks: {
+                    title: '12. Lo obligatorio, a la vista',
+                    description: 'Cada campo obligatorio lleva un asterisco en su etiqueta, y con formik sale del mismo esquema de yup que revisa el formulario: la pantalla no repite cuáles se piden. Las condiciones cuentan: elija «Empresa» y el RFC se vuelve obligatorio.',
+                    extend: {
+                        provider: 'Se prende una vez en la raíz: los campos de formik leen del esquema qué es obligatorio. Por omisión no, como antes.',
+                        required: 'Lo que la pantalla diga gana al esquema: required en un campo lo marca aunque el esquema no lo pida (y required={false} lo quita).',
+                        formikImport: 'formik no les comparte el esquema a sus campos: el Formik de Calcita lo hace solo; con el de formik, envuelva los campos en FormSchemaProvider.',
+                        hookForm: 'Con react-hook-form el esquema queda dentro del resolver: ahí cada campo lleva required.',
+                        mark: 'El asterisco va en el estilo de la etiqueta (así la etiqueta dice lo mismo para las pruebas y el lector de pantalla): su color o su tamaño desde el tema.',
+                        markText: 'El texto de la marca, por si lo quiere con palabras.',
+                        pure: 'La misma regla sin React, para lo que usted arme.',
+                    },
+                },
+                phoneLabels: {
+                    title: '13. En el teléfono, la etiqueta arriba',
+                    description: 'En el formulario agrupado la etiqueta se lleva el 38 % del renglón y en el teléfono un nombre largo se parte en tres renglones. Con esta opción, por debajo de sm la etiqueta sube arriba del campo; en pantallas más anchas todo sigue igual. Achique la ventana para verlo.',
+                    extend: {
+                        placement: 'La sección decide por todos sus renglones: a la izquierda (por omisión, como antes) o arriba en el teléfono.',
+                        theme: 'Para todos los formularios de la app, una vez en el tema.',
+                        breakpoint: 'Dónde empieza el teléfono: el sm de los breakpoints de su tema.',
                     },
                 },
             },
@@ -3031,6 +3076,16 @@ export const catalogPageTexts = {
                         toaster: 'Where the notices show: it goes ONCE at the app root.',
                     },
                 },
+                placement: {
+                    title: '3. Where notices show',
+                    description: 'In the corner that covers nothing in your app: bottom left (the default) gets in the way if the menu footer is there, and bottom right would cover a form’s “Next”. Pick a corner and press “Avisar”.',
+                    extend: {
+                        position: 'The corner, with sonner’s names: top or bottom, left, center or right.',
+                        sonner: 'The rest of sonner passes as is: how long each notice lasts, how many show at once and the gap from the edge.',
+                        defaults: 'What Calcita sets by default: each kind’s colors, the ✕ to close and the app’s light or dark mode.',
+                        toasterId: 'A second place for notices (a panel, a preview): the Toaster takes an id and the notice says which one it goes to.',
+                    },
+                },
             },
             cards: {
                 title: 'Headers and cards',
@@ -3410,6 +3465,16 @@ export const catalogPageTexts = {
                         hook: 'Just the parts, to build yours; and the function without React.',
                     },
                 },
+                letterMonth: {
+                    title: '9. Your own format, and required',
+                    description: 'With the month in letters, “16/jul/2029” leaves no doubt: 03/04 reads differently depending on where the reader is from. The format uses dayjs codes and what travels does not change. With required, the asterisk on the label, like the other fields.',
+                    extend: {
+                        format: 'How it looks, with dayjs codes (DD day, MMM month in letters, YYYY year, HH:mm time). In all four fields.',
+                        theme: 'The same format across the app, once in the theme.',
+                        pickerProps: 'Also from pickerProps, like the rest of the MUI X picker: it now wins over the house one (it used to get lost).',
+                        required: 'Required: the asterisk on the label.',
+                    },
+                },
             },
             richText: {
                 title: 'Rich text',
@@ -3545,6 +3610,7 @@ export const catalogPageTexts = {
                         serverProblem: 'Puts each server error on its field and the general notice above the form.',
                         problemAlert: 'The server’s general notice above the form (what does not belong to a field).',
                         submit: 'The save button: it waits only while saving and does not let you send twice.',
+                        screenEvents: 'Your own onChange and onBlur run too, after formik’s and with the new value (they used to get lost silently).',
                     },
                 },
                 hookForm: {
@@ -3555,6 +3621,7 @@ export const catalogPageTexts = {
                         multiple: 'Several options just like with formik: multiple on the list or the catalog.',
                         setup: 'How it is built: useForm with the yup rules (yupResolver) and FormProvider around it.',
                         serverProblem: 'The server error to its field: pass it what useForm returned.',
+                        screenEvents: 'Your own onChange and onBlur run too, after react-hook-form’s and with the new value (they used to get lost silently).',
                     },
                 },
                 wizard: {
@@ -3565,6 +3632,7 @@ export const catalogPageTexts = {
                         fields: 'The fields “Next” checks in that step.',
                         optional: 'The step can be skipped.',
                         submitLabel: 'The text of the last step’s button.',
+                        hideBackOnFirstStep: 'On the first step “Back” is not drawn: there is nowhere to go back to. By default it shows disabled, as before.',
                         texts: 'The texts of the buttons and steps (“Next”, “Skip this step”, “Step 2 of 4”).',
                         layout: 'What you see, loose: to build your own wizard with another form library or none.',
                     },
@@ -3662,6 +3730,28 @@ export const catalogPageTexts = {
                         completed: 'The step check mark. When titles can be pressed, «before» no longer means «done»: the screen sets it, since it knows which data is complete.',
                         onStepChange: 'Reports every step change: for example, to keep it in the address and open there after a reload.',
                         layout: 'What you see, on its own: both layouts and pressable titles, for a wizard of your own.',
+                    },
+                },
+                requiredMarks: {
+                    title: '12. Required fields, in sight',
+                    description: 'Each required field has an asterisk on its label, and with formik it comes from the same yup schema that checks the form: the screen does not repeat which ones are asked. Conditions count: choose “Empresa” and the RFC becomes required.',
+                    extend: {
+                        provider: 'Turned on once at the root: formik fields read from the schema what is required. Off by default, as before.',
+                        required: 'What the screen says wins over the schema: required on a field marks it even if the schema does not ask for it (and required={false} removes it).',
+                        formikImport: 'formik does not share the schema with its fields: Calcita’s Formik does it on its own; with formik’s, wrap the fields in FormSchemaProvider.',
+                        hookForm: 'With react-hook-form the schema stays inside the resolver: there each field takes required.',
+                        mark: 'The asterisk lives in the label’s style (so the label says the same to tests and screen readers): its color or size from the theme.',
+                        markText: 'The mark’s text, in case you want it in words.',
+                        pure: 'The same rule without React, for whatever you build.',
+                    },
+                },
+                phoneLabels: {
+                    title: '13. On phones, the label on top',
+                    description: 'In the grouped form the label takes 38 % of the row, and on a phone a long name breaks into three lines. With this option, below sm the label moves above the field; on wider screens everything stays the same. Shrink the window to see it.',
+                    extend: {
+                        placement: 'The section decides for all its rows: on the left (the default, as before) or on top on phones.',
+                        theme: 'For every form in the app, once in the theme.',
+                        breakpoint: 'Where phones start: the sm of your theme breakpoints.',
                     },
                 },
             },

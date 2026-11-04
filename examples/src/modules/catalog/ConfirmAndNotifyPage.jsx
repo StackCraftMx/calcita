@@ -12,9 +12,11 @@ import {DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import ConfirmWithServer from '@/modules/catalog/demos/confirm/ConfirmWithServer.tsx';
 import ToastKinds from '@/modules/catalog/demos/confirm/ToastKinds.tsx';
+import ToastPlacement from '@/modules/catalog/demos/confirm/ToastPlacement.tsx';
 
 const loadConfirm = () => import('@/modules/catalog/demos/confirm/ConfirmWithServer.tsx?demo-source');
 const loadToasts = () => import('@/modules/catalog/demos/confirm/ToastKinds.tsx?demo-source');
+const loadPlacement = () => import('@/modules/catalog/demos/confirm/ToastPlacement.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (confirmAndNotify.<sección>.extend.<id>)
@@ -37,6 +39,13 @@ const TOAST_EXTENSIONS = [
     {id: 'toaster', option: '<Toaster />', example: '<Toaster />  // en la raíz, una vez'},
 ];
 
+const PLACEMENT_EXTENSIONS = [
+    {id: 'position', option: 'position · TOASTER_POSITION', example: '<Toaster position={TOASTER_POSITION.bottomCenter} />'},
+    {id: 'sonner', option: 'duration · visibleToasts · offset · mobileOffset · toastOptions', example: '<Toaster duration={6000} visibleToasts={3} />'},
+    {id: 'defaults', option: 'richColors · closeButton · theme', example: '<Toaster closeButton={false} />  // por omisión los dos en sí'},
+    {id: 'toasterId', option: 'id · toasterId', example: "<Toaster id=\"panel\" />  ·  toastInfo('Listo', {toasterId: 'panel'})"},
+];
+
 export const ConfirmAndNotifyPage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `confirmAndNotify.${section}`, extensions);
@@ -48,6 +57,8 @@ export const ConfirmAndNotifyPage = () => {
                          extensions={rowsOf('confirm', CONFIRM_EXTENSIONS)} Demo={ConfirmWithServer} loadSource={loadConfirm} />
             <DemoSection title={t('confirmAndNotify.toasts.title')} description={t('confirmAndNotify.toasts.description')}
                          extensions={rowsOf('toasts', TOAST_EXTENSIONS)} Demo={ToastKinds} loadSource={loadToasts} />
+            <DemoSection title={t('confirmAndNotify.placement.title')} description={t('confirmAndNotify.placement.description')}
+                         extensions={rowsOf('placement', PLACEMENT_EXTENSIONS)} Demo={ToastPlacement} loadSource={loadPlacement} />
         </Stack>
     );
 };

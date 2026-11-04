@@ -1,8 +1,9 @@
 // El MISMO alta con react-hook-form (@stackcraftmx/calcita/react-hook-form): los campos se llaman igual, se ven igual y
 // aplican las mismas reglas de yup (yupResolver); cambia el import y cómo se arma el formulario (useForm + FormProvider).
 // El error del servidor llega igual a su campo con applyServerProblem. Varias opciones: `multiple` en el catálogo (cada una con
-// su etiqueta y su ×; al formulario llega la lista de claves).
-import {useMemo} from 'react';
+// su etiqueta y su ×; al formulario llega la lista de claves). El onChange de la pantalla también corre, después del de
+// react-hook-form: aquí enseña cómo saldrá el nombre en la factura.
+import {useMemo, useState} from 'react';
 import Stack from '@mui/material/Stack';
 import {ApiError, FormSection, toastSuccess} from '@stackcraftmx/calcita';
 import {Yup} from '@stackcraftmx/calcita/forms';
@@ -24,6 +25,7 @@ const createCustomer = async (values: CustomerValues) => {
 };
 
 const NewCustomerHookForm = () => {
+    const [invoiceName, setInvoiceName] = useState('');
     const resolver = useMemo(() => yupResolver(Yup.object({
         name: Yup.string().trim().required(),
         email: Yup.string().trim().required().email(),
@@ -46,8 +48,8 @@ const NewCustomerHookForm = () => {
             <form onSubmit={save} noValidate>
                 <Stack spacing={3} sx={{maxWidth: 560}}>
                     <FormProblemAlert />
-                    <FormSection title="Contacto">
-                        <FormTextField name="name" label="Nombre" />
+                    <FormSection title="Contacto" footer={invoiceName ? `En la factura: ${invoiceName.trim().toUpperCase()}` : undefined}>
+                        <FormTextField name="name" label="Nombre" onChange={setInvoiceName} />
                         <FormTextField name="email" label="Correo" type="email" />
                         <FormNumberField name="creditLimit" label="Límite de crédito" prefix="$" decimals={2} />
                     </FormSection>

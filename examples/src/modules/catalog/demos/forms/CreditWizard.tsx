@@ -1,5 +1,6 @@
 // Un formulario por pasos (FormWizard): la pantalla solo declara sus pasos y qué campos lleva cada uno. «Siguiente» revisa
 // solo los del paso; un paso opcional se puede omitir; y si el servidor dice que no, regresa solo al paso con el error.
+// hideBackOnFirstStep: en el primer paso no se pinta «Anterior» (no hay a dónde volver).
 import {useMemo} from 'react';
 import {toastSuccess} from '@stackcraftmx/calcita';
 import {Form, FormNumberField, FormTextField, FormWizard, Formik, Yup} from '@stackcraftmx/calcita/forms';
@@ -32,7 +33,7 @@ const CreditWizard = () => {
             toastSuccess(`Se recibió la solicitud de ${values.company.trim()}.`);
         }}>
             <Form noValidate>
-                <FormWizard steps={steps} submitLabel="Enviar solicitud" />
+                <FormWizard steps={steps} submitLabel="Enviar solicitud" hideBackOnFirstStep />
             </Form>
         </Formik>
     );
