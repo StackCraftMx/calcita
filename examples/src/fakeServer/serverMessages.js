@@ -161,6 +161,12 @@ const SERVER_TEXTS = Object.freeze({
             unreadable: 'No pudimos leer el archivo como Excel: puede estar dañado o protegido con contraseña.',
             attachmentTooLarge: 'El servidor acepta adjuntos de hasta {{max}}.',
         },
+        backups: {
+            invalid: 'Los datos no son válidos.',
+            tooLarge: 'El respaldo no puede pasar de {{max}}.',
+            unavailable: 'El servidor no está disponible; intente en un momento.',
+            stored: 'Respaldo guardado.',
+        },
         customerTerms: {
             creditLimitRequired: 'Escriba el límite de crédito.',
             branchRepeated: 'Esa sucursal ya está en el reparto.',
@@ -336,6 +342,12 @@ const SERVER_TEXTS = Object.freeze({
             notExcel: 'The file must be an Excel workbook (.xlsx).',
             unreadable: 'We could not read the file as Excel: it may be damaged or password protected.',
             attachmentTooLarge: 'The server accepts attachments up to {{max}}.',
+        },
+        backups: {
+            invalid: 'The data is not valid.',
+            tooLarge: 'The backup cannot be over {{max}}.',
+            unavailable: 'The server is not available; try again in a moment.',
+            stored: 'Backup stored.',
         },
         customerTerms: {
             creditLimitRequired: 'Enter the credit limit.',
