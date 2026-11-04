@@ -9,11 +9,17 @@
 // Responde como fetch: un Response (res.ok, res.status, res.headers, res.json(), res.blob()), así quien llama trata el
 // error RFC 9457 igual que con cualquier otra petición. La cancelación también es la de fetch: AbortSignal → AbortError.
 //
+// Por omisión es un POST; method cambia el verbo para los protocolos que suben por partes (el PATCH de cada trozo y el HEAD
+// que pregunta hasta dónde llegó, en la subida por trozos de FilePond).
+//
 // Funciones del navegador, sin React: function (regla de la casa). Se prueba con node --test (uploadWithProgress.test.js)
 // con un XMLHttpRequest de mentira.
 import {toolkitSettings} from '@/toolkit/toolkitSettings.js';
 
 const PERCENT = 100;
+// las respuestas que por regla no llevan cuerpo: Response truena si se le da uno, aunque venga vacío (un 204 a un PATCH es
+// lo normal en una subida por trozos)
+const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
 
 /**
  * Los headers de XMLHttpRequest ('k: v\r\nk2: v2') como objeto para Response.
@@ -34,8 +40,9 @@ function headersOf(rawHeaders) {
 
 /**
  * @param {string} url
- * @param {FormData} formData los archivos y los campos que pida el backend
+ * @param {FormData|Blob|null} formData los archivos y los campos que pida el backend (un trozo del archivo, o nada en un HEAD)
  * @param {object} [options]
+ * @param {string} [options.method] por omisión POST
  * @param {Record<string, string>} [options.headers] p. ej. Authorization; Accept-Language ya va con el idioma activo
  * @param {(percent: number, transfer: {loaded: number, total: number}) => void} [options.onProgress] 0 a 100 de lo que ya
  *     viajó del cuerpo, y los bytes (para la velocidad y lo que falta)
@@ -43,7 +50,7 @@ function headersOf(rawHeaders) {
  * @param {boolean} [options.withCredentials] manda las cookies a otro dominio (sesión de Sanctum en otro subdominio)
  * @returns {Promise<Response>}
  */
-export function uploadWithProgress(url, formData, {headers = {}, onProgress, signal, withCredentials = false} = {}) {
+export function uploadWithProgress(url, formData, {method = 'POST', headers = {}, onProgress, signal, withCredentials = false} = {}) {
     return new Promise((resolve, reject) => {
         // guard clause: ya venía cancelada
         if (signal?.aborted) {
@@ -52,7 +59,7 @@ export function uploadWithProgress(url, formData, {headers = {}, onProgress, sig
         }
 
         const request = new XMLHttpRequest();
-        request.open('POST', url);
+        request.open(method, url);
         request.responseType = 'blob';
         request.withCredentials = withCredentials;
         signal?.addEventListener('abort', () => request.abort(), {once: true});
@@ -65,12 +72,17 @@ export function uploadWithProgress(url, formData, {headers = {}, onProgress, sig
         }
 
         request.upload.onprogress = (event) => {
+            // al cancelar, el navegador todavía avisa un último avance: ya no se cuenta (la pantalla volvería a «Subiendo»)
+            if (signal?.aborted) {
+                return;
+            }
             if (event.lengthComputable) {
                 onProgress?.(Math.round((event.loaded / event.total) * PERCENT), {loaded: event.loaded, total: event.total});
             }
         };
         request.onload = () => {
-            resolve(new Response(request.response, {status: request.status, headers: headersOf(request.getAllResponseHeaders())}));
+            const body = NULL_BODY_STATUSES.has(request.status) ? null : request.response;
+            resolve(new Response(body, {status: request.status, headers: headersOf(request.getAllResponseHeaders())}));
         };
         request.onerror = () => reject(new TypeError('No hubo respuesta del servidor'));
         request.ontimeout = () => reject(new TypeError('El servidor tardó demasiado en responder'));

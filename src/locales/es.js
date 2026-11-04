@@ -377,6 +377,7 @@ export default Object.freeze({
                 "processingComplete": "Subido",
                 "processingAborted": "Subida cancelada",
                 "processingError": "No se pudo subir",
+                "noTransferId": "El servidor no dio el folio de la subida",
                 "revertError": "No se pudo deshacer",
                 "removeError": "No se pudo quitar",
                 "tapToCancel": "toque para cancelar",

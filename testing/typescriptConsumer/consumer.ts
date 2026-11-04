@@ -15,7 +15,7 @@ import {createPasskey, passkeysSupported, signWithPasskey} from '@stackcraftmx/c
 import {SecondStepForm, TwoStepVerificationCard, normalizeTotpCode} from '@stackcraftmx/calcita/forms';
 import {FileDropzone as PondFileDropzone, createPondServer} from '@stackcraftmx/calcita/filepond';
 import {
-    AttachmentsInput, CopyButton, FILE_REJECTION, FILE_UPLOAD_STATUS, FileInput, FileUploadInput, transferProgressOf, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles,
+    AttachmentsInput, CopyButton, FILE_REJECTION, FILE_UPLOAD_STATUS, FileInput, FileUploadInput, createChunkedUpload, transferProgressOf, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, fileAppearanceOf, screenFiles,
     tableRowTextOf, useFilePicker, MaskedInput, INPUT_MASK, rawValueOf, Countdown, useCountdown, countdownPartsOf, PdfViewerDialog, CookieNotice,
     TermsAcceptanceDialog, useCookieConsent,
 } from '@stackcraftmx/calcita';
@@ -88,6 +88,22 @@ const isNotice: boolean = watchAction === BUILD_WATCH_ACTION.notice;
 const fileBuildId: string | null = publishedBuildIdOf({buildId: 'b'});
 const watchBuilds = (): void => usePublishedBuildWatch({url: '/version.json', buildId: 'build-a', checkEveryMinutes: 10, reloadAfterHiddenMinutes: null});
 const attachmentsServer = createPondServer({url: '/api/adjuntos', headers: {Authorization: 'Bearer prueba'}});
+// por trozos: el servidor que ya recibía trozos de FilePond, su error de Laravel y la petición del proyecto
+const chunkedServer = createPondServer({
+    url: '/upload', patchUrl: '/upload?patch=', headers: {'X-Upload-Context': JSON.stringify({grupo: 12})},
+    toProblem: (body: {message?: string}) => ({title: body.message}),
+    sendRequest: (url: string, body: FormData | Blob | null, {method, headers, signal}) => fetch(url, {method, headers, body, signal}),
+});
+const chunkedZone = createElement(PondFileDropzone, {
+    value: null, onChange: () => {}, server: chunkedServer, chunkUploads: true, chunkForce: true, chunkSize: '1 MB', chunkRetryDelays: null,
+    pondProps: {maxParallelUploads: 1, onprocessfiles: () => {}},
+});
+// el cargador mini por trozos: la misma función upload que recibe el renglón
+const uploadInPieces = createChunkedUpload({url: '/upload', patchUrl: '/upload?patch=', chunkSize: '1 MB', chunkRetryDelays: [500], toProblem: (body: {message?: string}) => ({detail: body.message})});
+const miniInPieces = createElement(FileUploadInput, {label: 'Respaldo', value: '', onChange: () => {}, upload: uploadInPieces});
+const folioOfMini = (file: File): Promise<string> => uploadInPieces(file).then((result) => result.id);
+// @ts-expect-error chunkSize es un número de bytes o un texto como '1 MB'
+const wrongChunkSize = createElement(PondFileDropzone, {value: null, onChange: () => {}, chunkSize: true});
 const installment: Money = Money.fromString('10.00', {currency: 'MXN'}).dividedBy(3, {rounding: MONEY_ROUNDING.halfEven});
 const installmentText: string = installment.format();
 // @ts-expect-error un monto se suma con otro Money, no con un número
@@ -541,4 +557,4 @@ const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
 
 export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
-    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
+    ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, chunkedServer, chunkedZone, wrongChunkSize, uploadInPieces, miniInPieces, folioOfMini, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

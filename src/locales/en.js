@@ -377,6 +377,7 @@ export default Object.freeze({
                 "processingComplete": "Uploaded",
                 "processingAborted": "Upload canceled",
                 "processingError": "Could not upload",
+                "noTransferId": "The server did not return an upload id",
                 "revertError": "Could not undo",
                 "removeError": "Could not remove",
                 "tapToCancel": "tap to cancel",
