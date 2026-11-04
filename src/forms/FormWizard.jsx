@@ -53,6 +53,9 @@ function firstStepWithErrorOf(steps, errors) {
  * @param {string} props.steps[].label ya traducido
  * @param {string[]} [props.steps[].fields] los campos del paso (los que revisa «Siguiente»)
  * @param {boolean} [props.steps[].optional] se puede omitir
+ * @param {import('react').ReactNode} [props.steps[].nextDisabledReason] ya traducido: el paso todavía no se puede dejar («Faltan 2
+ *     documentos»). «Siguiente» se ve apagado con el motivo en un aviso (escrito, en el teléfono); en el último paso se apaga
+ *     el de enviar. Con stepSelection checked tampoco se salta a un paso de adelante. Sin él, como siempre
  * @param {import('react').ReactNode} props.steps[].content los campos del paso
  * @param {boolean} [props.steps[].completed] lleva la palomita (cuando los títulos se pulsan, solo si la pantalla lo dice)
  * @param {string} props.submitLabel ya traducido: el botón del último paso
@@ -113,8 +116,12 @@ export default function FormWizard({
     };
 
     return (
+        // un paso con su motivo para no avanzar (steps[].nextDisabledReason): «Siguiente» apagado y, en el último, también el de
+        // enviar; este sí con disabled de verdad, así un Enter en un campo tampoco envía
         <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation} hideBackOnFirstStep={hideBackOnFirstStep}
-                      onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)} onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
-                      submitButton={<SubmitButton>{submitLabel}</SubmitButton>} problemAlert={<FormProblemAlert />} texts={texts} />
+                      nextDisabledReason={activeStep.nextDisabledReason} onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)}
+                      onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
+                      submitButton={<SubmitButton disabled={Boolean(activeStep.nextDisabledReason)}>{submitLabel}</SubmitButton>}
+                      problemAlert={<FormProblemAlert />} texts={texts} />
     );
 }

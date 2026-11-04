@@ -29,6 +29,12 @@
 // tres renglones: con labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone} la etiqueta sube arriba del campo por debajo de `sm`
 // (como en los formularios de iOS y de Android); en pantallas más anchas, igual que siempre. Por omisión `side`, como antes.
 //
+// Lo ancho de la columna de las etiquetas, por sección (labelWidth): por omisión el 38 % del renglón hasta 200 px, lo de
+// siempre. Una lista de documentos lleva nombres de cien caracteres y a la derecha solo sus botones: con 200 px el nombre se
+// partía en ocho renglones. Con labelWidth={FORM_LABEL_WIDTH.auto} el nombre se lleva lo que sobre y el campo solo lo que
+// ocupa; con un ancho ('320px', '50%' o un número en px) la columna mide eso. Las demás secciones de la pantalla no cambian.
+// En el teléfono lo que sobra es poco: con auto, mejor junto con labelPlacement topOnPhone (el nombre arriba, el campo abajo).
+//
 // Un renglón con `required` lleva un asterisco en la etiqueta (requiredMark.js: en el estilo, así la etiqueta sigue diciendo lo
 // mismo y el lector de pantalla no lo lee; el campo ya dice que es obligatorio).
 //
@@ -56,6 +62,12 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  */
 export const FORM_LABEL_PLACEMENT = Object.freeze({side: 'side', topOnPhone: 'topOnPhone'});
 
+/**
+ * Lo ancho de la columna de las etiquetas que no es un número: auto = la etiqueta se lleva lo que sobre y el campo solo lo
+ * que ocupa (una lista de documentos con su cargador).
+ */
+export const FORM_LABEL_WIDTH = Object.freeze({auto: 'auto'});
+
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
 
@@ -63,6 +75,8 @@ export const FORM_ROW_CLASS = 'calcita-form-row';
 const ROW_MIN_HEIGHT_PIXELS = 52;
 const ROW_PADDING_BLOCK_PIXELS = 8;
 const LABEL_COLUMN = Object.freeze({share: '38%', maxPixels: 200});
+// con la etiqueta en auto, lo más que se lleva el campo: el nombre del documento conserva al menos la otra mitad
+const AUTO_CONTROL_MAX_SHARE = '50%';
 // lo que la etiqueta baja para quedar en la misma línea que el texto del campo (el campo mide 40 px y su letra 24 px)
 const LABEL_TOP_PIXELS = 8;
 // el aro al escribir y con error (por ciento del color) y su grosor
@@ -128,8 +142,27 @@ const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root', shouldForwa
     });
 });
 
+/**
+ * Lo ancho de la columna de la etiqueta según la sección: lo de siempre (38 % hasta 200 px), auto (lo que sobre) o el ancho
+ * que dijo (un número son px, como en sx).
+ *
+ * @param {string|number|undefined} labelWidth
+ * @returns {object}
+ */
+function labelColumnStylesOf(labelWidth) {
+    if (labelWidth === FORM_LABEL_WIDTH.auto) {
+        return {flex: '1 1 auto', maxWidth: 'none'};
+    }
+    if (labelWidth !== undefined && labelWidth !== null) {
+        const width = typeof labelWidth === 'number' ? `${labelWidth}px` : labelWidth;
+        return {flex: `0 0 ${width}`, maxWidth: 'none'};
+    }
+    return {flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels};
+}
+
 const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label', shouldForwardProp: isPartProp})(({theme, ownerState}) => theme.unstable_sx({
-    flex: `0 0 ${LABEL_COLUMN.share}`, maxWidth: LABEL_COLUMN.maxPixels, pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary',
+    ...labelColumnStylesOf(ownerState?.labelWidth), pt: `${LABEL_TOP_PIXELS}px`, lineHeight: 1.5, color: 'text.primary',
+    // va después del ancho: en el teléfono, con la etiqueta arriba, la columna ya no cuenta
     ...(ownerState?.labelPlacement === FORM_LABEL_PLACEMENT.topOnPhone && {
         [theme.breakpoints.down('sm')]: {flex: 'none', maxWidth: 'none', pt: 0},
     }),
@@ -138,8 +171,18 @@ const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label', sh
 }));
 
 
-const FormRowControl = styled(Box, {name: ROW_THEME_NAME, slot: 'Control'})({
-    flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 40,
+// el campo: lo que queda del renglón; con la etiqueta en auto, solo lo que ocupa (los botones de un cargador), sin encogerse
+// y hasta la mitad del renglón (un archivo de nombre largo se corta con «…» en lugar de aplastar el nombre del documento).
+// OJO: con '0 1 auto' el renglón angosto lo apretaba y, como el cargador alinea a la derecha, sus botones se salían hacia la
+// izquierda, encima del nombre (pasó en el teléfono). Con la etiqueta arriba en el teléfono, el campo va a todo lo ancho
+const FormRowControl = styled(Box, {name: ROW_THEME_NAME, slot: 'Control', shouldForwardProp: isPartProp})(({theme, ownerState}) => {
+    const isAuto = ownerState?.labelWidth === FORM_LABEL_WIDTH.auto;
+    return {
+        flex: isAuto ? '0 0 auto' : 1,
+        ...(isAuto && {maxWidth: AUTO_CONTROL_MAX_SHARE}),
+        ...(isAuto && ownerState?.labelPlacement === FORM_LABEL_PLACEMENT.topOnPhone && {[theme.breakpoints.down('sm')]: {maxWidth: 'none'}}),
+        minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 40,
+    };
 });
 
 const FormSectionRoot = styled(Box, {name: SECTION_THEME_NAME, slot: 'Root'})({});
@@ -178,6 +221,7 @@ export function FormRow(props) {
     const sectionLayout = useFormSectionLayout();
     const ownerState = {
         labelPlacement: sectionLayout ? sectionLayout.labelPlacement : FORM_LABEL_PLACEMENT.side,
+        labelWidth: sectionLayout ? sectionLayout.labelWidth : undefined,
         requiredMark: required ? t('form.requiredMark') : null,
     };
     return (
@@ -186,7 +230,7 @@ export function FormRow(props) {
                           {...(required && {[REQUIRED_LABEL_ATTRIBUTE]: 'true'})}>
                 {label}
             </FormRowLabel>
-            <FormRowControl>
+            <FormRowControl ownerState={ownerState}>
                 {children}
             </FormRowControl>
         </FormRowRoot>
@@ -199,17 +243,24 @@ export function FormRow(props) {
  * @param {import('react').ReactNode} [props.footer] la explicación, abajo de la tarjeta
  * @param {string} [props.labelPlacement] uno de FORM_LABEL_PLACEMENT: side (por omisión, la etiqueta a la izquierda) o
  *     topOnPhone (arriba del campo por debajo de `sm`)
+ * @param {'auto'|string|number} [props.labelWidth] lo ancho de la columna de las etiquetas: FORM_LABEL_WIDTH.auto (la etiqueta
+ *     se lleva lo que sobre y el campo lo que ocupa), un ancho de CSS ('320px', '50%') o un número en px; por omisión el 38 %
+ *     del renglón hasta 200 px, como siempre
+ * @param {import('@mui/material/styles').SxProps<import('@mui/material/styles').Theme>} [props.sx] los estilos de la sección
+ *     en esta pantalla, encima de los del tema (como en las demás piezas)
  * @param {import('react').ReactNode} props.children los campos, directo o dentro de un Grid, un Stack o un componente propio
  */
 export default function FormSection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormSection.defaultProps) y encima lo que llega aquí
-    const {title, footer, labelPlacement = FORM_LABEL_PLACEMENT.side, children, ...unknownProps} = useThemeProps({props, name: SECTION_THEME_NAME});
+    const {
+        title, footer, labelPlacement = FORM_LABEL_PLACEMENT.side, labelWidth, sx, children, ...unknownProps
+    } = useThemeProps({props, name: SECTION_THEME_NAME});
     warnUnknownProps(SECTION_THEME_NAME, unknownProps);
     const titleId = useId();
-    const layout = useMemo(() => ({labelPlacement}), [labelPlacement]);
+    const layout = useMemo(() => ({labelPlacement, labelWidth}), [labelPlacement, labelWidth]);
     return (
         <FormSectionContext value={layout}>
-            <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined}>
+            <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined} sx={sx}>
                 {title && (
                     <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary">
                         {title}

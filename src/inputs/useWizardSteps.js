@@ -12,7 +12,7 @@ const logger = createLogger('FormWizard');
 
 /**
  * @param {object} options
- * @param {Array<{key: string}>} options.steps
+ * @param {Array<{key: string, nextDisabledReason?: unknown}>} options.steps
  * @param {string} [options.initialStepKey] el paso en el que se abre (el que diga el servidor); por omisión el primero
  * @param {string} [options.stepSelection] uno de WIZARD_STEP_SELECTION; por omisión none
  * @param {(stepKey: string, index: number) => void} [options.onStepChange] cada vez que cambia el paso abierto
@@ -48,6 +48,11 @@ export function useWizardSteps({steps, initialStepKey, stepSelection = WIZARD_ST
         }
         // con checked, un paso con errores no se deja: se queda ahí para que se corrijan
         if (action === 'checkFirst' && !(await isStepValid(activeIndex))) {
+            return;
+        }
+        // con checked, un paso que todavía no se puede dejar (su nextDisabledReason) tampoco deja saltar hacia adelante; hacia
+        // atrás sí: no le falta nada a lo de antes
+        if (action === 'checkFirst' && index > activeIndex && steps[activeIndex].nextDisabledReason) {
             return;
         }
         setActiveIndex(index);

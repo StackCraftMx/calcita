@@ -15,7 +15,7 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, FORM_LABEL_PLACEMENT, RECORD_CARD_FOOTER_ALIGN, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, RECORD_CARD_FOOTER_ALIGN, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -350,6 +350,14 @@ const CASES = [
         steps: [{key: 'a', label: 'Datos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}], activeIndex: 0, hideBackOnFirstStep: true,
         onBack: () => {}, onNext: () => {}, submitButton: 'Enviar',
     }), 'Siguiente'],
+    ['WizardLayout con un motivo para no avanzar: «Siguiente» apagado pero alcanzable', h(WizardLayout, {
+        steps: [{key: 'a', label: 'Documentos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}], activeIndex: 0,
+        nextDisabledReason: 'Faltan 2 documentos', onBack: () => {}, onNext: () => {}, submitButton: 'Enviar',
+    }), 'aria-disabled="true"'],
+    ['FormSection con la columna de etiquetas en auto', h(FormSection, {title: 'Expediente', labelWidth: FORM_LABEL_WIDTH.auto},
+        h(TextInput, {label: 'Identificación oficial vigente del representante legal', value: '', onChange: () => {}})), 'flex:1 1 auto'],
+    ['FormSection con su sx', h(FormSection, {title: 'Expediente', sx: {maxWidth: 777}},
+        h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'max-width:777px'],
     ['Toaster en otra esquina y con lo de sonner', h(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000}), 'aria-live'],
 ];
 
