@@ -20,6 +20,19 @@
 //   onProcessProgress({done, total})  el «subidos 2 de 5» del modo server
 //   autoReject     (por omisión sí) lo que no es de un tipo permitido enseña su error un momento y se quita solo
 //
+// Por trozos, con los nombres de FilePond (así se copia tal cual lo de un sistema que ya subía por trozos):
+//   chunkUploads   sube por trozos lo que pase de chunkSize (con createPondServer, o con las direcciones de FilePond)
+//   chunkForce     por trozos TODO, también lo chico (hay servidores que solo reciben por trozos)
+//   chunkSize      el tamaño de cada trozo, en bytes o con unidades como maxSize ('1 MB'); por omisión el de FilePond, 5 MB
+//   chunkRetryDelays  las esperas entre reintentos de un trozo, en milisegundos; null o [] = sin reintentos
+// Con createPondServer la barra es honesta: cuenta lo que el servidor ya confirmó y no dice 100 % antes de tiempo
+// (ver chunkedUpload.js).
+//
+// pondProps: cualquier otra opción de FilePond, tal cual (maxParallelUploads, onaddfile, onprocessfiles…). Lo que la zona
+// ya maneja gana: name, server, files, los tipos y pesos, los textos y el candado (disabled y busy apagan soltar, elegir,
+// pegar y quitar aunque pondProps los prenda). Los eventos que la zona ya usa (onupdatefiles, onprocessfile, onwarning,
+// onerror, beforeAddFile) corren después de los suyos; beforeAddFile del proyecto revisa lo que ya pasó validate.
+//
 // OJO, trampa pagada (react-filepond#198): react-filepond no siempre refresca sus funciones después de montar, y puede
 // quedarse para siempre con la del primer render: quitar el archivo no apagaba el botón porque se comparaba contra un
 // value viejo. Blindaje: las funciones que recibe FilePond no cambian nunca (useCallback sin dependencias) y todo lo que
@@ -85,6 +98,47 @@ function detectFileType(file) {
     }
     const dotPosition = file.name.lastIndexOf('.');
     return Promise.resolve(dotPosition >= 0 ? file.name.slice(dotPosition).toLowerCase() : mimeType);
+}
+
+/**
+ * pondProps con sus funciones blindadas contra la trampa del encabezado: cada función que llega se cambia por una fija que
+ * llama a la de ESTE render (la lee del ref latest). files se quita: la verdad de la lista es FilePond (ver el OJO).
+ *
+ * @param {object|null} pondProps
+ * @param {{current: Map<string, Function>}} stableFunctions las funciones fijas ya hechas, por nombre
+ * @param {{current: {pondProps?: object|null}}} latest
+ * @returns {object}
+ */
+function stablePondPropsOf(pondProps, stableFunctions, latest) {
+    const {files: ignoredFiles, ...pondOptions} = pondProps ?? {};
+    if (ignoredFiles !== undefined) {
+        warnUnknownProps(THEME_NAME, {'pondProps.files': ignoredFiles});
+    }
+    return Object.fromEntries(Object.entries(pondOptions).map(([option, value]) => {
+        if (typeof value !== 'function') {
+            return [option, value];
+        }
+        if (!stableFunctions.current.has(option)) {
+            stableFunctions.current.set(option, (...args) => latest.current.pondProps?.[option]?.(...args));
+        }
+        return [option, stableFunctions.current.get(option)];
+    }));
+}
+
+/**
+ * Las opciones de trozos que la pantalla puso, para FilePond: solo las que vienen (sin ellas, FilePond sigue con las suyas).
+ *
+ * @param {{chunkUploads?: boolean, chunkForce?: boolean, chunkSize?: number|string, chunkRetryDelays?: number[]|null}} chunks
+ * @returns {object}
+ */
+function chunkOptionsOf({chunkUploads, chunkForce, chunkSize, chunkRetryDelays}) {
+    return {
+        ...(chunkUploads !== undefined && {chunkUploads}),
+        ...(chunkForce !== undefined && {chunkForce}),
+        ...(chunkSize !== undefined && {chunkSize: parseFileSize(chunkSize)}),
+        // FilePond truena con null: sin reintentos es una lista vacía
+        ...(chunkRetryDelays !== undefined && {chunkRetryDelays: chunkRetryDelays ?? []}),
+    };
 }
 
 /**
@@ -189,6 +243,11 @@ function pondThemeSxOf(theme) {
  * @param {{current: object|null}|null} [props.apiRef]
  * @param {(progress: {done: number, total: number}) => void} [props.onProcessProgress]
  * @param {(file: File|null, reason: string, message?: string) => void} [props.onReject] reason de FILE_REJECTION
+ * @param {boolean} [props.chunkUploads] sube por trozos lo que pase de chunkSize
+ * @param {boolean} [props.chunkForce] por trozos todo, también lo chico
+ * @param {number|string} [props.chunkSize] en bytes o con unidades ('1 MB'); por omisión 5 MB
+ * @param {number[]|null} [props.chunkRetryDelays] esperas entre reintentos de un trozo (ms); null o [] = sin reintentos
+ * @param {Partial<import('filepond').FilePondOptions>|null} [props.pondProps] cualquier otra opción de FilePond, tal cual
  * @param {import('react').ReactNode} [props.actions]
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.sx]
@@ -199,7 +258,7 @@ function FileDropzoneContent(props) {
     const {
     value = null, onChange, accept, maxSize, multiple = false, maxFiles, maxTotalSize, name, hint, buttonLabel, disabled = false,
     busy = false, busyModal = false, autoReject = true, validate = null, server = null, instantUpload = false, apiRef = null,
-    onProcessProgress, onReject, actions, children, sx, texts,
+    onProcessProgress, onReject, chunkUploads, chunkForce, chunkSize, chunkRetryDelays, pondProps = null, actions, children, sx, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -221,7 +280,11 @@ function FileDropzoneContent(props) {
     const pondRef = useRef(null);
     // lo que las funciones fijas necesitan de afuera, siempre al día (ver la trampa del encabezado)
     const latest = useRef({});
-    latest.current = {files, multiple, onChange, onReject, autoReject, validate, onProcessProgress, maxFiles, typeErrorLabel, totalErrorLabel, t};
+    latest.current = {files, multiple, onChange, onReject, autoReject, validate, onProcessProgress, maxFiles, typeErrorLabel, totalErrorLabel, t, pondProps};
+    const stableFunctions = useRef(new Map());
+    const pondOptions = stablePondPropsOf(pondProps, stableFunctions, latest);
+    // el candado gana: apagado o subiendo no se suelta, elige, pega ni quita aunque pondProps lo prenda
+    const pondAllows = (option) => !isLocked && (pondProps?.[option] ?? true);
 
     useEffect(() => {
         if (apiRef) {
@@ -247,7 +310,7 @@ function FileDropzoneContent(props) {
         }
     }, []);
 
-    const handleError = useCallback((error, item) => {
+    const handleError = useCallback((error, item, status) => {
         // el archivo acaba de quedar con error: se saca de value
         syncFromPond();
         const {onReject: reject, autoReject: shouldAutoReject, typeErrorLabel: typeLabel, totalErrorLabel: totalLabel} = latest.current;
@@ -269,13 +332,16 @@ function FileDropzoneContent(props) {
         if (reject && item?.file) {
             reject(item.file, reason);
         }
+        latest.current.pondProps?.onerror?.(error, item, status);
     }, [syncFromPond]);
 
     // la revisión del contenido, ANTES de que el archivo entre a la lista
     const handleBeforeAdd = useCallback(async (item) => {
-        const {validate: judge, onReject: reject, typeErrorLabel: fallbackMessage} = latest.current;
+        const {validate: judge, onReject: reject, typeErrorLabel: fallbackMessage, pondProps: projectOptions} = latest.current;
+        // la revisión del proyecto en pondProps va después de validate: lo que validate rechazó ya no le llega
+        const projectAccepts = async () => (projectOptions?.beforeAddFile ? (await projectOptions.beforeAddFile(item)) !== false : true);
         if (!judge) {
-            return true;
+            return projectAccepts();
         }
         let verdict;
         try {
@@ -284,7 +350,7 @@ function FileDropzoneContent(props) {
             verdict = false;
         }
         if (verdict === true) {
-            return true;
+            return projectAccepts();
         }
         const message = typeof verdict === 'string' ? verdict : fallbackMessage;
         if (reject) {
@@ -296,18 +362,18 @@ function FileDropzoneContent(props) {
     }, []);
 
     // el «subidos X de N» del modo server: cada archivo que termina su subida avisa la cuenta
-    const handleProcessed = useCallback(() => {
-        const report = latest.current.onProcessProgress;
-        if (!report) {
-            return;
+    const handleProcessed = useCallback((error, processedItem) => {
+        const {onProcessProgress: report, pondProps: projectOptions} = latest.current;
+        if (report) {
+            const pondItems = pondRef.current?.getFiles?.() ?? [];
+            report({done: pondItems.filter((item) => item.status === FileStatus.PROCESSING_COMPLETE).length, total: pondItems.length});
         }
-        const pondItems = pondRef.current?.getFiles?.() ?? [];
-        report({done: pondItems.filter((item) => item.status === FileStatus.PROCESSING_COMPLETE).length, total: pondItems.length});
+        projectOptions?.onprocessfile?.(error, processedItem);
     }, []);
 
     // lo que pasa de maxFiles ni siquiera entra (FilePond corta lo soltado y solo avisa): el aviso lo damos nosotros
-    const handleWarning = useCallback((warning) => {
-        const {maxFiles: maxFileCount, onReject: reject, t: translate} = latest.current;
+    const handleWarning = useCallback((warning, file, status) => {
+        const {maxFiles: maxFileCount, onReject: reject, t: translate, pondProps: projectOptions} = latest.current;
         if (maxFileCount && String(warning?.body ?? '').toLowerCase().includes(MAX_FILES_WARNING)) {
             if (reject) {
                 reject(null, FILE_REJECTION.count);
@@ -315,7 +381,14 @@ function FileDropzoneContent(props) {
                 toastError(translate('upload.tooManyFiles', {count: maxFileCount}));
             }
         }
+        projectOptions?.onwarning?.(warning, file, status);
     }, []);
+
+    // el cambio de la lista: el espejo de value y, después, el evento del proyecto
+    const handleUpdateFiles = useCallback((items) => {
+        syncFromPond();
+        latest.current.pondProps?.onupdatefiles?.(items);
+    }, [syncFromPond]);
 
     // limpiar desde afuera: value vacío (p. ej. después de subir bien) vacía la zona
     useEffect(() => {
@@ -338,21 +411,23 @@ function FileDropzoneContent(props) {
     return (
         <PondRoot ownSx={(theme) => pondThemeSxOf(theme)} sx={sx}>
             <FilePond
+                {...pondOptions}
+                {...chunkOptionsOf({chunkUploads, chunkForce, chunkSize, chunkRetryDelays})}
                 ref={pondRef}
                 name={pondName}
                 server={server}
                 instantUpload={instantUpload}
                 beforeAddFile={handleBeforeAdd}
                 onprocessfile={handleProcessed}
-                onupdatefiles={syncFromPond}
+                onupdatefiles={handleUpdateFiles}
                 allowMultiple={multiple}
                 maxFiles={multiple ? (maxFiles ?? null) : 1}
                 disabled={isLocked}
-                allowDrop={!isLocked}
-                allowBrowse={!isLocked}
-                allowPaste={!isLocked}
-                allowRemove={!isLocked}
-                allowReplace={!isLocked}
+                allowDrop={pondAllows('allowDrop')}
+                allowBrowse={pondAllows('allowBrowse')}
+                allowPaste={pondAllows('allowPaste')}
+                allowRemove={pondAllows('allowRemove')}
+                allowReplace={pondAllows('allowReplace')}
                 credits={false}
                 acceptedFileTypes={acceptedTypes}
                 fileValidateTypeDetectType={detectFileType}

@@ -79,3 +79,29 @@ test('cancelar con la señal termina en AbortError, como fetch', async () => {
 
     await assert.rejects(uploading, {name: 'AbortError'});
 });
+
+test('con method manda otro verbo (el PATCH de un trozo) y un 204 sin cuerpo no truena', async () => {
+    const piece = new Blob(['trozo']);
+    const uploading = uploadWithProgress('/api/subidas?patch=folio-1', piece, {method: 'PATCH', headers: {'Upload-Offset': '0'}});
+    lastRequest.answer(204, '');
+    const response = await uploading;
+
+    assert.equal(lastRequest.method, 'PATCH');
+    assert.equal(lastRequest.body, piece);
+    assert.equal(lastRequest.requestHeaders['Upload-Offset'], '0');
+    assert.equal(response.ok, true);
+    assert.equal(response.status, 204);
+    assert.equal(await response.text(), '');
+});
+
+test('al cancelar, el último avance que avisa el navegador ya no llega a la pantalla', async () => {
+    const abortController = new AbortController();
+    const percents = [];
+    const uploading = uploadWithProgress('/api/pagos', new FormData(), {signal: abortController.signal, onProgress: (percent) => percents.push(percent)});
+    lastRequest.upload.onprogress({lengthComputable: true, loaded: 40, total: 100});
+    abortController.abort();
+    lastRequest.upload.onprogress({lengthComputable: true, loaded: 60, total: 100});
+
+    await assert.rejects(uploading, {name: 'AbortError'});
+    assert.deepEqual(percents, [40]);
+});

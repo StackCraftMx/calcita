@@ -104,6 +104,7 @@ export {transferProgressOf} from '@/upload/transferProgress.js';
 export {useFilePicker} from '@/upload/useFilePicker.js';
 export {buildUploadActors, uploadMachine} from '@/upload/uploadMachine.js';
 export {uploadWithProgress} from '@/upload/uploadWithProgress.js';
+export {createChunkedUpload} from '@/upload/chunkedUpload.js';
 
 // ─── pantalla: esqueleto, navegación, filtros, etiquetas, acciones y métricas ─
 export {
