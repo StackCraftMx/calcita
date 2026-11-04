@@ -11,21 +11,30 @@
 // Con onStepSelect los títulos de los pasos se pulsan (con teclado también: son botones) y avisan qué paso se pidió; quien lo
 // usa decide si salta. Sin él, los títulos solo informan (lo de siempre). Omitir es opcional: sin onSkip no sale el botón.
 //
+// Un paso que todavía no se puede dejar (faltan documentos obligatorios) lo dice con nextDisabledReason, ya traducido: «Siguiente»
+// se ve apagado y no avanza, y el motivo sale en un aviso al pasar el cursor o al llegar con Tab. OJO: el botón NO lleva
+// `disabled`: un botón apagado así no recibe el foco y con el teclado no habría cómo saber por qué; va con aria-disabled y la
+// clase de apagado de MUI (se ve igual que uno apagado, también con el tema). En el teléfono un aviso no sale con el dedo: el
+// motivo va escrito arriba de los botones. En el último paso el botón de enviar es de quien lo pasa en submitButton: él lo
+// apaga (el FormWizard de formik y el de react-hook-form ya lo hacen); el motivo sale igual.
+//
 // Los textos se cambian con `texts`, con la forma de `common` en los textos del paquete: {wizard: {next: 'Continuar'}}.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaWizardLayout con defaultProps y
-// styleOverrides de sus partes: stepper, phoneSteps, actions.
+// styleOverrides de sus partes: stepper, phoneSteps, actions, nextReason (el motivo escrito en el teléfono).
 //
 // Genérico del paquete: function (regla de la casa).
+import {useId} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Button, {buttonClasses} from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import {WIZARD_ORIENTATION, isStepCompleted} from '@/inputs/wizardSteps.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
@@ -39,6 +48,7 @@ const THEME_NAME = 'CalcitaWizardLayout';
 const WizardStepper = piecePart(THEME_NAME, 'Stepper', Stepper);
 const WizardPhoneSteps = piecePart(THEME_NAME, 'PhoneSteps', Box);
 const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
+const WizardNextReason = piecePart(THEME_NAME, 'NextReason', Typography);
 
 /**
  * @param {object} props
@@ -51,6 +61,9 @@ const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {number} props.activeIndex el paso que se ve
  * @param {Set<string>} [props.skippedKeys] los pasos omitidos
  * @param {boolean} [props.isSubmitting] mientras se envía, «Anterior» se apaga
+ * @param {import('react').ReactNode} [props.nextDisabledReason] ya traducido: el paso abierto todavía no se puede dejar
+ *     («Faltan 2 documentos»). «Siguiente» se ve apagado y no avanza, y el motivo sale en un aviso (escrito, en el teléfono).
+ *     En el último paso, apague usted su submitButton. Sin él, como siempre
  * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
  * @param {boolean} [props.hideBackOnFirstStep] en el primer paso no se pinta «Anterior» (no hay a dónde volver); por omisión
  *     sale apagado, como antes
@@ -65,17 +78,19 @@ const WizardActions = piecePart(THEME_NAME, 'Actions', Stack);
 function WizardLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
-        steps, activeIndex, skippedKeys = NO_SKIPPED_KEYS, isSubmitting = false, orientation = WIZARD_ORIENTATION.horizontal,
-        hideBackOnFirstStep = false, onBack, onNext, onSkip, onStepSelect, submitButton, problemAlert, texts,
-        ...unknownProps
+        steps, activeIndex, skippedKeys = NO_SKIPPED_KEYS, isSubmitting = false, nextDisabledReason = null,
+        orientation = WIZARD_ORIENTATION.horizontal, hideBackOnFirstStep = false, onBack, onNext, onSkip, onStepSelect, submitButton,
+        problemAlert, texts, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
+    const reasonId = useId();
     const activeStep = steps[activeIndex];
     const isLastStep = activeIndex === steps.length - 1;
     const isVertical = orientation === WIZARD_ORIENTATION.vertical;
     const isSelectable = typeof onStepSelect === 'function';
     const isBackHidden = hideBackOnFirstStep && activeIndex === 0;
+    const isNextBlocked = Boolean(nextDisabledReason);
 
     // el título de un paso: con onStepSelect es un botón (se pulsa y se llega con Tab); sin él, solo informa
     const stepTitleOf = (step, index) => {
@@ -92,8 +107,24 @@ function WizardLayoutContent(props) {
         return <StepLabel optional={optional}>{step.label}</StepLabel>;
     };
 
+    // el botón de seguir: «Siguiente», o el de enviar en el último paso. Con un motivo para no avanzar, «Siguiente» se ve
+    // apagado pero se sigue alcanzando con Tab (aria-disabled, no disabled: ver el encabezado) y no hace nada al pulsarlo
+    const nextButton = isLastStep ? submitButton : (
+        <Button variant="contained" size="large" onClick={isNextBlocked ? undefined : onNext}
+                {...(isNextBlocked && {'aria-disabled': true, 'aria-describedby': reasonId, className: buttonClasses.disabled})}>
+            {t('wizard.next')}
+        </Button>
+    );
+    // el aviso va sobre una caja alrededor del botón: un botón que se ve apagado no recibe el cursor (MUI le quita los eventos)
+    // y la caja sí. En el teléfono no se abre con el dedo: ahí el motivo va escrito
+    const forwardButton = isNextBlocked ? (
+        <Tooltip title={nextDisabledReason} describeChild disableTouchListener>
+            <Box component="span" sx={{display: 'flex', flexDirection: 'column'}}>{nextButton}</Box>
+        </Tooltip>
+    ) : nextButton;
+
     // los botones del paso abierto: en fila van abajo de los campos; en vertical, dentro del paso
-    const actions = (
+    const buttons = (
         // sin «Anterior», los de seguir se quedan a la derecha (solos, space-between los mandaba a la izquierda; un margen
         // automático no sirve: Stack les pone margin 0 a sus hijos con más fuerza)
         <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: isBackHidden ? 'flex-end' : 'space-between'}}>
@@ -106,12 +137,20 @@ function WizardLayoutContent(props) {
                 {activeStep.optional && !isLastStep && onSkip && (
                     <Button variant="text" onClick={onSkip}>{t('wizard.skip')}</Button>
                 )}
-                {isLastStep
-                    ? submitButton
-                    : <Button variant="contained" size="large" onClick={onNext}>{t('wizard.next')}</Button>}
+                {forwardButton}
             </Stack>
         </WizardActions>
     );
+    // con un motivo, escrito arriba de los botones en el teléfono (en pantallas anchas lo dice el aviso). Sin motivo, los
+    // botones solos, como siempre. useFlexGap: el motivo escondido no deja hueco arriba de los botones
+    const actions = isNextBlocked ? (
+        <Stack spacing={1} useFlexGap>
+            <WizardNextReason id={reasonId} variant="body2" color="text.secondary" ownSx={{display: {xs: 'block', sm: 'none'}}}>
+                {nextDisabledReason}
+            </WizardNextReason>
+            {buttons}
+        </Stack>
+    ) : buttons;
     const completedOf = (step, index) => isStepCompleted(step, {index, activeIndex, skippedKeys, isSelectable});
 
     if (isVertical) {

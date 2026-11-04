@@ -1,8 +1,9 @@
 // Ejemplo del formulario por pasos (FormWizard): una solicitud de crédito en cinco pasos, con el aval y la imagen de la
 // empresa como pasos opcionales. Los documentos van con el cargador mini (FormFileUploadField): cada uno se sube en cuanto se
 // elige y al formulario llega solo su id; el servidor revisa al recibir la solicitud que esos ids sean de documentos
-// subidos. Al final, el folio con su botón de copiar y la clave que se enseña una sola vez
-// (SecretField).
+// subidos. Mientras falte uno obligatorio, «Siguiente» se ve apagado y dice cuántos faltan (steps[].nextDisabledReason); los
+// nombres de los documentos son largos y su sección va con labelWidth auto: el nombre se lleva lo que sobre y el cargador
+// solo lo que ocupa. Al final, el folio con su botón de copiar y la clave que se enseña una sola vez (SecretField).
 //
 // La página solo declara sus pasos (qué campos lleva cada uno); revisar por paso, omitir, enviar y regresar al paso con el
 // error del servidor lo hace FormWizard.
@@ -17,12 +18,13 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import {
-    CopyButton, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, toastProblem, toastSuccess,
+    CopyButton, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, toastProblem,
+    toastSuccess,
     useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {
     Form, Formik, FormCatalogField, FormColorField, FormFileUploadField, FormMaskedField, FormNumberField, FormSelectField, FormTextField,
-    FormWizard, applyServerProblem, useFormikContext,
+    FormWizard, applyServerProblem,
 } from '@stackcraftmx/calcita/forms';
 
 import {
@@ -35,17 +37,12 @@ import {FormsNav} from '@/modules/customers/FormsNav.jsx';
 import {normalizedEmailOf} from '@/modules/customers/newCustomerSchema.js';
 import {useStatesCatalog} from '@/modules/customers/useStatesCatalog.js';
 
-// cuántos documentos ya tienen su id (los que terminaron de subir), para el pie de la sección
-const FormikDocumentsCount = ({children}) => {
-    const {values} = useFormikContext();
-    return children(CREDIT_DOCUMENTS.filter(({field}) => Boolean(values[field])).length);
-};
-
-// los documentos que pide la solicitud: el campo del formulario y su texto; lo que aceptan es lo mismo que revisa el servidor
+// los documentos que pide la solicitud: el campo del formulario, su texto y si es obligatorio (lo mismo que el esquema); lo
+// que aceptan es lo mismo que revisa el servidor
 const CREDIT_DOCUMENTS = Object.freeze([
-    {field: 'identification_file_id', labelKey: 'credit.documents.identification'},
-    {field: 'address_proof_file_id', labelKey: 'credit.documents.addressProof'},
-    {field: 'bank_statement_file_id', labelKey: 'credit.documents.bankStatement'},
+    {field: 'identification_file_id', labelKey: 'credit.documents.identification', required: true},
+    {field: 'address_proof_file_id', labelKey: 'credit.documents.addressProof', required: true},
+    {field: 'bank_statement_file_id', labelKey: 'credit.documents.bankStatement', required: false},
 ]);
 const DOCUMENT_ACCEPT = Object.freeze(['pdf', '.jpg', '.jpeg', '.png']);
 const DOCUMENT_MAX_SIZE = '5 MB';
@@ -90,67 +87,72 @@ export const CreditRequestPage = () => {
         ? {orientation: WIZARD_ORIENTATION.vertical, stepSelection: WIZARD_STEP_SELECTION.free, initialStepKey: correction.review?.stepKey}
         : {};
 
-    const steps = [
-        {
-            key: 'applicant', label: t('credit.steps.applicant'), fields: CREDIT_REQUEST_STEP_FIELDS.applicant,
-            content: (
-                <FormSection>
-                    <FormTextField name="applicant_name" label={t('credit.applicantName')} autoComplete="off" />
-                    <FormTextField name="email" label={t('credit.email')} type="email" normalizeOnBlur={normalizedEmailOf} autoComplete="off" />
-                    <FormNumberField name="monthly_income" label={t('credit.monthlyIncome')} prefix="$" />
-                    <FormCatalogField name="state" label={t('credit.state')} placeholder={t('form.statePlaceholder')} options={states} loading={isLoadingStates} />
-                </FormSection>
-            ),
-        },
-        {
-            key: 'loan', label: t('credit.steps.loan'), fields: CREDIT_REQUEST_STEP_FIELDS.loan,
-            content: (
-                <FormSection>
-                    <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')} />
-                    <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
-                    <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
-                                     placeholder="032 180 00011835971 9" autoComplete="off" />
-                    {/* el mensaje de «no coincide» es de esta pantalla: messages lo pone sin tocar la regla del esquema */}
-                    <FormMaskedField name="deposit_clabe_confirmation" mask={INPUT_MASK.clabe} label={t('credit.depositClabeConfirmation')}
-                                     messages={{sameAs: t('credit.depositClabeMismatch')}} autoComplete="off" />
-                </FormSection>
-            ),
-        },
-        {
-            key: 'documents', label: t('credit.steps.documents'), fields: CREDIT_REQUEST_STEP_FIELDS.documents,
-            content: (
-                <FormikDocumentsCount>
-                    {(uploadedCount) => (
-                        <FormSection footer={t('credit.documents.count', {uploaded: uploadedCount, total: CREDIT_DOCUMENTS.length})}>
-                            {CREDIT_DOCUMENTS.map(({field, labelKey}) => (
-                                <FormFileUploadField key={field} name={field} label={t(labelKey)} upload={uploadDocument}
-                                                     uploadedFile={correction?.documents[field] ?? null}
-                                                     download={downloadUploadedDocument} accept={DOCUMENT_ACCEPT} maxSize={DOCUMENT_MAX_SIZE}
-                                                     limitsText={t('credit.documents.limits')} />
-                            ))}
-                        </FormSection>
-                    )}
-                </FormikDocumentsCount>
-            ),
-        },
-        {
-            key: 'guarantor', label: t('credit.steps.guarantor'), fields: CREDIT_REQUEST_STEP_FIELDS.guarantor, optional: true,
-            content: (
-                <FormSection footer={t('credit.guarantorHelp')}>
-                    <FormTextField name="guarantor_name" label={t('credit.guarantorName')} autoComplete="off" />
-                    <FormMaskedField name="guarantor_phone" mask={INPUT_MASK.phone} label={t('credit.guarantorPhone')} autoComplete="off" />
-                </FormSection>
-            ),
-        },
-        {
-            key: 'brand', label: t('credit.steps.brand'), fields: CREDIT_REQUEST_STEP_FIELDS.brand, optional: true,
-            content: (
-                <FormSection>
-                    <FormColorField name="company_color" label={t('credit.companyColor')} helperText={t('credit.companyColorHelp')} />
-                </FormSection>
-            ),
-        },
-    ];
+    // los pasos con lo que va escrito en el formulario: el de documentos cuenta los obligatorios que faltan
+    const stepsOf = (values) => {
+        const uploadedCount = CREDIT_DOCUMENTS.filter(({field}) => Boolean(values[field])).length;
+        const missingCount = CREDIT_DOCUMENTS.filter(({field, required}) => required && !values[field]).length;
+        return [
+            {
+                key: 'applicant', label: t('credit.steps.applicant'), fields: CREDIT_REQUEST_STEP_FIELDS.applicant,
+                content: (
+                    <FormSection>
+                        <FormTextField name="applicant_name" label={t('credit.applicantName')} autoComplete="off" />
+                        <FormTextField name="email" label={t('credit.email')} type="email" normalizeOnBlur={normalizedEmailOf} autoComplete="off" />
+                        <FormNumberField name="monthly_income" label={t('credit.monthlyIncome')} prefix="$" />
+                        <FormCatalogField name="state" label={t('credit.state')} placeholder={t('form.statePlaceholder')} options={states} loading={isLoadingStates} />
+                    </FormSection>
+                ),
+            },
+            {
+                key: 'loan', label: t('credit.steps.loan'), fields: CREDIT_REQUEST_STEP_FIELDS.loan,
+                content: (
+                    <FormSection>
+                        <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')} />
+                        <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
+                        <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
+                                         placeholder="032 180 00011835971 9" autoComplete="off" />
+                        {/* el mensaje de «no coincide» es de esta pantalla: messages lo pone sin tocar la regla del esquema */}
+                        <FormMaskedField name="deposit_clabe_confirmation" mask={INPUT_MASK.clabe} label={t('credit.depositClabeConfirmation')}
+                                         messages={{sameAs: t('credit.depositClabeMismatch')}} autoComplete="off" />
+                    </FormSection>
+                ),
+            },
+            {
+                key: 'documents', label: t('credit.steps.documents'), fields: CREDIT_REQUEST_STEP_FIELDS.documents,
+                // mientras falte uno obligatorio no se deja el paso: «Siguiente» apagado con el motivo
+                nextDisabledReason: missingCount > 0 ? t('credit.documents.missing', {count: missingCount}) : null,
+                content: (
+                    // en el teléfono lo que sobra es poco: ahí el nombre va arriba y el cargador abajo
+                    <FormSection labelWidth={FORM_LABEL_WIDTH.auto} labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}
+                                 footer={t('credit.documents.count', {uploaded: uploadedCount, total: CREDIT_DOCUMENTS.length})}>
+                        {CREDIT_DOCUMENTS.map(({field, labelKey}) => (
+                            <FormFileUploadField key={field} name={field} label={t(labelKey)} upload={uploadDocument}
+                                                 uploadedFile={correction?.documents[field] ?? null}
+                                                 download={downloadUploadedDocument} accept={DOCUMENT_ACCEPT} maxSize={DOCUMENT_MAX_SIZE}
+                                                 limitsText={t('credit.documents.limits')} />
+                        ))}
+                    </FormSection>
+                ),
+            },
+            {
+                key: 'guarantor', label: t('credit.steps.guarantor'), fields: CREDIT_REQUEST_STEP_FIELDS.guarantor, optional: true,
+                content: (
+                    <FormSection footer={t('credit.guarantorHelp')}>
+                        <FormTextField name="guarantor_name" label={t('credit.guarantorName')} autoComplete="off" />
+                        <FormMaskedField name="guarantor_phone" mask={INPUT_MASK.phone} label={t('credit.guarantorPhone')} autoComplete="off" />
+                    </FormSection>
+                ),
+            },
+            {
+                key: 'brand', label: t('credit.steps.brand'), fields: CREDIT_REQUEST_STEP_FIELDS.brand, optional: true,
+                content: (
+                    <FormSection>
+                        <FormColorField name="company_color" label={t('credit.companyColor')} helperText={t('credit.companyColorHelp')} />
+                    </FormSection>
+                ),
+            },
+        ];
+    };
 
     return (
         <>
@@ -178,12 +180,15 @@ export const CreditRequestPage = () => {
                 // key: la corrección es otro formulario (otros valores de inicio), no el de una solicitud nueva
                 <Formik key={correction?.folio ?? 'new'} initialValues={correction?.values ?? CREDIT_REQUEST_INITIAL_VALUES}
                         validationSchema={validationSchema} onSubmit={submit}>
-                    <Form noValidate>
-                        <Stack spacing={2} sx={{maxWidth: 640}}>
-                            {correction?.review && <Alert severity="warning">{t('credit.fixing', {folio: correction.folio, note: correction.review.note})}</Alert>}
-                            <FormWizard steps={steps} submitLabel={t(correction ? 'credit.saveChanges' : 'credit.submit')} hideBackOnFirstStep {...correctionWizardProps} />
-                        </Stack>
-                    </Form>
+                    {({values}) => (
+                        <Form noValidate>
+                            <Stack spacing={2} sx={{maxWidth: 640}}>
+                                {correction?.review && <Alert severity="warning">{t('credit.fixing', {folio: correction.folio, note: correction.review.note})}</Alert>}
+                                <FormWizard steps={stepsOf(values)} submitLabel={t(correction ? 'credit.saveChanges' : 'credit.submit')} hideBackOnFirstStep
+                                            {...correctionWizardProps} />
+                            </Stack>
+                        </Form>
+                    )}
                 </Formik>
             )}
         </>

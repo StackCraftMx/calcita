@@ -509,7 +509,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaTopMenu` | `link`, `root` |
 | `CalcitaTransferListInput` | `root`, `list`, `actions` |
 | `CalcitaTwoStepVerification` | `qr`, `secret`, `secretCode`, `header`, `headerTitle`, `headerText`, `menuIcon` |
-| `CalcitaWizardLayout` | `stepper`, `phoneSteps`, `actions` |
+| `CalcitaWizardLayout` | `stepper`, `phoneSteps`, `actions`, `nextReason` |
 | `CalcitaWordmark` | `root`, `mode` |
 
 </details>
@@ -807,6 +807,8 @@ export const api = createApiClient({
 const orders = await api.get('/orders', {params: {page: 2}, signal});
 await api.post('/orders', {customerId: 7});
 const {blob, fileName} = await api.download('/orders/export', {onDownloadProgress});
+// un archivo que el servidor arma con datos de la pantalla (una plantilla con de quién es): POST con su cuerpo
+const template = await api.download('/documents/template', {method: 'POST', body: {companyId: 7}, onDownloadProgress});
 ```
 
 - Cada petición lleva el idioma vigente (`Accept-Language`): el servidor responde sus mensajes ya traducidos.
@@ -814,7 +816,7 @@ const {blob, fileName} = await api.download('/orders/export', {onDownloadProgres
   `requestId` para soporte y los errores por campo de un 422 (los formularios los ponen en su campo). Sin red es la misma
   forma (status 0); cancelar no es un error.
 - Cada respuesta le avisa al aviso de versión nueva qué compilación está publicada (header `X-Frontend-Build`).
-- Un Excel que llegó cortado no se entrega.
+- Un Excel que llegó cortado no se entrega (también en una descarga con POST).
 
 Si se publica otra versión con la pestaña abierta, la pantalla que no se había abierto pide un archivo que ya no existe.
 `withChunkRecovery` (de `/react-router`) recarga una vez y `RouteErrorScreen` dice «Hay una versión nueva» con su botón;
@@ -1003,6 +1005,21 @@ campos, para lo obligatorio). `FormWizard` parte un formulario en pasos, con pas
 react-hook-form); los ejemplos traen los dos. `hideBackOnFirstStep` no pinta «Anterior» en el primer paso (por omisión sale
 apagado, como antes).
 
+Un paso que todavía no se puede dejar (faltan documentos obligatorios) lo dice con `steps[].nextDisabledReason`, ya traducido:
+«Siguiente» se ve apagado y no avanza, y el motivo sale en un aviso al pasar el cursor o al llegar con Tab; en el teléfono va
+escrito arriba de los botones. En el último paso se apaga el de enviar, y con `stepSelection` `checked` tampoco se salta a un
+paso de adelante. Con `null`, como siempre. `WizardLayout` suelto lo recibe como `nextDisabledReason` (en el último paso el
+botón de enviar es suyo: apáguelo usted).
+
+```jsx
+const missing = DOCUMENTS.filter(({field, required}) => required && !values[field]).length;
+const steps = [
+    {key: 'documents', label: 'Documentos', content: <DocumentsSection />,
+     nextDisabledReason: missing > 0 ? `Faltan ${missing} documentos obligatorios` : null},
+    …
+];
+```
+
 El `onChange` y el `onBlur` que la pantalla le pase a un campo de formik o de react-hook-form también corren, después de los
 del formulario y con el valor nuevo: `<FormSelectField name="kind" … onChange={(kind) => loadRatesFor(kind)} />`. Antes los
 del formulario los pisaban sin avisar.
@@ -1043,6 +1060,18 @@ En el teléfono la etiqueta se lleva el 38 % del renglón y un nombre largo se p
 `labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}` la etiqueta sube arriba del campo por debajo de `sm`, y en pantallas más
 anchas sigue a la izquierda. Por omisión `side`, como antes. Para todos los formularios, una vez en el tema:
 `components: {CalcitaFormSection: {defaultProps: {labelPlacement: 'topOnPhone'}}}`.
+
+La columna de las etiquetas mide el 38 % del renglón hasta 200 px. Una lista de documentos lleva nombres largos y a la derecha
+solo los botones del cargador: con `labelWidth={FORM_LABEL_WIDTH.auto}` el nombre se lleva lo que sobre y el campo solo lo que
+ocupa. También acepta un ancho (`'320px'`, `'50%'` o un número en px). Va por sección: las demás de la pantalla no cambian.
+En el teléfono lo que sobra es poco: con `auto`, mejor junto con `labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}`.
+Como las demás piezas, `FormSection` acepta `sx`.
+
+```jsx
+<FormSection title="Expediente" labelWidth={FORM_LABEL_WIDTH.auto} labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}>
+    {DOCUMENTS.map(({field, label}) => <FormFileUploadField key={field} name={field} label={label} upload={uploadDocument} />)}
+</FormSection>
+```
 
 ### Lo obligatorio, a la vista
 

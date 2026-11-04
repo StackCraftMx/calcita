@@ -237,6 +237,8 @@ async function readBlobWithProgress(response, onDownloadProgress) {
  * Lo que acepta una descarga.
  *
  * @typedef {object} ApiDownloadOptions
+ * @property {string} [method] por omisión 'GET'; 'POST' para un archivo que se arma con lo que va en `body`
+ * @property {unknown} [body] lo que va en la petición, como en post: objeto → JSON; FormData, Blob o URLSearchParams tal cual
  * @property {Record<string, unknown>} [params]
  * @property {AbortSignal} [signal]
  * @property {(progress: {loaded: number, total: number|null}) => void} [onDownloadProgress]
@@ -456,8 +458,13 @@ export function createApiClient({
     /**
      * Descarga un archivo: el Blob y el nombre que mandó el servidor, con avance. Un Excel cortado no se entrega.
      *
+     * Por omisión con GET. Un archivo que el servidor arma con datos de la pantalla (una plantilla con de quién es, el borrador
+     * de un contrato) va con method 'POST' y su body: el avance, el nombre y la revisión del Excel son los mismos.
+     *
      * @param {string} path
      * @param {object} [options]
+     * @param {string} [options.method] por omisión 'GET'
+     * @param {unknown} [options.body] objeto → JSON; FormData, Blob o URLSearchParams tal cual
      * @param {Record<string, unknown>} [options.params]
      * @param {AbortSignal} [options.signal]
      * @param {(progress: {loaded: number, total: number|null}) => void} [options.onDownloadProgress]
@@ -466,15 +473,17 @@ export function createApiClient({
      * @returns {Promise<{blob: Blob, fileName: string}>}
      * @throws {ApiError} status 500 si un Excel llegó incompleto
      */
-    const download = async (path, {params, signal, onDownloadProgress, fallbackFileName = 'descarga', timeoutMilliseconds = NO_TIMEOUT} = {}) => {
-        const response = await request('GET', path, {params, signal, parse: API_RESPONSE_PARSE.response, timeoutMilliseconds});
+    const download = async (path, {
+        method = 'GET', body, params, signal, onDownloadProgress, fallbackFileName = 'descarga', timeoutMilliseconds = NO_TIMEOUT,
+    } = {}) => {
+        const response = await request(method, path, {body, params, signal, parse: API_RESPONSE_PARSE.response, timeoutMilliseconds});
         const blob = await readBlobWithProgress(response, onDownloadProgress);
         const fileName = fileNameFromContentDisposition(response.headers.get('content-disposition'), fallbackFileName);
         // el tipo puede traer parámetros después del «;» (charset): solo cuenta lo de antes
         const contentType = String(response.headers.get('content-type') ?? '').split(';')[0].trim();
         if (contentType === XLSX_CONTENT_TYPE && !(await isCompleteZip(blob))) {
             const requestId = response.headers.get('x-request-id');
-            log.error(`GET ${path} → el Excel llegó incompleto: el servidor falló a media escritura`, {requestId, fileName});
+            log.error(`${method} ${path} → el Excel llegó incompleto: el servidor falló a media escritura`, {requestId, fileName});
             throw new ApiError({status: SERVER_ERROR_STATUS, problem: {request_id: requestId}});
         }
         return {blob, fileName};

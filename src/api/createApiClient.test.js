@@ -167,6 +167,36 @@ test('una descarga trae el archivo y el nombre que mandó el servidor, avisando 
     assert.deepEqual(progress.at(-1), {loaded: 8, total: 8});
 });
 
+test('una descarga con POST lleva su cuerpo en JSON y conserva el nombre, el avance y la revisión del Excel', async () => {
+    const progress = [];
+    const {calls, fakeFetch} = serverReplying(
+        new Response('a,b\n1,2\n', {status: 200, headers: {'content-type': 'text/csv', 'content-length': '8', 'content-disposition': 'attachment; filename="plantilla.csv"'}}),
+        new Response('PK-esto-no-es-un-zip-completo', {
+            status: 200, headers: {'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'x-request-id': 'req-11'},
+        }),
+    );
+    const api = createApiClient({fetch: fakeFetch});
+
+    const {blob, fileName} = await api.download('/documents/template', {method: 'POST', body: {company_id: 7}, onDownloadProgress: (event) => progress.push(event)});
+    const error = await api.download('/documents/template', {method: 'POST', body: {company_id: 7}}).catch((caught) => caught);
+
+    assert.equal(calls[0].init.method, 'POST');
+    assert.equal(calls[0].init.body, '{"company_id":7}');
+    assert.equal(new Headers(calls[0].init.headers).get('content-type'), 'application/json');
+    assert.equal(fileName, 'plantilla.csv');
+    assert.equal(await blob.text(), 'a,b\n1,2\n');
+    assert.deepEqual(progress.at(-1), {loaded: 8, total: 8});
+    assert.ok(error instanceof ApiError);
+    assert.equal(error.requestId, 'req-11');
+});
+
+test('una descarga sin method sigue siendo GET y sin cuerpo', async () => {
+    const {calls, fakeFetch} = serverReplying(new Response('x', {status: 200, headers: {'content-type': 'text/plain'}}));
+    await createApiClient({fetch: fakeFetch}).download('/orders/export');
+    assert.equal(calls[0].init.method, 'GET');
+    assert.equal(calls[0].init.body, undefined);
+});
+
 test('un Excel que llegó cortado no se entrega: ApiError 500 con el id de la petición', async () => {
     const {fakeFetch} = serverReplying(new Response('PK-esto-no-es-un-zip-completo', {
         status: 200, headers: {'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'x-request-id': 'req-9'},

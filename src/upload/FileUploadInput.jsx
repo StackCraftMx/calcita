@@ -327,9 +327,11 @@ function FileUploadInputContent(props) {
                     </Tooltip>
                 )}
             </FileUploadRoot>
-            {/* abajo: el error manda; si no, el avance; si no, la ayuda de la pantalla */}
+            {/* abajo: el error manda; si no, el avance; si no, la ayuda de la pantalla. width 0 con minWidth 100 %: el texto
+                usa el ancho de los botones de arriba y nunca lo ensancha. OJO: en un renglón que mide lo que ocupa (FormSection
+                con labelWidth auto) el avance, que cambia cada momento, empujaba el nombre del documento a cada rato */}
             <FileUploadHelper error={Boolean(errorText)} role={errorText ? 'alert' : (progressText ? 'status' : undefined)}
-                              ownSx={{textAlign: 'right', mx: 0}}>
+                              ownSx={{textAlign: 'right', mx: 0, width: 0, minWidth: '100%'}}>
                 {errorText ?? progressText ?? helperText}
             </FileUploadHelper>
         </div>

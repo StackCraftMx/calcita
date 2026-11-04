@@ -59,7 +59,7 @@ import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
 import {FormSchemaProvider, isRequiredInSchema} from '@stackcraftmx/calcita/forms';
 import {DateInput as LetterDateInput, FormDateField as LetterFormDateField} from '@stackcraftmx/calcita/date-pickers';
-import {FORM_LABEL_PLACEMENT, TOASTER_POSITION, Toaster} from '@stackcraftmx/calcita';
+import {FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, TOASTER_POSITION, Toaster} from '@stackcraftmx/calcita';
 // lo de la 0.25: sistemas que ya existen, el proveedor más cercano, eventos hacia afuera y textos propios
 import {
     ActionsMenu, BarSearch, CHART_VIEW, CollapsibleSection, ColorSchemeToggle, ComponentTexts, ToolkitProvider, createBrowserNavigation,
@@ -333,6 +333,18 @@ const requiredDate = createElement(LetterDateInput, {label: 'Vigencia', value: '
 const requiredDateField = createElement(LetterFormDateField, {name: 'validUntil', label: 'Vigencia', required: true, format: 'DD/MMM/YYYY'});
 const stackedOnPhone = createElement(FormSection, {title: 'Representante', labelPlacement: FORM_LABEL_PLACEMENT.topOnPhone, children: null});
 const centeredToasts = createElement(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000, visibleToasts: 2});
+// la cuarta carta: «Siguiente» con su motivo, la columna de las etiquetas por sección y descargas con POST
+const blockedWizard = createElement(WizardLayout, {
+    steps: [{key: 'documents', label: 'Documentos', content: null}, {key: 'end', label: 'Fin', content: null}], activeIndex: 0,
+    nextDisabledReason: 'Faltan 2 documentos', onBack: () => undefined, onNext: () => undefined, submitButton: null,
+});
+const blockedFormWizard = createElement(FormWizard, {
+    submitLabel: 'Enviar', steps: [{key: 'documents', label: 'Documentos', content: null, nextDisabledReason: 'Falta 1 documento'}],
+});
+const documentsSection = createElement(FormSection, {title: 'Expediente', labelWidth: FORM_LABEL_WIDTH.auto, sx: {mb: 2}, children: null});
+const fixedLabelSection = createElement(FormSection, {labelWidth: 320, children: null});
+// @ts-expect-error: el ancho es un texto de CSS o un número, no un sí o no
+const wrongLabelWidth = createElement(FormSection, {labelWidth: true, children: null});
 const plainToasts = createElement(Toaster);
 const schemaMarksRequired = createElement(ToolkitProvider, {requiredFromSchema: true, children: null});
 const letterSchema = Yup.object({company: Yup.string().required()});
@@ -372,6 +384,7 @@ const api = createApiClient({baseUrl: '/api/v1', csrf: {refreshPath: '/auth/csrf
 const ordersRequest: Promise<unknown> = api.get('/orders', {params: {page: 1}});
 const savedRequest: Promise<unknown> = api.post('/orders', {customerId: 7});
 const downloadRequest: Promise<{blob: Blob, fileName: string}> = api.download('/orders/export', {onDownloadProgress: ({loaded}) => loaded});
+const postedDownload: Promise<{blob: Blob, fileName: string}> = api.download('/documents/template', {method: 'POST', body: {companyId: 7}});
 const apiError = new ApiError({status: 422, problem: {detail: 'Revise los datos'}});
 const isValidation: boolean = apiError.isValidation;
 const staleChunk: boolean = isStaleChunkError(new Error('x'));
@@ -556,5 +569,5 @@ const ownPieceElement = createElement(OwnPiece, {title: 'Hola', slots: {root: 'a
 const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
 
 export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, blockedWizard, blockedFormWizard, documentsSection, fixedLabelSection, wrongLabelWidth, postedDownload, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, chunkedServer, chunkedZone, wrongChunkSize, uploadInPieces, miniInPieces, folioOfMini, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -2,17 +2,19 @@
 // la etiqueta a la izquierda y el valor a la derecha. Fuera de ella, la etiqueta va arriba del campo.
 //
 // El valor es false fuera de una sección (RepeatingFields lo vuelve a poner en false para sus renglones) y, dentro, cómo
-// pide la sección sus renglones: {labelPlacement}.
+// pide la sección sus renglones: {labelPlacement, labelWidth}.
 //
 // Va en su propio archivo y no junto a FormSection: FieldFrame lo lee, y así FieldFrame no importa a FormSection (que a su
 // vez usa FormRow).
 import {createContext, useContext} from 'react';
 
-/** @type {import('react').Context<false|{labelPlacement: string}>} */
-export const FormSectionContext = createContext(/** @type {false|{labelPlacement: string}} */ (false));
+/** @typedef {{labelPlacement: string, labelWidth?: string|number}} FormSectionLayout */
+
+/** @type {import('react').Context<false|FormSectionLayout>} */
+export const FormSectionContext = createContext(/** @type {false|FormSectionLayout} */ (false));
 
 /** true si el campo va dentro de una FormSection. */
 export const useIsInsideFormSection = () => Boolean(useContext(FormSectionContext));
 
-/** Cómo pide la sección sus renglones ({labelPlacement}); false fuera de una sección. */
+/** Cómo pide la sección sus renglones ({labelPlacement, labelWidth}); false fuera de una sección. */
 export const useFormSectionLayout = () => useContext(FormSectionContext);

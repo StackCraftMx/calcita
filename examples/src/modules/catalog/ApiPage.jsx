@@ -37,6 +37,7 @@ const CLIENT_EXTENSIONS = [
 ];
 const DOWNLOAD_EXTENSIONS = [
     {id: 'download', option: 'api.download(path)', example: "const {blob, fileName} = await api.download('/orders/export');"},
+    {id: 'post', option: "method · body", example: "api.download('/documents/template', {method: 'POST', body: {companyId: 7}})"},
     {id: 'progress', option: 'onDownloadProgress', example: 'api.download(path, {onDownloadProgress: ({loaded, total}) => …})'},
     {id: 'fallbackFileName', option: 'fallbackFileName', example: "api.download(path, {fallbackFileName: 'pedidos.csv'})"},
     {id: 'downloadTimeout', option: 'timeoutMilliseconds', example: 'api.download(path, {timeoutMilliseconds: 600000})'},
