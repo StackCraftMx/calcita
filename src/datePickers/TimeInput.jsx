@@ -56,8 +56,9 @@ function TimeInputContent(props) {
         <PickerFrame inputId={field.inputId} label={label} language={field.language}>
             <TimeInputPicker
                 {...pickerProps}
-                format={field.formats.time}
-                ampm={field.formats.ampm}
+                // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)
+                format={pickerProps?.format ?? field.formats.time}
+                ampm={pickerProps?.ampm ?? field.formats.ampm}
                 value={pickerTimeOf(value)}
                 minTime={pickerTimeOf(minTime) ?? undefined}
                 maxTime={pickerTimeOf(maxTime) ?? undefined}

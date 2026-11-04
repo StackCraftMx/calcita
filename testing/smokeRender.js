@@ -327,6 +327,9 @@ const CASES = [
     ['DateTimeInput rotula su zona', h(DateTimeInput, {label: 'Posponer hasta', value: '2026-11-01T18:30:00Z', onChange: () => {}, timeZone: 'America/Mexico_City'}), 'Hora estándar central'],
     ['TimeInput', h(TimeInput, {label: 'Hora de inicio', value: '09:30', onChange: () => {}, minutesStep: 30}), 'Hora de inicio'],
     ['MonthInput con el nombre del mes', h(MonthInput, {label: 'Mes del reporte', value: '2026-11', onChange: () => {}}), 'noviembre'],
+    // el formato que pasa la pantalla gana al de la casa (antes el de la casa lo pisaba): el mes en letras no deja dudas
+    ['DateInput con el formato de la pantalla', h(DateInput, {label: 'Vigencia', value: '2029-07-16', onChange: () => {}, pickerProps: {format: 'DD/MMM/YYYY'}}), '>jul<'],
+    ['TimeInput con el reloj de la pantalla', h(TimeInput, {label: 'Hora de inicio', value: '15:30', onChange: () => {}, pickerProps: {format: 'hh:mm a', ampm: true}}), '>03<'],
 ];
 
 // los avisos de Calcita (una opción que una pieza no conoce): ningún caso debe dar uno, porque cada caso usa las opciones como

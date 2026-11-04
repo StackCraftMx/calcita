@@ -72,7 +72,8 @@ function DateInputContent(props) {
         <PickerFrame inputId={inputId} label={label} language={language}>
             <DateInputPicker
                 {...pickerProps}
-                format={formats.date}
+                // el formato de la pantalla gana al de la casa (antes el de la casa iba después y lo pisaba sin avisar)
+                format={pickerProps?.format ?? formats.date}
                 value={pickerValueOf(value)}
                 minDate={pickerValueOf(minDate) ?? undefined}
                 maxDate={pickerValueOf(maxDate) ?? undefined}

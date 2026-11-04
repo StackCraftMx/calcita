@@ -69,7 +69,13 @@ pnpm add formik yup     # solo si usa /forms o /account
 ```
 
 Con npm es igual, con `npm install` en lugar de `pnpm add`. Desde la 0.25, formik y yup los pone el proyecto: Calcita usa
-la versión que ya tenga, no se casa con una.
+la versión que ya tenga, no se casa con una. Cada entrada aparte pide las suyas (la última columna de la tabla de entradas):
+sin ellas, el import truena al buscar el archivo y no dice qué falta. Por ejemplo, para las fechas,
+`pnpm add @mui/x-date-pickers dayjs`.
+
+Al subir de versión, apague y vuelva a prender el servidor de Vite (`pnpm dev` o `npm run dev`): Vite revisa lo instalado
+solo al arrancar, y con el servidor prendido sigue con la copia vieja del paquete y el error se busca en el código propio. No
+hace falta borrar `node_modules/.vite`; si de todos modos quiere que lo rehaga, `vite --force`.
 
 ```jsx
 import {ThemeProvider, createTheme} from '@mui/material/styles';
@@ -1079,7 +1085,9 @@ idioma de la persona; la pantalla no convierte nada:
 La fecha con hora se ve en la zona del proyecto (`ToolkitProvider timeZone`) con el nombre de la zona abajo («Hora estándar
 central»), para que nadie dude en qué hora está escribiendo; `timeZone` la cambia en un solo campo (la hora de una
 sucursal) y el momento que viaja es el mismo. La hora sale de 24 horas o con a. m. y p. m. según `ToolkitProvider
-hourCycle`, y viaja igual. Lo que el selector de MUI X acepta y aquí no tiene nombre va en `pickerProps`.
+hourCycle`, y viaja igual. Lo que el selector de MUI X acepta y aquí no tiene nombre va en `pickerProps`; ahí también
+`format` y `ampm` ganan a los de la casa (`pickerProps={{format: 'DD/MMM/YYYY'}}` enseña «16/jul/2029»). Piden
+`pnpm add @mui/x-date-pickers dayjs`.
 
 ```jsx
 import {FormDateTimeField, FormMonthField, FormTimeField} from '@stackcraftmx/calcita/date-pickers';

@@ -60,7 +60,8 @@ function MonthInputContent(props) {
                 {...pickerProps}
                 views={MONTH_VIEWS}
                 openTo="month"
-                format={field.formats.month}
+                // el formato de la pantalla gana al de la casa (antes el de la casa iba después y lo pisaba sin avisar)
+                format={pickerProps?.format ?? field.formats.month}
                 value={pickerMonthOf(value)}
                 minDate={pickerMonthOf(minMonth) ?? undefined}
                 maxDate={pickerMonthOf(maxMonth) ?? undefined}
