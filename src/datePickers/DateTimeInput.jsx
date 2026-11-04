@@ -86,8 +86,9 @@ function DateTimeInputContent(props) {
             <DateTimeInputPicker
                 {...pickerProps}
                 timezone={shownTimeZone}
-                format={field.formats.dateTime}
-                ampm={field.formats.ampm}
+                // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)
+                format={pickerProps?.format ?? field.formats.dateTime}
+                ampm={pickerProps?.ampm ?? field.formats.ampm}
                 value={pickerInstantOf(value, shownTimeZone)}
                 minDateTime={pickerInstantOf(earliest, shownTimeZone) ?? undefined}
                 maxDateTime={pickerInstantOf(maxDateTime, shownTimeZone) ?? undefined}
