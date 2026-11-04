@@ -4,6 +4,32 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.54.0] - 2026-11-04
+
+### Agregado
+
+- Subir por trozos con la zona de `/filepond`: `chunkUploads`, `chunkForce`, `chunkSize` (en bytes o `'1 MB'`) y
+  `chunkRetryDelays`, con los nombres de FilePond. Con `createPondServer` cada archivo sube con el protocolo de trozos de
+  FilePond (el folio con un POST, cada trozo en su PATCH a `patchUrl` + folio, uno detrás de otro, y retomar con un HEAD),
+  así que un backend que ya recibía trozos de FilePond no cambia. La barra es honesta: cuenta lo que el servidor ya guardó,
+  no dice 100 % hasta que guardó el último trozo y nunca regresa. Un trozo sin respuesta o con 5xx se reintenta; un 4xx se
+  enseña en seguida. Sin las opciones nuevas, la zona sube igual que antes.
+- `createPondServer`: `patchUrl`, `toProblem` (el error de un backend que no contesta RFC 9457, como en `createApiClient`) y
+  `sendRequest` (por dónde viaja cada petición; por omisión `uploadWithProgress`).
+- `FileDropzone` de `/filepond`: `pondProps` pasa cualquier otra opción de FilePond (`maxParallelUploads`, sus eventos…). Lo que
+  la zona ya maneja gana, y sus eventos corren después de los de la zona.
+- El cargador mini por trozos: `createChunkedUpload` arma la función `upload` de `FileUploadInput` y `FormFileUploadField` con el
+  mismo protocolo y sus estados de siempre («Procesando» mientras el servidor guarda el último trozo); al renglón llega el folio.
+- `uploadWithProgress` acepta `method` (el PATCH de un trozo, el HEAD de retomar); por omisión POST, como antes.
+- Ejemplos: en Subir archivos «9. Por trozos, con FilePond» y «10. Por trozos, en el cargador mini»; en la app de ejemplo, «Un
+  respaldo grande, por trozos» con su servidor de mentira (medio segundo por trozo, un trozo que falla una vez y el tope de
+  20 MB) y lo que va recibiendo.
+
+### Arreglado
+
+- `uploadWithProgress` tronaba con una respuesta sin cuerpo (204, 205, 304), aunque la subida hubiera salido bien.
+- `uploadWithProgress` ya no pasa a la pantalla un aviso de avance que llega después de cancelar.
+
 ## [0.53.0] - 2026-11-03
 
 ### Agregado
