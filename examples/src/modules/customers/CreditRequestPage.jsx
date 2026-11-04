@@ -181,7 +181,7 @@ export const CreditRequestPage = () => {
                     <Form noValidate>
                         <Stack spacing={2} sx={{maxWidth: 640}}>
                             {correction?.review && <Alert severity="warning">{t('credit.fixing', {folio: correction.folio, note: correction.review.note})}</Alert>}
-                            <FormWizard steps={steps} submitLabel={t(correction ? 'credit.saveChanges' : 'credit.submit')} {...correctionWizardProps} />
+                            <FormWizard steps={steps} submitLabel={t(correction ? 'credit.saveChanges' : 'credit.submit')} hideBackOnFirstStep {...correctionWizardProps} />
                         </Stack>
                     </Form>
                 </Formik>

@@ -6,10 +6,10 @@ import {useFormikField} from '@/forms/useFormikField.js';
 import TransferListInput from '@/inputs/TransferListInput.jsx';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/TransferListInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
- *     TransferListInput, sin value / onChange / onBlur / error
+ * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/TransferListInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/inputs/TransferListInput.jsx').default>[0], 'onChange'|'onBlur'>>} props las de
+ *     TransferListInput, sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormTransferListField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, inputProps);
     return <TransferListInput {...inputProps} {...fieldProps} />;
 }

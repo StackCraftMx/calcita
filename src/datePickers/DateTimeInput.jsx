@@ -57,6 +57,9 @@ const HELPER_SEPARATOR = ' · ';
  * @param {boolean} [props.showTimeZone] false quita el nombre de la zona de abajo (por omisión se ve)
  * @param {string} [props.timeZoneLabel] ya traducido, en lugar del nombre que da el navegador
  * @param {boolean} [props.disabled]
+ * @param {string} [props.format] cómo se ven la fecha y la hora, con los códigos de dayjs ('DD/MMM/YYYY HH:mm'); por omisión
+ *     DD/MM/YYYY HH:mm en español y el reloj de ToolkitProvider hourCycle
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DateTimePicker de MUI X que aquí no tiene nombre (views, shouldDisableDate,
  *     slots, slotProps…); value y onChange son del campo
@@ -67,7 +70,7 @@ const HELPER_SEPARATOR = ' · ';
 function DateTimeInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
-        disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, inputRef, pickerProps, messages, texts,
+        disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, required = false, format, inputRef, pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -82,12 +85,12 @@ function DateTimeInputContent(props) {
     const earliest = latestInstantOf(minDateTime, hasClockRule ? earliestInstantFromNow(minimumMinutesFromNow, currentMinute) : '');
 
     return (
-        <PickerFrame inputId={field.inputId} label={label} language={field.language}>
+        <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
             <DateTimeInputPicker
                 {...pickerProps}
                 timezone={shownTimeZone}
                 // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)
-                format={pickerProps?.format ?? field.formats.dateTime}
+                format={format ?? pickerProps?.format ?? field.formats.dateTime}
                 ampm={pickerProps?.ampm ?? field.formats.ampm}
                 value={pickerInstantOf(value, shownTimeZone)}
                 minDateTime={pickerInstantOf(earliest, shownTimeZone) ?? undefined}
@@ -104,7 +107,7 @@ function DateTimeInputContent(props) {
                     onBlur?.();
                 }}
                 slotProps={textFieldSlotPropsOf(
-                    {id: field.inputId, name, onBlur, error: Boolean(field.errorText), helperText: field.errorText ?? helperLine},
+                    {id: field.inputId, name, onBlur, required, error: Boolean(field.errorText), helperText: field.errorText ?? helperLine},
                     pickerProps,
                 )}
             />

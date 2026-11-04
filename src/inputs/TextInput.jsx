@@ -70,7 +70,7 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {string} [props.autoComplete]
  * @param {boolean} [props.autoFocus]
  * @param {boolean} [props.disabled]
- * @param {boolean} [props.required]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {boolean} [props.fullWidth]
  * @param {string} [props.id]
  * @param {object} [props.slotProps]
@@ -129,7 +129,7 @@ export default function TextInput(props) {
     };
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} label={label} required={Boolean(textFieldProps.required)}>
             <InputField
                 {...textFieldProps}
                 name={name}

@@ -52,6 +52,9 @@ function pickerValueOf(calendarDate) {
  * @param {boolean} [props.disablePast] p. ej. una cita
  * @param {'day'|'month'|'year'} [props.openTo] por dónde abre el calendario (year para un nacimiento)
  * @param {boolean} [props.disabled]
+ * @param {string} [props.format] cómo se ve la fecha, con los códigos de dayjs ('DD/MMM/YYYY' enseña «16/jul/2029», sin dudas
+ *     entre día y mes); por omisión DD/MM/YYYY en español y MM/DD/YYYY en inglés
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableDate, slots,
  *     slotProps…); value y onChange son del campo
@@ -62,18 +65,18 @@ function pickerValueOf(calendarDate) {
 function DateInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
-        openTo = 'day', disabled = false, inputRef, pickerProps, messages, texts,
+        openTo = 'day', disabled = false, required = false, format, inputRef, pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {language, inputId, errorText, formats} = usePickerField({name, kind: 'date', error, label, messages, texts});
 
     return (
-        <PickerFrame inputId={inputId} label={label} language={language}>
+        <PickerFrame inputId={inputId} label={label} required={required} language={language}>
             <DateInputPicker
                 {...pickerProps}
                 // el formato de la pantalla gana al de la casa (antes el de la casa iba después y lo pisaba sin avisar)
-                format={pickerProps?.format ?? formats.date}
+                format={format ?? pickerProps?.format ?? formats.date}
                 value={pickerValueOf(value)}
                 minDate={pickerValueOf(minDate) ?? undefined}
                 maxDate={pickerValueOf(maxDate) ?? undefined}
@@ -89,7 +92,7 @@ function DateInputContent(props) {
                     pickerProps?.onClose?.();
                     onBlur?.();
                 }}
-                slotProps={textFieldSlotPropsOf({id: inputId, name, onBlur, error: Boolean(errorText), helperText: errorText ?? helperText}, pickerProps)}
+                slotProps={textFieldSlotPropsOf({id: inputId, name, onBlur, required, error: Boolean(errorText), helperText: errorText ?? helperText}, pickerProps)}
             />
         </PickerFrame>
     );

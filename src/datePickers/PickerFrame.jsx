@@ -42,13 +42,14 @@ export function textFieldSlotPropsOf(textField, pickerProps) {
  * @param {string} props.inputId
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {string} props.language el del proveedor más cercano
+ * @param {boolean} [props.required] el asterisco en la etiqueta
  * @param {import('react').ReactNode} props.children el selector de MUI X
  */
-export default function PickerFrame({inputId, label, language, children}) {
+export default function PickerFrame({inputId, label, language, required = false, children}) {
     const adapter = ADAPTER_BY_LANGUAGE[language] ?? ADAPTER_BY_LANGUAGE.es;
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} label={label} required={required}>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={adapter.adapterLocale} localeText={adapter.localeText}>
                 {children}
             </LocalizationProvider>

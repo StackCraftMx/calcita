@@ -18,6 +18,7 @@ import MonthField from '@/modules/catalog/demos/dates/MonthField.tsx';
 import PublishWindow from '@/modules/catalog/demos/dates/PublishWindow.tsx';
 import TimeField from '@/modules/catalog/demos/dates/TimeField.tsx';
 import CountdownField from '@/modules/catalog/demos/dates/CountdownField.tsx';
+import LetterMonthDate from '@/modules/catalog/demos/dates/LetterMonthDate.tsx';
 
 const loadDate = () => import('@/modules/catalog/demos/dates/DateField.tsx?demo-source');
 const loadDateTime = () => import('@/modules/catalog/demos/dates/DateTimeField.tsx?demo-source');
@@ -27,6 +28,7 @@ const loadFormik = () => import('@/modules/catalog/demos/dates/FormikDates.tsx?d
 const loadHookForm = () => import('@/modules/catalog/demos/dates/HookFormDates.tsx?demo-source');
 const loadPublishWindow = () => import('@/modules/catalog/demos/dates/PublishWindow.tsx?demo-source');
 const loadCountdown = () => import('@/modules/catalog/demos/dates/CountdownField.tsx?demo-source');
+const loadLetterMonth = () => import('@/modules/catalog/demos/dates/LetterMonthDate.tsx?demo-source');
 
 // lo que aceptan los cuatro campos por igual
 const SHARED_EXTENSIONS = [
@@ -75,6 +77,12 @@ const PUBLISH_WINDOW_EXTENSIONS = [
     {id: 'clock', option: 'useCurrentMinute · earliestInstantFromNow', example: 'const minute = useCurrentMinute(true);'},
 ];
 
+const LETTER_MONTH_EXTENSIONS = [
+    {id: 'format', option: 'format', example: "format=\"DD/MMM/YYYY\"  // 16/jul/2029"},
+    {id: 'theme', option: 'CalcitaDateInput defaultProps', example: "components: {CalcitaDateInput: {defaultProps: {format: 'DD/MMM/YYYY'}}}"},
+    {id: 'pickerProps', option: 'pickerProps.format · pickerProps.ampm', example: "pickerProps={{format: 'hh:mm a', ampm: true}}"},
+    {id: 'required', option: 'required', example: '<DateInput label="Vigencia" required />'},
+];
 const COUNTDOWN_EXTENSIONS = [
     {id: 'until', option: 'until', example: 'until={registration.closes_at}  // instante, Date o milisegundos'},
     {id: 'onComplete', option: 'onComplete · completedText', example: 'onComplete={reloadRegistration} completedText="Cerradas"'},
@@ -106,6 +114,8 @@ export const DatesPage = () => {
                          extensions={rowsOf('publishWindow', PUBLISH_WINDOW_EXTENSIONS)} Demo={PublishWindow} loadSource={loadPublishWindow} />
             <DemoSection title={t('dates.countdown.title')} description={t('dates.countdown.description')}
                          extensions={rowsOf('countdown', COUNTDOWN_EXTENSIONS)} Demo={CountdownField} loadSource={loadCountdown} />
+            <DemoSection title={t('dates.letterMonth.title')} description={t('dates.letterMonth.description')}
+                         extensions={rowsOf('letterMonth', LETTER_MONTH_EXTENSIONS)} Demo={LetterMonthDate} loadSource={loadLetterMonth} />
         </Stack>
     );
 };

@@ -111,6 +111,7 @@ function uploadErrorTextOf(error) {
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {import('react').ReactNode} [props.actions] lo del negocio junto al estado (Aprobado, Falta información)
  * @param {(result: any) => void} [props.onUploaded] terminó de subir (p. ej. para enseñar el folio de la respuesta)
  * @param {(error: unknown) => void} [props.onUploadFailed] no se pudo subir (el motivo ya sale abajo)
@@ -125,7 +126,7 @@ function uploadErrorTextOf(error) {
 function FileUploadInputContent(props) {
     const {
         name, label, value = '', onChange, onBlur, upload, idOf = (result) => result?.id, uploadedFile = null, download, accept, maxSize,
-        limitsText, error, helperText = ' ', disabled = false, actions, onUploaded, onUploadFailed, onCancel, onRemove, onStatusChange,
+        limitsText, error, helperText = ' ', disabled = false, required = false, actions, onUploaded, onUploadFailed, onCancel, onRemove, onStatusChange,
         sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -338,7 +339,7 @@ function FileUploadInputContent(props) {
     if (!label) {
         return row;
     }
-    return <FieldFrame inputId={inputId} labelId={labelId} label={label}>{row}</FieldFrame>;
+    return <FieldFrame inputId={inputId} labelId={labelId} label={label} required={required}>{row}</FieldFrame>;
 }
 
 // lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)

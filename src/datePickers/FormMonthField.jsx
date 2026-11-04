@@ -7,10 +7,10 @@ import MonthInput from '@/datePickers/MonthInput.jsx';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/datePickers/MonthInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de
- *     MonthInput (minMonth, maxMonth, disableFuture…), sin value / onChange / onBlur / error
+ * @param {{name: string} & Omit<Parameters<typeof import('@/datePickers/MonthInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/datePickers/MonthInput.jsx').default>[0], 'onChange'|'onBlur'>>} props las de
+ *     MonthInput (minMonth, maxMonth, disableFuture…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormMonthField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, inputProps);
     return <MonthInput {...inputProps} {...fieldProps} />;
 }

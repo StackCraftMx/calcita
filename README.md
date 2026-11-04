@@ -95,6 +95,10 @@ export const App = () => (
 
 Sin nada más, todo sale en español, con la zona horaria del navegador, montos en pesos y la navegación del navegador.
 
+`<Toaster />` va una sola vez y acepta lo de sonner tal cual (`duration`, `visibleToasts`, `offset`, `toastOptions`…). Por
+omisión los avisos salen abajo a la izquierda; si ahí estorban (el pie del menú lateral), `position` los cambia de esquina:
+`<Toaster position={TOASTER_POSITION.bottomCenter} />`.
+
 ## Lo que se conecta en ToolkitProvider
 
 | Prop | Para qué | Por omisión |
@@ -112,6 +116,7 @@ Sin nada más, todo sale en español, con la zona horaria del navegador, montos 
 | `buildId` | la compilación del front que corre en la pestaña, para el aviso de versión nueva | ninguna (sin aviso) |
 | `fileTypes` | tipos de archivo propios para las descargas (su ícono y su color), además de Excel, CSV y PDF | los de la casa |
 | `onMissingText` | a quién avisarle de un texto que no existe (la pantalla enseña la llave): mandarlo a Sentry, tronar una prueba | un aviso en la consola, una vez por idioma y llave |
+| `requiredFromSchema` | los campos de formik leen del esquema de yup qué es obligatorio y ponen su asterisco (ver «Lo obligatorio, a la vista») | no |
 | `readValidationMessage` | cómo leer los mensajes de validación de un sistema que ya existe (ver «Mensajes de error propios») | `{key}`, `{msg}`, `{message}` y texto |
 
 Un `ToolkitProvider` dentro de otro (una parte de la app en otro idioma, una vista previa) toma del de afuera lo que no le
@@ -993,8 +998,14 @@ import {Form, Formik, FormNumberField, FormProblemAlert, FormTextField, SubmitBu
 ```
 
 formik y yup los instala el proyecto (`pnpm add formik yup`); `Formik`, `Form` y `Yup` también se pueden importar de
-`@stackcraftmx/calcita/forms`, que es la misma copia. `FormWizard` parte un formulario en pasos, con pasos opcionales (hay
-uno para formik y otro para react-hook-form); los ejemplos traen los dos.
+`@stackcraftmx/calcita/forms`, que es la misma copia (el `Formik` de Calcita es el de formik con el esquema a la vista de los
+campos, para lo obligatorio). `FormWizard` parte un formulario en pasos, con pasos opcionales (hay uno para formik y otro para
+react-hook-form); los ejemplos traen los dos. `hideBackOnFirstStep` no pinta «Anterior» en el primer paso (por omisión sale
+apagado, como antes).
+
+El `onChange` y el `onBlur` que la pantalla le pase a un campo de formik o de react-hook-form también corren, después de los
+del formulario y con el valor nuevo: `<FormSelectField name="kind" … onChange={(kind) => loadRatesFor(kind)} />`. Antes los
+del formulario los pisaban sin avisar.
 
 Para editar un registro de varios pasos (se entra a corregir un dato suelto, no a recorrer todo), el mismo `FormWizard`:
 
@@ -1027,6 +1038,35 @@ import {FormRow, FormSection} from '@stackcraftmx/calcita';
 
 Los campos van directo dentro de la `FormSection` (sin Grid ni Stack en medio): la línea entre renglones se dibuja entre
 hermanos.
+
+En el teléfono la etiqueta se lleva el 38 % del renglón y un nombre largo se parte en tres renglones: con
+`labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}` la etiqueta sube arriba del campo por debajo de `sm`, y en pantallas más
+anchas sigue a la izquierda. Por omisión `side`, como antes. Para todos los formularios, una vez en el tema:
+`components: {CalcitaFormSection: {defaultProps: {labelPlacement: 'topOnPhone'}}}`.
+
+### Lo obligatorio, a la vista
+
+Un campo con `required` lleva un asterisco en su etiqueta, en los 17 campos de la casa (texto, número, listas, catálogo,
+color, casillas, transferencia, máscara, las cuatro fechas, archivos, imagen, adjuntos y texto con formato). El asterisco va
+en el estilo de la etiqueta y no como texto: la etiqueta sigue diciendo lo mismo (así la siguen encontrando
+`getByLabel('Nombre', {exact: true})` y `getByLabelText('Nombre')`) y el lector de pantalla no dice «asterisco»; el campo
+dice que es obligatorio con `required` (como en MUI) o, donde el navegador no sabe revisarlo, con `aria-required`.
+
+Con formik, el asterisco puede salir del mismo esquema de yup que revisa el formulario, sin marcar cada campo a mano:
+
+```jsx
+<ToolkitProvider requiredFromSchema>   {/* una vez, en la raíz */}
+```
+
+Cuenta lo que yup describe como no opcional (`.required()`, `.defined()`) y una lista con `.min(1)`; las condiciones
+(`.when`) se resuelven con los valores de ese momento. Lo que la pantalla diga con `required` gana. formik no les comparte el
+esquema a sus campos: el `Formik` de `@stackcraftmx/calcita/forms` lo hace solo; con el de `'formik'`, envuelva los campos en
+`<FormSchemaProvider schema={schema}>`. Con react-hook-form el esquema queda dentro del resolver: ahí cada campo lleva su
+`required`. La regla sin React: `isRequiredInSchema(schema, 'contacts.2.email', values)`.
+
+Como en MUI, `required` también lo revisa el navegador al enviar si el `<Form>` no lleva `noValidate`: póngaselo para que solo
+revise yup (en el idioma de la app). El asterisco se cambia desde el tema (`label: {'&[data-required]::after': {…}}` de
+`CalcitaFieldFrame` y `CalcitaFormRow`) o con el texto `common.form.requiredMark`.
 
 ### Mensajes de error propios (sin tocar el esquema)
 
@@ -1086,7 +1126,8 @@ La fecha con hora se ve en la zona del proyecto (`ToolkitProvider timeZone`) con
 central»), para que nadie dude en qué hora está escribiendo; `timeZone` la cambia en un solo campo (la hora de una
 sucursal) y el momento que viaja es el mismo. La hora sale de 24 horas o con a. m. y p. m. según `ToolkitProvider
 hourCycle`, y viaja igual. Lo que el selector de MUI X acepta y aquí no tiene nombre va en `pickerProps`; ahí también
-`format` y `ampm` ganan a los de la casa (`pickerProps={{format: 'DD/MMM/YYYY'}}` enseña «16/jul/2029»). Piden
+`format` y `ampm` ganan a los de la casa. `format` también va directo (`<DateInput format="DD/MMM/YYYY" />` enseña
+«16/jul/2029»; con el mes en letras no hay dudas entre día y mes) y lo que viaja no cambia. Piden
 `pnpm add @mui/x-date-pickers dayjs`.
 
 ```jsx

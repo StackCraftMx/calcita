@@ -48,6 +48,7 @@ const WITHOUT_CHECKMARK = Object.freeze({'&.Mui-selected::after': {content: 'non
  * @param {string} [props.helperText] ayuda fija; el error la reemplaza
  * @param {string} [props.placeholder] texto de la opción vacía
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {boolean} [props.multiple] elegir varias opciones
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» arriba de la lista
@@ -59,7 +60,7 @@ const WITHOUT_CHECKMARK = Object.freeze({'&.Mui-selected::after': {content: 'non
 function SelectInputContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
     const {
-    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, inputRef, multiple = false,
+    name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, required = false, inputRef, multiple = false,
     selectAll = false, checkboxes = false, messages, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
@@ -104,7 +105,7 @@ function SelectInputContent(props) {
     };
 
     return (
-        <FieldFrame inputId={inputId} labelId={labelId} label={label}>
+        <FieldFrame inputId={inputId} labelId={labelId} label={label} required={required}>
             <TextField
                 name={name}
                 id={inputId}
@@ -113,6 +114,7 @@ function SelectInputContent(props) {
                 size="small"
                 fullWidth
                 disabled={disabled}
+                required={required}
                 value={currentValue}
                 onChange={handleChange}
                 onBlur={onBlur}

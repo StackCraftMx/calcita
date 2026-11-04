@@ -44,6 +44,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {boolean} [props.steps[].completed] lleva la palomita (cuando los títulos se pulsan, solo si la pantalla lo dice)
  * @param {string} props.submitLabel ya traducido: el botón del último paso
  * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
+ * @param {boolean} [props.hideBackOnFirstStep] en el primer paso no se pinta «Anterior»; por omisión sale apagado, como antes
  * @param {string} [props.initialStepKey] la llave del paso en el que se abre (la que diga el servidor); por omisión el primero
  * @param {'none'|'free'|'checked'} [props.stepSelection] uno de WIZARD_STEP_SELECTION: si el título de otro paso se pulsa y qué
  *   revisa antes; por omisión none (se avanza con «Siguiente», como siempre)
@@ -51,7 +52,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
  */
 export default function FormWizard({
-    steps, submitLabel, orientation, initialStepKey, stepSelection, onStepChange, texts, ...unknownProps
+    steps, submitLabel, orientation, hideBackOnFirstStep, initialStepKey, stepSelection, onStepChange, texts, ...unknownProps
 }) {
     warnUnknownProps('FormWizard', unknownProps);
     const {trigger, resetField, getFieldState, formState} = useFormContext();
@@ -98,7 +99,7 @@ export default function FormWizard({
     };
 
     return (
-        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation}
+        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation} hideBackOnFirstStep={hideBackOnFirstStep}
                       onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)} onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
                       submitButton={<SubmitButton>{submitLabel}</SubmitButton>} problemAlert={<FormProblemAlert />} texts={texts} />
     );

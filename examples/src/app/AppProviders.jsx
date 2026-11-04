@@ -5,6 +5,9 @@
 // de entrar. Aquí también se vigila si ya se publicó otra versión (usePublishedBuildWatch): la app anclada al inicio del
 // iPhone se actualiza sola.
 //
+// requiredFromSchema: en los formularios de formik, cada campo obligatorio pone su asterisco leyendo el esquema de yup
+// (la pantalla no los marca a mano).
+//
 // Va como elemento de la ruta raíz y no afuera del router porque los dos usan sus hooks (useNavigate, useLocation).
 //
 // El idioma vive aquí: LanguageToggle solo avisa el idioma nuevo (onLanguageChange) y la app decide qué hacer con él. Al
@@ -40,7 +43,7 @@ export const AppProviders = () => {
             {(canAccess) => (
                 <ToolkitProvider language={language} onLanguageChange={setLanguage} texts={APP_TEXTS} timeZone={PRODUCT_TIME_ZONE}
                                  currency={PRODUCT_CURRENCY} appName={APP_NAME} navigation={reactRouterNavigation} buildId={APP_BUILD_ID}
-                                 canAccess={canAccess} fileTypes={APP_FILE_TYPES}>
+                                 canAccess={canAccess} fileTypes={APP_FILE_TYPES} requiredFromSchema>
                     <NuqsAdapter>
                         <Outlet />
                     </NuqsAdapter>

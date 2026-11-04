@@ -38,6 +38,9 @@ const MONTH_VIEWS = ['year', 'month'];
  * @param {boolean} [props.disableFuture] p. ej. el mes de un reporte que ya cerró
  * @param {boolean} [props.disablePast]
  * @param {boolean} [props.disabled]
+ * @param {string} [props.format] cómo se ve el mes, con los códigos de dayjs ('MMM YYYY' enseña «nov 2026»); por omisión el nombre
+ *     completo del mes y el año
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableMonth, slots,
  *     slotProps…); value y onChange son del campo
@@ -48,20 +51,20 @@ const MONTH_VIEWS = ['year', 'month'];
 function MonthInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minMonth, maxMonth, disableFuture = false, disablePast = false,
-        disabled = false, inputRef, pickerProps, messages, texts,
+        disabled = false, required = false, format, inputRef, pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'month', error, label, messages, texts});
 
     return (
-        <PickerFrame inputId={field.inputId} label={label} language={field.language}>
+        <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
             <MonthInputPicker
                 {...pickerProps}
                 views={MONTH_VIEWS}
                 openTo="month"
                 // el formato de la pantalla gana al de la casa (antes el de la casa iba después y lo pisaba sin avisar)
-                format={pickerProps?.format ?? field.formats.month}
+                format={format ?? pickerProps?.format ?? field.formats.month}
                 value={pickerMonthOf(value)}
                 minDate={pickerMonthOf(minMonth) ?? undefined}
                 maxDate={pickerMonthOf(maxMonth) ?? undefined}
@@ -75,7 +78,7 @@ function MonthInputContent(props) {
                     onBlur?.();
                 }}
                 slotProps={textFieldSlotPropsOf(
-                    {id: field.inputId, name, onBlur, error: Boolean(field.errorText), helperText: field.errorText ?? helperText},
+                    {id: field.inputId, name, onBlur, required, error: Boolean(field.errorText), helperText: field.errorText ?? helperText},
                     pickerProps,
                 )}
             />

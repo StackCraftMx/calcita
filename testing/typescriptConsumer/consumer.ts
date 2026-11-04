@@ -57,6 +57,9 @@ import {
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
+import {FormSchemaProvider, isRequiredInSchema} from '@stackcraftmx/calcita/forms';
+import {DateInput as LetterDateInput, FormDateField as LetterFormDateField} from '@stackcraftmx/calcita/date-pickers';
+import {FORM_LABEL_PLACEMENT, TOASTER_POSITION, Toaster} from '@stackcraftmx/calcita';
 // lo de la 0.25: sistemas que ya existen, el proveedor más cercano, eventos hacia afuera y textos propios
 import {
     ActionsMenu, BarSearch, CHART_VIEW, CollapsibleSection, ColorSchemeToggle, ComponentTexts, ToolkitProvider, createBrowserNavigation,
@@ -303,6 +306,30 @@ const plainWizard = createElement(WizardLayout, {
     steps: [{key: 'a', label: 'Datos', content: null}], activeIndex: 0, onBack: () => undefined, onNext: () => undefined,
     onStepSelect: (index: number) => index, submitButton: null,
 });
+// la tercera carta: lo obligatorio a la vista, el formato de la fecha, el renglón en el teléfono, «Anterior» y los avisos
+const firstStepWithoutBack = createElement(FormWizard, {
+    submitLabel: 'Guardar', hideBackOnFirstStep: true, steps: [{key: 'company', label: 'Empresa', content: null}],
+});
+const looseWizardWithoutBack = createElement(WizardLayout, {
+    steps: [{key: 'a', label: 'Datos', content: null}], activeIndex: 0, hideBackOnFirstStep: true, onBack: () => undefined, onNext: () => undefined, submitButton: null,
+});
+const requiredDate = createElement(LetterDateInput, {label: 'Vigencia', value: '', onChange: (date: string) => date, required: true, format: 'DD/MMM/YYYY'});
+const requiredDateField = createElement(LetterFormDateField, {name: 'validUntil', label: 'Vigencia', required: true, format: 'DD/MMM/YYYY'});
+const stackedOnPhone = createElement(FormSection, {title: 'Representante', labelPlacement: FORM_LABEL_PLACEMENT.topOnPhone, children: null});
+const centeredToasts = createElement(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000, visibleToasts: 2});
+const plainToasts = createElement(Toaster);
+const schemaMarksRequired = createElement(ToolkitProvider, {requiredFromSchema: true, children: null});
+const letterSchema = Yup.object({company: Yup.string().required()});
+const isCompanyRequired: boolean = isRequiredInSchema(letterSchema, 'company', {company: ''});
+// el Formik de Calcita sigue sacando el tipo de los valores de initialValues, como el de formik
+const typedFormik = createElement(Formik<{company: string}>, {
+    initialValues: {company: ''}, validationSchema: letterSchema, onSubmit: (values) => {
+        values.company.trim();
+    }, children: null,
+});
+const sharedSchema = createElement(FormSchemaProvider, {schema: letterSchema, children: null});
+// @ts-expect-error la posición de los avisos es una de las de sonner
+const wrongToastPosition = createElement(Toaster, {position: 'middle'});
 // algo propio dentro de BarActions sabe si quedó en una cápsula (solo ícono) o en el «⋯» del teléfono, y cómo cerrarlo
 const isInCapsule = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.capsule;
 const isInMoreMenu = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.menu;
@@ -513,5 +540,5 @@ const ownPieceElement = createElement(OwnPiece, {title: 'Hola', slots: {root: 'a
 const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
 
 export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
-    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
+    reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

@@ -64,6 +64,7 @@ const AttachmentsLimits = piecePart(THEME_NAME, 'Limits', Typography);
  * @param {boolean} [props.showButton] false esconde «Adjuntar» (la ventana se abre con pickerRef desde un botón suyo)
  * @param {import('react').Ref<{open: () => void}>} [props.pickerRef] recibe {open} para abrir la ventana de archivos
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {boolean} [props.busy] candado mientras se sube: no se puede agregar ni quitar
  * @param {(file: File, reason: string) => void} [props.onReject] reason es uno de FILE_REJECTION; sin él, un aviso
  * @param {Parameters<typeof import('@/upload/TemplateDownloadButton.jsx').default>[0]} [props.template] «Descargar la
@@ -79,7 +80,7 @@ const AttachmentsLimits = piecePart(THEME_NAME, 'Limits', Typography);
 function AttachmentsInputContent(props) {
     const {
         name, label, value = [], onChange, onBlur, onRemove, accept, maxSize, maxFiles, maxTotalSize, error, helperText, buttonLabel,
-        showButton = true, pickerRef, disabled = false, busy = false, onReject, template, actions, sx, messages, texts,
+        showButton = true, pickerRef, disabled = false, required = false, busy = false, onReject, template, actions, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -149,7 +150,7 @@ function AttachmentsInputContent(props) {
         </AttachmentsRoot>
     );
 
-    return label ? <FieldFrame inputId={buttonId} label={label}>{content}</FieldFrame> : content;
+    return label ? <FieldFrame inputId={buttonId} label={label} required={required}>{content}</FieldFrame> : content;
 }
 
 // lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)

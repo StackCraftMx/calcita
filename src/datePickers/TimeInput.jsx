@@ -36,6 +36,9 @@ const TimeInputPicker = piecePart(THEME_NAME, 'Picker', TimePicker);
  * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos; por omisión de uno en uno (30 para citas de
  *     media hora)
  * @param {boolean} [props.disabled]
+ * @param {string} [props.format] cómo se ve la hora, con los códigos de dayjs ('hh:mm a' con ampm en pickerProps); por omisión
+ *     HH:mm o el reloj de ToolkitProvider hourCycle
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {object} [props.pickerProps] lo demás del TimePicker de MUI X que aquí no tiene nombre (views, shouldDisableTime,
  *     slots, slotProps…); value y onChange son del campo
@@ -45,7 +48,7 @@ const TimeInputPicker = piecePart(THEME_NAME, 'Picker', TimePicker);
  */
 function TimeInputContent(props) {
     const {
-        name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep = DEFAULT_MINUTES_STEP, disabled = false, inputRef,
+        name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep = DEFAULT_MINUTES_STEP, disabled = false, required = false, format, inputRef,
         pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -53,11 +56,11 @@ function TimeInputContent(props) {
     const field = usePickerField({name, kind: 'time', error, label, messages, texts});
 
     return (
-        <PickerFrame inputId={field.inputId} label={label} language={field.language}>
+        <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
             <TimeInputPicker
                 {...pickerProps}
                 // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)
-                format={pickerProps?.format ?? field.formats.time}
+                format={format ?? pickerProps?.format ?? field.formats.time}
                 ampm={pickerProps?.ampm ?? field.formats.ampm}
                 value={pickerTimeOf(value)}
                 minTime={pickerTimeOf(minTime) ?? undefined}
@@ -72,7 +75,7 @@ function TimeInputContent(props) {
                     onBlur?.();
                 }}
                 slotProps={textFieldSlotPropsOf(
-                    {id: field.inputId, name, onBlur, error: Boolean(field.errorText), helperText: field.errorText ?? helperText},
+                    {id: field.inputId, name, onBlur, required, error: Boolean(field.errorText), helperText: field.errorText ?? helperText},
                     pickerProps,
                 )}
             />

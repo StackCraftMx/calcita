@@ -28,5 +28,6 @@ export {
 export {default as SubmitButton} from '@/forms/SubmitButton.jsx';
 export {applyServerProblem} from '@/forms/applyServerProblem.js';
 export {formLevelMessageOf, splitRowFieldErrors, splitServerFieldErrors} from '@/forms/serverProblemFields.js';
+export {isRequiredInSchema} from '@/forms/schemaRequired.js';
 export {useFormikField} from '@/forms/useFormikField.js';
 export {Yup, buildYupLocale, translateValidationMessage} from '@/forms/validation.js';

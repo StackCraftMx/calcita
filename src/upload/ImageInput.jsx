@@ -89,6 +89,7 @@ function usePreviewUrl(value) {
  * @param {string} [props.chooseLabel] ya traducido; por omisión «Elegir imagen» (o «Cambiar la imagen» si ya hay una)
  * @param {string} [props.removeLabel] ya traducido; por omisión «Quitar la imagen»
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
  * @param {boolean} [props.busy] candado mientras se sube
  * @param {(file: File, reason: string) => void} [props.onReject] reason es uno de FILE_REJECTION; sin él, un aviso
  * @param {object} [props.sx]
@@ -99,7 +100,7 @@ function usePreviewUrl(value) {
 function ImageInputContent(props) {
     const {
         name, label, value = null, onChange, onBlur, shape = IMAGE_SHAPE.circle, size = DEFAULT_PREVIEW_SIZE, alt, placeholder,
-        accept = 'image', maxSize, error, helperText = ' ', chooseLabel, removeLabel, disabled = false, busy = false, onReject, sx, messages, texts,
+        accept = 'image', maxSize, error, helperText = ' ', chooseLabel, removeLabel, disabled = false, required = false, busy = false, onReject, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -119,7 +120,7 @@ function ImageInputContent(props) {
     const pickText = chooseLabel ?? t(value ? 'upload.changeImage' : 'upload.chooseImage');
 
     return (
-        <FieldFrame inputId={previewId} label={label}>
+        <FieldFrame inputId={previewId} label={label} required={required}>
             <div>
                 <ImageRoot direction="row" aria-busy={busy} ownSx={{alignItems: 'center', gap: 2}} sx={sx}>
                     <input {...picker.inputProps} name={name} aria-hidden="true" tabIndex={-1} />

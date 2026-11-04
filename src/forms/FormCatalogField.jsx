@@ -5,9 +5,9 @@ import CatalogInput from '@/inputs/CatalogInput.jsx';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
- * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/CatalogInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'>} props las de CatalogInput (options, formatLabel, loading…), sin value / onChange / onBlur / error
+ * @param {{name: string} & Omit<Parameters<typeof import('@/inputs/CatalogInput.jsx').default>[0], 'name'|'value'|'onChange'|'onBlur'|'error'> & Partial<Pick<Parameters<typeof import('@/inputs/CatalogInput.jsx').default>[0], 'onChange'|'onBlur'>>} props las de CatalogInput (options, formatLabel, loading…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormCatalogField({name, ...catalogInputProps}) {
-    const fieldProps = useFormikField(name);
+    const fieldProps = useFormikField(name, catalogInputProps);
     return <CatalogInput {...catalogInputProps} {...fieldProps} />;
 }

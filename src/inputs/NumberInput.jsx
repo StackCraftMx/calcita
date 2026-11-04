@@ -42,6 +42,7 @@ const SEPARATORS_ROOM = 6;
  * @param {import('react').ReactNode} [props.suffix] p. ej. «MXN» o «%»
  * @param {number} [props.maxDigits] tope de dígitos (por omisión 17)
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -50,7 +51,7 @@ const SEPARATORS_ROOM = 6;
 function NumberInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-        disabled = false, inputRef, messages, texts: unusedTexts,
+        disabled = false, required = false, inputRef, messages, texts: unusedTexts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -65,13 +66,14 @@ function NumberInputContent(props) {
     const shownText = groupThousands(isTyping ? valueText : completeDecimals(valueText, decimals));
 
     return (
-        <FieldFrame inputId={inputId} label={label}>
+        <FieldFrame inputId={inputId} label={label} required={required}>
             <NumberInputField
                 name={name}
                 id={inputId}
                 inputRef={inputRef}
                 value={shownText}
                 disabled={disabled}
+                required={required}
                 size="small"
                 fullWidth
                 error={Boolean(errorText)}
