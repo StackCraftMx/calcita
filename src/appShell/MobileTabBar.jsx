@@ -224,12 +224,15 @@ function useFittingTabCount(capsule, minTabPixels) {
  * @param {import('react').ReactNode} [props.account] la cuenta (o el engrane), en su círculo junto a la barra
  * @param {import('react').ReactNode} [props.moreFooter] lo que va al final de la hoja de «Más» (la tarjeta del menú lateral)
  * @param {boolean} [props.minimizeOnScroll] se encoge al leer hacia abajo; por omisión sí
+ * @param {string} [props.labelOverflow] un nombre que no cabe en su renglón de la hoja de «Más»: MENU_LABEL_OVERFLOW
  * @param {(keys: string[]|null) => void} [props.onPinnedTabsChange] la persona eligió sus pestañas (null: regresó a las de
  *     omisión)
  */
 function MobileTabBarContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMobileTabBar.defaultProps) y encima lo que llega aquí
-    const {menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, onPinnedTabsChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {
+        menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, labelOverflow, onPinnedTabsChange, ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
@@ -357,7 +360,7 @@ function MobileTabBarContent(props) {
                             <Button size="small" autoFocus={returnsFromEditor} onClick={() => setIsEditingTabs(true)}>{t('drawer.editTabs')}</Button>
                         </TabBarSheetHeader>
                         <SideMenu menuItems={more} activeItem={activeItem} menuBadges={menuBadges} collapsed={false} showBrand={false} footer={moreFooter}
-                                  onNavigate={closeMore} />
+                                  labelOverflow={labelOverflow} onNavigate={closeMore} />
                     </>
                 )}
             </Drawer>
