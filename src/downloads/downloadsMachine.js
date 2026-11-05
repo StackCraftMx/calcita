@@ -2,7 +2,7 @@
 //
 // Cada descarga vive así:
 //
-//   STARTED ──▶ downloading ──PROGRESSED──▶ downloading
+//   STARTED ──▶ downloading ──PROGRESSED / RELABELED──▶ downloading
 //                   │
 //                   ├── COMPLETED ──▶ completed ─┐
 //                   ├── FAILED ─────▶ failed ────┼── CLEAR_FINISHED ──▶ (sale de la lista)
@@ -69,6 +69,14 @@ export const downloadsMachine = setup({}).createMachine({
                     // un archivo que se arma al vuelo (el log) no dice su tamaño: se queda en null y la barra no tiene fin
                     totalBytes: event.totalBytes ?? null,
                 }),
+            }),
+        },
+        // el rótulo cambia mientras baja: un lote de varios archivos que cuenta como UNA descarga dice en cuál va
+        // («3 de 11: contrato.pdf»). Igual que el avance, solo a la que sigue descargando: un aviso que llega tarde no le
+        // cambia el nombre a una que ya terminó
+        RELABELED: {
+            actions: assign({
+                downloads: ({context, event}) => updateActiveDownload(context.downloads, event.id, {label: event.label}),
             }),
         },
         COMPLETED: {

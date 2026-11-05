@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, MarkedText, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, MarkedText, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_LABEL_OVERFLOW, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -319,6 +319,8 @@ const CASES = [
     ['tema del proyecto: CalcitaSectionCard title y defaultProps', h(SectionCard, {}, 'contenido'), 'Título del tema', PROJECT_STYLED_THEME],
     ['tema del proyecto: CalcitaSectionCard title color', h(SectionCard, {}, 'contenido'), 'rgb(16, 17, 18)', PROJECT_STYLED_THEME],
     // el logo ancho con una imagen para cada modo: se pintan las dos
+    // un nombre largo del menú baja de renglón en lugar de cortarse con «…»
+    ['AppLayout con nombres del menú que bajan de renglón', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, menuLabelOverflow: MENU_LABEL_OVERFLOW.wrap}, 'contenido'), 'overflow-wrap:anywhere'],
     ['AppLayout con wordmark para cada modo', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, wordmark: {light: h('img', {src: '/logo-color.svg', alt: ''}), dark: h('img', {src: '/logo-blanco.svg', alt: ''})}}, 'contenido'), '/logo-blanco.svg'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
     // /date-pickers: cada valor viaja en texto y se pinta en el idioma y la zona del proveedor

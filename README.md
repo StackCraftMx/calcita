@@ -574,6 +574,10 @@ es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la 
 Una marca que es una palabra larga va en `wordmark` (a 24 px de alto, en lugar del logo cuadrado y el nombre). Una entrada
 del menú puede llevar a otro sistema (`href`) y traer su ícono ya pintado (`icon`) en lugar del componente (`Icon`).
 
+Un nombre del menú que no cabe se corta con «…». Con `menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap}` baja a un segundo
+renglón y se lee completo («Administración de clientes»): en el menú lateral, en el cajón del teléfono y en «Más». También
+desde el tema, para todo el proyecto: `components.CalcitaAppLayout.defaultProps.menuLabelOverflow`.
+
 El menú no se escribe en una lista central: cada módulo trae su `menu.js` y `composeMenu` los junta, los ordena y deja
 solo los que la sesión puede ver (también dentro de los submenús).
 
@@ -818,6 +822,23 @@ const template = await api.download('/documents/template', {method: 'POST', body
 - Cada respuesta le avisa al aviso de versión nueva qué compilación está publicada (header `X-Frontend-Build`).
 - Un Excel que llegó cortado no se entrega (también en una descarga con POST).
 
+Para que la descarga siga mientras la persona trabaja, `startDownload` la pone en el panel de descargas (`DownloadManager`,
+montado una vez en la raíz) con su avance, su cancelación y el motivo si falla. Un lote de varios archivos que cuenta como
+**una** descarga dice en cuál va con `onLabelChange`, en el mismo renglón:
+
+```js
+startDownload({
+    label: t('files.label'),
+    request: async ({signal, onDownloadProgress, onLabelChange}) => {
+        for (const [position, file] of files.entries()) {
+            onLabelChange(t('files.progress', {position: position + 1, total: files.length, name: file.name}));
+            // …baja el archivo con {signal, onDownloadProgress}
+        }
+        return {blob, fileName};   // el lote ya armado en uno solo
+    },
+});
+```
+
 Si se publica otra versión con la pestaña abierta, la pantalla que no se había abierto pide un archivo que ya no existe.
 `withChunkRecovery` (de `/react-router`) recarga una vez y `RouteErrorScreen` dice «Hay una versión nueva» con su botón;
 sin router de datos, `recoverFromStaleChunk` en el `.catch()` del import y `StaleBuildBoundary` alrededor de las pantallas.
@@ -1053,8 +1074,8 @@ import {FormRow, FormSection} from '@stackcraftmx/calcita';
 </FormSection>
 ```
 
-Los campos van directo dentro de la `FormSection` (sin Grid ni Stack en medio): la línea entre renglones se dibuja entre
-hermanos.
+Los campos pueden ir directo dentro de la `FormSection` o dentro de lo que la pantalla necesite (un Grid de dos columnas, un
+Stack, un componente propio): cada renglón dibuja su propia línea arriba y la de hasta arriba la esconde la tarjeta.
 
 En el teléfono la etiqueta se lleva el 38 % del renglón y un nombre largo se parte en tres renglones: con
 `labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}` la etiqueta sube arriba del campo por debajo de `sm`, y en pantallas más

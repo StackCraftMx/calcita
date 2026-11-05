@@ -1,5 +1,6 @@
 // Lo que respondería el API de archivos: la bitácora de pedidos en CSV (tarda, para poder cancelarla desde el panel de
-// descargas) y un archivo que no se puede generar (para ver cómo el panel enseña el motivo).
+// descargas), la bitácora de un solo mes (la pantalla de Reportes pide varios meses en un lote) y un archivo que no se
+// puede generar (para ver cómo el panel enseña el motivo).
 //
 // Regresan lo que espera startDownload del paquete: {blob, fileName}, o un ApiError con su problema traducido.
 //
@@ -10,11 +11,15 @@ import {ApiError} from '@/fakeServer/ApiError.js';
 import {deliverLikeNetwork, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {allOrdersNewestFirst} from '@/fakeServer/ordersServer.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
+import {storeMonthOf} from '@/fakeServer/storeCalendar.js';
 
 const HTTP_STATUS = Object.freeze({serviceUnavailable: 503});
 
 // lo que tarda la bitácora completa: lo suficiente para alcanzar a cancelarla
 const ORDERS_LOG_MILLISECONDS = 10_000;
+// lo que tarda la bitácora de un mes: con los diez meses de los ejemplos, el lote dura unos ocho segundos y se alcanza
+// a leer en cuál va
+const MONTH_LOG_MILLISECONDS = 800;
 // lo que tarda el servidor en contestar que no puede
 const UNAVAILABLE_MILLISECONDS = 1500;
 
@@ -47,21 +52,46 @@ function csvFieldOf(value) {
 }
 
 /**
- * GET /files/orders-log: la bitácora de todos los pedidos, con los encabezados en el idioma activo (lo que haría el
- * Accept-Language de la petición).
+ * GET /files/orders-log: la bitácora de todos los pedidos.
  *
  * @param {{signal: AbortSignal, onDownloadProgress: Function}} transferOptions las que pasa startDownload
  * @param {string} fileName el nombre con que se guarda
  * @returns {Promise<{blob: Blob, fileName: string}>}
  */
 export async function downloadOrdersLog(transferOptions, fileName) {
-    const {language} = toolkitSettings();
-    const headerLine = ORDERS_LOG_COLUMNS.map((column) => csvFieldOf(column.header[language] ?? column.header.es)).join(',');
-    const orderLines = allOrdersNewestFirst().map((order) => ORDERS_LOG_COLUMNS.map((column) => csvFieldOf(order[column.field])).join(','));
-    const blob = new Blob([UTF8_BYTE_ORDER_MARK + [headerLine, ...orderLines].join(CSV_LINE_END) + CSV_LINE_END], {type: CSV_CONTENT_TYPE});
+    const blob = ordersLogBlobOf(allOrdersNewestFirst());
 
     await deliverLikeNetwork(blob, transferOptions, ORDERS_LOG_MILLISECONDS);
     return {blob, fileName};
+}
+
+/**
+ * GET /files/orders-log?month=AAAA-MM: la bitácora de un solo mes (el mes de la tienda en que se hizo cada pedido), con
+ * sus encabezados. Es la forma de un API que no entrega todo de una vez: quien quiere varios meses los pide uno por uno.
+ *
+ * @param {string} month 'AAAA-MM'
+ * @param {{signal: AbortSignal, onDownloadProgress: Function}} transferOptions
+ * @returns {Promise<{blob: Blob}>}
+ */
+export async function downloadOrdersLogOfMonth(month, transferOptions) {
+    const blob = ordersLogBlobOf(allOrdersNewestFirst().filter((order) => storeMonthOf(order.created_at) === month));
+
+    await deliverLikeNetwork(blob, transferOptions, MONTH_LOG_MILLISECONDS);
+    return {blob};
+}
+
+/**
+ * El CSV de la bitácora: los encabezados en el idioma activo (lo que haría el Accept-Language de la petición) y un
+ * renglón por pedido.
+ *
+ * @param {object[]} orders como las regresa el API de pedidos
+ * @returns {Blob}
+ */
+function ordersLogBlobOf(orders) {
+    const {language} = toolkitSettings();
+    const headerLine = ORDERS_LOG_COLUMNS.map((column) => csvFieldOf(column.header[language] ?? column.header.es)).join(',');
+    const orderLines = orders.map((order) => ORDERS_LOG_COLUMNS.map((column) => csvFieldOf(order[column.field])).join(','));
+    return new Blob([UTF8_BYTE_ORDER_MARK + [headerLine, ...orderLines].join(CSV_LINE_END) + CSV_LINE_END], {type: CSV_CONTENT_TYPE});
 }
 
 /**

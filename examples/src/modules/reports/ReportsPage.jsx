@@ -6,7 +6,8 @@
 //   - el reporte (reportSheetOf, reportWorkbookOf, reportCsvOf): la misma hoja se pinta aquí y se descarga, entre los dos
 //     meses que se eligen con MonthInput (el servidor filtra; viajan 'AAAA-MM');
 //   - el panel de descargas (DownloadManager, montado en AppShell) con startDownload: una descarga lenta que se puede
-//     cancelar y una que falla con el motivo del servidor.
+//     cancelar, un lote de varios meses que cuenta como una sola descarga y dice en qué mes va (onLabelChange), y una que
+//     falla con el motivo del servidor.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useMemo, useState} from 'react';
@@ -23,7 +24,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {
-    ConfirmDialog, DownloadMenu, PageHeading, SectionCard, formatNumber, formatPercent, materialBackgroundOf, startDownload,
+    ConfirmDialog, DownloadMenu, PageHeading, SectionCard, formatMonthName, formatNumber, formatPercent, materialBackgroundOf, startDownload,
     useConfirmAction, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {MonthInput} from '@stackcraftmx/calcita/date-pickers';
@@ -31,8 +32,9 @@ import {SHEET_ROW_KIND, VALUE_FORMAT} from '@stackcraftmx/calcita/excel';
 import {Money} from '@stackcraftmx/calcita/money';
 
 import {monthlyReportSheetOf} from '@/modules/reports/monthlyReport.js';
+import {downloadOrdersLogByMonth} from '@/modules/reports/ordersLogByMonth.js';
 import {REPORT_FORMATS, reportFileOf} from '@/modules/reports/reportFiles.js';
-import {downloadOrdersLog, downloadUnavailableFile, getMonthlyReport} from '@/modules/reports/reportsApi.js';
+import {downloadOrdersLog, downloadOrdersLogOfMonth, downloadUnavailableFile, getMonthlyReport} from '@/modules/reports/reportsApi.js';
 
 // el estado de cuenta sería un PDF: el panel pinta el ícono de ese tipo de archivo
 const STATEMENT_FORMAT = 'pdf';
@@ -103,6 +105,24 @@ export const ReportsPage = () => {
                 label: t('panel.logLabel'),
                 format: REPORT_FORMATS.csv,
                 request: (transferOptions) => downloadOrdersLog(transferOptions, t('panel.logFileName')),
+            });
+        },
+    });
+    // los meses que se ven en el reporte (los que eligió arriba), uno por petición; el panel lo enseña como una sola descarga
+    const logByMonth = useConfirmAction({
+        run: () => {
+            startDownload({
+                label: t('panel.byMonthLabel'),
+                format: REPORT_FORMATS.csv,
+                request: (transferOptions) => downloadOrdersLogByMonth({
+                    months: metrics.months.map(({month}) => month),
+                    downloadMonth: downloadOrdersLogOfMonth,
+                    labelOf: (month, position, total) => {
+                        const [year, monthNumber] = month.split('-').map(Number);
+                        return t('panel.byMonthProgress', {position, total, month: formatMonthName(year, monthNumber)});
+                    },
+                    fileName: t('panel.byMonthFileName'),
+                }, transferOptions),
             });
         },
     });
@@ -190,12 +210,15 @@ export const ReportsPage = () => {
                     <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('panel.text')}</Typography>
                     <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5}>
                         <Button variant="outlined" onClick={() => ordersLog.open({})}>{t('panel.log')}</Button>
+                        <Button variant="outlined" disabled={!metrics?.months.length} onClick={() => logByMonth.open({})}>{t('panel.byMonth')}</Button>
                         <Button variant="outlined" color="error" onClick={() => unavailableFile.open({})}>{t('panel.unavailable')}</Button>
                     </Stack>
                 </SectionCard>
             </Stack>
 
             <ConfirmDialog {...ordersLog.dialogProps} title={t('panel.logTitle')} description={t('panel.logDescription')}
+                           confirmLabel={t('panel.confirm')} />
+            <ConfirmDialog {...logByMonth.dialogProps} title={t('panel.byMonthTitle')} description={t('panel.byMonthDescription')}
                            confirmLabel={t('panel.confirm')} />
             <ConfirmDialog {...unavailableFile.dialogProps} title={t('panel.unavailableTitle')} description={t('panel.unavailableDescription')}
                            confirmLabel={t('panel.confirm')} />

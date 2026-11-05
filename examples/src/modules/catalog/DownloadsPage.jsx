@@ -20,6 +20,7 @@ const PANEL_EXTENSIONS = [
     {id: 'label', option: 'label', example: "startDownload({label: 'Pedidos de octubre', …})"},
     {id: 'format', option: 'format', example: "format: 'xlsx'"},
     {id: 'request', option: 'request', example: "request: (options) => api.download('/orders/export', options)"},
+    {id: 'onLabelChange', option: 'request({onLabelChange})', example: "onLabelChange(`${position} de ${files.length}: ${file.name}`)"},
     {id: 'onCompleted', option: 'onCompleted', example: 'onCompleted: (fileName) => reloadTable()'},
     {id: 'onFailed', option: 'onFailed · onCanceled', example: "onFailed: (error) => reportError(error), onCanceled: () => analytics.track('download_canceled')"},
     {id: 'fileTypes', option: 'ToolkitProvider fileTypes', example: "fileTypes={{zip: {Icon: FolderZipOutlinedIcon, color: 'warning.main', label: 'ZIP', hint: 'Todas las facturas'}}}"},

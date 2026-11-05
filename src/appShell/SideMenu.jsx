@@ -101,12 +101,13 @@ const SECTION_TITLE_FONT_REM = Object.freeze({solid: 0.6875, glass: 0.75});
  * @param {Record<string, number>} [props.menuBadges] los conteos del servidor por badgeKey
  * @param {import('react').ReactNode} [props.railTop] arriba del menú encogido que hace de barra: la ☰ y el logo
  * @param {import('react').ReactNode} [props.railBottom] abajo de ese menú: los ajustes y la cuenta
+ * @param {string} [props.labelOverflow] un nombre que no cabe en su renglón: MENU_LABEL_OVERFLOW (SideMenuEntry)
  */
 function SideMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSideMenu.defaultProps) y encima lo que llega aquí
     const {
     logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, collapsed, footer, showBrand = true, onNavigate, railTop, railBottom, menuBadges,
-    ...unknownProps
+    labelOverflow, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
@@ -200,7 +201,7 @@ function SideMenuContent(props) {
                                   ) : null}>
                                 {section.menuItems.map((menuItem) => (
                                     <SideMenuEntry key={menuItem.to ?? menuItemLabelOf(menuItem, t)} menuItem={menuItem} activeItem={activeItem} collapsed={collapsed}
-                                                   onNavigate={onNavigate} menuBadges={menuBadges} />
+                                                   onNavigate={onNavigate} menuBadges={menuBadges} labelOverflow={labelOverflow} />
                                 ))}
                             </List>
                         </MenuSection>

@@ -218,7 +218,7 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
     accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    onMenuCollapse, onMobileMenuChange, onMobileTabsChange, children,
+    menuLabelOverflow, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
@@ -260,7 +260,7 @@ const AppLayoutFrame = ({
     const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons && !usesBarCapsules;
     const drawerWidth = collapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH_EXPANDED;
     const activeItem = activeMenuItemOf(menuItems, pathname);
-    const sideMenuProps = {logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter};
+    const sideMenuProps = {logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter, labelOverflow: menuLabelOverflow};
     // el lugar de la barra donde caen las acciones de cada pantalla (BarActions); con la barra fundida con el menú no hay
     // barra en escritorio y se quedan en la pantalla
     const [barActionsSlot, setBarActionsSlot] = useState(null);
@@ -363,7 +363,7 @@ const AppLayoutFrame = ({
             {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
-                              onPinnedTabsChange={onMobileTabsChange}
+                              labelOverflow={menuLabelOverflow} onPinnedTabsChange={onMobileTabsChange}
                               account={(
                                   <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle}
                                                showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} user={user}
@@ -483,6 +483,9 @@ const AppLayoutFrame = ({
  * @param {boolean} [props.minimizeTabBarOnScroll] en el teléfono con vidrio, la barra de pestañas se encoge al leer hacia
  *     abajo y regresa al subir (como iOS 26); por omisión sí
  * @param {number|string} [props.contentMaxWidth] por omisión 1400
+ * @param {string} [props.menuLabelOverflow] un nombre del menú lateral que no cabe en su renglón: MENU_LABEL_OVERFLOW.ellipsis
+ *     (por omisión, se corta con «…») o MENU_LABEL_OVERFLOW.wrap (baja a otro renglón y se lee completo). También desde el
+ *     tema: components.CalcitaAppLayout.defaultProps
  * @param {(collapsed: boolean) => void} [props.onMenuCollapse] la persona encogió (true) o abrió (false) el menú lateral
  * @param {(isOpen: boolean) => void} [props.onMobileMenuChange] se abrió o se cerró el menú del teléfono (el cajón)
  * @param {(keys: string[]|null) => void} [props.onMobileTabsChange] la persona eligió sus pestañas del teléfono (las llaves
@@ -496,8 +499,8 @@ const AppLayoutContent = (props) => {
     const {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
-    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, onMenuCollapse, onMobileMenuChange, onMobileTabsChange,
-    texts, children,
+    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, menuLabelOverflow, onMenuCollapse, onMobileMenuChange,
+    onMobileTabsChange, texts, children,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -515,7 +518,7 @@ const AppLayoutContent = (props) => {
                                     headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
                                     isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
-                                    contentMaxWidth={contentMaxWidth} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
+                                    contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
                                     onMobileTabsChange={onMobileTabsChange}>
                         {children}
                     </AppLayoutFrame>

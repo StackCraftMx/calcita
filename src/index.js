@@ -60,6 +60,7 @@ export {
 
 // ─── el marco de la app, el menú compuesto y los permisos (RBAC / ABAC del proyecto) ─
 export {AppLayout, MENU_POSITION} from '@/appShell/AppLayout.jsx';
+export {MENU_LABEL_OVERFLOW} from '@/appShell/SideMenuEntry.jsx';
 export {AuthLayout} from '@/appShell/AuthLayout.jsx';
 export {default as BarActions} from '@/appShell/BarActions.jsx';
 export {default as BarActionButton} from '@/appShell/BarActionButton.jsx';

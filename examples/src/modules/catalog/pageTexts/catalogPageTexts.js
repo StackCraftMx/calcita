@@ -738,11 +738,12 @@ export const catalogPageTexts = {
                 description: 'El panel de descargas, como el de Google Drive: sale abajo a la derecha solo mientras hay descargas, con el avance de cada archivo, la opción de cancelar, el motivo si falla y el archivo guardado al terminar. Las pantallas solo piden el archivo; el panel es el único que avisa. Cada sección trae para qué sirve, el código mínimo y una tabla con todo lo que acepta.',
                 panel: {
                     title: '1. Mandar un archivo al panel',
-                    description: 'Cada botón pide un archivo a un servidor de mentira. La pantalla sigue trabajando mientras baja. Cancele uno desde el panel, o deje que falle el último: el panel se queda con el motivo hasta que lo cierre.',
+                    description: 'Cada botón pide un archivo a un servidor de mentira. La pantalla sigue trabajando mientras baja. El lote baja cinco archivos como una sola descarga y su renglón dice en cuál va. Cancele uno desde el panel, o deje que falle el último: el panel se queda con el motivo hasta que lo cierre.',
                     extend: {
                         label: 'El nombre que se ve en el panel mientras todavía no se sabe el del archivo.',
                         format: 'El tipo de archivo, para su ícono: Excel, CSV o PDF.',
                         request: 'Cómo pedir el archivo. Recibe con qué cancelarlo y dónde avisar su avance; regresa el archivo y su nombre.',
+                        onLabelChange: 'Un lote de varios archivos que cuenta como una sola descarga: cambia el nombre de su renglón mientras baja, para decir en cuál va. Sin llamarlo, se queda el label.',
                         onCompleted: 'Qué hacer cuando terminó (volver a pedir la tabla, si la descarga cambió algo).',
                         onFailed: 'Enterarse cuando no se pudo (para reportarlo) o cuando la persona la canceló. El panel ya lo dice.',
                         fileTypes: 'Tipos de archivo propios además de Excel, CSV y PDF (un ZIP, el XML del SAT), con su ícono, su color y su texto: los usan el menú «Descargar» y el panel.',
@@ -1624,6 +1625,7 @@ export const catalogPageTexts = {
                         ribbons: 'Avisos suyos dentro de la barra (mantenimiento programado).',
                         toggles: 'Quitar del menú de la cuenta el tamaño de letra, el idioma o claro u oscuro.',
                         defaultCollapsed: 'El menú lateral empieza encogido a íconos (la persona lo cambia y se recuerda).',
+                        menuLabelOverflow: 'Un nombre del menú que no cabe: por omisión se corta con «…»; con wrap baja a otro renglón y se lee completo. Vale en el menú lateral, en el del teléfono y en «Más». También desde el tema (CalcitaAppLayout).',
                         minimizeTabBar: 'En el teléfono, que la barra de abajo no se encoja al bajar.',
                         contentMaxWidth: 'Qué tan ancho llega el contenido en pantallas grandes (por omisión 1400).',
                         bar: 'La barra en cápsulas (por omisión) o en franja de lado a lado. Va en el tema.',
@@ -2961,11 +2963,12 @@ export const catalogPageTexts = {
                 description: 'The downloads panel, like Google Drive’s: it shows at the bottom right only while there are downloads, with each file’s progress, the option to cancel, the reason if it fails and the file saved when done. Screens only request the file; the panel is the only one that tells. Each section has what it is for, the minimum code and a table with everything it accepts.',
                 panel: {
                     title: '1. Send a file to the panel',
-                    description: 'Each button requests a file from a fake server. The screen keeps working while it downloads. Cancel one from the panel, or let the last one fail: the panel keeps the reason until you close it.',
+                    description: 'Each button requests a file from a fake server. The screen keeps working while it downloads. The batch downloads five files as a single download and its row says which one it is on. Cancel one from the panel, or let the last one fail: the panel keeps the reason until you close it.',
                     extend: {
                         label: 'The name shown in the panel while the file’s own name is not known yet.',
                         format: 'The file type, for its icon: Excel, CSV or PDF.',
                         request: 'How to request the file. It receives what cancels it and where to report its progress; it returns the file and its name.',
+                        onLabelChange: 'A batch of several files that counts as one download: it changes the name of its row while downloading, to say which file it is on. Without calling it, the label stays.',
                         onCompleted: 'What to do when it finished (request the table again, if the download changed something).',
                         onFailed: 'Know when it failed (to report it) or when the person canceled it. The panel already says so.',
                         fileTypes: 'Your own file types besides Excel, CSV and PDF (a ZIP, the SAT XML), with their icon, color and text: the download menu and the panel use them.',
@@ -3847,6 +3850,7 @@ export const catalogPageTexts = {
                         ribbons: 'Your own notices inside the bar (scheduled maintenance).',
                         toggles: 'Remove text size, language or light or dark from the account menu.',
                         defaultCollapsed: 'The side menu starts shrunk to icons (the person changes it and it is remembered).',
+                        menuLabelOverflow: 'A menu name that does not fit: by default it is cut with «…»; with wrap it goes to another line and reads whole. It applies to the side menu, the phone menu and «More». Also from the theme (CalcitaAppLayout).',
                         minimizeTabBar: 'On a phone, keep the bottom bar from shrinking when scrolling down.',
                         contentMaxWidth: 'How wide the content gets on large screens (1400 by default).',
                         bar: 'The bar in capsules (default) or as a full-width band. It goes in the theme.',

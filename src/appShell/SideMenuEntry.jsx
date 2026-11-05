@@ -17,6 +17,12 @@
 //     dedo) con esquina concéntrica: el radio del panel (20) menos el margen entre botón y orilla (10) da 10. Antes era una
 //     cápsula con botones redondos y se veía demasiado redondo (lo reportaron).
 //
+// Un nombre largo se corta con «…» por omisión (el renglón mide siempre lo mismo). Con labelOverflow wrap baja a un
+// segundo renglón: el menú tiene ancho fijo y, con un vocabulario largo («Administración de clientes»), cortado ya no se
+// sabe a dónde lleva la entrada. Solo baja con el menú abierto (encogido el nombre ni se ve) y el renglón tiene desde el
+// principio el ancho del menú abierto: si creciera junto con el menú al abrirse, el nombre bajaría letra por letra (medido
+// en Chrome: un renglón llegó a 703 px de alto a media animación).
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSideMenuEntry con defaultProps y
 // styleOverrides de sus partes: button, icon, iconPlaceholder, text, badge, expand.
 //
@@ -39,12 +45,21 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import SubmenuActionsMenu, {SUBMENU_PLACEMENT} from '@/appShell/SubmenuActionsMenu.jsx';
+import {DRAWER_WIDTH_EXPANDED} from '@/appShell/shellSizes.js';
 import {menuBadgeOf} from '@/navigation/appMenu.js';
 import {accentTextStylesOf, glassDropOf, isGlassTheme} from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
+
+/** Qué hace el menú lateral con un nombre que no cabe en su renglón. */
+export const MENU_LABEL_OVERFLOW = Object.freeze({
+    // se corta con «…» (lo de siempre): todos los renglones miden lo mismo
+    ellipsis: 'ellipsis',
+    // baja a otro renglón: se lee completo
+    wrap: 'wrap',
+});
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaSideMenuEntry)
 const THEME_NAME = 'CalcitaSideMenuEntry';
@@ -76,6 +91,12 @@ const MENU_BADGE_PIXELS = 11;
 // de ahí para arriba se lee «99+»
 const BADGE_MAX = 99;
 const RAIL_BUTTON_RADIUS_PIXELS = 10;
+// con los nombres que bajan de renglón, lo menos que mide el renglón con el menú abierto: el ancho del cajón menos el margen
+// de la lista de SideMenu (px 1 de cada lado, en unidades de spacing) y la línea de la derecha del cajón sin vidrio. El
+// cajón recorta lo que sobra mientras se abre. OJO: si el proyecto angosta el cajón desde su tema, también tiene que bajar
+// este mínimo (styleOverrides de button) o se recortan el numerito y la flecha
+const MENU_LIST_SIDE_PADDING = 1;
+const DRAWER_LINE_PIXELS = 1;
 
 /**
  * @param {object} props
@@ -84,11 +105,15 @@ const RAIL_BUTTON_RADIUS_PIXELS = 10;
  * @param {boolean} props.collapsed el menú está encogido (solo íconos)
  * @param {() => void} [props.onNavigate] al elegir una pantalla (el cajón del teléfono se cierra)
  * @param {Record<string, number>} [props.menuBadges] los conteos del servidor por badgeKey (menuBadgeOf)
+ * @param {string} [props.labelOverflow] un nombre que no cabe: MENU_LABEL_OVERFLOW.ellipsis (por omisión, se corta con
+ *     «…») o MENU_LABEL_OVERFLOW.wrap (baja a otro renglón)
  * @param {number} [props.depth]
  */
 function SideMenuEntryContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSideMenuEntry.defaultProps) y encima lo que llega aquí
-    const {menuItem, activeItem, collapsed, onNavigate, menuBadges, depth = 0, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {
+        menuItem, activeItem, collapsed, onNavigate, menuBadges, labelOverflow = MENU_LABEL_OVERFLOW.ellipsis, depth = 0, ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
@@ -107,6 +132,10 @@ function SideMenuEntryContent(props) {
     // el badge: el conteo del servidor, la suma de las hijas o el fijo del menu.js; encogido va sobre el ícono
     const badge = menuBadgeOf(menuItem, menuBadges);
     const Icon = menuItem.Icon;
+    // baja de renglón solo con el menú abierto (ver el encabezado). whiteSpace normal: el cajón del escritorio le pide a todo
+    // su contenido un solo renglón (para que nada se reacomode mientras anima) y el nombre lo hereda. overflowWrap anywhere:
+    // una palabra más larga que el renglón («conciliacion_de_pagos_del_mes») también baja en lugar de salirse
+    const wrapsLabel = labelOverflow === MENU_LABEL_OVERFLOW.wrap && !collapsed;
 
     const toggleChildren = (event) => {
         if (collapsed) {
@@ -139,6 +168,7 @@ function SideMenuEntryContent(props) {
                         ownSx={{
                             borderRadius: isRailButton ? `${RAIL_BUTTON_RADIUS_PIXELS}px` : 1.5, pl: leftPadding, pr: isChild ? CHILD_RIGHT_PADDING : ROW_RIGHT_PADDING,
                             minHeight: isRailButton ? RAIL_BUTTON_PIXELS : (isChild ? CHILD_ROW_MIN_HEIGHT_PIXELS : ROW_MIN_HEIGHT_PIXELS),
+                            ...(wrapsLabel && {minWidth: `calc(${DRAWER_WIDTH_EXPANDED}px - ${theme.spacing(2 * MENU_LIST_SIDE_PADDING)} - ${DRAWER_LINE_PIXELS}px)`}),
                             transition: theme.transitions.create(['background-color', 'border-radius', 'min-height']),
                             ...(isActive ? activeText : {color: 'text.primary'}),
                             '&.Mui-selected, &.Mui-selected:hover': selectedStyle,
@@ -152,7 +182,10 @@ function SideMenuEntryContent(props) {
                 </EntryIcon>
             )}
             <EntryText primary={label} ownSx={fadeWhenCollapsed}
-                          slotProps={{primary: {noWrap: true, sx: {...textSizeOf(MENU_TEXT_PIXELS), fontWeight: isActive ? 600 : 400}}}} />
+                          slotProps={{primary: {
+                              noWrap: !wrapsLabel,
+                              sx: {...textSizeOf(MENU_TEXT_PIXELS), fontWeight: isActive ? 600 : 400, ...(wrapsLabel && {whiteSpace: 'normal', overflowWrap: 'anywhere'})},
+                          }}} />
             {badge && (
                 <EntryBadge label={badge.isCount && badge.content > BADGE_MAX ? `${BADGE_MAX}+` : badge.content} size="small" color="primary" ownSx={(theme) => ({height: 20, ...textSizeOf(MENU_BADGE_PIXELS), ml: 1, ...fadeWhenCollapsed(theme)})} />
             )}
@@ -176,7 +209,7 @@ function SideMenuEntryContent(props) {
                     <List dense disablePadding>
                         {menuItem.children.map((child) => (
                             <SideMenuEntry key={child.to ?? child.href ?? menuItemLabelOf(child, t)} menuItem={child} activeItem={activeItem} collapsed={collapsed}
-                                           onNavigate={onNavigate} menuBadges={menuBadges} depth={depth + 1} />
+                                           onNavigate={onNavigate} menuBadges={menuBadges} labelOverflow={labelOverflow} depth={depth + 1} />
                         ))}
                     </List>
                 </Collapse>
