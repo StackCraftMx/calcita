@@ -36,7 +36,10 @@ const abortControllerByDownloadId = new Map();
  *     archivo
  * @param {string} [options.format] el tipo de archivo, para su ícono en el panel: xlsx, csv, pdf o uno del proyecto
  *     (ToolkitProvider fileTypes)
- * @param {(transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void}) => Promise<{blob: Blob, fileName: string}>} options.request
+ * @param {(transferOptions: {signal: AbortSignal, onDownloadProgress: (progress: {loaded: number, total?: number|null}) => void, onLabelChange: (label: string) => void}) => Promise<{blob: Blob, fileName: string}>} options.request
+ *     baja el archivo y regresa {blob, fileName}. onLabelChange es para un lote de varios archivos que cuenta como una
+ *     sola descarga: cambia el rótulo del panel mientras baja («3 de 11: contrato.pdf»); quien no lo llame se queda con
+ *     `label`
  * @param {(fileName: string) => void} [options.onCompleted] p. ej. volver a pedir la tabla (si la descarga cambia algo
  *     en el servidor)
  * @param {(error: unknown) => void} [options.onFailed] cuando no se pudo (el panel ya lo dice; para avisar o reportarlo)
@@ -57,6 +60,8 @@ export async function startDownload({label, format, request, onCompleted, onFail
             onDownloadProgress: (progressEvent) => downloadsActor.send({
                 type: 'PROGRESSED', id: downloadId, loadedBytes: progressEvent.loaded, totalBytes: progressEvent.total,
             }),
+            // un lote de varios archivos cuenta como UNA descarga: así su renglón dice en cuál va, en lugar de agregar otro
+            onLabelChange: (newLabel) => downloadsActor.send({type: 'RELABELED', id: downloadId, label: newLabel}),
         });
         saveBlob(blob, fileName);
         downloadsActor.send({type: 'COMPLETED', id: downloadId, fileName, sizeBytes: blob.size});

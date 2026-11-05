@@ -42,6 +42,25 @@ test('una descarga terminada ya no cambia aunque llegue un aviso tarde', () => {
     assert.equal(download.errorMessage, null);
 });
 
+test('un lote cambia su rótulo mientras baja y lo deja de cambiar al terminar', () => {
+    // Escenario: una descarga de varios archivos avisa en cuál va; después termina y llega un aviso tarde.
+    // Esperado: el renglón es el mismo (no se agrega otro), con el rótulo nuevo; ya terminada, el aviso tarde no lo cambia.
+    const actor = startActor();
+    actor.send({type: 'STARTED', id: 'lote', label: 'Expediente'});
+    actor.send({type: 'RELABELED', id: 'lote', label: 'Expediente: 3 de 11, contrato.pdf'});
+
+    const [whileDownloading] = actor.getSnapshot().context.downloads;
+    assert.equal(actor.getSnapshot().context.downloads.length, 1);
+    assert.equal(whileDownloading.label, 'Expediente: 3 de 11, contrato.pdf');
+
+    actor.send({type: 'COMPLETED', id: 'lote', fileName: 'expediente.zip'});
+    actor.send({type: 'RELABELED', id: 'lote', label: 'Expediente: 11 de 11, anexo.pdf'});
+
+    const [finished] = actor.getSnapshot().context.downloads;
+    assert.equal(finished.status, DOWNLOAD_STATUS.completed);
+    assert.equal(finished.label, 'Expediente: 3 de 11, contrato.pdf');
+});
+
 test('limpiar quita las terminadas y deja las que siguen descargando', () => {
     // Escenario: una completada, una fallida, una cancelada y una en curso.
     // Esperado: queda solo la que sigue descargando.
