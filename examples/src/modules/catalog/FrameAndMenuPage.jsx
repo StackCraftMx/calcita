@@ -36,6 +36,7 @@ const LAYOUT_EXTENSIONS = [
     {id: 'ribbons', option: 'ribbons', example: 'ribbons={<MaintenanceNotice />}'},
     {id: 'toggles', option: 'showFontSizeToggle · showLanguageToggle · showColorSchemeToggle', example: 'showLanguageToggle={false}'},
     {id: 'defaultCollapsed', option: 'defaultCollapsed', example: 'defaultCollapsed'},
+    {id: 'menuLabelOverflow', option: 'menuLabelOverflow', example: 'menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap}'},
     {id: 'minimizeTabBar', option: 'minimizeTabBarOnScroll', example: 'minimizeTabBarOnScroll={false}'},
     {id: 'contentMaxWidth', option: 'contentMaxWidth', example: 'contentMaxWidth={1200}'},
     {id: 'bar', option: 'createToolkitTheme({bar})', example: 'createToolkitTheme({glass: true, bar: TOP_BAR.band})'},
