@@ -4,6 +4,26 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.56.0] - 2026-11-05
+
+### Agregado
+
+- El panel de descargas dice en qué archivo va un lote: la `request` de `startDownload` recibe `onLabelChange(label)` junto a
+  `signal` y `onDownloadProgress`, y el renglón cambia su nombre mientras baja («3 de 11: contrato.pdf») en lugar de agregar
+  otro. Una descarga que ya terminó no cambia aunque llegue un aviso tarde. Quien no lo llame, igual que antes.
+- `AppLayout`: `menuLabelOverflow` para un nombre del menú que no cabe en su renglón. `MENU_LABEL_OVERFLOW.wrap` lo baja a un
+  segundo renglón y se lee completo, en el menú lateral, el cajón del teléfono y «Más» (solo con el menú abierto: encogido
+  no se ve). Por omisión `MENU_LABEL_OVERFLOW.ellipsis`, cortado con «…» como antes. También desde el tema
+  (`CalcitaAppLayout` o `CalcitaSideMenuEntry` con `labelOverflow`).
+- Ejemplos: en Reportes, «Bajar la bitácora mes por mes» (el servidor da un mes por petición; el panel lo enseña como una
+  sola descarga que dice en qué mes va y lo guarda en un solo CSV); el menú de los ejemplos ya baja de renglón los nombres
+  largos; en Hecho en Calcita, el lote de cinco en Descargas y la opción del menú en Marco y menú.
+
+### Corregido
+
+- El README decía que los campos de una `FormSection` tenían que ir directo, sin Grid ni Stack en medio. Ya no es así: cada
+  renglón dibuja su propia línea y pueden ir dentro de lo que la pantalla necesite.
+
 ## [0.55.0] - 2026-11-04
 
 ### Agregado
