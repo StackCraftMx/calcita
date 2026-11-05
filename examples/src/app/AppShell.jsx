@@ -5,7 +5,8 @@
 // términos de uso nuevos que la persona no ha aceptado, se le piden antes de seguir (TermsAcceptanceDialog; no acepta = sale).
 //
 // Lo que se agrega sin tocar el framework: el estilo y «Instalar la app» en el menú de la cuenta (accountSettings), «Entrar con otro
-// perfil» en el menú de la cuenta (accountMenuItems) y la tarjeta de abajo del menú (sidebarFooter).
+// perfil» en el menú de la cuenta (accountMenuItems) y la tarjeta de abajo del menú (sidebarFooter). Un nombre del menú que no
+// cabe baja de renglón en lugar de cortarse (menuLabelOverflow): en el menú se tiene que leer a dónde lleva cada entrada.
 //
 // El menú no se escribe aquí: composeMenu descubre los menu.js de los módulos y deja solo los que la sesión puede ver;
 // al cambiar los permisos de su perfil, el menú cambia solo.
@@ -19,7 +20,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import SwitchAccountOutlinedIcon from '@mui/icons-material/SwitchAccountOutlined';
 import {
-    AppLayout, InstallAppSetting, TermsAcceptanceDialog, composeMenu, toastSuccess, useAccessChecker, useMenuBadges, useToolkitTranslation,
+    AppLayout, InstallAppSetting, MENU_LABEL_OVERFLOW, TermsAcceptanceDialog, composeMenu, toastSuccess, useAccessChecker, useMenuBadges,
+    useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {useAccount} from '@stackcraftmx/calcita/account';
 import {useIsNavigating} from '@stackcraftmx/calcita/react-router';
@@ -92,7 +94,7 @@ export const AppShell = () => {
             <AppLayout logo={<Logo />} brandName={t('title')} brandCaption={t('caption')} menuItems={menuItems} user={session.user}
                        profilePath={APP_PATHS.profile} accountMenuItems={accountMenuItems} onSignOut={leave} isSigningOut={isSigningOut}
                        isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<><GlassModeSetting /><InstallAppSetting /></>}
-                       sidebarFooter={<SidebarCard />}>
+                       sidebarFooter={<SidebarCard />} menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap}>
                 <Outlet />
             </AppLayout>
             <TermsAcceptanceDialog open={termsPending} version={session.terms?.current} title={t('legal.termsTitle')} onDecline={leave}
