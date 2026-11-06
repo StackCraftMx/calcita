@@ -19,15 +19,23 @@
 //   <RecordCard slots={{avatar: MiAvatar}} slotProps={{title: {component: 'h2'}}} … />
 //   components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {elevation: 2}}}}}
 //
+// Una parte propia recibe su contenido y lo demás que le pasa Calcita, pero no su estilo (ownSx) ni, si la parte es un Stack,
+// su acomodo (spacing, direction): eso lo pone ella.
+//
 // Cada pieza se exporta envuelta con withPieceSlots(Contenido, nombre): la envoltura lee slots y slotProps y se los da a
 // sus partes por contexto (de cada pieza el suyo: una pieza dentro de otra no se los roba).
 //
 // Funciones genéricas del paquete: function (regla de la casa).
 import {createContext, createElement, useContext} from 'react';
+import Stack from '@mui/material/Stack';
 import {styled, useThemeProps} from '@mui/material/styles';
 
 // lo que la parte usa y no se le pasa al componente de adentro (ni al HTML)
 const PIECE_ONLY_PROPS = new Set(['ownSx', 'ownerState', 'theme', 'as']);
+// el acomodo que Calcita le pone a una parte que es un Stack (la separación, la dirección): solo Stack lo entiende. Una parte
+// propia (slots) no lo recibe, igual que no recibe el estilo de Calcita: un Box o un div lo pintaba como atributo del HTML y
+// React avisaba en la consola. Lo que la pantalla pase en slotProps sí le llega.
+const STACK_LAYOUT_PROPS = Object.freeze(['spacing', 'direction', 'useFlexGap', 'divider']);
 // lo que la pieza recibe para sus partes: no le llega al contenido (no son props suyas)
 const SLOT_PROP_NAMES = Object.freeze(['slots', 'slotProps']);
 
@@ -82,6 +90,11 @@ export function mergedSlotProps(partProps, extra) {
     return merged;
 }
 
+/** Las props de una parte sin el acomodo que solo entiende Stack (STACK_LAYOUT_PROPS). */
+function withoutStackLayout(partProps) {
+    return Object.fromEntries(Object.entries(partProps).filter(([propName]) => !STACK_LAYOUT_PROPS.includes(propName)));
+}
+
 /**
  * Un componente con su lugar en el tema: theme.components[name].styleOverrides[parte con minúscula] se aplica después
  * del estilo de Calcita (ownSx) y gana. La parte también se puede cambiar o recibir props de más con slots y slotProps
@@ -98,6 +111,7 @@ export function piecePart(name, slot, component = 'div') {
         ({theme, ownSx}) => (ownSx ? theme.unstable_sx(ownSx) : {}),
     );
     const partKey = partKeyOf(slot);
+    const isStackPart = component === Stack;
 
     // React 19: ref llega como una prop más y se pasa tal cual
     function PiecePart(props) {
@@ -105,14 +119,15 @@ export function piecePart(name, slot, component = 'div') {
         if (!pieceSlots) {
             return createElement(StyledPart, props);
         }
-        const partProps = mergedSlotProps(props, pieceSlots.slotProps?.[partKey]);
+        const extraProps = pieceSlots.slotProps?.[partKey];
         const Replacement = pieceSlots.slots?.[partKey];
         if (!Replacement) {
-            return createElement(StyledPart, partProps);
+            return createElement(StyledPart, mergedSlotProps(props, extraProps));
         }
-        // el componente de la pantalla no sabe de los estilos de Calcita: le llega lo demás
-        const {ownSx: unusedOwnSx, ownerState: unusedOwnerState, ...replacementProps} = partProps;
-        return createElement(Replacement, replacementProps);
+        // el componente de la pantalla no sabe de los estilos ni del acomodo de Calcita: le llega lo demás, y encima lo que
+        // la pantalla le dé en slotProps
+        const {ownSx: unusedOwnSx, ownerState: unusedOwnerState, ...calcitaProps} = props;
+        return createElement(Replacement, mergedSlotProps(isStackPart ? withoutStackLayout(calcitaProps) : calcitaProps, extraProps));
     }
     PiecePart.displayName = `${name}${slot}`;
     return PiecePart;
