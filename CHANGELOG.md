@@ -4,6 +4,37 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.57.0] - 2026-11-06
+
+### Agregado
+
+- `FilterDrawer`: el campo de fecha se cambia por el calendario de la app (`slots={{dateInput: DateInput}}`, o una vez en el
+  tema para todas las listas). Por omisión sigue el del navegador, sin pedir MUI X. El campo recibe lo mismo que `DateInput`
+  (name, label, value, onChange, error, helperText, minDate, maxDate).
+- Un `dateRange` se acota con `minDate`, `maxDate`, `disablePast` y `disableFuture` (hoy en la zona del producto): el
+  calendario no deja escoger fuera y cada extremo acota al otro. Una fecha tecleada fuera de los topes se dice en su campo
+  («No puede ser después del 6 nov 2026.») y no deja buscar, igual que un rango al revés. Nada se borra solo.
+- Un `custom` con `keys` es un rango propio en un solo campo: guarda en sus dos llaves, cuenta como un filtro, da sus dos
+  chips y, con `isBackwards(from, to)`, no deja buscar al revés. `render` recibe además sus `keys` y lo que esté mal en cada
+  una (`errors`), ya dicho. Un `custom` sin `keys`, igual que antes.
+- `stackPairsBelow`: si el cajón mide menos que eso, cada par («desde» y «hasta», operador y número) va uno arriba del otro
+  (también en el teléfono). Sin la opción, lado a lado como antes. `ServerTableFilterDrawer` la pasa, y `drawerProps` lleva lo
+  demás del cajón (sus `slots`, `slotProps`…).
+- Ejemplos: en Pedidos, el cajón con el calendario de la app, la fecha del pedido sin días en el futuro, la «Hora de compra»
+  como rango propio (el servidor filtra por la hora de la tienda) y los pares apilados en el teléfono; en Hecho en Calcita,
+  la demo del cajón con topes, un periodo propio de dos meses y sus filas en «Cómo se extiende».
+
+### Corregido
+
+- Una parte que la pantalla cambia por la suya (`slots`) ya no recibe el acomodo de Calcita cuando la parte es un `Stack`
+  (`spacing`, `direction`): un `Box` o un `div` lo pintaba como atributo del HTML y React avisaba en la consola. Valía para las
+  92 partes de ese tipo en 52 piezas (el cuerpo del cajón de filtros entre ellas). Lo que se le pase en `slotProps` sí le
+  llega. OJO: quien cambió una parte por un `Stack` propio y se apoyaba en esa separación tiene que ponerla él.
+- Los campos fuera de una `FormSection` (el cajón de filtros, una ventana) leen las variables `--calcita-field-*` como los de
+  `FormSection`: el color que el tema del proyecto les pone en oscuro ya les llega. Sin la variable, los mismos tonos de antes.
+- Minimalista: las fechas y horas de `/date-pickers` salían transparentes y con la raya de MUI; ahora llevan el mismo relleno
+  que los demás campos, sin raya y con el aro de color al escribir.
+
 ## [0.56.0] - 2026-11-05
 
 ### Agregado
