@@ -307,6 +307,36 @@ números, de fechas, monto con operador o uno propio); lo que se cambia adentro 
 por filtro (`filterDrawerDefaultsOf`, `filterDrawerKindsOf`, `filterDrawerChipsOf`). Un monto viaja como `gte:500`
 (`comparisonOf` lo separa en el backend o en la pantalla).
 
+Las fechas del cajón usan el calendario del navegador, así el cajón no obliga a instalar MUI X. Una app que ya trae
+`/date-pickers` pone el suyo para que el cajón y sus formularios se vean igual: `slots={{dateInput: DateInput}}` en un
+cajón (desde la tabla, `drawerProps`), o una vez en el tema para todas las listas. Un rango de fechas se acota con
+`minDate`, `maxDate`, `disablePast` y `disableFuture`: el calendario no deja escoger fuera y cada extremo acota al otro. Si
+alguien teclea una fecha fuera de los topes o un rango al revés, su campo lo dice y «Buscar» no busca; nada se borra solo.
+Un `custom` con `keys` es un rango propio en un solo campo: guarda en sus dos llaves, cuenta como un filtro, da sus dos chips
+y, con `isBackwards`, tampoco deja buscar al revés. Su `render` recibe todo el borrador (`values`, `setValue`), sus `keys` y
+lo que esté mal en cada una (`errors`), ya dicho. En un cajón angosto, `stackPairsBelow` pone cada par uno arriba del otro.
+
+```jsx
+import {DateInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
+
+const FIELDS = [
+    {name: 'paid', label: 'Fecha de pago', kind: FILTER_FIELD_KIND.dateRange, minDate: '2026-01-01', disableFuture: true},
+    {
+        name: 'hours', label: 'Hora de compra', kind: FILTER_FIELD_KIND.custom, keys: {from: 'hour_from', to: 'hour_to'},
+        isBackwards: (from, to) => to < from,
+        render: ({values, setValue, keys: [fromKey, toKey], errors}) => (
+            <>
+                <TimeInput label="Desde" value={values[fromKey]} onChange={(time) => setValue(fromKey, time)} />
+                <TimeInput label="Hasta" value={values[toKey]} onChange={(time) => setValue(toKey, time)} error={errors[toKey]} />
+            </>
+        ),
+    },
+];
+
+<ServerTableFilterDrawer fields={FIELDS} width={460} stackPairsBelow={420} drawerProps={{slots: {dateInput: DateInput}}} />
+// o para todas las listas: createTheme({components: {CalcitaFilterDrawer: {defaultProps: {slots: {dateInput: DateInput}}}}})
+```
+
 ```jsx
 <BarActions label="Buscar en pedidos" order={1}>
     <IconButton aria-label="Buscar" onClick={openSearch}><SearchRoundedIcon /></IconButton>
@@ -334,6 +364,16 @@ se pueden escribir en `colorSchemes`.
 
 ```js
 createToolkitTheme({glass: true, fields: {radius: 8, light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}});
+```
+
+Para cambiar el relleno solo en ciertos campos (los bloqueados, o todos en oscuro con el color de la marca), el tema del
+proyecto pone la variable `--calcita-field-fill` (y `--calcita-field-hover-fill`, `--calcita-field-edge`,
+`--calcita-field-hover-edge`) en el campo o en algo que lo contenga: todos los campos de Calcita la leen, los de
+`FormSection` y los sueltos (un cajón de filtros, una ventana). Ponerle un `backgroundColor` al campo no siempre gana, porque
+las reglas de Calcita llevan selectores largos; con la variable manda la definición más cercana.
+
+```js
+MuiOutlinedInput: {styleOverrides: {root: ({theme}) => theme.applyStyles('dark', {'--calcita-field-fill': '#1E3A5F', '--calcita-field-hover-fill': '#1E3A5F'})}}
 ```
 
 El minimalista separa las superficies por su tono con los grises de Apple. Para pintarlo con los colores de la marca:
@@ -368,7 +408,8 @@ createTheme({components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {
 ```
 
 `className`, `style` y `sx` de `slotProps` se suman a los de Calcita; una pieza dentro de otra igual no toma los `slots` de la
-de afuera. `TextInput` es la excepción: su `slotProps` es el del `TextField` de MUI (`input`, `htmlInput`…). Una pieza propia
+de afuera. Una parte propia no recibe el estilo de Calcita ni, si la parte es un `Stack`, su acomodo (`spacing`,
+`direction`): eso lo pone ella; lo que la pantalla le dé en `slotProps` sí le llega. `TextInput` es la excepción: su `slotProps` es el del `TextField` de MUI (`input`, `htmlInput`…). Una pieza propia
 del proyecto se arma con lo mismo: `piecePart`, `usePieceProps` y `withPieceSlots`.
 
 El `sx` de la pantalla se **combina regla por regla** con el de la pieza, no la reemplaza: en la tabla,
@@ -429,7 +470,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaFileInput` | `root`, `button`, `fileChip`, `empty` |
 | `CalcitaFileUploadInput` | `root`, `fileName`, `status`, `button`, `helper` |
 | `CalcitaFilterChips` | `root`, `header`, `clearButton` |
-| `CalcitaFilterDrawer` | `header`, `body`, `footer` |
+| `CalcitaFilterDrawer` | `header`, `body`, `footer`, `dateInput` |
 | `CalcitaFontSizeToggle` | `button` |
 | `CalcitaFormProblemAlert` | `root` |
 | `CalcitaFormRow` | `root`, `label`, `control` |
