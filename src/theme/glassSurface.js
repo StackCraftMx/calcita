@@ -516,19 +516,27 @@ export function fieldWellStylesOf(theme, {radius = FIELD_WELL_RADIUS_PIXELS} = {
     const base = {backgroundImage: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none', borderRadius: fieldRadiusOf(theme, radius)};
     const field = fieldPaletteOf(theme);
     if (field) {
-        return {
-            ...base,
-            backgroundColor: field.fill,
-            boxShadow: fieldEdgeOf(field.border),
-            '&:hover': {backgroundColor: field.hoverFill, boxShadow: fieldEdgeOf(field.hoverBorder)},
-        };
+        return {...base, ...fieldWellOfTones(field)};
     }
     const {light, dark} = FIELD_TONES;
+    return {...base, ...lightDarkStylesOf(theme, fieldWellOfTones(light), fieldWellOfTones(dark))};
+}
+
+/**
+ * El relleno y la orilla de un pozo con unos tonos, detrás de las variables --calcita-field-*: si el proyecto las pone en el
+ * campo o en algo que lo contiene (su tema, en oscuro, con el azul de su marca), mandan; si no, salen estos tonos, igual que
+ * antes. OJO, trampa pagada: las reglas de los campos dentro del contenido llevan selectores largos y el proyecto no les gana
+ * con un backgroundColor en MuiOutlinedInput; la variable sí, porque manda la definición más cercana, no la más específica.
+ * Así un campo del cajón de filtros o de una ventana sigue la misma regla que uno de FormSection.
+ */
+function fieldWellOfTones(tones) {
     return {
-        ...base,
-        ...lightDarkStylesOf(theme,
-            {backgroundColor: light.fill, boxShadow: fieldEdgeOf(light.border), '&:hover': {backgroundColor: light.hoverFill, boxShadow: fieldEdgeOf(light.hoverBorder)}},
-            {backgroundColor: dark.fill, boxShadow: fieldEdgeOf(dark.border), '&:hover': {backgroundColor: dark.hoverFill, boxShadow: fieldEdgeOf(dark.hoverBorder)}}),
+        backgroundColor: `var(--calcita-field-fill, ${tones.fill})`,
+        boxShadow: `var(--calcita-field-edge, ${fieldEdgeOf(tones.border)})`,
+        '&:hover': {
+            backgroundColor: `var(--calcita-field-hover-fill, ${tones.hoverFill})`,
+            boxShadow: `var(--calcita-field-hover-edge, ${fieldEdgeOf(tones.hoverBorder)})`,
+        },
     };
 }
 

@@ -269,8 +269,8 @@ test('el minimalista con los tonos de la marca: fondo, tarjetas, relleno y lo qu
     assert.deepEqual(backgroundOf('light'), {default: '#EEF4FF', paper: MINIMAL_TONES.light.paper});
     assert.deepEqual(backgroundOf('dark'), {default: '#101827', paper: '#1A2333'});
     // el campo lee el relleno de la paleta de su modo (palette.field): el del minimalista de la marca en claro y el gris de
-    // Apple en oscuro, que no se pasó
-    assert.equal(field.backgroundColor, theme.vars.palette.field.fill);
+    // Apple en oscuro, que no se pasó (detrás de la variable --calcita-field-fill, que manda si el proyecto la pone)
+    assert.equal(field.backgroundColor, `var(--calcita-field-fill, ${theme.vars.palette.field.fill})`);
     assert.equal(theme.colorSchemes.light.palette.field.fill, '#DCE6F5');
     assert.equal(theme.colorSchemes.dark.palette.field.fill, MINIMAL_TONES.dark.fill);
     assert.equal(valueOf(floating, 'backgroundColor'), MINIMAL_TONES.light.floating);
@@ -290,9 +290,11 @@ test('los campos con los tonos del proyecto (fields): blancos con borde en claro
         {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5', hoverBorder: FIELD_TONES.light.hoverBorder},
     );
     assert.deepEqual({...theme.colorSchemes.dark.palette.field}, {...FIELD_TONES.dark});
-    // el pozo lee la paleta (variables de MUI: cambian solas con el modo) y la orilla va por dentro
-    assert.equal(well.backgroundColor, theme.vars.palette.field.fill);
-    assert.equal(well.boxShadow, `inset 0 0 0 1px ${theme.vars.palette.field.border}`);
+    // el pozo lee la paleta (variables de MUI: cambian solas con el modo) y la orilla va por dentro; delante, la variable
+    // --calcita-field-* que el proyecto ponga en el campo o en lo que lo contiene (sin ella, la paleta)
+    assert.equal(well.backgroundColor, `var(--calcita-field-fill, ${theme.vars.palette.field.fill})`);
+    assert.equal(well.boxShadow, `var(--calcita-field-edge, inset 0 0 0 1px ${theme.vars.palette.field.border})`);
+    assert.equal(well['&:hover'].backgroundColor, `var(--calcita-field-hover-fill, ${theme.vars.palette.field.hoverFill})`);
     // un número va en px en todos lados (en sx se multiplicaría por el radio del tema)
     assert.equal(well.borderRadius, '8px');
     assert.equal(fieldWellFromVariablesOf(theme).borderRadius, '8px');
@@ -323,4 +325,16 @@ test('los campos de un renglón de FormSection son cápsulas de fábrica, y la v
     assert.equal(fieldWellStylesOf(createToolkitTheme({glass: true})).borderRadius, 'var(--calcita-field-radius, 12px)');
     // con fields.radius en texto, tal cual
     assert.equal(fieldWellFromVariablesOf(createToolkitTheme({fields: {radius: '0.5rem'}})).borderRadius, '0.5rem');
+});
+
+test('el minimalista pinta las fechas y horas de MUI X como los demás campos: mismo relleno, sin raya', () => {
+    const theme = createToolkitTheme({look: THEME_LOOK.minimal});
+    const pickerField = theme.components.MuiPickersOutlinedInput.styleOverrides.root({theme, ownerState: {}});
+    const textField = theme.components.MuiOutlinedInput.styleOverrides.root({theme, ownerState: {}});
+
+    assert.equal(pickerField.backgroundColor, textField.backgroundColor);
+    assert.equal(pickerField.borderRadius, textField.borderRadius);
+    assert.equal(pickerField['&.Mui-focused'].outline, textField['&.Mui-focused'].outline);
+    const outlineRule = Object.entries(pickerField).find(([selector]) => selector.includes('.Mui-focused .MuiPickersOutlinedInput-notchedOutline'));
+    assert.deepEqual(outlineRule?.[1], {border: 0});
 });

@@ -164,6 +164,21 @@ export function minimalComponents() {
             defaultProps: {disableUnderline: true},
             styleOverrides: {root: ({theme}) => fieldWellStylesOf(theme, {radius: RADIUS_PIXELS.control})},
         },
+        // las fechas y horas de MUI X (/date-pickers) tienen su propia pieza: lo mismo que el campo de arriba. Sin esto salían
+        // transparentes y con la raya de MUI, distintas de los campos de al lado (medido en Chrome, claro y oscuro). La raya se
+        // quita también al pasar el cursor, con el foco y con error: ahí MUI X la vuelve a poner
+        MuiPickersOutlinedInput: {
+            styleOverrides: {
+                root: ({theme}) => ({
+                    ...fieldWellStylesOf(theme, {radius: RADIUS_PIXELS.control}),
+                    '& .MuiPickersOutlinedInput-notchedOutline, &:hover .MuiPickersOutlinedInput-notchedOutline, &.Mui-focused .MuiPickersOutlinedInput-notchedOutline, &.Mui-error .MuiPickersOutlinedInput-notchedOutline': {
+                        border: 0,
+                    },
+                    '&.Mui-focused': {outline: `2px solid ${tintOf(theme, 'primary', TINT_PERCENT.ring)}`},
+                    '&.Mui-error': {outline: `2px solid ${tintOf(theme, 'error', TINT_PERCENT.ring)}`},
+                }),
+            },
+        },
         // la etiqueta con borde también es tonal: el tinte de su color (o el gris si no lleva color)
         MuiChip: {
             styleOverrides: {
