@@ -216,6 +216,8 @@ export default Object.freeze({
                 "lte": "Menor o igual"
             },
             "rangeBackwards": "Debe ser igual o mayor que «Desde».",
+            "dateBeforeMin": "No puede ser antes del {{date}}.",
+            "dateAfterMax": "No puede ser después del {{date}}.",
             "chipFrom": "{{label}} desde",
             "chipTo": "{{label}} hasta"
         },

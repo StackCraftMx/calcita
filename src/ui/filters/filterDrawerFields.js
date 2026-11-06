@@ -10,9 +10,17 @@
 //   dateRange     del día al día (AAAA-MM-DD)         {name}_from: '2026-11-01', {name}_to: '2026-11-30'
 //   comparison    un número con su operador           {name}: 'gte:500' (mayor o igual que 500)
 //   custom        uno propio (render)                 {name}: lo que el proyecto decida
+//                 o un rango propio, con keys         {keys.from}: …, {keys.to}: …
 //
 // Los nombres de un rango se cambian con keys ({from: 'created_from', to: 'created_to'}) para usar los que ya tiene el
-// backend. Los textos llegan ya traducidos (label, options[].label); los de la casa salen de `t` (common.filterDrawer).
+// backend. Un custom con keys es un rango propio: guarda en sus dos llaves, cuenta como un filtro, da dos chips («desde» y
+// «hasta») y, con isBackwards(from, to), no deja buscar si está al revés, como los de la casa.
+//
+// Un dateRange se acota con minDate y maxDate ('AAAA-MM-DD'), disablePast y disableFuture (hoy en la zona del producto): el
+// calendario no deja escoger fuera, cada extremo acota al otro y lo que se teclee fuera se dice en su campo y no deja buscar
+// (drawerProblemsOf). Nada se borra solo.
+//
+// Los textos llegan ya traducidos (label, options[].label); los de la casa salen de `t` (common.filterDrawer).
 //
 // Puro (sin React): se prueba con node (filterDrawerFields.test.js).
 //
@@ -23,6 +31,12 @@ export const FILTER_FIELD_KIND = Object.freeze({
     text: 'text', select: 'select', multiSelect: 'multiSelect', catalog: 'catalog', checkboxes: 'checkboxes',
     numberRange: 'numberRange', dateRange: 'dateRange', comparison: 'comparison', custom: 'custom',
 });
+
+/**
+ * Lo que puede estar mal en un campo del cajón; cada uno es su texto en common.filterDrawer. Mientras haya uno, «Buscar» no
+ * busca.
+ */
+export const FILTER_FIELD_PROBLEM = Object.freeze({rangeBackwards: 'rangeBackwards', beforeMinDate: 'dateBeforeMin', afterMaxDate: 'dateAfterMax'});
 
 /** Los operadores de un campo de comparación, como viajan ('gte:500'). */
 export const COMPARISON_OPERATOR = Object.freeze({equals: 'eq', greaterThan: 'gt', greaterOrEqual: 'gte', lessThan: 'lt', lessOrEqual: 'lte'});
@@ -44,7 +58,27 @@ export function isListField(field) {
 }
 
 /**
- * Los nombres con que viaja un campo en los filtros: uno, o dos para un rango.
+ * ¿El campo es un rango propio? Un custom con sus dos llaves (keys.from y keys.to).
+ *
+ * @param {{kind: string, keys?: {from?: string, to?: string}}} field
+ * @returns {boolean}
+ */
+function isCustomRange(field) {
+    return field.kind === FILTER_FIELD_KIND.custom && Boolean(field.keys?.from) && Boolean(field.keys?.to);
+}
+
+/**
+ * ¿El campo guarda un «desde» y un «hasta»? Los rangos de la casa y los propios.
+ *
+ * @param {{kind: string, keys?: {from?: string, to?: string}}} field
+ * @returns {boolean}
+ */
+export function isRangeField(field) {
+    return field.kind === FILTER_FIELD_KIND.numberRange || field.kind === FILTER_FIELD_KIND.dateRange || isCustomRange(field);
+}
+
+/**
+ * Los nombres con que viaja un campo en los filtros: uno, o dos para un rango (también uno propio: custom con keys).
  *
  * @param {{name: string, kind: string, keys?: {from?: string, to?: string}}} field
  * @returns {string[]}
@@ -55,6 +89,9 @@ export function filterKeysOf(field) {
     }
     if (field.kind === FILTER_FIELD_KIND.dateRange) {
         return [field.keys?.from ?? `${field.name}_from`, field.keys?.to ?? `${field.name}_to`];
+    }
+    if (isCustomRange(field)) {
+        return [field.keys.from, field.keys.to];
     }
     return [field.name];
 }
@@ -146,7 +183,22 @@ export function activeDrawerFilterCountOf(fields, filters) {
 }
 
 /**
- * Los rangos que no tienen sentido («hasta» menor que «desde»): {llave de «hasta»: true}.
+ * ¿Ese rango está al revés («hasta» antes que «desde»)? Los números como números, las fechas AAAA-MM-DD como texto (ya se
+ * ordenan solas) y uno propio con su isBackwards (sin él, nunca).
+ */
+function isBackwardsRange(field, from, to) {
+    if (field.kind === FILTER_FIELD_KIND.numberRange) {
+        return Number(to) < Number(from);
+    }
+    if (field.kind === FILTER_FIELD_KIND.dateRange) {
+        return String(to) < String(from);
+    }
+    return Boolean(field.isBackwards?.(from, to));
+}
+
+/**
+ * Los rangos que no tienen sentido («hasta» menor que «desde»): {llave de «hasta»: true}. También los propios (custom con
+ * keys) que traen isBackwards.
  *
  * @param {object[]} fields
  * @param {Record<string, unknown>} values
@@ -154,23 +206,81 @@ export function activeDrawerFilterCountOf(fields, filters) {
  */
 export function invalidRangesOf(fields, values) {
     const invalid = {};
-    for (const field of fields) {
-        if (field.kind !== FILTER_FIELD_KIND.numberRange && field.kind !== FILTER_FIELD_KIND.dateRange) {
-            continue;
-        }
+    for (const field of fields.filter(isRangeField)) {
         const [fromKey, toKey] = filterKeysOf(field);
         const from = values?.[fromKey];
         const to = values?.[toKey];
-        if (!isFilterValueSet(from) || !isFilterValueSet(to)) {
-            continue;
-        }
-        // los números como números y las fechas AAAA-MM-DD como texto (ya se ordenan solas)
-        const isBackwards = field.kind === FILTER_FIELD_KIND.numberRange ? Number(to) < Number(from) : String(to) < String(from);
-        if (isBackwards) {
+        if (isFilterValueSet(from) && isFilterValueSet(to) && isBackwardsRange(field, from, to)) {
             invalid[toKey] = true;
         }
     }
     return invalid;
+}
+
+// la más temprana y la más tardía de unas fechas AAAA-MM-DD (las vacías no cuentan)
+const earliestDateOf = (...dates) => dates.filter(Boolean).sort()[0];
+const latestDateOf = (...dates) => dates.filter(Boolean).sort().at(-1);
+
+/**
+ * Los topes de un dateRange: minDate y maxDate del campo, y hoy si pide disablePast o disableFuture (el más estrecho gana).
+ *
+ * @param {{minDate?: string, maxDate?: string, disablePast?: boolean, disableFuture?: boolean}} field
+ * @param {string} today AAAA-MM-DD en la zona del producto (todayInZone)
+ * @returns {{minDate?: string, maxDate?: string}}
+ */
+export function dateLimitsOf(field, today) {
+    return {
+        minDate: latestDateOf(field.minDate, field.disablePast && today),
+        maxDate: earliestDateOf(field.maxDate, field.disableFuture && today),
+    };
+}
+
+/**
+ * Los topes de cada extremo de un dateRange para su calendario: los del campo y, además, cada extremo acota al otro (el
+ * «desde» no pasa del «hasta» puesto y el «hasta» no baja del «desde»).
+ *
+ * @param {object} field
+ * @param {Record<string, unknown>} values el borrador del cajón
+ * @param {string} today AAAA-MM-DD en la zona del producto
+ * @returns {{from: {minDate?: string, maxDate?: string}, to: {minDate?: string, maxDate?: string}}}
+ */
+export function dateRangeBoundsOf(field, values, today) {
+    const [fromKey, toKey] = filterKeysOf(field);
+    const {minDate, maxDate} = dateLimitsOf(field, today);
+    return {
+        from: {minDate, maxDate: earliestDateOf(maxDate, values?.[toKey] || undefined)},
+        to: {minDate: latestDateOf(minDate, values?.[fromKey] || undefined), maxDate},
+    };
+}
+
+/**
+ * Lo que está mal en los campos del cajón, por llave: un rango al revés (en su «hasta») y una fecha fuera de los topes de
+ * su dateRange (la que se tecleó: el calendario ya no deja escogerla). Mientras haya algo, «Buscar» no busca.
+ *
+ *   {created_to: {problem: 'rangeBackwards'}, paid_from: {problem: 'dateBeforeMin', date: '2026-01-01'}}
+ *
+ * @param {object[]} fields
+ * @param {Record<string, unknown>} values
+ * @param {{today?: string}} [options] hoy AAAA-MM-DD en la zona del producto (para disablePast y disableFuture)
+ * @returns {Record<string, {problem: string, date?: string}>} problem es FILTER_FIELD_PROBLEM; date, el tope que se pasó
+ */
+export function drawerProblemsOf(fields, values, {today} = {}) {
+    const problems = Object.fromEntries(Object.keys(invalidRangesOf(fields, values)).map((key) => [key, {problem: FILTER_FIELD_PROBLEM.rangeBackwards}]));
+    for (const field of fields.filter((candidate) => candidate.kind === FILTER_FIELD_KIND.dateRange)) {
+        const {minDate, maxDate} = dateLimitsOf(field, today);
+        for (const key of filterKeysOf(field)) {
+            const date = values?.[key];
+            if (!isFilterValueSet(date)) {
+                continue;
+            }
+            if (minDate && String(date) < minDate) {
+                problems[key] = {problem: FILTER_FIELD_PROBLEM.beforeMinDate, date: minDate};
+            } else if (maxDate && String(date) > maxDate) {
+                problems[key] = {problem: FILTER_FIELD_PROBLEM.afterMaxDate, date: maxDate};
+            }
+        }
+    }
+    return problems;
 }
 
 /**
@@ -190,11 +300,12 @@ export function filterDrawerChipsOf(fields, {t, formatDate = (date) => date}) {
         const withUnit = (value) => `${field.prefix ?? ''}${value}${field.suffix ? ` ${field.suffix}` : ''}`;
         if (isListField(field)) {
             multiSelect.push({key: field.name, label: field.label, itemLabel: (value) => optionLabelOf(field, value)});
-        } else if (field.kind === FILTER_FIELD_KIND.numberRange || field.kind === FILTER_FIELD_KIND.dateRange) {
+        } else if (isRangeField(field)) {
             const [fromKey, toKey] = filterKeysOf(field);
-            const format = field.kind === FILTER_FIELD_KIND.dateRange ? formatDate : withUnit;
-            text.push({key: fromKey, label: t('filterDrawer.chipFrom', {label: field.label}), format});
-            text.push({key: toKey, label: t('filterDrawer.chipTo', {label: field.label}), format});
+            // un rango propio se dice con su chipFormat (o tal cual)
+            const format = field.kind === FILTER_FIELD_KIND.dateRange ? formatDate : (isCustomRange(field) ? field.chipFormat : withUnit);
+            text.push({key: fromKey, label: t('filterDrawer.chipFrom', {label: field.label}), ...(format && {format})});
+            text.push({key: toKey, label: t('filterDrawer.chipTo', {label: field.label}), ...(format && {format})});
         } else if (field.kind === FILTER_FIELD_KIND.comparison) {
             text.push({
                 key: field.name, label: field.label,
