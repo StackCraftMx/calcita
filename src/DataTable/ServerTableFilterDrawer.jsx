@@ -10,6 +10,9 @@
 // filterDefaults: la tabla solo guarda en la dirección lo que declara ahí. filterKinds: las listas se leen como lista. Los
 // chips dicen cada filtro en palabras y cada uno se quita con su ×.
 //
+// Lo demás del cajón (su calendario propio, sus partes) va en drawerProps: <ServerTableFilterDrawer fields={…}
+// drawerProps={{slots: {dateInput: DateInput}}} />. Los slots de aquí son del botón.
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaServerTableFilterDrawer con defaultProps, styleOverrides de
 // sus partes (button) y slots/slotProps para cambiarlas.
 //
@@ -37,11 +40,13 @@ const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
  * @param {string} [props.title] ya traducido; por omisión «Filtros»
  * @param {string} [props.buttonLabel] ya traducido; por omisión «Filtros» (con los puestos, «Filtros (3)»)
  * @param {(values: Record<string, unknown>) => void} [props.onApply] aviso de lo que se buscó (la tabla ya se filtró)
+ * @param {number} [props.stackPairsBelow] en px: si el cajón mide menos, cada par («desde» y «hasta») va uno arriba del otro
+ * @param {object} [props.drawerProps] lo demás de FilterDrawer: slots (dateInput, body…), slotProps, applyLabel, closeOnApply
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos del cajón
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */
 function ServerTableFilterDrawerContent(props) {
-    const {fields, anchor, width, title, buttonLabel, onApply, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {fields, anchor, width, title, buttonLabel, onApply, stackPairsBelow, drawerProps, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {filters, setFilters} = useTableFilter();
@@ -54,8 +59,8 @@ function ServerTableFilterDrawerContent(props) {
                     aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
                 {activeCount > 0 ? t('filterDrawer.openWithCount', {count: activeCount}) : (buttonLabel ?? t('filterDrawer.open'))}
             </ServerTableFilterDrawerButton>
-            <FilterDrawer open={isOpen} onClose={() => setIsOpen(false)} fields={fields} values={filters} anchor={anchor} width={width} title={title}
-                          texts={texts}
+            <FilterDrawer {...drawerProps} open={isOpen} onClose={() => setIsOpen(false)} fields={fields} values={filters} anchor={anchor} width={width}
+                          title={title} stackPairsBelow={stackPairsBelow} texts={texts}
                           onApply={(values) => {
                               setFilters(values);
                               onApply?.(values);

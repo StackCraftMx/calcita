@@ -820,7 +820,7 @@ export const catalogPageTexts = {
                 },
                 filterDrawer: {
                     title: '3. Búsqueda en cajón',
-                    description: 'Un panel que sale de un lado con los campos que filtran una lista: listas, rangos «desde-hasta», fechas y montos con su operador (mayor, menor, igual). Lo que se cambia adentro no mueve la lista hasta «Buscar»; un rango al revés no deja buscar. En Pedidos va conectado a la tabla con su botón «Filtros (N)» y sus chips.',
+                    description: 'Un panel que sale de un lado con los campos que filtran una lista: listas, rangos «desde-hasta», fechas y montos con su operador (mayor, menor, igual). Lo que se cambia adentro no mueve la lista hasta «Buscar»; un rango al revés o una fecha fuera de sus topes se dice en su campo y no deja buscar. Aquí, con el calendario del navegador; en Pedidos, con el de la app, conectado a la tabla con su botón «Filtros (N)» y sus chips.',
                     extend: {
                         fields: 'Cada campo se declara una vez: de su tipo sale cómo se pinta, cómo viaja y su chip.',
                         kinds: 'Los tipos: texto, una o varias opciones, catálogo, casillas, rango de números, de fechas, comparación o uno propio.',
@@ -828,8 +828,14 @@ export const catalogPageTexts = {
                         side: 'De qué lado sale, su ancho, su título y el texto del botón.',
                         table: 'El botón «Filtros (N)» con su cajón, conectado a los filtros de la tabla.',
                         setup: 'Lo que la tabla necesita de los campos: sus valores vacíos, sus tipos y sus chips.',
-                        custom: 'Un campo propio dentro del cajón.',
-                        theme: 'Sus partes en el tema: paper, header, body, footer.',
+                        custom: 'Un campo propio dentro del cajón. Recibe todo el borrador para acotar un campo con otro.',
+                        customRange: 'Un rango propio en un solo campo: guarda en sus dos llaves, da sus dos chips y, al revés, no deja buscar.',
+                        dateLimits: 'Los topes de un rango de fechas: el calendario no deja escoger fuera y lo tecleado fuera no deja buscar.',
+                        dateInput: 'El calendario de la app en lugar del del navegador, en un cajón.',
+                        dateInputTheme: 'El mismo calendario para todas las listas del proyecto, una vez en el tema.',
+                        stackPairs: 'Si el cajón mide menos que esto, cada par («desde» y «hasta») va uno arriba del otro.',
+                        tableDrawer: 'Lo mismo desde el botón «Filtros» de la tabla.',
+                        theme: 'Sus partes en el tema: paper, header, body, footer y dateInput.',
                     },
                 },
                 readyColumns: {
@@ -3045,7 +3051,7 @@ export const catalogPageTexts = {
                 },
                 filterDrawer: {
                     title: '3. Drawer search',
-                    description: 'A panel that slides from one side with the fields that filter a list: lists, «from-to» ranges, dates and amounts with their operator (greater, less, equal). What you change inside does not move the list until «Search»; a backwards range does not allow searching. In Orders it is connected to the table with its «Filters (N)» button and its chips.',
+                    description: 'A panel that slides from one side with the fields that filter a list: lists, «from-to» ranges, dates and amounts with their operator (greater, less, equal). What you change inside does not move the list until «Search»; a backwards range or a date outside its limits is shown in its field and does not allow searching. Here with the browser calendar; in Orders with the app one, connected to the table with its «Filters (N)» button and its chips.',
                     extend: {
                         fields: 'Each field is declared once: its kind says how it is painted, how it travels and its chip.',
                         kinds: 'The kinds: text, one or several options, catalog, checkboxes, number range, date range, comparison or your own.',
@@ -3053,8 +3059,14 @@ export const catalogPageTexts = {
                         side: 'Which side it slides from, its width, its title and the button text.',
                         table: 'The «Filters (N)» button with its drawer, connected to the table filters.',
                         setup: 'What the table needs from the fields: their empty values, their kinds and their chips.',
-                        custom: 'Your own field inside the drawer.',
-                        theme: 'Its parts in the theme: paper, header, body, footer.',
+                        custom: 'Your own field inside the drawer. It gets the whole draft to limit one field with another.',
+                        customRange: 'Your own range in a single field: it stores in its two keys, gives its two chips and, backwards, does not allow searching.',
+                        dateLimits: 'The limits of a date range: the calendar does not let you pick outside them and a typed date outside them does not allow searching.',
+                        dateInput: 'The app calendar instead of the browser one, in one drawer.',
+                        dateInputTheme: 'The same calendar for every list of the project, once in the theme.',
+                        stackPairs: 'If the drawer is narrower than this, each pair («from» and «to») goes one above the other.',
+                        tableDrawer: 'The same from the table «Filters» button.',
+                        theme: 'Its parts in the theme: paper, header, body, footer and dateInput.',
                     },
                 },
                 readyColumns: {

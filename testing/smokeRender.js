@@ -36,6 +36,9 @@ import {createDemoAccountConnector} from '@stackcraftmx/calcita/account-demo';
 
 const ORDER_STATUS = Object.freeze({pending: dictionaryEntryOf('pending', 'orderStatus.pending', 'warning')});
 // un menú con secciones y un submenú, como lo regresa composeMenu
+// lo que le llegó a una parte propia del acomodo de Stack (para la prueba de slots)
+const StackLayoutProbe = ({children, ...props}) => h('div', {'data-stack-layout': ['spacing', 'direction'].filter((name) => name in props).join(',') || 'none'}, children);
+
 const MENU_ITEMS = [
     {to: '/', label: 'Inicio'},
     {to: '/pedidos', label: 'Pedidos', section: 'Operación', badge: 3},
@@ -321,6 +324,10 @@ const CASES = [
     // el logo ancho con una imagen para cada modo: se pintan las dos
     // un nombre largo del menú baja de renglón en lugar de cortarse con «…»
     ['AppLayout con nombres del menú que bajan de renglón', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, menuLabelOverflow: MENU_LABEL_OVERFLOW.wrap}, 'contenido'), 'overflow-wrap:anywhere'],
+    // una parte propia que reemplaza un Stack no recibe su acomodo (spacing, direction): un div lo pintaba como atributo y
+    // React avisaba; lo que la pantalla pone en slotProps sí le llega
+    ['parte propia sin el acomodo de Stack', h(ErrorPage, {kind: ERROR_PAGE_KIND.notFound, slots: {actions: StackLayoutProbe}}), 'data-stack-layout="none"'],
+    ['parte propia con lo de su slotProps', h(ErrorPage, {kind: ERROR_PAGE_KIND.notFound, slots: {actions: StackLayoutProbe}, slotProps: {actions: {spacing: 3}}}), 'data-stack-layout="spacing"'],
     ['AppLayout con wordmark para cada modo', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, wordmark: {light: h('img', {src: '/logo-color.svg', alt: ''}), dark: h('img', {src: '/logo-blanco.svg', alt: ''})}}, 'contenido'), '/logo-blanco.svg'],
     ['GroupedTimeline', h(GroupedTimeline, {groups: [{key: 'g', title: 'Intento 1', items: [{key: 'e', title: 'Pedido creado', timestamp: '5 ene 2027 · 10:00'}]}]}), 'Pedido creado'],
     // /date-pickers: cada valor viaja en texto y se pinta en el idioma y la zona del proveedor
