@@ -13,7 +13,7 @@ import {ORDER_STATUSES, STORE_CURRENCY, fakeOrders, orderEventsOf} from '@/fakeS
 import {NETWORK_DELAY_MILLISECONDS, waitLikeNetwork} from '@/fakeServer/networkDelay.js';
 import {serverTextOf} from '@/fakeServer/serverMessages.js';
 import {containsText, rowsMatchingFilters, serverPageOf} from '@/fakeServer/serverPage.js';
-import {storeDateOf} from '@/fakeServer/storeCalendar.js';
+import {storeDateOf, storeTimeOf} from '@/fakeServer/storeCalendar.js';
 
 const HTTP_STATUS = Object.freeze({notFound: 404, conflict: 409});
 
@@ -60,6 +60,9 @@ const ORDER_FILTER_RULES = Object.freeze({
     // el cajón de búsqueda: piezas desde y hasta, y el total con su operador ('gte:500')
     quantity_min: (order, minimum) => order.quantity >= Number(minimum),
     quantity_max: (order, maximum) => order.quantity <= Number(maximum),
+    // la hora de compra (un rango propio del cajón): de qué hora a qué hora del día, en la tienda, con las dos adentro
+    created_time_from: (order, fromTime) => storeTimeOf(order.created_at) >= fromTime,
+    created_time_to: (order, toTime) => storeTimeOf(order.created_at) <= toTime,
     total: (order, comparison) => totalMatches(order.total, comparison),
 });
 

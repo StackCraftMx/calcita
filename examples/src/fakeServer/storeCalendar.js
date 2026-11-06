@@ -25,6 +25,19 @@ export function storeDateOf(isoInstant) {
     return CALENDAR_DATE_FORMAT.format(new Date(isoInstant));
 }
 
+// la hora de la tienda en 24 horas ('09:05'): así la manda el reloj del cajón de búsqueda
+const STORE_TIME_FORMAT = new Intl.DateTimeFormat('en-GB', {timeZone: STORE_TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23'});
+
+/**
+ * La hora del día de la tienda en que cae un instante.
+ *
+ * @param {string} isoInstant '2026-03-01T15:30:00.000Z'
+ * @returns {string} '09:30' (HH:mm, en la Ciudad de México)
+ */
+export function storeTimeOf(isoInstant) {
+    return STORE_TIME_FORMAT.format(new Date(isoInstant));
+}
+
 /**
  * El mes de la tienda en que cae un instante.
  *

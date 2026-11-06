@@ -71,6 +71,7 @@ export const ordersTexts = {
                 piecesSuffix: 'pzas',
                 created: 'Fecha del pedido',
                 total: 'Total',
+                purchaseHours: 'Hora de compra',
             },
             chips: {
                 number: 'Pedido',
@@ -233,6 +234,7 @@ export const ordersTexts = {
                 piecesSuffix: 'pcs',
                 created: 'Order date',
                 total: 'Total',
+                purchaseHours: 'Time of purchase',
             },
             chips: {
                 number: 'Order',
