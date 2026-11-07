@@ -20,17 +20,21 @@
 // la tabla de MUI se pinta con divisiones (role table, row y cell) y cada renglón es una cuadrícula con las mismas columnas:
 // el que flota conserva su ancho. El estilo del tema del proyecto para MuiTableCell se le aplica igual.
 //
-// Mover sin arrastrar (un botón «Subir» en las acciones de la pantalla): moveRow de sortableRows.js.
+// Mover sin arrastrar: cada renglón trae «Subir» y «Bajar» en la última columna (moveButtons, por omisión sí). La regla de
+// accesibilidad lo pide (WCAG 2.5.7: lo que se arrastra también se hace con un clic, para quien no puede sostener y mover el
+// ratón o el dedo). Cada clic mueve el renglón un lugar y guarda igual que soltarlo. Para mover desde otra parte (un menú
+// «Mandar al final»): moveRow de sortableRows.js.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSortableTable con defaultProps y
 // styleOverrides de sus partes: root, container, table, head, headerRow, headerCell, body, row, handleCell, handle, positionCell,
-// cell, empty, helperText, announcer.
+// cell, moveCell, moveButton, empty, helperText, announcer.
 //
 // Genérico del paquete: function (regla de la casa).
-import {useId, useRef, useState} from 'react';
+import {useEffect, useId, useRef, useState} from 'react';
 import {DragDropContext, Draggable, Droppable} from '@hello-pangea/dnd';
 import Box from '@mui/material/Box';
 import FormHelperText from '@mui/material/FormHelperText';
+import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -38,7 +42,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Tooltip from '@mui/material/Tooltip';
 import DragIndicatorRoundedIcon from '@mui/icons-material/DragIndicatorRounded';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 
 import {moveRow} from '@/sortable/sortableRows.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
@@ -58,6 +65,8 @@ const SortableHandleCell = piecePart(THEME_NAME, 'HandleCell', TableCell);
 const SortableHandle = piecePart(THEME_NAME, 'Handle', Box);
 const SortablePositionCell = piecePart(THEME_NAME, 'PositionCell', TableCell);
 const SortableCell = piecePart(THEME_NAME, 'Cell', TableCell);
+const SortableMoveCell = piecePart(THEME_NAME, 'MoveCell', TableCell);
+const SortableMoveButton = piecePart(THEME_NAME, 'MoveButton', IconButton);
 const SortableEmpty = piecePart(THEME_NAME, 'Empty', TableCell);
 const SortableHelperText = piecePart(THEME_NAME, 'HelperText', FormHelperText);
 const SortableAnnouncer = piecePart(THEME_NAME, 'Announcer', Box);
@@ -67,6 +76,13 @@ const SortableAnnouncer = piecePart(THEME_NAME, 'Announcer', Box);
 const HANDLE_COLUMN_WIDTH_PIXELS = 48;
 const POSITION_COLUMN_WIDTH_PIXELS = 88;
 const HOUSE_COLUMN_PADDING_X = 1.5;
+// la columna de «Subir» y «Bajar»: dos botones chicos (30 px cada uno), su separación y el relleno de la casa
+const MOVE_COLUMN_WIDTH_PIXELS = 88;
+// los dos botones de cada renglón para mover sin arrastrar: cuántos lugares se mueve con cada uno, su ícono y sus textos
+const MOVE_BUTTONS = Object.freeze([
+    {direction: 'up', step: -1, Icon: KeyboardArrowUpRoundedIcon, labelKey: 'moveUp', hintKey: 'moveUpHint'},
+    {direction: 'down', step: 1, Icon: KeyboardArrowDownRoundedIcon, labelKey: 'moveDown', hintKey: 'moveDownHint'},
+]);
 // lo mínimo de una columna sin ancho fijo: abajo de eso la tabla se desliza de lado (en el teléfono)
 const DEFAULT_COLUMN_MIN_WIDTH_PIXELS = 96;
 // lo que se ve, solo para el lector de pantalla
@@ -116,7 +132,9 @@ function isPromiseLike(value) {
  * @param {(row: Row) => string} [props.getRowLabel] el nombre del renglón que oye el lector de pantalla («Polanco»); por omisión
  *     lo de la primera columna
  * @param {boolean} [props.showPosition] la columna «Orden» con 1..n (por omisión sí)
- * @param {boolean} [props.disabled] nada se arrastra (mientras se envía el formulario, o de solo lectura)
+ * @param {boolean} [props.moveButtons] «Subir» y «Bajar» en cada renglón, para mover sin arrastrar (por omisión sí: lo pide la
+ *     regla de accesibilidad WCAG 2.5.7); false los quita
+ * @param {boolean} [props.disabled] nada se arrastra ni se mueve (mientras se envía el formulario, o de solo lectura)
  * @param {import('react').ReactNode} [props.error] el error de la lista (en rojo, abajo de la tabla)
  * @param {import('react').ReactNode} [props.helperText] una ayuda abajo de la tabla (el error gana)
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] lo de afuera de la tabla
@@ -125,8 +143,8 @@ function isPromiseLike(value) {
 function SortableTableContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSortableTable.defaultProps) y encima lo que llega aquí
     const {
-        rows, columns, onReorder, ariaLabel, getRowId = (row) => row.id, getRowLabel, showPosition = true, disabled = false, error,
-        helperText, sx, texts, ...unknownProps
+        rows, columns, onReorder, ariaLabel, getRowId = (row) => row.id, getRowLabel, showPosition = true, moveButtons = true,
+        disabled = false, error, helperText, sx, texts, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('sortableTable', texts);
@@ -164,6 +182,43 @@ function SortableTableContent(props) {
         return handlePropsByRow.current.get(rowId) ?? {tabIndex: 0, role: 'button'};
     };
 
+    // los botones «Subir» y «Bajar» ya pintados de cada renglón (para regresarles el foco) y a cuál se le regresa
+    const moveButtonsByRow = useRef(new Map());
+    const focusAfterMove = useRef(null);
+    const rememberMoveButton = (rowId, direction) => (element) => {
+        const buttons = moveButtonsByRow.current.get(rowId) ?? {};
+        buttons[direction] = element;
+        moveButtonsByRow.current.set(rowId, buttons);
+    };
+
+    // OJO trampa pagada: al cambiar el orden, React a veces saca la división del renglón movido y la vuelve a meter en su lugar
+    // nuevo (medido en Chrome: al bajar sí, al subir no), y el navegador le quita el foco a lo que se saca: quien movía con el
+    // teclado se quedaba sin foco y tenía que volver a buscar el renglón. Si el foco estaba en un botón del renglón, se le
+    // regresa cuando el renglón se pinta en expectedIndex (al botón de enfrente si ya llegó a la orilla y se apagó). Con el
+    // ratón en Safari el botón no se lleva el foco: ahí no se toca.
+    const keepFocusOnMoveButton = (rowId, expectedIndex) => {
+        const buttons = moveButtonsByRow.current.get(rowId);
+        const focused = MOVE_BUTTONS.find(({direction}) => buttons?.[direction] && buttons[direction] === document.activeElement);
+        focusAfterMove.current = focused ? {rowId, direction: focused.direction, expectedIndex} : null;
+    };
+    useEffect(() => {
+        const wanted = focusAfterMove.current;
+        if (!wanted) {
+            return;
+        }
+        const index = shownRows.findIndex((row) => String(getRowId(row)) === wanted.rowId);
+        // todavía no se pinta en su lugar nuevo: la pantalla no ha dado los renglones
+        if (index !== -1 && index !== wanted.expectedIndex) {
+            return;
+        }
+        focusAfterMove.current = null;
+        const buttons = moveButtonsByRow.current.get(wanted.rowId);
+        const pressed = MOVE_BUTTONS.find(({direction}) => direction === wanted.direction);
+        const reachedEdge = index + pressed.step < 0 || index + pressed.step >= shownRows.length;
+        const opposite = MOVE_BUTTONS.find(({direction}) => direction !== wanted.direction);
+        buttons?.[reachedEdge ? opposite.direction : pressed.direction]?.focus();
+    });
+
     const reorder = (row, fromIndex, toIndex) => {
         const movedRows = moveRow(shownRows, fromIndex, toIndex);
         const outcome = onReorder({rows: movedRows, rowId: getRowId(row), fromIndex, toIndex});
@@ -176,15 +231,31 @@ function SortableTableContent(props) {
         outcome.then(
             () => setPending((current) => (current === attempt ? {...attempt, saving: false} : current)),
             () => {
-                // el servidor dijo que no: se enseñan otra vez los renglones de la pantalla (el orden de antes)
+                // el servidor dijo que no: se enseñan otra vez los renglones de la pantalla (el orden de antes), y si el foco
+                // estaba en «Subir» o «Bajar» de ese renglón, lo sigue a su lugar de antes
+                keepFocusOnMoveButton(String(getRowId(row)), fromIndex);
                 setPending((current) => (current === attempt ? null : current));
                 setNotice(t('reverted', {title: labelOf(row), position: fromIndex + 1}));
             },
         );
     };
 
+    // un lugar arriba o abajo con su botón: guarda igual que soltarlo; mientras se guarda, el botón conserva el foco pero no
+    // mueve (y en la orilla está apagado)
+    const moveWithButton = (row, index, step) => {
+        const toIndex = index + step;
+        if (!canDrag || toIndex < 0 || toIndex >= total) {
+            return;
+        }
+        keepFocusOnMoveButton(String(getRowId(row)), toIndex);
+        setNotice(t('moved', {title: labelOf(row), position: toIndex + 1, total}));
+        reorder(row, index, toIndex);
+    };
+
     // lo que oye quien usa lector de pantalla (posiciones desde 1, como se cuentan)
     const announceStart = (start, provided) => {
+        // se empezó a arrastrar: ya no se espera regresarle el foco a un botón
+        focusAfterMove.current = null;
         setNotice('');
         provided.announce(t('lifted', {title: titleOf(start.draggableId), position: start.source.index + 1, total}));
     };
@@ -205,12 +276,13 @@ function SortableTableContent(props) {
         reorder(row, source.index, destination.index);
     };
 
-    // todas las filas con las mismas columnas: la del asa, la del orden y las de la pantalla
+    // todas las filas con las mismas columnas: la del asa, la del orden, las de la pantalla y la de «Subir» y «Bajar»
     const gridTemplateColumns = [
         `${HANDLE_COLUMN_WIDTH_PIXELS}px`, ...(showPosition ? [`${POSITION_COLUMN_WIDTH_PIXELS}px`] : []), ...columns.map(trackOf),
+        ...(moveButtons ? [`${MOVE_COLUMN_WIDTH_PIXELS}px`] : []),
     ].join(' ');
     // abajo de esto la tabla se desliza de lado en vez de apretar las columnas
-    const minimumWidth = HANDLE_COLUMN_WIDTH_PIXELS + (showPosition ? POSITION_COLUMN_WIDTH_PIXELS : 0)
+    const minimumWidth = HANDLE_COLUMN_WIDTH_PIXELS + (showPosition ? POSITION_COLUMN_WIDTH_PIXELS : 0) + (moveButtons ? MOVE_COLUMN_WIDTH_PIXELS : 0)
         + columns.reduce((sum, column) => sum + (column.width ?? column.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH_PIXELS), 0);
     const rowSx = {display: 'grid', gridTemplateColumns};
     // una palabra solo se parte si no cabe ni sola en su renglón (un correo largo); un encabezado de dos palabras baja entero
@@ -220,7 +292,10 @@ function SortableTableContent(props) {
 
     return (
         <SortableRoot sx={sx}>
-            <SortableContainer component={Paper} variant="outlined" ownSx={{overflowX: 'auto'}}>
+            {/* OJO trampa pagada: los encabezados escondidos (solo para el lector de pantalla) van con position absolute y se
+                acomodan contra el primer papá con posición. Sin la de esta caja, el de la última columna («Subir o bajar») quedaba
+                fuera de lo que se desliza y ensanchaba la página en el teléfono (715 px en una pantalla de 390). */}
+            <SortableContainer component={Paper} variant="outlined" ownSx={{overflowX: 'auto', position: 'relative'}}>
                 <SortableTableElement component="div" aria-label={ariaLabel} aria-busy={isSaving || undefined}
                                       aria-describedby={bottomText ? helperId : undefined} ownSx={{display: 'block', minWidth: minimumWidth}}>
                     <SortableHead component="div" ownSx={{display: 'block'}}>
@@ -236,6 +311,11 @@ function SortableTableContent(props) {
                                     {column.headerName}
                                 </SortableHeaderCell>
                             ))}
+                            {moveButtons && (
+                                <SortableHeaderCell component="div" role="columnheader" ownSx={houseCellSx('center')}>
+                                    <Box component="span" sx={VISUALLY_HIDDEN_SX}>{t('moveHeader')}</Box>
+                                </SortableHeaderCell>
+                            )}
                         </SortableHeaderRow>
                     </SortableHead>
                     <DragDropContext onDragStart={announceStart} onDragUpdate={announceUpdate} onDragEnd={finishMove}
@@ -280,6 +360,27 @@ function SortableTableContent(props) {
                                                                 {column.renderCell ? column.renderCell(row, {index, position: index + 1}) : (row[column.field] ?? t('noValue'))}
                                                             </SortableCell>
                                                         ))}
+                                                        {moveButtons && (
+                                                            <SortableMoveCell component="div" role="cell" ownSx={{...houseCellSx('center'), gap: 0.5}}>
+                                                                {MOVE_BUTTONS.map(({direction, step, Icon, labelKey, hintKey}) => (
+                                                                    // el span deja que el globo salga también con el botón apagado (regla de MUI)
+                                                                    <Tooltip key={direction} title={t(hintKey)}>
+                                                                        <span>
+                                                                            <SortableMoveButton size="small" ref={rememberMoveButton(rowId, direction)}
+                                                                                                aria-label={t(labelKey, {title: label})}
+                                                                                                // el primero no sube y el último no baja; mientras se guarda
+                                                                                                // se queda prendido para no perder el foco, pero no mueve
+                                                                                                disabled={disabled || index + step < 0 || index + step >= total}
+                                                                                                aria-disabled={isSaving || undefined}
+                                                                                                onClick={() => moveWithButton(row, index, step)}
+                                                                                                ownSx={isSaving ? {color: 'text.disabled'} : undefined}>
+                                                                                <Icon fontSize="small" />
+                                                                            </SortableMoveButton>
+                                                                        </span>
+                                                                    </Tooltip>
+                                                                ))}
+                                                            </SortableMoveCell>
+                                                        )}
                                                     </SortableRow>
                                                 )}
                                             </Draggable>

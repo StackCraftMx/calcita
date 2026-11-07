@@ -304,6 +304,10 @@ const CASES = [
         onReorder: () => {}, ariaLabel: 'Ruta de reparto', error: 'La primera parada sale de la bodega',
     }), 'Mover «Polanco», posición 2'],
     ['SortableTable vacía', h(SortableTable, {rows: [], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta'}), 'Sin renglones.'],
+    // mover sin arrastrar: «Subir» y «Bajar» en cada renglón, por omisión
+    ['SortableTable con «Subir» y «Bajar»', h(SortableTable, {
+        rows: [{id: 'centro', name: 'Centro'}, {id: 'polanco', name: 'Polanco'}], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta',
+    }), 'Bajar «Centro»'],
     ['EventCalendar', h(EventCalendar, {events: [], ariaLabel: 'Calendario'}), 'Calendario'],
     ['MessageList', h(MessageList, {messages: [INBOX_MESSAGE], onSelect: () => {}}), 'Entrega del lunes'],
     // el texto del mensaje se pinta como texto: las etiquetas salen escapadas
@@ -438,6 +442,9 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         ['WizardLayout de siempre con «Anterior» apagado', htmlOf(wizardOf({})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep sin «Anterior»', !htmlOf(wizardOf({hideBackOnFirstStep: true})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep: «Anterior» de vuelta en el segundo paso', htmlOf(wizardOf({hideBackOnFirstStep: true, activeIndex: 1})).includes('Anterior')],
+        ['SortableTable con moveButtons={false} sin «Subir» ni «Bajar»', !htmlOf(h(SortableTable, {
+            rows: [{id: 'centro', name: 'Centro'}], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta', moveButtons: false,
+        })).includes('Bajar «Centro»')],
     ];
     for (const [name, isFine] of checks) {
         if (!isFine) {

@@ -609,7 +609,7 @@ const sortableStops = createElement(SortableTable<RouteStop>, {
         return Promise.resolve(savedOrder);
     },
 });
-const sortableField = createElement(FormSortableField<RouteStop>, {name: 'stops', ariaLabel: 'Ruta de reparto', columns: [{field: 'name', headerName: 'Sucursal'}]});
+const sortableField = createElement(FormSortableField<RouteStop>, {name: 'stops', ariaLabel: 'Ruta de reparto', columns: [{field: 'name', headerName: 'Sucursal'}], moveButtons: false});
 // @ts-expect-error align es 'left', 'center' o 'right'
 const wrongSortableAlign = createElement(SortableTable<RouteStop>, {rows: routeStops, ariaLabel: 'Ruta', onReorder: () => undefined, columns: [{field: 'name', headerName: 'Sucursal', align: 'end'}]});
 

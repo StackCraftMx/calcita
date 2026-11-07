@@ -1,5 +1,6 @@
 // Mover un renglón de lugar en una lista donde el orden es el dato (qué se hace primero, en qué orden pasa la ruta). Sin
-// React ni MUI: lo usa SortableTable al soltar y la pantalla que quiera mover sin arrastrar (botones «Subir» y «Bajar»).
+// React ni MUI: lo usa SortableTable al soltar y con sus botones «Subir» y «Bajar», y la pantalla que quiera mover desde otra
+// parte (un menú «Mandar al final»).
 //
 // Las posiciones van desde 0, como las del arreglo; lo que ve una persona («posición 3») es la de aquí más uno.
 //
