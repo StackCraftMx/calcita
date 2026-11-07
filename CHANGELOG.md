@@ -4,6 +4,24 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.60.0] - 2026-11-07
+
+### Agregado
+
+- `useActiveMenuPath(path)`: una pantalla dice a qué entrada del menú pertenece cuando su dirección no lo dice (un detalle o
+  un comprobante que vive en otra raíz que su lista, o que solo se distingue por un número del negocio). El menú lateral,
+  el de arriba, la barra de pestañas del teléfono y las migas de `PageHeading` marcan esa entrada; al salir de la pantalla
+  se vuelve a marcar por la dirección. Sin la línea, todo igual. `activeMenuItemOf` y `menuBreadcrumbsOf` reciben la
+  dirección declarada como tercer dato (opcional) y `useAppMenu()` la entrega en `declaredPath`.
+- `DateTimeInput` y `FormDateTimeField`: la nota de abajo (`helperText`) puede ser un elemento con su propio estilo (una
+  advertencia en rojo) y el nombre de la zona horaria se queda a su lado, sin teñirse. Antes se juntaba como texto y salía
+  «[object Object] · Hora estándar central». Con texto, igual que siempre. En `DateInput`, `TimeInput` y `MonthInput` ya
+  funcionaba; ahora sus tipos lo dicen.
+- `ActionsMenu`: el botón «⋯» es una parte del tema (`CalcitaActionsMenu`, parte `button`), para darle otro tamaño sin tocar
+  las pantallas; por ejemplo, 44 px con el dedo: `button: {'@media (pointer: coarse)': {minWidth: 44, minHeight: 44}}`.
+  Vale para el mismo menú en `RecordCard`, el tablero, la bandeja y las columnas de acciones. Por omisión, igual (30 px).
+- README: la PWA del generador va sin service worker a propósito (instala en Chrome y Edge con el manifiesto y los íconos).
+
 ## [0.59.2] - 2026-11-07
 
 ### Arreglado
