@@ -105,6 +105,12 @@ export const ordersTexts = {
                 canceledAt: 'Cancelado',
                 cancelReason: 'Motivo de la cancelación',
                 timeZoneNote: 'Las horas son del centro de México, la zona de la tienda.',
+                receipt: 'Comprobante',
+            },
+            receipt: {
+                title: 'Comprobante del pedido {{number}}',
+                description: 'Para imprimirlo o mandarlo al cliente. Vive en su propia dirección y aun así el menú marca «Tabla»: la pantalla dice a qué entrada pertenece.',
+                print: 'Imprimir',
             },
             delivery: {
                 orderGroup: 'Pedido',
@@ -268,6 +274,12 @@ export const ordersTexts = {
                 canceledAt: 'Canceled',
                 cancelReason: 'Cancellation reason',
                 timeZoneNote: 'Times are in central Mexico time, the store time zone.',
+                receipt: 'Receipt',
+            },
+            receipt: {
+                title: 'Receipt for order {{number}}',
+                description: 'To print it or send it to the customer. It lives at its own address and the menu still marks “Table”: the screen says which entry it belongs to.',
+                print: 'Print',
             },
             delivery: {
                 orderGroup: 'Order',

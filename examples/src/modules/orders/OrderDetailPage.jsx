@@ -7,7 +7,7 @@
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useState} from 'react';
-import {useParams} from 'react-router';
+import {Link, useParams} from 'react-router';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import HistoryIcon from '@mui/icons-material/History';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import {
     BackButton, ConfirmDialog, CopyButton, DefinitionList, DetailHeader, DictionaryText, ICON_BADGE_VARIANT, IconBadge, SectionCard, StatusChip,
     formatDateTime,
@@ -32,7 +33,7 @@ import {
     CANCELABLE_ORDER_STATUSES, CANCEL_REASON_MAX_LENGTH, ORDER_EVENT, ORDER_FLAG, PAYMENT_METHOD,
 } from '@/modules/orders/orderDictionaries.js';
 import {cancelOrder, getOrderHistoryPage} from '@/modules/orders/ordersApi.js';
-import {ORDERS_LIST_KEY} from '@/modules/orders/ordersPaths.js';
+import {ORDERS_LIST_KEY, orderReceiptPathOf} from '@/modules/orders/ordersPaths.js';
 import {ORDER_DETAIL_STATUS, useOrderDetail} from '@/modules/orders/useOrderDetail.js';
 
 export const OrderDetailPage = () => {
@@ -119,6 +120,10 @@ export const OrderDetailPage = () => {
                         ])} />
                         <Button variant="outlined" startIcon={<HistoryIcon />} onClick={() => setIsHistoryOpen(true)}>
                             {t('detail.history')}
+                        </Button>
+                        {/* el comprobante vive en /receipts/…: el menú sigue marcando «Tabla» porque esa pantalla lo declara */}
+                        <Button variant="outlined" startIcon={<ReceiptOutlinedIcon />} component={Link} to={orderReceiptPathOf(orderId)}>
+                            {t('detail.receipt')}
                         </Button>
                         {canCancel && (
                             <Button variant="outlined" color="error" onClick={openCancel}>{t('detail.cancel')}</Button>
