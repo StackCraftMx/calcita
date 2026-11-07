@@ -1,5 +1,8 @@
 import {useState} from 'react';
 import Stack from '@mui/material/Stack';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
+import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import {QuickFilters, StatusChip, Tag, dictionaryEntryOf, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 // El estado de un pedido como llega del API → su texto (dictionaries:orderStatus.<valor>), su explicación y su color.
@@ -30,6 +33,11 @@ const FrameworkTags = () => {
             <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: 'wrap', alignItems: 'center'}}>
                 <Tag label={t('samples.retail')} tooltip={t('chips.framework.tagTooltip')} />
                 <Tag label={t('samples.wholesale')} color="info" tooltip={t('chips.framework.tagTooltip')} />
+                {/* el ícono toma el color de su letra, también con la letra teñida desde sx y en oscuro */}
+                <Tag label={t('chips.framework.freeShipping')} icon={<LocalShippingOutlinedIcon />} />
+                <Tag label={t('chips.framework.tintedTag')} icon={<VerifiedUserOutlinedIcon />} sx={{color: 'success.main', borderColor: 'success.main'}} />
+                {/* un ícono con su propio color se respeta */}
+                <Tag label={t('chips.framework.verified')} icon={<VerifiedOutlinedIcon color="success" />} />
             </Stack>
             <Stack direction="row" spacing={2} useFlexGap sx={{flexWrap: 'wrap', alignItems: 'center'}}>
                 {Object.keys(ORDER_STATUS).map((status) => <StatusChip key={status} dictionary={ORDER_STATUS} value={status} />)}

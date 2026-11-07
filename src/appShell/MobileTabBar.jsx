@@ -284,8 +284,11 @@ function MobileTabBarContent(props) {
                      height: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait,
                      [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                  })}>
+                {/* minWidth 0: sin él la barra no se encoge por debajo de sus rótulos (lo mínimo de una caja flexible es lo
+                    que mide su contenido). Con nombres largos crecía hasta su tope, contaba más pestañas de las que caben y,
+                    centrada, se salía de la pantalla por los dos lados */}
                 <TabBarBar ref={setTabsCapsule} inert={isMinimized}
-                     ownSx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
+                     ownSx={(theme) => ({...glassSurfaceSx(theme), display: 'flex', flex: 1, minWidth: 0, maxWidth: TAB_BAR_MAX_WIDTH_PIXELS, p: 0.375,
                                       ...appearStylesOf(theme, !isMinimized, 'left bottom')})}>
                     {tabs.map((menuItem) => {
                         const hasChildren = (menuItem.children ?? []).length > 0;
