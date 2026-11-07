@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.59.2] - 2026-11-07
+
+### Arreglado
+
+- `AppLayout` en el teléfono: la barra de pestañas de abajo ya no se sale de la pantalla con nombres largos («Administración
+  de clientes»). No se encogía por debajo de lo que miden sus nombres: crecía hasta su tope, contaba más pestañas de las que
+  caben y, centrada, se salía por los dos lados (también al angostar la ventana en escritorio). Ahora se queda adentro y
+  cada nombre largo se corta con «…». Un proyecto que lo arregló en su tema (`CalcitaMobileTabBar`, parte `bar`,
+  `minWidth: 0`) ya puede quitar ese ajuste.
+- `Tag` con ícono: el ícono toma el color de su letra. En una etiqueta sin color MUI le ponía un gris fijo de la paleta, y
+  con la letra teñida desde `sx` o con una paleta de oscuro cuyos grises van al revés, el ícono casi no se veía. Un ícono que
+  trae su propio color (`<CheckIcon color="success" />`) se respeta.
+
 ## [0.59.1] - 2026-11-07
 
 ### Arreglado
