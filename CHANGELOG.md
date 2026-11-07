@@ -4,6 +4,46 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.61.0] - 2026-11-07
+
+### Agregado
+
+- `createToolkitTheme({glass: {surfaces: {…}}})`: el vidrio superficie por superficie (`GLASS_SURFACE`): `topBar`,
+  `tabBar`, `sideMenu`, `backdrop` (el velo detrás de cajones y ventanas), `drawers`, `dialogs`, `menus` y `cards`. Lo que no
+  se diga queda de fábrica (`DEFAULT_GLASS_SURFACES`: todo lo que flota con vidrio, las tarjetas sólidas), así que sin la
+  opción todo se ve igual. Una superficie apagada se pinta sólida, como con «Reducir transparencia», sin desenfoque ni
+  lente: el tema del proyecto le gana sin `!important` ni selectores más pesados. `surfaces: true` sigue siendo «también las
+  tarjetas». Un nombre mal escrito truena al armar el tema.
+- `surfaceStylesOf(theme, superficie)` y `hasGlassSurface(theme, superficie)`: algo propio del proyecto (un cajón suyo) se
+  pinta de vidrio o sólido igual que la superficie del tema.
+- `createToolkitTheme({glass: {selectedTab: GLASS_SELECTED_TAB.accent}})`: la pestaña elegida de `Tabs` del color de la marca,
+  con el brillo del botón principal y letra blanca, en lugar de la gota del color del papel (que sobre un papel blanco casi
+  no se distinguía). Por omisión, la gota.
+- `FilterDrawer`: `closePlacement` (`FILTER_DRAWER_CLOSE_PLACEMENT`) pone la × de cerrar al final del encabezado, donde la
+  alcanza el pulgar en el teléfono; también cambia el orden para el lector de pantalla y el tabulador. Para toda la app:
+  `CalcitaFilterDrawer: {defaultProps: {closePlacement: 'end'}}`. Por omisión, al principio.
+- `ServerTable`: `density` (`TABLE_DENSITY`) pide el aire de los renglones: `compact` (36 px), `standard` (52) o
+  `comfortable` (67), los del DataGrid. Hasta hoy la compacta iba fija por dentro y solo se podía cambiar con un alto fijo
+  (`getRowHeight`, que recorta los renglones de dos líneas) o con CSS en cada pantalla. Para toda la app:
+  `CalcitaServerTable: {defaultProps: {density: 'standard'}}`. Por omisión, la compacta, como siempre; un nombre que no
+  existe se queda en la compacta y avisa una vez.
+- Ejemplos: el configurador de tema trae un interruptor por superficie y la pestaña elegida (toda la app cambia al picarlos y
+  el código exportado los lleva), y el tema de los ejemplos pone la × del cajón de filtros a la derecha. En Hecho en Calcita,
+  «La tabla de servidor» trae el aire de los renglones con las tres densidades para probarlas.
+
+### Arreglado
+
+- `ServerTable` con `showGoToPage`: «Página N de M» se ve igual que «Filas por página», que va a su lado. Con vidrio
+  llevaba el botón cuadrado de color del «combo box», hecho para los campos en cápsula, y en ese campo chico se veía fuera
+  de lugar; ahora lleva la flechita ⌃⌄ de las listas para elegir, sin raya, con la misma letra y color que la paginación de
+  MUI (el número en 14 px, y en 16 con el dedo para que el iPhone no haga zoom). Sigue siendo el mismo buscador: se teclea,
+  se filtra y abre igual de rápido con miles de páginas.
+- `ServerTable`: si «Página N de M» y la paginación no caben juntos, el primero se baja a su propia línea. Antes la
+  paginación se encogía, cortaba «Filas por página» y aparecía una barra para deslizarla de lado.
+- `AppLayout`: la rayita de «cargando la pantalla» (`isNavigating`, mientras baja la pantalla siguiente) va hasta arriba de
+  la página, de orilla a orilla, encima de todo y del color de la marca. Antes iba en la orilla de abajo de la barra: con
+  cápsulas casi no se veía y en el teléfono, donde esa barra va escondida, no salía.
+
 ## [0.60.1] - 2026-11-07
 
 ### Arreglado
