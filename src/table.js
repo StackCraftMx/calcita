@@ -3,7 +3,7 @@
 // pone el adaptador de nuqs de su framework).
 export {
     ACTIONS_COLUMN_FIELD, AuditTrailDialog, AuditTrailTable, DETAIL_COLUMN_FIELD, EmptyState, FILTER_KINDS, FilterChips, GoToPage, SELECTION_PHONE_LAYOUT,
-    ServerTable, ServerTableFilterDrawer, StackedCell, TABLE_VIEW, TableCardsView, TableFilterContext, TableViewToggle, actionsColumn,
+    ServerTable, ServerTableFilterDrawer, StackedCell, TABLE_DENSITY, TABLE_VIEW, TableCardsView, TableFilterContext, TableViewToggle, actionsColumn,
     buildChipConfig, buildTableActors, detailColumn, facetColumn, fixedColumnOffsetsOf, fixedFieldsOf, isFilterActive, stackedColumn, statusColumn,
     statusColumnWidthOf, tableMachine, textColumn, textWidthOf, toServerTableParams, useDebouncedFilter, useTableFilter, useTableState, useTableView,
 } from '@/DataTable/index.js';

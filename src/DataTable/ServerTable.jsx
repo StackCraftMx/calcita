@@ -104,12 +104,22 @@ function readCspNonce() {
     return document.querySelector('meta[property="csp-nonce"]')?.nonce || undefined;
 }
 
-// Densidad compacta en todas las tablas: el espaciado por omisión desperdicia renglones. Son los altos que pinta el DataGrid 8 con density="compact": la base de 52 px del renglón y de 56 px del
-// encabezado por el factor 0.7, redondeados hacia abajo. El pie (paginación) no cambia con la densidad.
-// OJO: si se cambia la densidad, estos números se vuelven a medir en Chrome; con ellos se calcula el alto del contenedor
-// y un número viejo deja hueco blanco abajo o una barra de desplazamiento sin necesidad
-const ROW_HEIGHT_PIXELS = 36;
-const COLUMN_HEADER_HEIGHT_PIXELS = 39;
+/**
+ * El aire de los renglones (density), con los nombres del DataGrid. De fábrica la compacta: en una lista de trabajo con
+ * ratón el espaciado de MUI desperdicia renglones. Con el dedo, en la compacta entre el botón de un renglón y el del
+ * siguiente quedan 6 px y se pica el de al lado (lo reportaron); la estándar o la cómoda se piden en la tabla o, para
+ * toda la app, en el tema (components.CalcitaServerTable.defaultProps.density).
+ */
+export const TABLE_DENSITY = Object.freeze({compact: 'compact', standard: 'standard', comfortable: 'comfortable'});
+// Los altos que pinta el DataGrid 8 en cada densidad: la base de 52 px del renglón y de 56 px del encabezado por su factor
+// (0.7, 1 y 1.3), redondeados hacia abajo (medidos en Chrome). El pie (paginación) no cambia con la densidad.
+// OJO: con ellos se calcula el alto del contenedor; un número que no es el real deja hueco blanco abajo o una barra de
+// desplazamiento sin necesidad
+const DENSITY_SIZES = Object.freeze({
+    [TABLE_DENSITY.compact]: Object.freeze({factor: 0.7, rowPixels: 36, headerPixels: 39}),
+    [TABLE_DENSITY.standard]: Object.freeze({factor: 1, rowPixels: 52, headerPixels: 56}),
+    [TABLE_DENSITY.comfortable]: Object.freeze({factor: 1.3, rowPixels: 67, headerPixels: 72}),
+});
 const FOOTER_HEIGHT_PIXELS = 52;
 // líneas del borde del encabezado y del pie
 const GRID_BORDER_PIXELS = 2;
@@ -126,7 +136,8 @@ const CELL_LINE_HEIGHT = 'inherit';
 const log = createLogger('table');
 // las columnas fijas sin ancho fijo de las que ya se avisó (una vez por columna en toda la app)
 const warnedFixedColumns = new Set();
-const DATA_GRID_DENSITY = 'compact';
+// las densidades mal escritas de las que ya se avisó (una vez por nombre en toda la app)
+const warnedDensities = new Set();
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
 // dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
 export {SELECTION_PHONE_LAYOUT};
@@ -212,7 +223,6 @@ function fixedColumnSxOf(theme, fixedColumns, {withCheckboxColumn = false} = {})
         }),
     };
 }
-const COMPACT_DENSITY_FACTOR = 0.7;
 
 /** Una tira de accesos rápidos sobre un campo de la tabla, alimentada por su faceta. */
 function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFilter, setFilters}) {
@@ -315,6 +325,8 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     una función nueva en cada pintada haría filtrar la página cada vez
  * @param {boolean} [props.striped] renglones alternos (cebra) con el color de hover del tema; al pasar el cursor se usa
  *     el de «seleccionado» para que el renglón bajo el cursor se siga distinguiendo
+ * @param {'compact'|'standard'|'comfortable'} [props.density] el aire de los renglones (TABLE_DENSITY): 36, 52 o 67 px; por
+ *     omisión la compacta. Para toda la app, en el tema: components.CalcitaServerTable.defaultProps.density
  * @param {(params: any) => number|'auto'|null} [props.getRowHeight] el alto de cada renglón: un número (px) o 'auto' para
  *     que crezca con lo que lleva adentro (varios renglones de texto en una celda). Con 'auto' la tabla se mide a sí misma
  *     (autoHeight del DataGrid); con maxGridHeight cuenta cada renglón 'auto' con getEstimatedRowHeight de gridProps o, sin
@@ -396,6 +408,7 @@ function ServerTableContent(props) {
     hideFooterWhenAllRowsFit = false,
     showGoToPage = false,
     striped = false,
+    density = TABLE_DENSITY.compact,
     getRowHeight,
     gridSx,
     maxGridHeight = null,
@@ -587,23 +600,32 @@ function ServerTableContent(props) {
     // (autoHeight del DataGrid). OJO, trampa pagada: antes 'auto' se contaba con el alto de siempre, el contenedor quedaba
     // corto y el renglón salía cortado a la mitad. Con un tope (maxGridHeight) no se puede medir sola: se cuenta con el
     // alto estimado que dé la pantalla (getEstimatedRowHeight de gridProps) o con el de siempre
-    let rowsHeight = placeholderRowCount * ROW_HEIGHT_PIXELS;
+    // los altos de la densidad pedida; un nombre que no existe se queda en la compacta (y se avisa abajo)
+    const densitySizes = DENSITY_SIZES[density] ?? DENSITY_SIZES[TABLE_DENSITY.compact];
+    let rowsHeight = placeholderRowCount * densitySizes.rowPixels;
     let hasAutoHeightRows = false;
     for (const row of visibleRows) {
-        const rowParams = {id: getRowId ? getRowId(row) : row.id, model: row, densityFactor: COMPACT_DENSITY_FACTOR};
+        const rowParams = {id: getRowId ? getRowId(row) : row.id, model: row, densityFactor: densitySizes.factor};
         const requestedRowHeight = rowHeightOf?.(rowParams);
         if (requestedRowHeight === AUTO_ROW_HEIGHT) {
             hasAutoHeightRows = true;
             const estimatedRowHeight = gridProps?.getEstimatedRowHeight?.(rowParams);
-            rowsHeight += typeof estimatedRowHeight === 'number' ? estimatedRowHeight : ROW_HEIGHT_PIXELS;
+            rowsHeight += typeof estimatedRowHeight === 'number' ? estimatedRowHeight : densitySizes.rowPixels;
             continue;
         }
-        rowsHeight += typeof requestedRowHeight === 'number' ? requestedRowHeight : ROW_HEIGHT_PIXELS;
+        rowsHeight += typeof requestedRowHeight === 'number' ? requestedRowHeight : densitySizes.rowPixels;
     }
     const measuresItself = hasAutoHeightRows && !maxGridHeight;
     // las columnas fijas con su lugar; la primera va después de la casilla de elegir renglones (fixedColumns.js)
     const fixedColumns = fixedColumnOffsetsOf(fixedFieldsOf(fixedColumn), columns, {startLeft: isSelectable ? CHECKBOX_COLUMN_WIDTH_PIXELS : 0});
     const fixedWithUnknownWidth = fixedColumns.filter((fixed) => fixed.hasUnknownWidth).map((fixed) => fixed.field).join(',');
+    useEffect(() => {
+        // una densidad que no existe («confortable», «normal») se queda en la compacta: se avisa una vez para que se corrija
+        if (!DENSITY_SIZES[density] && !warnedDensities.has(density)) {
+            warnedDensities.add(density);
+            log.warn(`ServerTable: density «${density}» no existe (son ${Object.values(TABLE_DENSITY).join(', ')}); va la compacta.`);
+        }
+    }, [density]);
     useEffect(() => {
         // una sola vez por columna: la que sigue de una fija sin ancho fijo podría quedar encima de ella
         for (const field of fixedWithUnknownWidth ? fixedWithUnknownWidth.split(',') : []) {
@@ -617,7 +639,7 @@ function ServerTableContent(props) {
     // de la página). La paginación del servidor ya acota cuántos renglones hay; maxGridHeight queda solo para quien
     // de verdad necesite un tope (un diálogo con altura fija)
     // con bandas el encabezado son dos renglones del mismo alto: el de las bandas y el de las columnas
-    const headerHeight = columnGroupingModel ? 2 * COLUMN_HEADER_HEIGHT_PIXELS : COLUMN_HEADER_HEIGHT_PIXELS;
+    const headerHeight = columnGroupingModel ? 2 * densitySizes.headerPixels : densitySizes.headerPixels;
     // sin paginador que usar no hay pie: todo lo que hay ya está a la vista en la primera página
     const isFooterHidden = hideFooterWhenAllRowsFit && page === 0 && total <= pageSize;
     // el pie mide su alto más las líneas de borde; sin pie no hay ni lo uno ni lo otro
@@ -771,7 +793,7 @@ function ServerTableContent(props) {
                     hideFooterSelectedRowCount
                     // con columna fija se dibuja todo: si no, la fija desaparecería al deslizar a la derecha (fixedColumnSxOf)
                     disableVirtualization={fixedColumns.length > 0}
-                    density={DATA_GRID_DENSITY}
+                    density={DENSITY_SIZES[density] ? density : TABLE_DENSITY.compact}
                     localeText={{...gridText, noRowsLabel: emptyLabel ?? t('empty.default')}}
                     slotProps={{
                         // con filas ya pintadas, barra delgada arriba sin tapar lo que se lee; con la tabla vacía, esqueleto
@@ -782,7 +804,15 @@ function ServerTableContent(props) {
                         // "51-75 de 1,234". Sin él, la paginación de siempre del DataGrid
                         ...(showGoToPage && {
                             pagination: () => (
-                                <TablePagination direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
+                                // si no caben juntos, «Página N de M» se baja a su propia línea (arriba) y la paginación se queda
+                                // entera: sin esto la paginación de MUI se encogía, cortaba «Filas por página» y salía una barra
+                                // para deslizarla de lado (lo reportaron en el teléfono, con totales de cuatro cifras)
+                                <TablePagination direction="row" ownSx={{
+                                    alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0,
+                                    '& .MuiTablePagination-root': {flexShrink: 0},
+                                    // el margen derecho de la paginación: en su propia línea no queda pegado a la orilla
+                                    '& > .CalcitaGoToPage-root': {pr: 2},
+                                }}>
                                     <GoToPage page={page} pageCount={Math.ceil(total / pageSize) || 1} onChange={tableState.setPage} />
                                     <GridPagination />
                                 </TablePagination>
