@@ -4,6 +4,17 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.62.1] - 2026-11-07
+
+### Arreglado
+
+- `ServerTable`: `density` también vale con renglones de alto automático (`getRowHeight` con `'auto'` o una
+  `stackedColumn`). Ahí el DataGrid no mira el alto de la densidad, manda lo que mide la celda, y la celda no lleva relleno:
+  la estándar salía igual de apretada que la compacta (33 px y 6 px entre «⋯», medido en un proyecto). Ahora la densidad le
+  pone a cada celda su aire arriba y abajo (8 px la estándar, 16 la cómoda) y, como mínimo, el alto del renglón fijo: una
+  línea mide lo mismo con alto fijo que con automático y varias líneas crecen con su aire. La compacta no cambia.
+- Ejemplos: «El aire de los renglones» en Hecho en Calcita trae «Varios renglones (alto automático)» para probarlo.
+
 ## [0.62.0] - 2026-11-07
 
 ### Agregado
