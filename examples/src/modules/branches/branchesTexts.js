@@ -6,7 +6,7 @@ export const branchesTexts = {
             nav: {ariaLabel: 'Secciones de sucursales', map: 'Mapa', route: 'Ruta de reparto'},
             route: {
                 title: 'Ruta de reparto',
-                description: 'En qué orden visita el camión las sucursales abiertas. Arrastre un renglón por su asa (o con el teclado: espacio, flechas y espacio) y guarde. El camión sale de la bodega de Ciudad de México.',
+                description: 'En qué orden visita el camión las sucursales abiertas. Arrastre un renglón por su asa (o con el teclado: espacio, flechas y espacio), o muévalo con sus flechas «Subir» y «Bajar», y guarde. El camión sale de la bodega de Ciudad de México.',
                 table: 'Paradas de la ruta de reparto',
                 name: 'Sucursal',
                 city: 'Ciudad',
@@ -47,7 +47,7 @@ export const branchesTexts = {
             nav: {ariaLabel: 'Branch sections', map: 'Map', route: 'Delivery route'},
             route: {
                 title: 'Delivery route',
-                description: 'The order in which the truck visits the open branches. Drag a row by its handle (or with the keyboard: space, arrows and space) and save. The truck leaves the Mexico City warehouse.',
+                description: 'The order in which the truck visits the open branches. Drag a row by its handle (or with the keyboard: space, arrows and space), or move it with its “Move up” and “Move down” arrows, and save. The truck leaves the Mexico City warehouse.',
                 table: 'Delivery route stops',
                 name: 'Branch',
                 city: 'City',

@@ -24,7 +24,8 @@ const SAVE_ON_DROP_EXTENSIONS = [
     {id: 'rowIdentity', option: 'getRowId · getRowLabel', example: 'getRowId={(order) => order.folio} getRowLabel={(order) => order.customer}'},
     {id: 'renderCell', option: 'renderCell', example: "renderCell: (order, {position}) => <Tag label={order.status} />"},
     {id: 'position', option: 'showPosition · disabled', example: 'showPosition={false} disabled={!canEdit}'},
-    {id: 'moveRow', option: 'moveRow', example: 'onClick={() => setRows(moveRow(rows, index, index - 1))}  // un botón «Subir»'},
+    {id: 'moveButtons', option: 'moveButtons', example: 'moveButtons={false}  // sin «Subir» ni «Bajar»'},
+    {id: 'moveRow', option: 'moveRow', example: 'onClick={() => setRows(moveRow(rows, index, rows.length - 1))}  // «Mandar al final»'},
     {id: 'texts', option: 'texts', example: "texts={{position: 'Prioridad'}}"},
     {id: 'theme', option: 'theme.components.CalcitaSortableTable', example: "styleOverrides: {handle: {color: 'primary.main'}}"},
 ];

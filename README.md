@@ -244,7 +244,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/maps` | `MapView`: mapa con marcadores del color del tema, el elegido con su globo, se acomoda solo; en oscuro, mosaicos oscuros | `leaflet`, `react-leaflet` 5 |
 | `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no. `EventDetails`: el detalle de una cita (lugar, liga de la reunión, invitados con su respuesta, recordatorio, notas) | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
 | `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope (y que se encogen, como un congelador) y tarjetas de producto (etiquetas, responsables, fecha, pendientes, terminar) que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
-| `@stackcraftmx/calcita/sortable` | `SortableTable`: una tabla chica cuyos renglones se arrastran (ratón, dedo o teclado) para ordenarlos, con su columna «Orden»; guarda al soltar (y regresa el renglón si el servidor dice que no) o en un formulario con `FormSortableField`; `moveRow` para mover sin arrastrar | `@hello-pangea/dnd` 18 |
+| `@stackcraftmx/calcita/sortable` | `SortableTable`: una tabla chica cuyos renglones se arrastran (ratón, dedo o teclado) para ordenarlos, o se mueven con sus botones «Subir» y «Bajar», con su columna «Orden»; guarda al soltar (y regresa el renglón si el servidor dice que no) o en un formulario con `FormSortableField`; `moveRow` para mover desde otra parte | `@hello-pangea/dnd` 18 |
 
 ## El tema
 
@@ -537,7 +537,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaSignInForm` | `footer` |
 | `CalcitaSignInScreen` | `alert` |
 | `CalcitaSortableFilterHeader` | `title`, `root`, `sortButton`, `sortIndicator`, `clearButton` |
-| `CalcitaSortableTable` | `root`, `container`, `table`, `head`, `headerRow`, `headerCell`, `body`, `row`, `handleCell`, `handle`, `positionCell`, `cell`, `empty`, `helperText`, `announcer` |
+| `CalcitaSortableTable` | `root`, `container`, `table`, `head`, `headerRow`, `headerCell`, `body`, `row`, `handleCell`, `handle`, `positionCell`, `cell`, `moveCell`, `moveButton`, `empty`, `helperText`, `announcer` |
 | `CalcitaStackedCell` | `root`, `line`, `label`, `valueRow`, `primary`, `secondary`, `note` |
 | `CalcitaStatusChip` | `root`, `dot`, `label`, `chip` |
 | `CalcitaSubmenuActionsMenu` | `badge` |
@@ -729,7 +729,7 @@ const columns = [
 
 Para una lista chica donde el orden de los renglones es el dato (qué se surte primero, en qué orden pasa la ruta, qué se
 hace antes): `SortableTable` es una tabla cuyos renglones se arrastran con el ratón, el dedo o el teclado (espacio, flechas,
-espacio), con la columna «Orden» 1..n que se renumera sola. Pide `@hello-pangea/dnd`, la misma del tablero kanban. La tabla
+espacio), o se mueven un lugar con sus botones «Subir» y «Bajar», con la columna «Orden» 1..n que se renumera sola. Pide `@hello-pangea/dnd`, la misma del tablero kanban. La tabla
 de servidor no sirve para esto: en MUI X, ordenar renglones arrastrando es de su versión de paga; esta lista va completa en
 el navegador.
 
@@ -758,8 +758,11 @@ import {FormSortableField, SortableTable, moveRow} from '@stackcraftmx/calcita/s
 - Las columnas: `width` fijo, o `flex` y `minWidth` para repartirse el espacio libre; abajo de su mínimo, la tabla se desliza
   de lado (en el teléfono). `renderCell(row, {position})` para una celda a la medida. Los renglones conservan su tipo en
   TypeScript.
-- `moveRow(rows, desde, hasta)` mueve sin arrastrar (un botón «Subir» de la pantalla). `showPosition={false}` quita la
-  columna «Orden»; `disabled` la deja de solo lectura; `texts` y el tema (`CalcitaSortableTable`) cambian lo demás.
+- Cada renglón trae «Subir» y «Bajar» en la última columna: la regla de accesibilidad pide poder mover sin arrastrar
+  (WCAG 2.5.7, para quien no puede sostener y mover el ratón o el dedo). Cada clic mueve un lugar y guarda igual que soltar;
+  el foco se queda en el botón aunque el renglón cambie de lugar. `moveButtons={false}` los quita.
+- `moveRow(rows, desde, hasta)` mueve desde otra parte de la pantalla (un menú «Mandar al final»). `showPosition={false}`
+  quita la columna «Orden»; `disabled` la deja de solo lectura; `texts` y el tema (`CalcitaSortableTable`) cambian lo demás.
 
 ## Eventos y textos de cada componente
 
