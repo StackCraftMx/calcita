@@ -442,6 +442,10 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         ['WizardLayout de siempre con «Anterior» apagado', htmlOf(wizardOf({})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep sin «Anterior»', !htmlOf(wizardOf({hideBackOnFirstStep: true})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep: «Anterior» de vuelta en el segundo paso', htmlOf(wizardOf({hideBackOnFirstStep: true, activeIndex: 1})).includes('Anterior')],
+        // el ícono de un Tag sin color toma el color de su letra (MUI le ponía un gris fijo que se perdía en oscuro); uno con su
+        // propio color se respeta
+        ['Tag con ícono: el ícono va del color de su letra', htmlOf(h(Tag, {label: 'Envío gratis', icon: h('svg')})).includes('MuiChip-icon{color:inherit')],
+        ['Tag con ícono de color propio: se respeta', !htmlOf(h(Tag, {label: 'Verificado', icon: h('svg', {color: 'success'})})).includes('MuiChip-icon{color:inherit')],
         ['SortableTable con moveButtons={false} sin «Subir» ni «Bajar»', !htmlOf(h(SortableTable, {
             rows: [{id: 'centro', name: 'Centro'}], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta', moveButtons: false,
         })).includes('Bajar «Centro»')],
