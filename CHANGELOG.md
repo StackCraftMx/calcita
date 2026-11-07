@@ -4,6 +4,29 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.62.0] - 2026-11-07
+
+### Agregado
+
+- Esqueletos de carga, cada uno con la forma de la pieza que imita: `DefinitionListSkeleton` (los renglones de dato, con
+  `rows`, `layout` y `labelWidth` como `DefinitionList`), `DetailHeaderSkeleton` (el encabezado de una ficha: `media` para el
+  logotipo, `lines` para los renglones bajo el título, `tabs` para la tira de pestañas, `badges` y `eyebrow`), `TableSkeleton`
+  (`rows` y `columns`, para una tabla que no es `ServerTable`) y `DashboardSkeleton` (un tablero, del alto que se le dé).
+  Ninguno pinta texto; al lector de pantalla le dicen «Cargando», ya traducido (`texts={{skeleton: {loading}}}` lo cambia).
+  Los anchos cambian de renglón a renglón para que parezca texto.
+- `SkeletonOverlay`: el esqueleto ENCIMA de algo que tiene que seguir montado mientras carga (un tablero de Tableau empieza
+  de cero si se desmonta). Lo de abajo se monta desde el principio con `aria-busy` y el esqueleto se quita con
+  `isLoading={false}`, cuando ese algo avisa que está listo. Por omisión tapa con `DashboardSkeleton`; `skeleton` pone otra.
+- README y Hecho en Calcita: la frontera. El esqueleto es para esperar información; guardar, enviar o subir conservan su
+  rueda.
+- El armazón del primer arranque: la silueta del marco (barra, menú y contenido en gris) en el HTML, adentro de `#root`,
+  mientras baja la app. Sale a los 250 ms, se va solo cuando React pinta y toma el color del sistema sin escribir
+  `color-scheme`. Viene en la plantilla de `calcita new` y, para copiar (también a una vista de Blade), en Hecho en Calcita →
+  «Encabezados y tarjetas». Una prueba vigila que la plantilla y los ejemplos traigan el mismo.
+- Ejemplos: el detalle y el comprobante del pedido esperan con la forma de la ficha en lugar de una rueda, y la app de
+  ejemplos trae el armazón del arranque. En Hecho en Calcita, «Encabezados y tarjetas» trae los esqueletos con una ficha y un
+  tablero que tardan en llegar.
+
 ## [0.61.0] - 2026-11-07
 
 ### Agregado
