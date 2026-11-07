@@ -5,7 +5,7 @@ import {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf, usePublished
 import {VALUE_FORMAT, reportSheetOf} from '@stackcraftmx/calcita/excel';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
-import {ServerTable, ServerTableFilterDrawer} from '@stackcraftmx/calcita/table';
+import {ServerTable, ServerTableFilterDrawer, TABLE_DENSITY} from '@stackcraftmx/calcita/table';
 import {FormTextField} from '@stackcraftmx/calcita/forms';
 import {createCsrfRetryHandler} from '@stackcraftmx/calcita/laravel';
 import {MONEY_ROUNDING, Money} from '@stackcraftmx/calcita/money';
@@ -53,7 +53,7 @@ import {createDemoAccountConnector, totpCodeAt} from '@stackcraftmx/calcita/acco
 import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
-    withPermissionGroup, TOP_BAR, MINIMAL_TONES, FIELD_TONES, CSS_TOKENS, cssTokenOf, cssTokenDeclarationsOf, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
+    withPermissionGroup, TOP_BAR, MINIMAL_TONES, FIELD_TONES, GLASS_SURFACE, GLASS_SELECTED_TAB, DEFAULT_GLASS_SURFACES, hasGlassSurface, surfaceStylesOf, FILTER_DRAWER_CLOSE_PLACEMENT, CSS_TOKENS, cssTokenOf, cssTokenDeclarationsOf, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
     useBarActionsPlacement, useCloseBarActionsMenu, BackButton, useActiveMenuPath, useAppMenu,
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
@@ -283,6 +283,19 @@ const serverProblemRoot: string = SERVER_PROBLEM_ROOT;
 const emailSchema = Yup.string().email();
 const toolkitTheme = createToolkitTheme({glass: true});
 const surfacesTheme = createToolkitTheme({glass: {opacity: 0.7, surfaces: true}});
+// el vidrio superficie por superficie y la pestaña elegida de color; lo de afuera obedece con surfaceStylesOf
+const bySurfaceTheme = createToolkitTheme({glass: {surfaces: {backdrop: false, drawers: false, menus: false}, selectedTab: GLASS_SELECTED_TAB.accent}});
+const ownDrawerStyles: object = surfaceStylesOf(bySurfaceTheme, GLASS_SURFACE.drawers, {isControl: false});
+const backdropIsGlass: boolean = hasGlassSurface(bySurfaceTheme, GLASS_SURFACE.backdrop) || DEFAULT_GLASS_SURFACES.backdrop;
+// @ts-expect-error una superficie va con true o false
+const wrongSurface = createToolkitTheme({glass: {surfaces: {menus: 'no'}}});
+// @ts-expect-error la pestaña elegida es 'drop' o 'accent'
+const wrongSelectedTab = createToolkitTheme({glass: {selectedTab: 'brand'}});
+// el aire de los renglones: los de TABLE_DENSITY; otro nombre no pasa
+const standardTable = createElement(ServerTable, {queryKey: 'density', fetchPage: async () => ({rows: [], total: 0}), columns: [], density: TABLE_DENSITY.standard});
+// @ts-expect-error la densidad es compact, standard o comfortable
+const roomyTable = createElement(ServerTable, {queryKey: 'density', fetchPage: async () => ({rows: [], total: 0}), columns: [], density: 'roomy'});
+const closeAtEnd = createElement(FilterDrawer, {open: true, onClose: () => undefined, fields: [], values: {}, onApply: () => undefined, closePlacement: FILTER_DRAWER_CLOSE_PLACEMENT.end});
 const capsulesTheme = createToolkitTheme({look: 'minimal', bar: TOP_BAR.band});
 // el minimalista con los tonos de la marca: solo lo que se pasa, lo demás el gris de Apple
 const brandMinimalTheme = createToolkitTheme({look: 'minimal', minimalTones: {light: {default: '#EEF4FF', fill: '#DCE6F5'}, dark: {floating: '#243047'}}});
@@ -623,6 +636,6 @@ const sortableField = createElement(FormSortableField<RouteStop>, {name: 'stops'
 // @ts-expect-error align es 'left', 'center' o 'right'
 const wrongSortableAlign = createElement(SortableTable<RouteStop>, {rows: routeStops, ariaLabel: 'Ruta', onReorder: () => undefined, columns: [{field: 'name', headerName: 'Sucursal', align: 'end'}]});
 
-export {reorderedStops, sortableStops, sortableField, wrongSortableAlign, cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+export {standardTable, roomyTable, bySurfaceTheme, ownDrawerStyles, backdropIsGlass, wrongSurface, wrongSelectedTab, closeAtEnd, reorderedStops, sortableStops, sortableField, wrongSortableAlign, cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, blockedWizard, blockedFormWizard, documentsSection, fixedLabelSection, wrongLabelWidth, postedDownload, batchDownload, wrappedMenuLayout, boundedDrawer, tableDrawerWithCalendar, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, chunkedServer, chunkedZone, wrongChunkSize, uploadInPieces, miniInPieces, folioOfMini, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};
