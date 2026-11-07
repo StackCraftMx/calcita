@@ -129,6 +129,17 @@ test('el grupo de botones con borde es una sola cápsula de vidrio y sus botones
     assert.equal(button.boxShadow, 'none');
 });
 
+test('un cajón que sale encima va un punto arriba de la barra del marco y debajo de los diálogos; el fijo no cambia', () => {
+    [createToolkitTheme(), createToolkitTheme({glass: true}), createToolkitTheme({look: THEME_LOOK.minimal})].forEach((theme) => {
+        const rootOf = (ownerState) => theme.components.MuiDrawer.styleOverrides.root({theme, ownerState});
+        const temporaryZIndex = rootOf({variant: 'temporary', anchor: 'right'}).zIndex;
+
+        assert.equal(temporaryZIndex, theme.zIndex.drawer + 2);
+        assert.ok(temporaryZIndex < theme.zIndex.modal, 'una confirmación abierta desde el cajón sale por delante');
+        assert.equal(rootOf({variant: 'permanent', anchor: 'left'}).zIndex, undefined);
+    });
+});
+
 test('los cajones que salen encima flotan separados de la orilla; el fijo del menú lateral no', () => {
     const theme = createToolkitTheme({glass: true});
     const paperOf = (ownerState) => theme.components.MuiDrawer.styleOverrides.paper({theme, ownerState});
