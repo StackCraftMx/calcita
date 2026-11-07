@@ -11,7 +11,7 @@ import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
 import {
     BackButton, CalendarHeatmap, ColorSchemeToggle, ConfirmDialog, CopyButton, DEFAULT_LANGUAGES, DocumentTitle, DownloadMenu, LanguageToggle, MetricCard,
     ModalWaiting,
-    AppLayout, AttachmentsInput, MarkedText, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_LABEL_OVERFLOW, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
+    AppLayout, AttachmentsInput, MarkedText, CatalogInput, CookieNotice, Countdown, INPUT_MASK, MaskedInput, PdfViewerDialog, TermsAcceptanceDialog, CheckboxGroupInput, IconBadge, RouteTabs, HelpButton, HelpCarouselDialog, FilterDrawer, RecordCard, RecordCardSkeleton, DefinitionListSkeleton, DetailHeaderSkeleton, TableSkeleton, DashboardSkeleton, SkeletonOverlay, dictionaryEntryOf as smokeEntryOf, ColorInput, FileDropzone, FileInput, FileUploadInput, TransferListInput, SelectInput as MultiSelectInput, FontSizeToggle, IMAGE_SHAPE, ImageInput, TemplateDownloadButton, MENU_LABEL_OVERFLOW, MENU_POSITION, RequireAccess, NewBuildNotice, NumberInput, PageHeader, PageHeading,
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
@@ -203,6 +203,14 @@ const CASES = [
         actions: [{key: 'copy', label: 'Copiar', onClick: () => {}}], groups: [{title: 'Importe', facts: [{label: 'Subtotal', value: '$100.00'}, {label: 'IVA', value: '$16.00'}]}],
         highlight: {label: 'Total', value: '$116.00'}, footer: 'Entrega mañana', details: 'Historial'}), 'Total'],
     ['RecordCardSkeleton', h(RecordCardSkeleton, {groups: 3}), ''],
+    // los esqueletos: sin texto a la vista, «Cargando» para el lector de pantalla
+    ['DefinitionListSkeleton dice «Cargando»', h(DefinitionListSkeleton, {rows: 4, layout: 'stacked'}), 'aria-label="Cargando"'],
+    ['DetailHeaderSkeleton con logotipo, renglones y pestañas', h(DetailHeaderSkeleton, {media: true, lines: 2, tabs: 5}), 'CalcitaDetailHeaderSkeleton-root'],
+    ['TableSkeleton con sus columnas', h(TableSkeleton, {rows: 3, columns: 5}), 'role="status"'],
+    ['DashboardSkeleton del alto que se le da', h(DashboardSkeleton, {height: 300}), 'height:300px'],
+    // encima de algo que sigue montado: lo de abajo se pinta desde el principio y el esqueleto lo tapa
+    ['SkeletonOverlay cargando: lo de abajo montado y tapado', h(SkeletonOverlay, {isLoading: true}, h('p', null, 'el tablero')), 'aria-busy="true"'],
+    ['SkeletonOverlay cargando: lo de abajo ya está', h(SkeletonOverlay, {isLoading: true}, h('p', null, 'el tablero')), 'el tablero'],
     // cada parte escribe su clase fija en el HTML (como MuiAccordion-region), y la que traiga la pantalla se suma
     ['la parte escribe su clase en el HTML', h(RecordCardSkeleton, {slotProps: {root: {className: 'mine'}}}), 'CalcitaRecordCardSkeleton-root mine'],
     ['cada parte de una pieza escribe la suya', h(RecordCard, {title: 'Ana López'}), 'CalcitaRecordCard-titles'],

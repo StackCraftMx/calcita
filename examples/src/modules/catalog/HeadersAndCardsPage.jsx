@@ -11,11 +11,24 @@ import {PageHeading, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import CardsAndSections from '@/modules/catalog/demos/cards/CardsAndSections.tsx';
+import LoadingShapes from '@/modules/catalog/demos/cards/LoadingShapes.tsx';
 import RecordCards from '@/modules/catalog/demos/cards/RecordCards.tsx';
 
 const loadCards = () => import('@/modules/catalog/demos/cards/CardsAndSections.tsx?demo-source');
 const loadHeaders = () => import('@/modules/catalog/demos/cards/PageHeaders.tsx?demo-source');
 const loadRecordCards = () => import('@/modules/catalog/demos/cards/RecordCards.tsx?demo-source');
+const loadLoadingShapes = () => import('@/modules/catalog/demos/cards/LoadingShapes.tsx?demo-source');
+
+// el armazón del primer arranque: el del index.html de los ejemplos (el mismo que trae la plantilla de calcita new; lo vigila
+// cli/bootShell.test.js), de su comentario de inicio al de fin
+const BOOT_SHELL_START = '<!-- calcita:boot-shell';
+const BOOT_SHELL_END = '<!-- /calcita:boot-shell -->';
+const loadBootShell = async () => {
+    const {default: indexHtml} = await import('/index.html?raw');
+    const start = indexHtml.indexOf(BOOT_SHELL_START);
+    const end = indexHtml.indexOf(BOOT_SHELL_END) + BOOT_SHELL_END.length;
+    return {default: {html: indexHtml.slice(start, end)}};
+};
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (cards.<sección>.extend.<id>)
@@ -40,6 +53,21 @@ const RECORD_CARD_EXTENSIONS = [
     {id: 'theme', option: 'theme.components.CalcitaRecordCard', example: 'components: {CalcitaRecordCard: {styleOverrides: {highlight: {color: \'#0B5\'}}}}'},
     {id: 'menuButton', option: 'theme.components.CalcitaActionsMenu', example: "components: {CalcitaActionsMenu: {styleOverrides: {button: {'@media (pointer: coarse)': {minWidth: 44, minHeight: 44}}}}}"},
 ];
+const LOADING_SHAPES_EXTENSIONS = [
+    {id: 'definitionList', option: 'DefinitionListSkeleton · rows · layout · labelWidth', example: '<DefinitionListSkeleton rows={6} />'},
+    {id: 'detailHeader', option: 'DetailHeaderSkeleton · media · lines · tabs · badges · eyebrow', example: '<DetailHeaderSkeleton media lines={2} tabs={5} />'},
+    {id: 'table', option: 'TableSkeleton · rows · columns', example: '<TableSkeleton rows={8} columns={5} />  // ServerTable ya trae su espera'},
+    {id: 'dashboard', option: 'DashboardSkeleton · height', example: '<DashboardSkeleton height="100%" />'},
+    {id: 'overlay', option: 'SkeletonOverlay · isLoading · skeleton', example: '<SkeletonOverlay isLoading={!isReady} sx={{height: 640}}><tableau-viz … /></SkeletonOverlay>'},
+    {id: 'boundary', option: 'esqueleto · rueda', example: 'if (status === "loading") return <DefinitionListSkeleton />;  // guardar: <Button loading>'},
+    {id: 'texts', option: 'texts={{skeleton: {loading}}}', example: "<DetailHeaderSkeleton texts={{skeleton: {loading: 'Cargando el pedido'}}} />"},
+];
+const BOOT_SHELL_EXTENSIONS = [
+    {id: 'where', option: 'index.html · <div id="root">', example: '<div id="root"><!-- calcita:boot-shell … --></div>'},
+    {id: 'blade', option: 'Blade · <div id="app">', example: '<div id="app">{{-- el mismo armazón --}}</div>'},
+    {id: 'delay', option: 'animation-delay: .25s', example: '.calcita-boot{animation:calcita-boot-in .2s ease-out .25s forwards}'},
+    {id: 'colors', option: 'prefers-color-scheme', example: '@media (prefers-color-scheme:dark){.calcita-boot{background:#05070B}}'},
+];
 const HEADERS_EXTENSIONS = [
     {id: 'heading', option: '<PageHeading title description>', example: '<PageHeading title="Pedidos" description="Todos los pedidos de la tienda." />'},
     {id: 'breadcrumbs', option: 'breadcrumbs', example: "breadcrumbs={[{label: 'Inicio', to: '/'}, {label: 'Pedidos'}]}"},
@@ -62,6 +90,10 @@ export const HeadersAndCardsPage = () => {
                          extensions={rowsOf('headers', HEADERS_EXTENSIONS)} loadSource={loadHeaders} />
             <DemoSection title={t('cards.recordCards.title')} description={t('cards.recordCards.description')}
                          extensions={rowsOf('recordCards', RECORD_CARD_EXTENSIONS)} Demo={RecordCards} loadSource={loadRecordCards} />
+            <DemoSection title={t('cards.loadingShapes.title')} description={t('cards.loadingShapes.description')}
+                         extensions={rowsOf('loadingShapes', LOADING_SHAPES_EXTENSIONS)} Demo={LoadingShapes} loadSource={loadLoadingShapes} />
+            <CodeSection title={t('cards.bootShell.title')} description={t('cards.bootShell.description')}
+                         extensions={rowsOf('bootShell', BOOT_SHELL_EXTENSIONS)} loadSource={loadBootShell} />
         </Stack>
     );
 };

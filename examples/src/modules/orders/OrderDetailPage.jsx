@@ -2,16 +2,15 @@
 // diálogo (AuditTrailDialog, paginado en el servidor) y la cancelación con confirmación y motivo.
 //
 // Lo que se ve aquí del paquete: BackButton (regresa a la lista tal como estaba y su texto dice a dónde), DetailHeader,
-// SectionCard, DefinitionList, GroupedTimeline, AuditTrailDialog y useConfirmAction + ConfirmDialog. Solo se puede
+// SectionCard, DefinitionList, GroupedTimeline, AuditTrailDialog, useConfirmAction + ConfirmDialog y, mientras llega el pedido,
+// DetailHeaderSkeleton y DefinitionListSkeleton (la forma de la ficha en lugar de una rueda). Solo se puede
 // cancelar lo que no ha salido del almacén; aun así el servidor lo vuelve a revisar (un 409 sale en el diálogo).
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useState} from 'react';
 import {Link, useParams} from 'react-router';
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -19,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import HistoryIcon from '@mui/icons-material/History';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import {
-    BackButton, ConfirmDialog, CopyButton, DefinitionList, DetailHeader, DictionaryText, ICON_BADGE_VARIANT, IconBadge, SectionCard, StatusChip,
+    BackButton, ConfirmDialog, CopyButton, DefinitionList, DefinitionListSkeleton, DetailHeader, DetailHeaderSkeleton, DictionaryText, ICON_BADGE_VARIANT, IconBadge, SectionCard, StatusChip,
     formatDateTime,
     tableRowTextOf, toastSuccess,
     usePageName, useConfirmAction, useToolkitTranslation,
@@ -67,14 +66,21 @@ export const OrderDetailPage = () => {
         );
     }
 
-    // guard clause: todavía no llega la primera respuesta
+    // guard clause: todavía no llega la primera respuesta. La forma de la ficha y no una rueda: lo que ya se sabe (los títulos
+    // de las tarjetas) va de verdad, y lo que falta, en gris donde va a caer. Así nada brinca cuando llega el pedido
     if (!order) {
         return (
             <>
                 {backButton}
-                <Box role="status" sx={{display: 'grid', placeItems: 'center', py: 8}}>
-                    <CircularProgress aria-label={t('detail.loading')} />
-                </Box>
+                <DetailHeaderSkeleton badges={2} texts={{skeleton: {loading: t('detail.loading')}}} />
+                <Grid container spacing={2}>
+                    <Grid size={{xs: 12, md: 6}}>
+                        <SectionCard title={t('detail.dataTitle')}><DefinitionListSkeleton rows={6} /></SectionCard>
+                    </Grid>
+                    <Grid size={{xs: 12, md: 6}}>
+                        <SectionCard title={t('detail.deliveryTitle')}><DefinitionListSkeleton rows={4} layout="stacked" /></SectionCard>
+                    </Grid>
+                </Grid>
             </>
         );
     }
