@@ -10,6 +10,7 @@ import {CodeSection, DemoSection} from '@/modules/catalog/DemoSection.jsx';
 import {extensionRowsOf} from '@/modules/catalog/ExtensionTable.jsx';
 import FilterDrawerDemo from '@/modules/catalog/demos/table/FilterDrawerDemo.tsx';
 import ReadyColumnsDemo from '@/modules/catalog/demos/table/ReadyColumnsDemo.tsx';
+import TableDensityDemo from '@/modules/catalog/demos/table/TableDensityDemo.tsx';
 import OrdersSelectionDemo from '@/modules/catalog/demos/table/OrdersSelectionDemo.tsx';
 import OrdersTableDemo from '@/modules/catalog/demos/table/OrdersTableDemo.tsx';
 
@@ -18,6 +19,7 @@ const loadSelection = () => import('@/modules/catalog/demos/table/OrdersSelectio
 const loadApi = () => import('@/modules/catalog/demos/table/OrdersTableApi.ts?demo-source');
 const loadFilterDrawer = () => import('@/modules/catalog/demos/table/FilterDrawerDemo.tsx?demo-source');
 const loadReadyColumns = () => import('@/modules/catalog/demos/table/ReadyColumnsDemo.tsx?demo-source');
+const loadDensity = () => import('@/modules/catalog/demos/table/TableDensityDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (serverTable.<sección>.extend.<id>)
@@ -78,6 +80,7 @@ const FILTER_DRAWER_EXTENSIONS = [
     {id: 'kinds', option: 'text · select · multiSelect · catalog · checkboxes · numberRange · dateRange · comparison · custom', example: "{name: 'term', kind: FILTER_FIELD_KIND.numberRange, suffix: 'días'}  // term_min y term_max"},
     {id: 'keys', option: 'keys · operators · defaultOperator', example: "{kind: 'dateRange', keys: {from: 'created_from', to: 'created_to'}}"},
     {id: 'side', option: 'anchor · width · title · applyLabel', example: '<FilterDrawer anchor={FILTER_DRAWER_ANCHOR.left} width={420} title="Buscar facturas" />'},
+    {id: 'closePlacement', option: 'closePlacement', example: "components: {CalcitaFilterDrawer: {defaultProps: {closePlacement: FILTER_DRAWER_CLOSE_PLACEMENT.end}}}  // para toda la app"},
     {id: 'table', option: 'ServerTableFilterDrawer (en toolbarExtra)', example: '<ServerTable … toolbarExtra={<ServerTableFilterDrawer fields={FIELDS} />} />'},
     {id: 'setup', option: 'filterDrawerDefaultsOf · filterDrawerKindsOf · filterDrawerChipsOf', example: 'chipConfig={buildChipConfig(filterDrawerChipsOf(FIELDS, {t, formatDate}))}'},
     {id: 'custom', option: "kind: 'custom' · render({value, onChange, values, setValue, keys, errors})", example: "{name: 'zone', kind: 'custom', render: ({value, onChange}) => <MiMapa value={value} onChange={onChange} />}"},
@@ -101,6 +104,10 @@ const READY_COLUMNS_EXTENSIONS = [
     {id: 'skeleton', option: 'cardSkeleton', example: '<RecordCardSkeleton groups={2} withHighlight={false} />'},
     {id: 'theme', option: 'CalcitaServerTable: cards · viewToggle · CalcitaStackedCell', example: "components: {CalcitaServerTable: {styleOverrides: {cards: {gridTemplateColumns: 'repeat(2, 1fr)'}}}}"},
 ];
+const DENSITY_EXTENSIONS = [
+    {id: 'prop', option: 'density · TABLE_DENSITY', example: '<ServerTable density={TABLE_DENSITY.standard} … />  // compact · standard · comfortable'},
+    {id: 'theme', option: 'theme.components.CalcitaServerTable', example: "components: {CalcitaServerTable: {defaultProps: {density: 'standard'}}}  // todas las tablas de la app"},
+];
 
 export const ServerTablePage = () => {
     const {t} = useToolkitTranslation('catalog');
@@ -117,6 +124,8 @@ export const ServerTablePage = () => {
                          extensions={rowsOf('filterDrawer', FILTER_DRAWER_EXTENSIONS)} Demo={FilterDrawerDemo} loadSource={loadFilterDrawer} />
             <DemoSection title={t('serverTable.readyColumns.title')} description={t('serverTable.readyColumns.description')}
                          extensions={rowsOf('readyColumns', READY_COLUMNS_EXTENSIONS)} Demo={ReadyColumnsDemo} loadSource={loadReadyColumns} />
+            <DemoSection title={t('serverTable.density.title')} description={t('serverTable.density.description')}
+                         extensions={rowsOf('density', DENSITY_EXTENSIONS)} Demo={TableDensityDemo} loadSource={loadDensity} />
             <CodeSection title={t('serverTable.api.title')} description={t('serverTable.api.description')}
                          extensions={rowsOf('api', API_EXTENSIONS)} loadSource={loadApi} />
         </Stack>

@@ -89,7 +89,9 @@ const ReadyColumnsDemo = () => {
             filterDefaults={{contains: '', status: []}}
             ariaLabel="Clientes"
             searchPlaceholder="Buscar por empresa, RFC o contacto"
+            // de 5 en 5, y el 5 entre las opciones (si no, el DataGrid avisa en la consola y no enseña la lista)
             defaultPageSize={5}
+            pageSizeOptions={[5, 10, 25]}
             // 4. Fijas al deslizar de lado: el «⋯» (ancho fijo) y la empresa (la última puede ser flexible)
             fixedColumn={[ACTIONS_COLUMN_FIELD, 'business_name']}
             // 5. La misma lista en tarjetas
