@@ -7,12 +7,11 @@
 // Lo renderiza la app: arrow (regla de la casa).
 import {useParams} from 'react-router';
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import {
-    BackButton, DefinitionList, DictionaryText, PageHeading, SectionCard, formatDateTime, useActiveMenuPath, useToolkitTranslation,
+    BackButton, DefinitionList, DefinitionListSkeleton, DetailHeaderSkeleton, DictionaryText, PageHeading, SectionCard, formatDateTime, useActiveMenuPath,
+    useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {Money} from '@stackcraftmx/calcita/money';
 
@@ -43,14 +42,13 @@ export const OrderReceiptPage = () => {
         );
     }
 
-    // guard clause: todavía no llega la respuesta
+    // guard clause: todavía no llega la respuesta. La forma del comprobante (el título y sus datos) en gris, no una rueda
     if (!order) {
         return (
             <>
                 {backButton}
-                <Box role="status" sx={{display: 'grid', placeItems: 'center', py: 8}}>
-                    <CircularProgress aria-label={t('detail.loading')} />
-                </Box>
+                <DetailHeaderSkeleton eyebrow={false} badges={0} lines={1} texts={{skeleton: {loading: t('detail.loading')}}} />
+                <SectionCard title={t('detail.dataTitle')}><DefinitionListSkeleton rows={6} /></SectionCard>
             </>
         );
     }
