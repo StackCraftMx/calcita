@@ -203,6 +203,11 @@ const CASES = [
         actions: [{key: 'copy', label: 'Copiar', onClick: () => {}}], groups: [{title: 'Importe', facts: [{label: 'Subtotal', value: '$100.00'}, {label: 'IVA', value: '$16.00'}]}],
         highlight: {label: 'Total', value: '$116.00'}, footer: 'Entrega mañana', details: 'Historial'}), 'Total'],
     ['RecordCardSkeleton', h(RecordCardSkeleton, {groups: 3}), ''],
+    // cada parte escribe su clase fija en el HTML (como MuiAccordion-region), y la que traiga la pantalla se suma
+    ['la parte escribe su clase en el HTML', h(RecordCardSkeleton, {slotProps: {root: {className: 'mine'}}}), 'CalcitaRecordCardSkeleton-root mine'],
+    ['cada parte de una pieza escribe la suya', h(RecordCard, {title: 'Ana López'}), 'CalcitaRecordCard-titles'],
+    // una parte cambiada por slots es del proyecto: no recibe la clase (un DateInput de /date-pickers avisaba que no la conoce)
+    ['la parte cambiada por slots no recibe la clase de Calcita', h(RecordCardSkeleton, {slots: {root: ({className}) => h('div', null, `clase: ${className ?? 'ninguna'}`)}}), 'clase: ninguna'],
     ['RecordCard con el pie a la derecha', h(RecordCard, {title: 'Ana López', footer: 'Entrega mañana', details: 'Historial',
         footerAlign: RECORD_CARD_FOOTER_ALIGN.end}), 'justify-content:flex-end'],
     // el cajón de búsqueda abierto (va en un portal que no se pinta en el servidor: que no truene con todos sus tipos)

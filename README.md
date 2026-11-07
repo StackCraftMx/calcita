@@ -400,6 +400,10 @@ Para lo que el proyecto quiera hacer flotar (los botones encima de un mapa, una 
 de vidrio si el tema lo trae y una tarjeta con sombra si no. Para algo propio: `sx={(theme) => glassStylesOf(theme)}` e
 `isGlassTheme(theme)`. Cada ajuste vive en su archivo (`src/theme/components/MuiButton.js`…).
 
+Un `Drawer` de MUI que se abre encima (`variant="temporary"`, el de omisión) va en `zIndex.drawer + 2`: la barra de
+`AppLayout` va en `drawer + 1` para quedar encima del menú lateral, y sin esto la barra tapaba el cajón. Va debajo de los
+diálogos (`zIndex.modal`), así que una confirmación abierta desde el cajón sale por delante.
+
 Todas las piezas de Calcita se cambian desde el tema del proyecto igual que las de MUI: con su nombre en `components`,
 `styleOverrides` para cada parte y `defaultProps`. El orden, de abajo hacia arriba: el estilo de Calcita, encima el del
 tema del proyecto y al final el `sx` que pase la pantalla. Los números se leen como en MUI (`borderRadius: 4` son 4 px).
@@ -413,6 +417,12 @@ Además, como en MUI, cada parte con nombre se puede **cambiar por otro componen
 <RecordCard slots={{avatar: StoreAvatar}} slotProps={{titles: {component: 'header'}}} … />
 createTheme({components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {elevation: 3}}}}}});
 ```
+
+Cada parte escribe también su **clase fija** en el HTML, con el nombre de la pieza y el de la parte, como las de MUI
+(`MuiAccordion-region`): `CalcitaRecordCard-titles`, `CalcitaAccountMenu-settings`. Sirve para atinarle desde CSS a una
+parte y no a todas las de su tipo; por ejemplo, solo al panel del menú de la cuenta:
+`'.MuiPopover-paper:has(.CalcitaAccountMenu-settings)': {…}`. Las clases `css-…` cambian en cada versión: no se usan.
+Una parte cambiada por `slots` es del proyecto y no la recibe (como tampoco recibe el estilo de Calcita).
 
 `className`, `style` y `sx` de `slotProps` se suman a los de Calcita; una pieza dentro de otra igual no toma los `slots` de la
 de afuera. Una parte propia no recibe el estilo de Calcita ni, si la parte es un `Stack`, su acomodo (`spacing`,
