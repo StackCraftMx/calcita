@@ -4,6 +4,16 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.59.1] - 2026-11-07
+
+### Arreglado
+
+- `SortableTable`: lo que oye quien usa lector de pantalla al mover un renglón dice qué renglón, de qué lugar salió y a cuál
+  va («pasó de la posición 2 a la 3 de 4»), al arrastrar con el teclado, al soltar y con «Subir» o «Bajar»; antes solo
+  decía el lugar nuevo. Al regresarlo a su lugar mientras se arrastra dice «está otra vez en su lugar» (texto nuevo
+  `movingBack`). Los textos propios de un proyecto siguen funcionando: `{{position}}` sigue siendo el lugar nuevo y el de
+  antes llega en `{{fromPosition}}`.
+
 ## [0.59.0] - 2026-11-06
 
 ### Agregado
