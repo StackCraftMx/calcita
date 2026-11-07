@@ -112,17 +112,23 @@ export function piecePart(name, slot, component = 'div') {
     );
     const partKey = partKeyOf(slot);
     const isStackPart = component === Stack;
+    // la clase fija de la parte en el HTML, como las de MUI (MuiAccordion-region): CalcitaAccountMenu-settings. Sin ella solo
+    // salía la clase css-… que cambia en cada versión, y desde CSS no se le podía atinar a una parte (:has(.CalcitaX-parte)).
+    // OJO: solo en lo que pinta Calcita. Una parte cambiada por slots es del proyecto y no la recibe, igual que no recibe el
+    // estilo de Calcita: el DateInput de /date-pickers puesto en el cajón de filtros avisaba que no conoce className
+    const partClassName = `${name}-${partKey}`;
+    const withPartClass = (props) => ({...props, className: props.className ? `${partClassName} ${props.className}` : partClassName});
 
     // React 19: ref llega como una prop más y se pasa tal cual
     function PiecePart(props) {
         const pieceSlots = useContext(PieceSlotsContext)?.[name];
         if (!pieceSlots) {
-            return createElement(StyledPart, props);
+            return createElement(StyledPart, withPartClass(props));
         }
         const extraProps = pieceSlots.slotProps?.[partKey];
         const Replacement = pieceSlots.slots?.[partKey];
         if (!Replacement) {
-            return createElement(StyledPart, mergedSlotProps(props, extraProps));
+            return createElement(StyledPart, mergedSlotProps(withPartClass(props), extraProps));
         }
         // el componente de la pantalla no sabe de los estilos ni del acomodo de Calcita: le llega lo demás, y encima lo que
         // la pantalla le dé en slotProps
