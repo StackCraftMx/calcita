@@ -13,6 +13,7 @@
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useCallback, useEffect, useRef, useState} from 'react';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
@@ -106,6 +107,19 @@ export const MailPage = () => {
     const [draft, setDraft] = useState(null);
     // las conversaciones que se van a posponer (abre la ventana de hasta cuándo)
     const [snoozing, setSnoozing] = useState(null);
+    // la nota de «Otro día y hora». Con varias conversaciones elegidas, la advertencia va resaltada: la fecha las mueve todas,
+    // no solo la que se ve. Va como elemento (su color) y el nombre de la zona horaria se queda a su lado, sin teñirse
+    const snoozeHelpOf = (count) => {
+        const minimumHelp = t('snooze.pickHelp', {count: MINIMUM_SNOOZE_MINUTES});
+        if (count <= 1) {
+            return minimumHelp;
+        }
+        return (
+            <>
+                {minimumHelp}. <Box component="span" sx={{color: 'warning.main', fontWeight: 600}}>{t('snooze.manyWarning', {count})}</Box>
+            </>
+        );
+    };
     // el día y la hora elegidos a mano en «Posponer hasta…» ('' = ninguno)
     const [pickedSnoozeUntil, setPickedSnoozeUntil] = useState('');
     const [labelsAnchor, setLabelsAnchor] = useState(null);
@@ -411,7 +425,7 @@ export const MailPage = () => {
                     minuto a minuto y al menos 5 minutos después de ahora (el mínimo se recorre solo con el reloj) */}
                 <DialogContent dividers>
                     <DateTimeInput label={t('snooze.pickLabel')} value={pickedSnoozeUntil} onChange={setPickedSnoozeUntil}
-                                   minimumMinutesFromNow={MINIMUM_SNOOZE_MINUTES} helperText={t('snooze.pickHelp', {count: MINIMUM_SNOOZE_MINUTES})} />
+                                   minimumMinutesFromNow={MINIMUM_SNOOZE_MINUTES} helperText={snoozeHelpOf(snoozing?.length ?? 0)} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={closeSnooze}>{t('snooze.cancel')}</Button>

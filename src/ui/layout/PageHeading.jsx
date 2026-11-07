@@ -61,7 +61,7 @@ function PageHeadingContent(props) {
     const {t} = useToolkitTranslation('layout', texts);
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();
-    const {menuItems} = useAppMenu();
+    const {menuItems, declaredPath} = useAppMenu();
     const titleRef = useRef(null);
     useRegisterPageTitle(title, titleRef);
     const {usesCapsules} = useBarActionsSlot();
@@ -73,7 +73,7 @@ function PageHeadingContent(props) {
 
     const crumbs = breadcrumbs === false
         ? []
-        : breadcrumbs ?? menuBreadcrumbsOf(menuItems, pathname).map((menuItem) => ({label: menuItemLabelOf(menuItem, t), to: menuItem.to}));
+        : breadcrumbs ?? menuBreadcrumbsOf(menuItems, pathname, declaredPath).map((menuItem) => ({label: menuItemLabelOf(menuItem, t), to: menuItem.to}));
 
     return (
         <HeadingRoot component="header" ownSx={{mb: 3}}>

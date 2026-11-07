@@ -75,6 +75,7 @@ const PUBLISH_WINDOW_EXTENSIONS = [
     {id: 'afterStart', option: 'minDateTime · instantPlusMinutes', example: 'minDateTime={instantPlusMinutes(values.startsAt, 30)}'},
     {id: 'rules', option: 'minutesFromNowRule · minutesAfterRule', example: "endsAt: Yup.string().test(minutesAfterRule('startsAt', 30))"},
     {id: 'clock', option: 'useCurrentMinute · earliestInstantFromNow', example: 'const minute = useCurrentMinute(true);'},
+    {id: 'warning', option: 'helperText (un elemento)', example: "helperText={<Box component=\"span\" sx={{color: 'error.main'}}>Al terminar, la oferta deja de verse.</Box>}"},
 ];
 
 const LETTER_MONTH_EXTENSIONS = [

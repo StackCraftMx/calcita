@@ -1,12 +1,19 @@
 // El tema de los ejemplos: el del framework (createToolkitTheme, el estilo de Stackcraft con claro y oscuro), con el estilo
 // que se elige en el menú de la cuenta (vidrio o minimalista) y lo que la persona eligió en el configurador de tema (sus
-// colores y sus esquinas). Con los de fábrica queda idéntico al de siempre.
+// colores y sus esquinas). Con los de fábrica queda idéntico al de siempre, más un ajuste de proyecto: el botón «⋯».
 import {THEME_LOOK, TOP_BAR, createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette} from '@stackcraftmx/calcita';
 
 import {DEFAULT_CORNER_RADIUS, GLASS_MODES, STACKCRAFT_COLORS, changedColorsOf, paletteWithColors} from '@/core';
 
 // GLASS_MODES vive en core (lo usan también los módulos); se vuelve a exportar aquí para la app
 export {GLASS_MODES};
+
+// EL «⋯» DE 44 PX CON EL DEDO. El botón del menú de acciones (en las tarjetas de Pedidos, el tablero, la bandeja) mide 30 px;
+// en una pantalla táctil se agranda a 44, lo que pide Apple para un blanco del dedo (la regla de la web pide 24 como mínimo).
+// Así lo haría cualquier proyecto: con la parte button de CalcitaActionsMenu en su tema, sin tocar las pantallas
+const PROJECT_COMPONENTS = Object.freeze({
+    CalcitaActionsMenu: {styleOverrides: {button: {'@media (pointer: coarse)': {minWidth: 44, minHeight: 44}}}},
+});
 
 /** Lo que trae el configurador de tema de fábrica: los colores de Stackcraft, las esquinas y la barra del framework. */
 export const DEFAULT_THEME_CHOICES = Object.freeze({colors: STACKCRAFT_COLORS, cornerRadius: DEFAULT_CORNER_RADIUS, bar: TOP_BAR.capsules});
@@ -27,12 +34,12 @@ export function buildAppTheme({glassMode, themeChoices = DEFAULT_THEME_CHOICES})
     };
     const overrides = {shape: {borderRadius: themeChoices.cornerRadius}};
     if (glassMode === GLASS_MODES.off) {
-        return createToolkitTheme({colorSchemes, overrides});
+        return createToolkitTheme({colorSchemes, overrides, components: PROJECT_COMPONENTS});
     }
     // la barra en cápsulas o en franja: con vidrio y con el minimalista (sin vidrio no aplica)
     const bar = themeChoices.bar ?? TOP_BAR.capsules;
     if (glassMode === GLASS_MODES.minimal) {
-        return createToolkitTheme({colorSchemes, overrides, look: THEME_LOOK.minimal, bar});
+        return createToolkitTheme({colorSchemes, overrides, look: THEME_LOOK.minimal, bar, components: PROJECT_COMPONENTS});
     }
-    return createToolkitTheme({colorSchemes, overrides, glass: {surfaces: glassMode === GLASS_MODES.surfaces}, bar});
+    return createToolkitTheme({colorSchemes, overrides, glass: {surfaces: glassMode === GLASS_MODES.surfaces}, bar, components: PROJECT_COMPONENTS});
 }

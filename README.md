@@ -36,6 +36,12 @@ Sale un proyecto de Vite con la forma de los ejemplos: `src/app` (el único luga
 descubren solos. Trae un módulo de ejemplo (Contactos: lista, formulario, errores del servidor en su campo) y
 `src/core/apiClient.js` listo para cambiar el servidor de mentira por el de verdad.
 
+Instalar como app (PWA) trae el manifiesto y los íconos, **sin service worker, a propósito**: con eso basta para instalarla
+en Chrome y en Edge de escritorio (la guía de Chrome pide HTTPS y el manifiesto con nombre, íconos de 192 y 512 px,
+`start_url` y `display`: https://web.dev/articles/install-criteria) y para agregarla a la pantalla de inicio del teléfono.
+El service worker es lo único riesgoso de una PWA: si guarda la app en caché, puede seguir sirviendo una versión vieja
+después de publicar. Un proyecto que de verdad necesite trabajar sin internet lo agrega él, sabiendo eso.
+
 Para crecerlo, dentro del proyecto:
 
 ```bash
@@ -425,7 +431,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | --- | --- |
 | `CalcitaAccountMenu` | `button`, `avatar`, `header`, `name`, `settings` |
 | `CalcitaAccountSecurity` | `title`, `form` |
-| `CalcitaActionsMenu` | `item`, `itemIcon` |
+| `CalcitaActionsMenu` | `button`, `item`, `itemIcon` |
 | `CalcitaActivityLog` | `itemIcon` |
 | `CalcitaAppearanceSettings` | `selectSection`, `section`, `sectionLabel`, `option`, `divider` |
 | `CalcitaAppLayout` | `skipLink`, `brand`, `brandLogo`, `brandText`, `brandName`, `brandCaption`, `titleArea`, `phoneTitle`, `desktopTitle`, `railBrand`, `railLogo`, `collapseButton`, `root`, `scrollEdge`, `bar`, `toolbar`, `menuButton`, `spacer`, `tools`, `progress`, `body`, `drawer`, `main`, `phoneSlot`, `content`, `phoneDrawer` |

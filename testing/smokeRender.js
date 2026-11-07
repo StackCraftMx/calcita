@@ -446,6 +446,12 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         // propio color se respeta
         ['Tag con ícono: el ícono va del color de su letra', htmlOf(h(Tag, {label: 'Envío gratis', icon: h('svg')})).includes('MuiChip-icon{color:inherit')],
         ['Tag con ícono de color propio: se respeta', !htmlOf(h(Tag, {label: 'Verificado', icon: h('svg', {color: 'success'})})).includes('MuiChip-icon{color:inherit')],
+        // la nota del campo de fecha y hora: con texto, una frase como siempre; con un elemento, a su lado y sin «[object Object]»
+        ['DateTimeInput con nota de texto: igual que siempre', htmlOf(h(DateTimeInput, {label: 'Cierre', value: '', onChange: () => {}, helperText: 'Mueve el grupo', timeZoneLabel: 'Hora del centro'})).includes('Mueve el grupo · Hora del centro')],
+        ['DateTimeInput con nota en un elemento: con la zona al lado, sin [object Object]', (() => {
+            const html = htmlOf(h(DateTimeInput, {label: 'Cierre', value: '', onChange: () => {}, helperText: h('span', {'data-warning': 'yes'}, 'Mueve el grupo'), timeZoneLabel: 'Hora del centro'}));
+            return html.includes('<span data-warning="yes">Mueve el grupo</span>') && html.includes('Hora del centro') && !html.includes('[object Object]');
+        })()],
         ['SortableTable con moveButtons={false} sin «Subir» ni «Bajar»', !htmlOf(h(SortableTable, {
             rows: [{id: 'centro', name: 'Centro'}], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta', moveButtons: false,
         })).includes('Bajar «Centro»')],

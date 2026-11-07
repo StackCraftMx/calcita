@@ -2,6 +2,7 @@
 // menos 30 minutos después del inicio. El mínimo del inicio se recorre solo con el reloj mientras el formulario está
 // abierto; si el inicio alcanza al fin, el fin se recorre con él. Yup revisa lo mismo al guardar y el servidor otra vez.
 import {useEffect, useMemo} from 'react';
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import {FormSection, toastProblem, toastSuccess} from '@stackcraftmx/calcita';
 import {
@@ -66,8 +67,15 @@ const PublishWindow = () => {
                         <FormSection title="Publicar la oferta">
                             <FormDateTimeField name="startsAt" label="Empieza" minimumMinutesFromNow={PUBLISH_LEAD_MINUTES}
                                                helperText={`Al menos ${PUBLISH_LEAD_MINUTES} minutos después de ahora`} />
+                            {/* la nota puede ser un elemento: la advertencia en rojo y la zona horaria a su lado, sin teñirse.
+                                OJO: va en un span (la nota es un párrafo; un div adentro es HTML inválido) */}
                             <FormDateTimeField name="endsAt" label="Termina" minDateTime={instantPlusMinutes(values.startsAt, MINIMUM_DURATION_MINUTES)}
-                                               helperText={`Dura al menos ${MINIMUM_DURATION_MINUTES} minutos`} />
+                                               helperText={(
+                                                   <>
+                                                       Dura al menos {MINIMUM_DURATION_MINUTES} minutos.{' '}
+                                                       <Box component="span" sx={{color: 'error.main', fontWeight: 600}}>Al terminar, la oferta deja de verse en la tienda.</Box>
+                                                   </>
+                                               )} />
                         </FormSection>
                         <SubmitButton sx={{alignSelf: 'flex-start'}}>Publicar</SubmitButton>
                     </Stack>

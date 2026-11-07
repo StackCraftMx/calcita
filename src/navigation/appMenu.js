@@ -116,11 +116,33 @@ function isChildMenuItem(menuItems, menuItem) {
 /**
  * La entrada del menú de la pantalla abierta: la más específica gana (/orders/15 marca «Pedidos», no «Inicio»).
  *
+ * Una pantalla que vive en otra dirección que su lista (el detalle /users/detail/4/15 de «Compradores», cuya lista es
+ * /users/buyers) dice a qué entrada pertenece con useActiveMenuPath: esa dirección (declaredPath) manda sobre la de la
+ * barra del navegador. Si no coincide con ninguna entrada, se marca por la dirección, como siempre.
+ *
+ *   activeMenuItemOf(menuItems, '/users/detail/4/15', '/users/buyers')   // la entrada «Compradores»
+ *
  * @param {Array<{to: string, matchPrefix?: string}>} menuItems lo que regresa composeMenu
  * @param {string} pathname location.pathname
+ * @param {string|null} [declaredPath] la dirección que declaró la pantalla abierta (useActiveMenuPath)
  * @returns {object|null}
  */
-export function activeMenuItemOf(menuItems, pathname) {
+export function activeMenuItemOf(menuItems, pathname, declaredPath = null) {
+    const declaredItem = declaredPath ? menuItemOfPath(menuItems, declaredPath) : null;
+    if (declaredItem) {
+        return declaredItem;
+    }
+    return menuItemOfPath(menuItems, pathname);
+}
+
+/**
+ * La entrada más específica que corresponde a una dirección.
+ *
+ * @param {object[]} menuItems
+ * @param {string} pathname
+ * @returns {object|null}
+ */
+function menuItemOfPath(menuItems, pathname) {
     const matchingItems = screenMenuItemsOf(menuItems).filter((menuItem) => {
         const prefix = menuItem.matchPrefix ?? menuItem.to;
         // el inicio solo se marca en el inicio: todas las direcciones empiezan con '/'
@@ -155,10 +177,11 @@ export function parentMenuItemOf(menuItems, menuItem) {
  *
  * @param {object[]} menuItems lo que regresa composeMenu
  * @param {string} pathname location.pathname
+ * @param {string|null} [declaredPath] la dirección que declaró la pantalla abierta (useActiveMenuPath)
  * @returns {object[]} entradas del menú, en orden
  */
-export function menuBreadcrumbsOf(menuItems, pathname) {
-    const activeItem = activeMenuItemOf(menuItems, pathname);
+export function menuBreadcrumbsOf(menuItems, pathname, declaredPath = null) {
+    const activeItem = activeMenuItemOf(menuItems, pathname, declaredPath);
     if (!activeItem) {
         return [];
     }

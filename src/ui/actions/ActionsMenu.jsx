@@ -21,7 +21,7 @@
 // El clic no llega a lo de abajo: no levanta una tarjeta que se arrastra ni abre el renglón donde vive.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaActionsMenu con defaultProps y
-// styleOverrides de sus partes: item, itemIcon.
+// styleOverrides de sus partes: button (el «⋯»: por ejemplo, de 44 px en el teléfono para el dedo), item, itemIcon.
 //
 // Genérico del paquete: function (regla de la casa).
 import {useEffect, useRef, useState} from 'react';
@@ -47,6 +47,7 @@ export const ACTIONS_MENU_ROW = Object.freeze({section: 'section', divider: 'div
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaActionsMenu)
 const THEME_NAME = 'CalcitaActionsMenu';
+const ActionsButton = piecePart(THEME_NAME, 'Button', IconButton);
 const ActionsItem = piecePart(THEME_NAME, 'Item', MenuItem);
 const ActionsItemIcon = piecePart(THEME_NAME, 'ItemIcon', ListItemIcon);
 
@@ -111,13 +112,13 @@ function ActionsMenuContent(props) {
     return (
         <>
             <Tooltip title={label}>
-                <IconButton size={size} aria-label={label} aria-haspopup="menu"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                setAnchor(event.currentTarget);
-                            }}>
+                <ActionsButton size={size} aria-label={label} aria-haspopup="menu"
+                               onClick={(event) => {
+                                   event.stopPropagation();
+                                   setAnchor(event.currentTarget);
+                               }}>
                     {icon ?? <MoreHorizRoundedIcon fontSize="small" />}
-                </IconButton>
+                </ActionsButton>
             </Tooltip>
             <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={close} onClick={(event) => event.stopPropagation()}
                   slotProps={{list: {ref: listRef, onKeyDown: (event) => {

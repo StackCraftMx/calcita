@@ -38,6 +38,29 @@ const DateTimeInputPicker = piecePart(THEME_NAME, 'Picker', DateTimePicker);
 const HELPER_SEPARATOR = ' · ';
 
 /**
+ * La línea de ayuda de abajo: la nota de la pantalla y el nombre de la zona horaria, en ese orden. Con texto se juntan en una
+ * frase, como siempre. Con un elemento (una advertencia con su color) la zona va a su lado como texto aparte: antes se juntaba
+ * como texto y salía «[object Object] · Hora estándar central».
+ *
+ * @param {import('react').ReactNode} helperText
+ * @param {string|null} zoneText
+ * @returns {import('react').ReactNode}
+ */
+function helperLineOf(helperText, zoneText) {
+    // sin nota: solo la zona (o un espacio, para que el campo no brinque cuando llegue un error)
+    if (!helperText) {
+        return zoneText || ' ';
+    }
+    if (!zoneText) {
+        return helperText;
+    }
+    if (typeof helperText === 'string' || typeof helperText === 'number') {
+        return `${helperText}${HELPER_SEPARATOR}${zoneText}`;
+    }
+    return <>{helperText}{HELPER_SEPARATOR}{zoneText}</>;
+}
+
+/**
  * @param {object} props
  * @param {string} [props.name]
  * @param {string} props.label ya traducido
@@ -45,7 +68,8 @@ const HELPER_SEPARATOR = ' · ';
  * @param {(value: string) => void} props.onChange recibe el instante en UTC ('' al borrar o a medias)
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error]
- * @param {string} [props.helperText] ya traducida; va antes del nombre de la zona
+ * @param {import('react').ReactNode} [props.helperText] ya traducida; va antes del nombre de la zona. Texto, o un elemento con su
+ *     propio estilo (una advertencia en rojo): el nombre de la zona se queda a su lado sin teñirse
  * @param {string} [props.minDateTime] instante (el fin de algo: instantPlusMinutes(startsAt, 30))
  * @param {number} [props.minimumMinutesFromNow] al menos tantos minutos después de ahora; se recorre con el reloj
  * @param {string} [props.maxDateTime] instante
@@ -78,7 +102,7 @@ function DateTimeInputContent(props) {
     const {languages} = useToolkitSettings();
     const shownTimeZone = timeZone ?? field.timeZone;
     const zoneText = showTimeZone ? (timeZoneLabel ?? timeZoneNameOf(shownTimeZone, intlLocaleOf(field.language, languages))) : null;
-    const helperLine = [helperText, zoneText].filter(Boolean).join(HELPER_SEPARATOR) || ' ';
+    const helperLine = helperLineOf(helperText, zoneText);
     // el mínimo que de verdad aplica: el que da la pantalla o el de «ahora + N minutos», el más tarde
     const hasClockRule = minimumMinutesFromNow != null;
     const currentMinute = useCurrentMinute(hasClockRule);

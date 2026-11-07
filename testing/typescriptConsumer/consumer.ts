@@ -54,7 +54,7 @@ import {
     AppLayout, AuthLayout, DEFAULT_PASSWORD_POLICY, FormRow, FormSection, GLASS_INSET_PIXELS, GlassPanel, MENU_POSITION, PageHeading, PermissionMatrix, ProfileHeader, STACKCRAFT, TREND_DIRECTION,
     composeMenu, composePermissionGroups, createToolkitTheme, glassStylesOf, isGlassTheme, isPasswordAccepted, materialStylesOf, menuBreadcrumbsOf,
     withPermissionGroup, TOP_BAR, MINIMAL_TONES, FIELD_TONES, CSS_TOKENS, cssTokenOf, cssTokenDeclarationsOf, isAndroidDevice, BarActions, BarCapsule, BarActionButton, BAR_ACTIONS_PLACEMENT,
-    useBarActionsPlacement, useCloseBarActionsMenu, BackButton,
+    useBarActionsPlacement, useCloseBarActionsMenu, BackButton, useActiveMenuPath, useAppMenu,
 } from '@stackcraftmx/calcita';
 import {ChangePasswordForm, ForgotPasswordForm, SignInForm} from '@stackcraftmx/calcita/forms';
 import {Formik, FormWizard, Yup} from '@stackcraftmx/calcita/forms';
@@ -272,6 +272,8 @@ const pickerFields = [
     createElement(TimeInput, {label: 'Hora', value: '09:00', onChange: () => {}, minTime: '08:00', maxTime: '18:00'}),
     createElement(MonthInput, {label: 'Mes', value: '2026-11', onChange: () => {}, maxMonth: '2026-12', disableFuture: true}),
     createElement(FormDateTimeField, {name: 'snoozedUntil', label: 'Posponer hasta', showTimeZone: false}),
+    // la nota puede ser un elemento con su propio estilo (una advertencia en rojo); la zona se queda a su lado
+    createElement(FormDateTimeField, {name: 'dateLimit', label: 'Fecha límite', helperText: createElement('span', {style: {color: 'red'}}, 'Mueve el cierre del grupo')}),
     createElement(FormTimeField, {name: 'startTime', label: 'Hora de inicio', minutesStep: 30}),
     createElement(FormMonthField, {name: 'month', label: 'Mes'}),
     // @ts-expect-error minutesStep es un número, no un texto
@@ -363,6 +365,14 @@ const wrongToastPosition = createElement(Toaster, {position: 'middle'});
 const isInCapsule = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.capsule;
 const isInMoreMenu = (): boolean => useBarActionsPlacement() === BAR_ACTIONS_PLACEMENT.menu;
 const readCloseMoreMenu: () => () => void = useCloseBarActionsMenu;
+// una pantalla que vive en otra dirección que su lista dice a qué entrada del menú pertenece
+const ReceiptScreen = (): null => {
+    useActiveMenuPath('/orders');
+    const declared: string | null = useAppMenu().declaredPath;
+    return declared === null ? null : null;
+};
+// @ts-expect-error la dirección es un texto
+const WrongDeclaredScreen = (): null => { useActiveMenuPath(15); return null; };
 const startsMinimal: boolean = isAndroidDevice({userAgent: 'Mozilla/5.0 (Linux; Android 14)'});
 // @ts-expect-error la barra es 'capsules' o 'band', no otro texto
 createToolkitTheme({bar: 'capsulas'});

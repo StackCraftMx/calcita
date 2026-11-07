@@ -32,7 +32,7 @@ const MONTH_VIEWS = ['year', 'month'];
  * @param {(value: string) => void} props.onChange recibe 'AAAA-MM' ('' al borrar o a medias)
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error]
- * @param {string} [props.helperText]
+ * @param {import('react').ReactNode} [props.helperText] ya traducida; texto o un elemento con su propio estilo
  * @param {string} [props.minMonth] 'AAAA-MM'
  * @param {string} [props.maxMonth] 'AAAA-MM'
  * @param {boolean} [props.disableFuture] p. ej. el mes de un reporte que ya cerró

@@ -1,9 +1,10 @@
-// Las rutas del módulo de pedidos: la lista y el detalle.
+// Las rutas del módulo de pedidos: la lista, el detalle y el comprobante.
 import {APP_PATHS} from '@/core';
-import {ORDER_DETAIL_ROUTE} from '@/modules/orders/ordersPaths.js';
+import {ORDER_DETAIL_ROUTE, ORDER_RECEIPT_ROUTE} from '@/modules/orders/ordersPaths.js';
 
 // lazy: la pantalla (y la tabla de MUI X que trae) se descarga hasta que alguien la abre, no en la primera carga
 export const routes = [
     {path: APP_PATHS.orders, lazy: async () => ({Component: (await import('@/modules/orders/OrdersPage.jsx')).OrdersPage})},
     {path: ORDER_DETAIL_ROUTE, lazy: async () => ({Component: (await import('@/modules/orders/OrderDetailPage.jsx')).OrderDetailPage})},
+    {path: ORDER_RECEIPT_ROUTE, lazy: async () => ({Component: (await import('@/modules/orders/OrderReceiptPage.jsx')).OrderReceiptPage})},
 ];
