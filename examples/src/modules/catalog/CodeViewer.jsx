@@ -13,7 +13,8 @@ import {Highlight, themes} from 'prism-react-renderer';
 import {CopyButton, SegmentedControl, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 /** Los lenguajes en que se enseña el código. */
-export const CODE_LANGUAGES = Object.freeze({js: 'js', ts: 'ts'});
+// html: un código que no es de React (el armazón del primer arranque, para pegar en el index.html o en la vista de Blade)
+export const CODE_LANGUAGES = Object.freeze({js: 'js', ts: 'ts', html: 'html'});
 
 const CODE_LANGUAGE_STORAGE_KEY = 'calcita-examples:code-language';
 // avisa a las demás secciones abiertas que la persona cambió de lenguaje
@@ -21,7 +22,7 @@ const CODE_LANGUAGE_EVENT = 'calcita-examples:code-language';
 // lo que mide el código antes de deslizar (px): un ejemplo largo no empuja la página hasta abajo
 const CODE_MAX_HEIGHT_PIXELS = 520;
 // el lenguaje con que prism colorea cada uno (el JSX va con su variante)
-const PRISM_LANGUAGE = Object.freeze({[CODE_LANGUAGES.js]: 'jsx', [CODE_LANGUAGES.ts]: 'tsx'});
+const PRISM_LANGUAGE = Object.freeze({[CODE_LANGUAGES.js]: 'jsx', [CODE_LANGUAGES.ts]: 'tsx', [CODE_LANGUAGES.html]: 'markup'});
 
 const readCodeLanguage = () => {
     try {
