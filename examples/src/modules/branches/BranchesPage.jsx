@@ -1,5 +1,6 @@
 // Sucursales: la lista y el mapa (MapView de /maps) juntos. Elegir una sucursal en la lista vuela a su alfiler y abre su
-// globo; picar un alfiler la marca en la lista. Arriba, el filtro por estado (abiertas, en remodelación, cerradas).
+// globo; picar un alfiler la marca en la lista. Arriba, las pestañas entre el mapa y la ruta de reparto (BranchesNav) y el
+// filtro por estado (abiertas, en remodelación, cerradas).
 // «Agregar sucursal» abre el formulario en una ventana (NewBranchDialog); al guardar, la nueva sale en la lista y el mapa
 // vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra como ícono con su tooltip
 // (BarActionButton); en el teléfono flota arriba a la derecha.
@@ -24,6 +25,7 @@ import Typography from '@mui/material/Typography';
 import {BarActionButton, PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {MapView} from '@stackcraftmx/calcita/maps';
 
+import {BranchesNav} from '@/modules/branches/BranchesNav.jsx';
 import {BRANCH_STATUS, loadBranches} from '@/modules/branches/branchesApi.js';
 import {NewBranchDialog} from '@/modules/branches/NewBranchDialog.jsx';
 
@@ -72,6 +74,7 @@ export const BranchesPage = () => {
         <Stack spacing={3}>
             <PageHeading title={t('page.title')} description={t('page.description')}
                          actions={<BarActionButton label={t('add.button')} icon={<AddRoundedIcon />} onClick={openNewBranch} />} />
+            <BranchesNav />
             <SegmentedControl ariaLabel={t('status.label')} value={status} onChange={setStatus} options={statusOptions} />
             {error && <Alert severity="error">{error}</Alert>}
             <Grid container spacing={2}>

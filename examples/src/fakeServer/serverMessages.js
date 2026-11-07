@@ -29,6 +29,9 @@ const SERVER_TEXTS = Object.freeze({
             photoNotImage: 'La foto tiene que ser una imagen (JPG, PNG o WebP).',
             addressRequired: 'Escriba la dirección de la sucursal.',
             created: 'Se agregó la sucursal {{name}}.',
+            routeChanged: 'La ruta cambió mientras la editaba (se abrió o se cerró una sucursal). Vuelva a cargar la página.',
+            routeFirstStop: 'El camión sale de la bodega de {{city}}: la primera parada tiene que ser una sucursal de {{city}}.',
+            routeSaved: 'Se guardó la ruta de reparto: {{count}} paradas.',
         },
         calendar: {
             titleRequired: 'Escriba de qué es la cita (hasta 120 caracteres).',
@@ -211,6 +214,9 @@ const SERVER_TEXTS = Object.freeze({
             photoNotImage: 'The photo must be an image (JPG, PNG or WebP).',
             addressRequired: 'Type the branch address.',
             created: 'The {{name}} branch was added.',
+            routeChanged: 'The route changed while you were editing it (a branch opened or closed). Reload the page.',
+            routeFirstStop: 'The truck leaves the {{city}} warehouse: the first stop must be a {{city}} branch.',
+            routeSaved: 'The delivery route was saved: {{count}} stops.',
         },
         calendar: {
             titleRequired: 'Write what the appointment is about (up to 120 characters).',

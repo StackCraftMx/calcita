@@ -1,5 +1,6 @@
-// Lo que respondería el API de las sucursales: dónde está cada una (latitud y longitud), su dirección y si está abierta.
-// Datos de mentira en ciudades de México; las que se agregan viven en la memoria de la pestaña (al recargar se van).
+// Lo que respondería el API de las sucursales: dónde está cada una (latitud y longitud), su dirección y si está abierta, y
+// la ruta de reparto (en qué orden las visita el camión). Datos de mentira en ciudades de México; lo que se agrega o se
+// guarda vive en la memoria de la pestaña (al recargar se va).
 //
 // Funciones del servidor de mentira, sin React: function (regla de la casa).
 import {ApiError} from '@/fakeServer/ApiError.js';
@@ -26,6 +27,8 @@ export const BRANCH_CITIES = Object.freeze({
 });
 
 const HTTP_STATUS = Object.freeze({unprocessable: 422});
+// de donde sale el camión de reparto: la primera parada de la ruta tiene que estar en esta ciudad
+const WAREHOUSE_CITY = 'Ciudad de México';
 // lo que se recorre el alfiler de cada sucursal nueva en la misma ciudad (grados): unas cuadras
 const NEW_BRANCH_OFFSET_DEGREES = 0.012;
 
@@ -39,6 +42,9 @@ const branches = [
     {id: 'mid-montejo', name: 'Paseo de Montejo', city: 'Mérida', address: 'Paseo de Montejo 485', position: [20.9876, -89.6181], status: BRANCH_STATUS.closed, orders: 0},
     {id: 'tij-rio', name: 'Zona Río', city: 'Tijuana', address: 'Paseo de los Héroes 9350', position: [32.5257, -117.0236], status: BRANCH_STATUS.open, orders: 98},
 ];
+
+// el orden de la ruta de reparto: las sucursales por su id; solo cuentan las abiertas
+let deliveryRoute = ['cdmx-centro', 'cdmx-polanco', 'pue-centro', 'qro-juriquilla', 'gdl-chapultepec', 'tij-rio'];
 
 /** La sucursal como la manda el API: la posición en latitud y longitud. */
 function toResponse({position, ...branch}) {
@@ -96,4 +102,59 @@ export async function createBranch({name, city, address, status, photo = null}) 
     };
     branches.push(branch);
     return {branch: toResponse(branch), message: serverTextOf('branches.created', {name: cleanName})};
+}
+
+/**
+ * Las sucursales abiertas en el orden de la ruta: las que ya tienen lugar, en su orden; las que se abrieron después, al
+ * final.
+ *
+ * @returns {string[]}
+ */
+function openBranchIdsInRouteOrder() {
+    const openIds = branches.filter((branch) => branch.status === BRANCH_STATUS.open).map((branch) => branch.id);
+    return [...deliveryRoute.filter((id) => openIds.includes(id)), ...openIds.filter((id) => !deliveryRoute.includes(id))];
+}
+
+/**
+ * GET branches/route: las paradas de la ruta de reparto en su orden (solo las sucursales abiertas), con lo que la pantalla
+ * enseña de cada una.
+ *
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<Array<{branch_id: string, stop: number, name: string, city: string, orders: number}>>}
+ */
+export async function getDeliveryRoute(signal) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS, signal);
+    return openBranchIdsInRouteOrder().map((id, index) => {
+        const branch = branches.find((candidate) => candidate.id === id);
+        return {branch_id: id, stop: index + 1, name: branch.name, city: branch.city, orders: branch.orders};
+    });
+}
+
+/**
+ * PUT branches/route: el orden nuevo, cada sucursal con su número de parada. Valida como el backend (422 en «stops»): que
+ * vengan todas las abiertas una vez con sus números 1..n (si alguien abrió o cerró una mientras tanto, hay que recargar) y
+ * que la primera esté en la ciudad de la bodega.
+ *
+ * @param {Array<{branch_id: string, stop: number}>} stops
+ * @returns {Promise<{message: string}>}
+ */
+export async function saveDeliveryRoute(stops) {
+    await waitLikeNetwork(NETWORK_DELAY_MILLISECONDS);
+    const expectedIds = openBranchIdsInRouteOrder();
+    const inOrder = [...stops].sort((first, second) => first.stop - second.stop);
+    const ids = inOrder.map((stop) => stop.branch_id);
+    const hasEveryOpenBranchOnce = ids.length === expectedIds.length && new Set(ids).size === ids.length && expectedIds.every((id) => ids.includes(id));
+    const hasConsecutiveStops = inOrder.every((stop, index) => stop.stop === index + 1);
+    const firstCity = branches.find((branch) => branch.id === ids[0])?.city;
+    const errors = {};
+    if (!hasEveryOpenBranchOnce || !hasConsecutiveStops) {
+        errors.stops = [serverTextOf('branches.routeChanged')];
+    } else if (firstCity !== WAREHOUSE_CITY) {
+        errors.stops = [serverTextOf('branches.routeFirstStop', {city: WAREHOUSE_CITY})];
+    }
+    if (errors.stops) {
+        throw new ApiError({status: HTTP_STATUS.unprocessable, problem: {title: serverTextOf('validation.title'), detail: serverTextOf('validation.detail'), errors}});
+    }
+    deliveryRoute = ids;
+    return {message: serverTextOf('branches.routeSaved', {count: ids.length})};
 }
