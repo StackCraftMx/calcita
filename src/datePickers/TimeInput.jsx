@@ -30,7 +30,7 @@ const TimeInputPicker = piecePart(THEME_NAME, 'Picker', TimePicker);
  * @param {(value: string) => void} props.onChange recibe 'HH:mm' ('' al borrar o a medias)
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error]
- * @param {string} [props.helperText]
+ * @param {import('react').ReactNode} [props.helperText] ya traducida; texto o un elemento con su propio estilo
  * @param {string} [props.minTime] 'HH:mm'
  * @param {string} [props.maxTime] 'HH:mm'
  * @param {number} [props.minutesStep] de cuánto en cuánto van los minutos; por omisión de uno en uno (30 para citas de

@@ -45,7 +45,7 @@ function pickerValueOf(calendarDate) {
  * @param {(value: string) => void} props.onChange recibe 'AAAA-MM-DD' ('' al borrar o con una fecha a medias)
  * @param {() => void} [props.onBlur]
  * @param {string|{key: string, values?: object}} [props.error]
- * @param {string} [props.helperText]
+ * @param {import('react').ReactNode} [props.helperText] ya traducida; texto o un elemento con su propio estilo
  * @param {string} [props.minDate] 'AAAA-MM-DD'
  * @param {string} [props.maxDate] 'AAAA-MM-DD'
  * @param {boolean} [props.disableFuture] p. ej. una fecha de nacimiento
