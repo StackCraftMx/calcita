@@ -218,7 +218,7 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
     accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    menuLabelOverflow, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, children,
+    menuLabelOverflow, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, declaredPath, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
@@ -259,7 +259,8 @@ const AppLayoutFrame = ({
     // lugar de bajar al pie del menú encogido (lo pidió el autor)
     const isBarMerged = isGlass && isSideMenu && collapsed && !ribbons && !usesBarCapsules;
     const drawerWidth = collapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH_EXPANDED;
-    const activeItem = activeMenuItemOf(menuItems, pathname);
+    // la pantalla abierta puede decir a qué entrada pertenece (useActiveMenuPath); si no, se marca por la dirección
+    const activeItem = activeMenuItemOf(menuItems, pathname, declaredPath);
     const sideMenuProps = {logo, wordmark, brandName, brandCaption, homePath, menuItems, activeItem, menuBadges, footer: sidebarFooter, labelOverflow: menuLabelOverflow};
     // el lugar de la barra donde caen las acciones de cada pantalla (BarActions); con la barra fundida con el menú no hay
     // barra en escritorio y se quedan en la pantalla
@@ -507,7 +508,9 @@ const AppLayoutContent = (props) => {
     const {appName} = useToolkitSettings();
     // un ícono ya pintado (icon) se vuelve componente aquí, una vez: las piezas del menú pintan siempre Icon
     const shownMenuItems = useMemo(() => menuItemsWithIconsOf(menuItems), [menuItems]);
-    const appMenu = useMemo(() => ({menuItems: shownMenuItems}), [shownMenuItems]);
+    // la dirección de la entrada que declaró la pantalla abierta (useActiveMenuPath); null = se marca por la dirección
+    const [declaredPath, setDeclaredPath] = useState(null);
+    const appMenu = useMemo(() => ({menuItems: shownMenuItems, declaredPath, declarePath: setDeclaredPath}), [shownMenuItems, declaredPath]);
     // los textos del marco llegan a todas sus piezas (la cuenta, el menú, las pestañas del teléfono), cada una lee los suyos
     return (
         <ComponentTexts namespace="layout" texts={texts}>
@@ -519,7 +522,7 @@ const AppLayoutContent = (props) => {
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
                                     isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
                                     contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
-                                    onMobileTabsChange={onMobileTabsChange}>
+                                    onMobileTabsChange={onMobileTabsChange} declaredPath={declaredPath}>
                         {children}
                     </AppLayoutFrame>
                 </AppMenuContext.Provider>

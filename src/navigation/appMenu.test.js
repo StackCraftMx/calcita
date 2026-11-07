@@ -42,6 +42,30 @@ test('la entrada activa es la más específica, y el inicio solo en el inicio', 
     assert.equal(activeMenuItemOf(menuItems, '/nada'), null);
 });
 
+// tres listas de personas y un solo detalle en otra dirección, que solo se distingue por el grupo: cada detalle dice a qué
+// lista pertenece (useActiveMenuPath) y esa entrada se marca, con sus migas
+const PEOPLE_MODULES = [
+    {order: 1, buildMenuItem: () => ({to: '/', label: 'Inicio'})},
+    {order: 10, buildMenuItem: () => ({label: 'Personas', children: [
+        {to: '/people/buyers', label: 'Compradores'},
+        {to: '/people/sellers', label: 'Vendedores'},
+    ]})},
+];
+
+test('la pantalla declara su entrada: manda sobre la dirección; sin declarar, o si no coincide, se marca por la dirección', () => {
+    const menuItems = composeMenu(PEOPLE_MODULES);
+
+    assert.equal(activeMenuItemOf(menuItems, '/people/detail/2/15'), null);
+    assert.equal(activeMenuItemOf(menuItems, '/people/detail/2/15', '/people/sellers').label, 'Vendedores');
+    assert.equal(activeMenuItemOf(menuItems, '/people/detail/1/15', '/people/buyers').label, 'Compradores');
+    // lo de antes, igual: sin declarar y con una declaración vacía o que no está en el menú
+    assert.equal(activeMenuItemOf(menuItems, '/people/buyers', null).label, 'Compradores');
+    assert.equal(activeMenuItemOf(menuItems, '/people/buyers', '').label, 'Compradores');
+    assert.equal(activeMenuItemOf(menuItems, '/people/buyers', '/no-esta').label, 'Compradores');
+    assert.deepEqual(menuBreadcrumbsOf(menuItems, '/people/detail/2/15', '/people/sellers').map((menuItem) => menuItem.label),
+        ['Inicio', 'Personas', 'Vendedores']);
+});
+
 // un módulo con submenú: la entrada de arriba no lleva a una pantalla, sus hijas sí
 const MODULES_WITH_SUBMENU = [
     {order: 1, buildMenuItem: () => ({to: '/', label: 'Inicio'})},
