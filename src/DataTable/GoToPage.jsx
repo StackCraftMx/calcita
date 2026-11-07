@@ -9,7 +9,15 @@
 //      última. Antes se cortaba en 100 y la 101 solo se alcanzaba tecleando;
 //   2. abre en la página donde está la tabla, no en la 1;
 //   3. filtra por PREFIJO primero (teclear 13 da 13, 130, 131...) y luego por "contiene" (goToPageOptions.js);
-//   4. con una sola página no se pinta: sería un control que no lleva a ningún lado.
+//   4. con una sola página no se pinta: sería un control que no lleva a ningún lado;
+//   5. se ve igual que «Filas por página», que va a su lado: el número sin raya, con la letra de la fila, y la flechita de
+//      las listas para elegir. Con vidrio el tema le pone a un Autocomplete el botón cuadrado de color del «combo box» de
+//      Apple, hecho para los campos en cápsula; en este campo chico se veía fuera de lugar (lo reportaron: «se ve feo»), así
+//      que aquí va la flechita doble ⌃⌄ del Select. Sigue siendo el Autocomplete: se teclea, se filtra y se elige.
+//      Las mismas reglas de letra que la paginación de MUI (TablePagination): las palabras en body2 del color del texto y el
+//      número del tamaño de la fila (14 px). Con gris en las palabras y 15 px en el número se veía chueco junto a «Filas por
+//      página» (lo reportaron). OJO: con el dedo el número va en 16, porque el iPhone hace zoom al tocar un campo de letra
+//      más chica.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaGoToPage con defaultProps y
 // styleOverrides de sus partes: root, field.
@@ -24,6 +32,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import {List} from 'react-window';
 
 import {filterPages, pageNumbersOf} from '@/DataTable/goToPageOptions.js';
+import {popUpChevronStylesOf} from '@/theme/components/glassComponents.js';
+import {isGlassTheme} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -38,6 +48,33 @@ const GoToField = piecePart(THEME_NAME, 'Field', Autocomplete);
 // mínimo ahí). OJO: react-window acomoda cada renglón con este número; si no es el alto real, se encimarían
 const OPTION_HEIGHT = 36;
 const PHONE_OPTION_HEIGHT = 48;
+// lo que ocupa la flechita a la derecha del número (px): el campo mide lo que el número más largo («56», «1200») y esto
+const CHEVRON_ROOM_PIXELS = 22;
+// la letra del número con el dedo: el iPhone hace zoom al tocar un campo de menos de 16 px
+const TOUCH_INPUT_FONT_PIXELS = 16;
+// la letra de la fila de la paginación: la que pone MUI en TablePagination (pxToRem(14)), para que el número salga igual
+// que el de «Filas por página»
+const PAGINATION_FONT_PIXELS = 14;
+
+/**
+ * Con vidrio, el botón de la lista es la flechita doble ⌃⌄ del Select (como «Filas por página») y no el botón cuadrado de
+ * color del «combo box» que el tema le pone a un Autocomplete. Sin vidrio se queda el ▾ de MUI, igual que el Select.
+ *
+ * @param {object} theme
+ * @returns {object}
+ */
+function popupIndicatorStylesOf(theme) {
+    if (!isGlassTheme(theme)) {
+        return {};
+    }
+    return {
+        width: 'auto', height: 'auto', padding: '2px', borderRadius: 0,
+        backgroundColor: 'transparent', backgroundImage: 'none', boxShadow: 'none',
+        color: (theme.vars ?? theme).palette.action.active,
+        '&:hover': {backgroundColor: 'transparent'},
+        '&::after': {content: '""', ...popUpChevronStylesOf()},
+    };
+}
 // lo más alto que crece la lista y el margen de arriba y abajo que MUI les da a sus listas
 const LISTBOX_MAX_HEIGHT = 240;
 const LISTBOX_PADDING = 8;
@@ -162,8 +199,10 @@ function GoToPageContent(props) {
     };
 
     return (
-        <GoToRoot direction="row" spacing={0.75} ownSx={{alignItems: 'baseline'}}>
-            <Typography variant="body2" color="text.secondary" noWrap>{t('goToPage.page')}</Typography>
+        // centrado como la fila de la paginación de MUI («Filas por página» y su lista): con baseline el número quedaba más
+        // abajo que «Página»
+        <GoToRoot direction="row" spacing={0.75} ownSx={(theme) => ({alignItems: 'center', fontSize: theme.typography.pxToRem(PAGINATION_FONT_PIXELS)})}>
+            <Typography variant="body2" noWrap>{t('goToPage.page')}</Typography>
             <GoToField
                 size="small"
                 disableClearable
@@ -183,14 +222,31 @@ function GoToPageContent(props) {
                         onChange(selectedPageNumber - 1);
                     }
                 }}
-                ownSx={{width: 78, '& .MuiAutocomplete-endAdornment': {right: 0}}}
-                slotProps={{listbox: {component: PageListbox, pageCount, pageListRef, pageIndexesRef}}}
+                // lo ancho del número más largo y su flechita; la letra de la fila, salvo con el dedo (ver el OJO de arriba)
+                ownSx={{
+                    width: `calc(${String(pageCount).length}ch + ${CHEVRON_ROOM_PIXELS}px)`,
+                    '& .MuiAutocomplete-endAdornment': {right: 0},
+                    '&.MuiAutocomplete-hasPopupIcon .MuiAutocomplete-inputRoot': {paddingRight: `${CHEVRON_ROOM_PIXELS}px`},
+                    // sin el ancho mínimo de MUI (30 px): con él sobraba espacio entre el número y su flechita. OJO: con dos
+                    // clases (inputRoot e input), porque la regla de MUI tiene el mismo peso y se escribe después
+                    '& .MuiAutocomplete-inputRoot .MuiAutocomplete-input': {minWidth: 0},
+                    // el número del tamaño de la fila, como el de «Filas por página» (MUI le pone fontSize: inherit)
+                    '& .MuiInputBase-root': {fontSize: 'inherit', '@media (pointer: coarse)': {fontSize: TOUCH_INPUT_FONT_PIXELS}},
+                }}
+                slotProps={{
+                    listbox: {component: PageListbox, pageCount, pageListRef, pageIndexesRef},
+                    popupIndicator: {sx: popupIndicatorStylesOf},
+                }}
                 renderInput={(params) => (
                     <TextField {...params} variant="standard"
-                               slotProps={{htmlInput: {...params.inputProps, inputMode: 'numeric', 'aria-label': t('goToPage.ariaLabel')}}} />
+                               slotProps={{
+                                   // sin la raya de abajo, como el Select de «Filas por página»
+                                   input: {...params.InputProps, disableUnderline: true},
+                                   htmlInput: {...params.inputProps, inputMode: 'numeric', 'aria-label': t('goToPage.ariaLabel')},
+                               }} />
                 )}
             />
-            <Typography variant="body2" color="text.secondary" noWrap>
+            <Typography variant="body2" noWrap>
                 {t('goToPage.of', {count: pageCount, total: formatNumber(pageCount)})}
             </Typography>
         </GoToRoot>
