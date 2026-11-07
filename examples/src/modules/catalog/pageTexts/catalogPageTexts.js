@@ -1932,17 +1932,18 @@ export const catalogPageTexts = {
             },
             sortable: {
                 title: 'Listas que se ordenan',
-                description: 'Una tabla chica donde el orden de los renglones es el dato (qué se surte primero, en qué orden pasa la ruta), con @hello-pangea/dnd: los renglones se arrastran con el ratón, el dedo o el teclado y la columna «Orden» se renumera sola. La tabla de servidor no ordena arrastrando (en MUI X es de paga): esta lista va completa en el navegador. Cada sección trae para qué sirve, el código mínimo y una tabla con lo que acepta.',
+                description: 'Una tabla chica donde el orden de los renglones es el dato (qué se surte primero, en qué orden pasa la ruta), con @hello-pangea/dnd: los renglones se arrastran con el ratón, el dedo o el teclado, o se mueven con sus botones «Subir» y «Bajar», y la columna «Orden» se renumera sola. La tabla de servidor no ordena arrastrando (en MUI X es de paga): esta lista va completa en el navegador. Cada sección trae para qué sirve, el código mínimo y una tabla con lo que acepta.',
                 saveOnDrop: {
                     title: '1. Guardar al soltar',
-                    description: 'Para lo que se guarda en cuanto se mueve. Arrastre un renglón por su asa, o enfóquela con Tab y use espacio, flechas y espacio. El orden nuevo se ve al instante; mueva PED-1043 (ya va en camino) y el servidor dice que no: el renglón regresa solo.',
+                    description: 'Para lo que se guarda en cuanto se mueve. Arrastre un renglón por su asa, enfóquela con Tab y use espacio, flechas y espacio, o pique sus flechas «Subir» y «Bajar» al final del renglón. El orden nuevo se ve al instante; mueva PED-1043 (ya va en camino) y el servidor dice que no: el renglón regresa solo.',
                     extend: {
                         columns: 'Los renglones en su orden y sus columnas: ancho fijo, o lo que les toque del espacio libre sin bajar de su mínimo.',
                         onReorder: 'Qué pasa al soltar: llegan los renglones ya en su orden nuevo. Si regresa una promesa y truena, el renglón regresa a donde estaba.',
                         rowIdentity: 'Cómo se distingue cada renglón y su nombre para el lector de pantalla.',
                         renderCell: 'Lo de una celda a su manera (una etiqueta, un monto); recibe el renglón y su posición.',
                         position: 'Sin la columna «Orden», o la tabla sin arrastrar (de solo lectura).',
-                        moveRow: 'Mover sin arrastrar, desde un botón suyo.',
+                        moveButtons: 'Sin los botones «Subir» y «Bajar» de cada renglón (por omisión salen: la regla de accesibilidad pide poder mover sin arrastrar).',
+                        moveRow: 'Mover desde otra parte de la pantalla, con un botón suyo («Mandar al final»).',
                         texts: 'Cualquier texto de la tabla, con la forma de «sortableTable» en los textos del paquete.',
                         theme: 'Su estilo desde el tema del proyecto, parte por parte.',
                     },
@@ -4193,17 +4194,18 @@ export const catalogPageTexts = {
             },
             sortable: {
                 title: 'Lists you reorder',
-                description: 'A small table where the order of the rows is the data (what gets packed first, the order of the route), with @hello-pangea/dnd: rows are dragged with the mouse, a finger or the keyboard and the “Order” column renumbers itself. The server table does not reorder by dragging (in MUI X it is paid): this list goes complete in the browser. Each section has what it is for, the minimum code and a table with what it accepts.',
+                description: 'A small table where the order of the rows is the data (what gets packed first, the order of the route), with @hello-pangea/dnd: rows are dragged with the mouse, a finger or the keyboard, or moved with their “Move up” and “Move down” buttons, and the “Order” column renumbers itself. The server table does not reorder by dragging (in MUI X it is paid): this list goes complete in the browser. Each section has what it is for, the minimum code and a table with what it accepts.',
                 saveOnDrop: {
                     title: '1. Save on drop',
-                    description: 'For what is saved as soon as it moves. Drag a row by its handle, or focus it with Tab and use space, arrows and space. The new order shows at once; move PED-1043 (already on its way) and the server says no: the row goes back on its own.',
+                    description: 'For what is saved as soon as it moves. Drag a row by its handle, focus it with Tab and use space, arrows and space, or click its “Move up” and “Move down” arrows at the end of the row. The new order shows at once; move PED-1043 (already on its way) and the server says no: the row goes back on its own.',
                     extend: {
                         columns: 'The rows in their order and their columns: a fixed width, or their share of the free space without going under their minimum.',
                         onReorder: 'What happens on drop: the rows arrive already in their new order. If it returns a promise and it fails, the row goes back to where it was.',
                         rowIdentity: 'How each row is told apart and its name for the screen reader.',
                         renderCell: 'A cell your way (a tag, an amount); it gets the row and its position.',
                         position: 'Without the “Order” column, or the table without dragging (read only).',
-                        moveRow: 'Move without dragging, from a button of yours.',
+                        moveButtons: 'Without the “Move up” and “Move down” buttons of each row (they show by default: the accessibility rule asks to move without dragging).',
+                        moveRow: 'Move from another part of the screen, with a button of yours (“Send to the end”).',
                         texts: 'Any text of the table, with the shape of “sortableTable” in the package texts.',
                         theme: 'Its style from the project theme, part by part.',
                     },
