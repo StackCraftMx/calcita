@@ -4,6 +4,23 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.58.0] - 2026-11-06
+
+### Agregado
+
+- Puerta nueva `/sortable` (pide `@hello-pangea/dnd`, la misma del tablero kanban): `SortableTable`, una tabla chica donde
+  el orden de los renglones es el dato. Se arrastran con el ratón, el dedo o el teclado (espacio, flechas, espacio) y la
+  columna «Orden» se renumera 1..n; el que flota conserva el ancho de sus columnas. Si `onReorder` regresa una promesa, se
+  guarda al soltar: el orden nuevo se ve al instante, no se mueve otro mientras se guarda y, si truena, el renglón regresa a
+  su lugar y el lector de pantalla lo anuncia. Sin promesa, la pantalla pone los renglones nuevos.
+- `FormSortableField` (formik): el valor del campo es la lista en su orden. Al soltar, el formulario queda cambiado; el error
+  de la lista (una regla de yup o el 422 del servidor) sale abajo de la tabla. Con react-hook-form, `SortableTable` va en un
+  `Controller`.
+- `moveRow(rows, desde, hasta)` para mover sin arrastrar. Los renglones conservan su tipo en TypeScript.
+- Ejemplos: en Sucursales, la pestaña «Ruta de reparto» (el orden en que el camión visita las sucursales abiertas; el
+  servidor de mentira pide que la primera esté en la ciudad de la bodega); en Hecho en Calcita, la página «Listas que se
+  ordenan» con guardar al soltar (un pedido que ya salió regresa a su lugar) y la ruta en un formulario.
+
 ## [0.57.0] - 2026-11-06
 
 ### Agregado

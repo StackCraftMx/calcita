@@ -1,6 +1,6 @@
 {
     "name": "@stackcraftmx/calcita",
-    "version": "0.57.0",
+    "version": "0.58.0",
     "description": "Componentes y utilidades de React con MUI para arrancar proyectos rápido: tabla de servidor, diálogos, avisos, descargas, formularios, formatos y reportes en Excel.",
     "license": "FSL-1.1-MIT",
     "author": "calcifux",
@@ -138,6 +138,10 @@
         "./kanban": {
             "types": "./dist/types/kanban.d.ts",
             "import": "./dist/kanban.js"
+        },
+        "./sortable": {
+            "types": "./dist/types/sortable.d.ts",
+            "import": "./dist/sortable.js"
         },
         "./package.json": "./package.json"
     },
