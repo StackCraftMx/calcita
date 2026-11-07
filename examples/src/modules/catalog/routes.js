@@ -21,6 +21,7 @@ const pages = [
     {path: BUILT_IN_PATHS.maps, lazy: async () => ({Component: (await import('@/modules/catalog/MapsPage.jsx')).MapsPage})},
     {path: BUILT_IN_PATHS.calendar, lazy: async () => ({Component: (await import('@/modules/catalog/CalendarPage.jsx')).CalendarPage})},
     {path: BUILT_IN_PATHS.kanban, lazy: async () => ({Component: (await import('@/modules/catalog/KanbanPage.jsx')).KanbanPage})},
+    {path: BUILT_IN_PATHS.sortable, lazy: async () => ({Component: (await import('@/modules/catalog/SortablePage.jsx')).SortablePage})},
     {path: BUILT_IN_PATHS.serverTable, lazy: async () => ({Component: (await import('@/modules/catalog/ServerTablePage.jsx')).ServerTablePage})},
     {path: BUILT_IN_PATHS.confirmAndNotify, lazy: async () => ({Component: (await import('@/modules/catalog/ConfirmAndNotifyPage.jsx')).ConfirmAndNotifyPage})},
     {path: BUILT_IN_PATHS.cards, lazy: async () => ({Component: (await import('@/modules/catalog/HeadersAndCardsPage.jsx')).HeadersAndCardsPage})},
