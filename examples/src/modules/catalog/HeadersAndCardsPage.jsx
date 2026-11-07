@@ -38,6 +38,7 @@ const RECORD_CARD_EXTENSIONS = [
     {id: 'bottom', option: 'footer · details · onDetailsToggle · footerAlign', example: 'footerAlign={RECORD_CARD_FOOTER_ALIGN.end}  // los dos controles juntos, a la derecha'},
     {id: 'skeleton', option: '<RecordCardSkeleton>', example: '{isLoading && <RecordCardSkeleton groups={2} />}'},
     {id: 'theme', option: 'theme.components.CalcitaRecordCard', example: 'components: {CalcitaRecordCard: {styleOverrides: {highlight: {color: \'#0B5\'}}}}'},
+    {id: 'menuButton', option: 'theme.components.CalcitaActionsMenu', example: "components: {CalcitaActionsMenu: {styleOverrides: {button: {'@media (pointer: coarse)': {minWidth: 44, minHeight: 44}}}}}"},
 ];
 const HEADERS_EXTENSIONS = [
     {id: 'heading', option: '<PageHeading title description>', example: '<PageHeading title="Pedidos" description="Todos los pedidos de la tienda." />'},

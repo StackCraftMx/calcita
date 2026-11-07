@@ -54,6 +54,8 @@ const MENU_EXTENSIONS = [
     {id: 'href', option: 'href', example: "{href: 'https://sistema-anterior/inicio', label: 'Sistema anterior'}"},
     {id: 'icon', option: 'Icon · icon', example: 'icon: <Iconify icon="mdi:bank" />  // o Icon: AccountBalanceOutlinedIcon'},
     {id: 'mobileTab', option: 'mobileTab', example: 'mobileTab: true'},
+    {id: 'matchPrefix', option: 'matchPrefix', example: "{to: '/rates/MXN', matchPrefix: '/rates'}"},
+    {id: 'activeMenuPath', option: 'useActiveMenuPath()', example: "useActiveMenuPath('/orders')  // en la pantalla /receipts/15"},
 ];
 const CAPSULES_EXTENSIONS = [
     {id: 'barActions', option: '<BarActions>', example: '<BarActions label="Pedidos">…</BarActions>'},

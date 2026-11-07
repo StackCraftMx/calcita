@@ -953,6 +953,7 @@ export const catalogPageTexts = {
                         bottom: 'Lo de abajo y lo que se despliega, que se monta al abrirlo. footerAlign junta los dos a la izquierda o a la derecha (por omisión, «Ver detalle» va en la otra orilla).',
                         skeleton: 'Su esqueleto con la misma forma, mientras llega la lista.',
                         theme: 'Sus partes en el tema: root, header, avatar, titles, status, body, group, fact, highlight, footer, details.',
+                        menuButton: 'El botón «⋯» desde el tema (CalcitaActionsMenu, parte button): de 44 px en una pantalla táctil, para el dedo. Vale para el mismo menú en el tablero, la bandeja y las tablas.',
                     },
                 },
             },
@@ -1301,6 +1302,7 @@ export const catalogPageTexts = {
                         afterStart: 'El fin, al menos tantos minutos después del inicio: el mínimo del fin sale del inicio.',
                         rules: 'Las mismas reglas en yup, con su mensaje en el idioma activo; la hora se toma al revisar.',
                         clock: 'Para armar una regla propia: el minuto de ahora que se actualiza solo, y «ahora + N minutos» sin segundos.',
+                        warning: 'La nota de abajo puede ser un elemento con su color (una advertencia en rojo): el nombre de la zona horaria se queda a su lado, sin teñirse. Con texto, una sola frase como siempre.',
                     },
                 },
                 countdown: {
@@ -1656,6 +1658,8 @@ export const catalogPageTexts = {
                         href: 'Una liga a otro sistema en lugar de una pantalla de la app (to): carga la página completa, como cualquier liga.',
                         icon: 'El ícono como componente (Icon) o uno ya pintado (icon): un sistema que ya usaba iconify lo pasa tal cual.',
                         mobileTab: 'Va en la barra de pestañas del teléfono (cada persona puede cambiarlas después).',
+                        matchPrefix: 'Desde dónde se marca la entrada (por omisión, su to): una lista con la moneda en la dirección se queda marcada al cambiar de MXN a USD.',
+                        activeMenuPath: 'Para una pantalla que vive en otra dirección que su lista (un detalle, un comprobante): la pantalla dice a qué entrada pertenece y el menú, la barra del teléfono y las migas la marcan. Al salir, se marca por la dirección otra vez.',
                     },
                 },
                 capsules: {
@@ -3218,6 +3222,7 @@ export const catalogPageTexts = {
                         bottom: 'What goes at the bottom and what expands, mounted when opened. footerAlign keeps both together on the left or on the right (by default «See details» goes on the other edge).',
                         skeleton: 'Its skeleton with the same shape, while the list arrives.',
                         theme: 'Its parts in the theme: root, header, avatar, titles, status, body, group, fact, highlight, footer, details.',
+                        menuButton: 'The «⋯» button from the theme (CalcitaActionsMenu, button part): 44 px on a touch screen, for the finger. It applies to the same menu on the board, the inbox and the tables.',
                     },
                 },
             },
@@ -3566,6 +3571,7 @@ export const catalogPageTexts = {
                         afterStart: 'The end, at least that many minutes after the start: the end minimum comes from the start.',
                         rules: 'The same rules in yup, with their message in the active language; the time is taken when checking.',
                         clock: 'To build your own rule: the current minute that updates itself, and «now + N minutes» without seconds.',
+                        warning: 'The note below can be an element with its own color (a warning in red): the time zone name stays next to it, untinted. With text, a single sentence as always.',
                     },
                 },
                 countdown: {
@@ -3921,6 +3927,8 @@ export const catalogPageTexts = {
                         href: 'A link to another system instead of an app screen (to): it loads the whole page, like any link.',
                         icon: 'The icon as a component (Icon) or one already drawn (icon): a system that already used iconify passes it as is.',
                         mobileTab: 'It goes in the phone tab bar (each person can change them later).',
+                        matchPrefix: 'Where the entry starts being marked (by default, its to): a list with the currency in the address stays marked when switching from MXN to USD.',
+                        activeMenuPath: 'For a screen that lives at another address than its list (a detail, a receipt): the screen says which entry it belongs to and the menu, the phone tab bar and the breadcrumbs mark it. On leaving, it is marked by the address again.',
                     },
                 },
                 capsules: {
