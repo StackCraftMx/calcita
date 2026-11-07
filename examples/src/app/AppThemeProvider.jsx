@@ -8,7 +8,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
-import {TOP_BAR, isAndroidDevice} from '@stackcraftmx/calcita';
+import {DEFAULT_GLASS_SURFACES, GLASS_SELECTED_TAB, GLASS_SURFACE, TOP_BAR, isAndroidDevice} from '@stackcraftmx/calcita';
 
 import {DEFAULT_THEME_CHOICES, GLASS_MODES, buildAppTheme} from '@/app/appTheme.js';
 import {AppThemeChoiceContext, THEME_COLOR_KEYS, useAppThemeChoice} from '@/core';
@@ -42,7 +42,7 @@ const readStoredGlassMode = () => {
 /**
  * Los colores, las esquinas y la barra guardados, revisados: lo que no sea válido se queda con lo de fábrica.
  *
- * @returns {{colors: Record<string, string>, cornerRadius: number, bar: string}}
+ * @returns {{colors: Record<string, string>, cornerRadius: number, bar: string, surfacesOff: string[], selectedTab: string}}
  */
 const readStoredThemeChoices = () => {
     try {
@@ -57,7 +57,12 @@ const readStoredThemeChoices = () => {
         const cornerRadius = Number.isInteger(radius) && radius >= CORNER_RADIUS_LIMITS.min && radius <= CORNER_RADIUS_LIMITS.max
             ? radius : DEFAULT_THEME_CHOICES.cornerRadius;
         const bar = Object.values(TOP_BAR).includes(stored.bar) ? stored.bar : DEFAULT_THEME_CHOICES.bar;
-        return {colors, cornerRadius, bar};
+        // solo nombres de superficie que existen, sin las tarjetas (van con el estilo del menú de la cuenta), sin repetir
+        const surfacesOff = Array.isArray(stored.surfacesOff)
+            ? [...new Set(stored.surfacesOff.filter((surface) => surface in DEFAULT_GLASS_SURFACES && surface !== GLASS_SURFACE.cards))]
+            : DEFAULT_THEME_CHOICES.surfacesOff;
+        const selectedTab = Object.values(GLASS_SELECTED_TAB).includes(stored.selectedTab) ? stored.selectedTab : DEFAULT_THEME_CHOICES.selectedTab;
+        return {colors, cornerRadius, bar, surfacesOff, selectedTab};
     } catch {
         return DEFAULT_THEME_CHOICES;
     }
