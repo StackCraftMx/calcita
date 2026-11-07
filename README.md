@@ -5,8 +5,8 @@ transparente famoso por doblar la luz, y eso es lo que define al vidrio líquido
 
 Arranca un proyecto sin copiar y volver a probar lo de siempre: el marco de la app con menú y permisos, tabla de servidor,
 diálogos de confirmación, avisos, descargas, formularios, formatos de número y fecha, errores RFC 9457, reportes en Excel,
-la cuenta completa, mapa, calendario, tablero kanban, bandeja tipo correo y el tema con vidrio líquido, interpretado
-componente por componente según la guía de Apple.
+la cuenta completa, mapa, calendario, tablero kanban, listas que se ordenan arrastrando, bandeja tipo correo y el tema con
+vidrio líquido, interpretado componente por componente según la guía de Apple.
 
 JavaScript con sus tipos generados: se usa igual desde un proyecto en TypeScript. Sirve para un proyecto nuevo y también
 para meterlo por pedazos en un sistema que ya existe (ver «En un sistema que ya existe»).
@@ -244,6 +244,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/maps` | `MapView`: mapa con marcadores del color del tema, el elegido con su globo, se acomoda solo; en oscuro, mosaicos oscuros | `leaflet`, `react-leaflet` 5 |
 | `@stackcraftmx/calcita/calendar` | `EventCalendar`: mes, semana, día y lista, con la barra del framework; arrastrar cambia la cita y regresa si el servidor dice que no. `EventDetails`: el detalle de una cita (lugar, liga de la reunión, invitados con su respuesta, recordatorio, notas) | `@fullcalendar/react`, `core`, `daygrid`, `timegrid`, `list`, `interaction` 6.1 |
 | `@stackcraftmx/calcita/kanban` | `KanbanBoard`: columnas con tope (y que se encogen, como un congelador) y tarjetas de producto (etiquetas, responsables, fecha, pendientes, terminar) que se arrastran con el ratón, el dedo o el teclado; `moveCard` para ver la movida al instante | `@hello-pangea/dnd` 18 |
+| `@stackcraftmx/calcita/sortable` | `SortableTable`: una tabla chica cuyos renglones se arrastran (ratón, dedo o teclado) para ordenarlos, con su columna «Orden»; guarda al soltar (y regresa el renglón si el servidor dice que no) o en un formulario con `FormSortableField`; `moveRow` para mover sin arrastrar | `@hello-pangea/dnd` 18 |
 
 ## El tema
 
@@ -536,6 +537,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaSignInForm` | `footer` |
 | `CalcitaSignInScreen` | `alert` |
 | `CalcitaSortableFilterHeader` | `title`, `root`, `sortButton`, `sortIndicator`, `clearButton` |
+| `CalcitaSortableTable` | `root`, `container`, `table`, `head`, `headerRow`, `headerCell`, `body`, `row`, `handleCell`, `handle`, `positionCell`, `cell`, `empty`, `helperText`, `announcer` |
 | `CalcitaStackedCell` | `root`, `line`, `label`, `valueRow`, `primary`, `secondary`, `note` |
 | `CalcitaStatusChip` | `root`, `dot`, `label`, `chip` |
 | `CalcitaSubmenuActionsMenu` | `badge` |
@@ -722,6 +724,42 @@ const columns = [
   `prefix` la vista va en la dirección (`?clientes_view=cards`). `view`, `defaultView`, `onViewChange` y `showViewToggle`
   para decidirlo desde la pantalla.
 - `gridSx` se combina con los estilos de la tabla regla por regla; `gridProps` pasa lo demás al DataGrid.
+
+## Listas que se ordenan (`/sortable`)
+
+Para una lista chica donde el orden de los renglones es el dato (qué se surte primero, en qué orden pasa la ruta, qué se
+hace antes): `SortableTable` es una tabla cuyos renglones se arrastran con el ratón, el dedo o el teclado (espacio, flechas,
+espacio), con la columna «Orden» 1..n que se renumera sola. Pide `@hello-pangea/dnd`, la misma del tablero kanban. La tabla
+de servidor no sirve para esto: en MUI X, ordenar renglones arrastrando es de su versión de paga; esta lista va completa en
+el navegador.
+
+```jsx
+import {FormSortableField, SortableTable, moveRow} from '@stackcraftmx/calcita/sortable';
+
+// guardar al soltar: si la promesa truena (el servidor dijo que no), el renglón regresa solo a su lugar
+<SortableTable rows={orders} ariaLabel="Orden de surtido" getRowLabel={(order) => order.folio}
+               columns={[{field: 'folio', headerName: 'Pedido', width: 120}, {field: 'customer', headerName: 'Cliente', flex: 1}]}
+               onReorder={async ({rows}) => {
+                   await api.put('/packing', rows.map((order, index) => ({order_id: order.id, priority: index + 1})));
+                   setOrders(rows);
+               }} />
+
+// en un formulario de formik: el valor del campo es la lista en su orden; al soltar, el formulario queda cambiado
+<FormSortableField name="stops" ariaLabel="Ruta de reparto" columns={columns} />
+// al guardar: values.stops.map((stop, index) => ({branch_id: stop.id, stop: index + 1}))
+```
+
+- `onReorder` recibe los renglones ya en su orden nuevo (`rows`), el id del que se movió y de dónde a dónde (desde 0). Si no
+  regresa nada, la pantalla pone los renglones nuevos. Si regresa una promesa, la tabla enseña el orden nuevo al instante,
+  no deja mover otro mientras se guarda y, si truena, lo regresa a su lugar y el lector de pantalla lo anuncia.
+- El error de la lista (una regla de yup sobre el arreglo, o el 422 del servidor con `applyServerProblem`) sale abajo de la
+  tabla. Con react-hook-form: `SortableTable` dentro de un `Controller` (`rows={field.value}`,
+  `onReorder={({rows}) => field.onChange(rows)}`).
+- Las columnas: `width` fijo, o `flex` y `minWidth` para repartirse el espacio libre; abajo de su mínimo, la tabla se desliza
+  de lado (en el teléfono). `renderCell(row, {position})` para una celda a la medida. Los renglones conservan su tipo en
+  TypeScript.
+- `moveRow(rows, desde, hasta)` mueve sin arrastrar (un botón «Subir» de la pantalla). `showPosition={false}` quita la
+  columna «Orden»; `disabled` la deja de solo lectura; `texts` y el tema (`CalcitaSortableTable`) cambian lo demás.
 
 ## Eventos y textos de cada componente
 
