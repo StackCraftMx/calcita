@@ -861,7 +861,7 @@ export const catalogPageTexts = {
                     title: '5. El aire de los renglones',
                     description: 'Compacta (de fábrica), estándar o cómoda: los altos del DataGrid (36, 52 y 67 px). En la compacta, entre el «⋯» de un renglón y el del siguiente quedan 6 px y con el dedo se pica el de al lado. Pruebe las tres y mire el espacio entre los «⋯».',
                     extend: {
-                        prop: 'El aire de esta tabla. También sirve con renglones de dos líneas, que un alto fijo (getRowHeight) recortaría.',
+                        prop: 'El aire de esta tabla, también con renglones de alto automático (varios renglones en una celda): ahí la densidad le pone a cada celda su aire arriba y abajo y, como mínimo, el alto del renglón fijo. Un alto fijo (getRowHeight) recortaría lo que no cabe.',
                         theme: 'Para todas las tablas de la app, una vez en el tema, en lugar de repetirlo en cada pantalla.',
                     },
                 },
@@ -3166,7 +3166,7 @@ export const catalogPageTexts = {
                     title: '5. Row spacing',
                     description: 'Compact (default), standard or comfortable: the DataGrid heights (36, 52 and 67 px). In compact, there are 6 px between one row «⋯» and the next, and with a finger you tap the wrong one. Try the three and look at the space between the «⋯».',
                     extend: {
-                        prop: 'The spacing of this table. It also works with two-line rows, which a fixed height (getRowHeight) would cut.',
+                        prop: 'The spacing of this table, also with auto-height rows (several lines in a cell): there the density gives each cell its space above and below and, at least, the fixed row height. A fixed height (getRowHeight) would cut what does not fit.',
                         theme: 'For every table in the app, once in the theme, instead of repeating it on each screen.',
                     },
                 },

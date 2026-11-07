@@ -114,11 +114,16 @@ export const TABLE_DENSITY = Object.freeze({compact: 'compact', standard: 'stand
 // Los altos que pinta el DataGrid 8 en cada densidad: la base de 52 px del renglón y de 56 px del encabezado por su factor
 // (0.7, 1 y 1.3), redondeados hacia abajo (medidos en Chrome). El pie (paginación) no cambia con la densidad.
 // OJO: con ellos se calcula el alto del contenedor; un número que no es el real deja hueco blanco abajo o una barra de
-// desplazamiento sin necesidad
+// desplazamiento sin necesidad.
+// autoPaddingPixels: con renglones de alto automático ('auto') el DataGrid no mira el alto de la densidad, manda lo que mide
+// la celda, y la celda no lleva relleno: la estándar salía igual de apretada que la compacta (lo midió la migración: 33 px y
+// 6 px entre «⋯» con las dos). Ahí la densidad le pone a la celda, arriba y abajo, el aire que le suma a un renglón fijo
+// contra la compacta, y como mínimo el alto del renglón fijo (rowPixels): una línea mide igual con alto fijo que con
+// automático y varias líneas crecen con su aire. La compacta no lleva nada (como siempre)
 const DENSITY_SIZES = Object.freeze({
-    [TABLE_DENSITY.compact]: Object.freeze({factor: 0.7, rowPixels: 36, headerPixels: 39}),
-    [TABLE_DENSITY.standard]: Object.freeze({factor: 1, rowPixels: 52, headerPixels: 56}),
-    [TABLE_DENSITY.comfortable]: Object.freeze({factor: 1.3, rowPixels: 67, headerPixels: 72}),
+    [TABLE_DENSITY.compact]: Object.freeze({factor: 0.7, rowPixels: 36, headerPixels: 39, autoPaddingPixels: 0}),
+    [TABLE_DENSITY.standard]: Object.freeze({factor: 1, rowPixels: 52, headerPixels: 56, autoPaddingPixels: 8}),
+    [TABLE_DENSITY.comfortable]: Object.freeze({factor: 1.3, rowPixels: 67, headerPixels: 72, autoPaddingPixels: 16}),
 });
 const FOOTER_HEIGHT_PIXELS = 52;
 // líneas del borde del encabezado y del pie
@@ -326,7 +331,8 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {boolean} [props.striped] renglones alternos (cebra) con el color de hover del tema; al pasar el cursor se usa
  *     el de «seleccionado» para que el renglón bajo el cursor se siga distinguiendo
  * @param {'compact'|'standard'|'comfortable'} [props.density] el aire de los renglones (TABLE_DENSITY): 36, 52 o 67 px; por
- *     omisión la compacta. Para toda la app, en el tema: components.CalcitaServerTable.defaultProps.density
+ *     omisión la compacta. También con alto automático (su aire arriba y abajo de cada celda). Para toda la app, en el tema:
+ *     components.CalcitaServerTable.defaultProps.density
  * @param {(params: any) => number|'auto'|null} [props.getRowHeight] el alto de cada renglón: un número (px) o 'auto' para
  *     que crezca con lo que lleva adentro (varios renglones de texto en una celda). Con 'auto' la tabla se mide a sí misma
  *     (autoHeight del DataGrid); con maxGridHeight cuenta cada renglón 'auto' con getEstimatedRowHeight de gridProps o, sin
@@ -835,6 +841,12 @@ function ServerTableContent(props) {
                         // suya quedaba en una línea de 99 px: a media celda o hasta abajo, y lo que iba debajo se salía y se
                         // cortaba. Las celdas ya se centran con flex, así que la altura de línea vuelve a la del texto
                         '& .MuiDataGrid-cell': {display: 'flex', alignItems: 'center', lineHeight: CELL_LINE_HEIGHT},
+                        // el aire de la densidad también con alto automático (ver autoPaddingPixels en DENSITY_SIZES)
+                        ...(densitySizes.autoPaddingPixels > 0 && {
+                            '& .MuiDataGrid-row--dynamicHeight > .MuiDataGrid-cell': {
+                                paddingBlock: `${densitySizes.autoPaddingPixels}px`, minHeight: `${densitySizes.rowPixels}px`,
+                            },
+                        }),
                         '& .MuiDataGrid-columnHeader': {alignItems: 'center'},
                         // cebra: el color del hover del tema
                         [`& .${STRIPED_ROW_CLASS}`]: {bgcolor: 'action.hover'},
