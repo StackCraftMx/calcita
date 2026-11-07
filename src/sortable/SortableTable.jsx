@@ -248,11 +248,13 @@ function SortableTableContent(props) {
             return;
         }
         keepFocusOnMoveButton(String(getRowId(row)), toIndex);
-        setNotice(t('moved', {title: labelOf(row), position: toIndex + 1, total}));
+        setNotice(t('moved', {title: labelOf(row), fromPosition: index + 1, position: toIndex + 1, total}));
         reorder(row, index, toIndex);
     };
 
-    // lo que oye quien usa lector de pantalla (posiciones desde 1, como se cuentan)
+    // lo que oye quien usa lector de pantalla (posiciones desde 1, como se cuentan). Cada aviso de una movida dice qué
+    // renglón, de qué lugar salió y a cuál va (guía de accesibilidad de arrastrar de Atlassian); position siempre es el
+    // lugar nuevo, así los textos propios de un proyecto que solo usan {{position}} siguen diciendo lo correcto
     const announceStart = (start, provided) => {
         // se empezó a arrastrar: ya no se espera regresarle el foco a un botón
         focusAfterMove.current = null;
@@ -260,9 +262,15 @@ function SortableTableContent(props) {
         provided.announce(t('lifted', {title: titleOf(start.draggableId), position: start.source.index + 1, total}));
     };
     const announceUpdate = (update, provided) => {
-        if (update.destination) {
-            provided.announce(t('moving', {position: update.destination.index + 1, total}));
+        const {draggableId, source, destination} = update;
+        if (!destination) {
+            return;
         }
+        // al regresar a su lugar de origen no se dice «de la 2 a la 2»
+        const key = destination.index === source.index ? 'movingBack' : 'moving';
+        provided.announce(t(key, {
+            title: titleOf(draggableId), fromPosition: source.index + 1, position: destination.index + 1, total,
+        }));
     };
     const finishMove = (result, provided) => {
         const {draggableId, source, destination} = result;
@@ -272,7 +280,9 @@ function SortableTableContent(props) {
             provided.announce(t('cancelled', {title: titleOf(draggableId), position: source.index + 1}));
             return;
         }
-        provided.announce(t('dropped', {title: labelOf(row), position: destination.index + 1, total}));
+        provided.announce(t('dropped', {
+            title: labelOf(row), fromPosition: source.index + 1, position: destination.index + 1, total,
+        }));
         reorder(row, source.index, destination.index);
     };
 
