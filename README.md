@@ -556,6 +556,11 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 | `CalcitaQuickFilters` | `root`, `caption`, `chip`, `chipLabel`, `chipCount` |
 | `CalcitaRecordCard` | `root`, `header`, `avatar`, `titles`, `status`, `body`, `group`, `fact`, `highlight`, `footer`, `details` |
 | `CalcitaRecordCardSkeleton` | `root` |
+| `CalcitaDefinitionListSkeleton` | `root` |
+| `CalcitaDetailHeaderSkeleton` | `root` |
+| `CalcitaTableSkeleton` | `root` |
+| `CalcitaDashboardSkeleton` | `root` |
+| `CalcitaSkeletonOverlay` | `root`, `cover` |
 | `CalcitaRecoveryCodesDialog` | `codes`, `actions` |
 | `CalcitaRepeatingFields` | `root`, `row`, `rowHeader`, `rowContent`, `addButton`, `helper` |
 | `CalcitaRichTextEditor` | `root`, `toolbar`, `content`, `footer` |
@@ -705,6 +710,25 @@ reacomoda solo: para un orden obligatorio, `trailing` pone el estatus al final y
 submenús (`children`), que se abren dentro del mismo menú con «Regresar». Un renglón con `to` es una pantalla de la app: va
 con la navegación del proyecto, así el clic normal no recarga la app y Cmd/Ctrl+clic o el botón de en medio la abren en otra
 pestaña (`href` es para lo de afuera). `onClick` recibe el evento del clic.
+
+**Esqueletos de carga.** Mientras llega la información, la forma gris de lo que va a llegar, en lugar de una rueda: el ojo
+ya sabe dónde caerá cada cosa y el cambio de pestaña no deja un hueco. Cada uno imita a su pieza: `DefinitionListSkeleton`
+(los renglones de dato, con `rows`, `layout` y `labelWidth` como `DefinitionList`), `DetailHeaderSkeleton` (el encabezado de
+una ficha: `media` para el logotipo, `lines` para los renglones bajo el título y `tabs` para la tira de pestañas),
+`TableSkeleton` (`rows` y `columns`, para una tabla que no es `ServerTable`: esa ya trae su espera), `DashboardSkeleton`
+(un tablero, del alto que se le dé) y `RecordCardSkeleton`. `SkeletonOverlay` lo pone **encima** de algo que tiene que
+seguir montado mientras carga (un tablero de Tableau empieza de cero si se desmonta) y se quita con `isLoading={false}`
+cuando el propio tablero avisa que está listo. Ninguno pinta texto; al lector de pantalla le dicen «Cargando», ya traducido.
+
+La frontera: el esqueleto es **solo para esperar información**. Una acción en curso (guardar, enviar, subir) conserva su
+rueda: ahí el dato ya existe y lo que corre es el guardado; una forma gris diría «esto todavía no llega», y no es cierto.
+
+```jsx
+if (status === 'loading') {
+    return (<><DetailHeaderSkeleton media lines={2} tabs={5} /><DefinitionListSkeleton rows={6} /></>);
+}
+<SkeletonOverlay isLoading={!isReady} sx={{height: 640}}><tableau-viz src={url} /></SkeletonOverlay>
+```
 
 Para las secciones de un registro, `RouteTabs`: pestañas donde cada una es una dirección (se comparte la liga a una
 pestaña); por ruta (cada pestaña su página, y «atrás» regresa a la anterior) o en la consulta (`mode="query"`, `?tab=pagos`,
