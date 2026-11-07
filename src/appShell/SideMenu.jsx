@@ -33,7 +33,7 @@ import {menuItemLabelOf, menuSectionsOf} from '@/appShell/menuItemText.js';
 import Wordmark from '@/appShell/Wordmark.jsx';
 import {APP_BAR_HEIGHT_PIXELS} from '@/appShell/shellSizes.js';
 import SideMenuEntry from '@/appShell/SideMenuEntry.jsx';
-import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {GLASS_SURFACE, isGlassTheme, surfaceStylesOf} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -70,7 +70,7 @@ function ScrollArrow({label, onClick, sx, children}) {
             <MenuScrollArrow size="small" aria-label={label} onClick={onClick}
                         ownSx={[(theme) => ({
                             position: 'absolute', left: '50%', transform: 'translateX(-50%)', zIndex: 1, width: 32, height: 24, borderRadius: '999px',
-                            ...(isGlassTheme(theme) ? glassStylesOf(theme, {isControl: true}) : {bgcolor: 'background.paper', boxShadow: 2}),
+                            ...(isGlassTheme(theme) ? surfaceStylesOf(theme, GLASS_SURFACE.sideMenu, {isControl: true}) : {bgcolor: 'background.paper', boxShadow: 2}),
                         }), sx]}>
                 {children}
             </MenuScrollArrow>

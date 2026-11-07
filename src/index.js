@@ -55,7 +55,7 @@ export {CSS_TOKENS, cssTokenDeclarationsOf, cssTokenOf} from '@/theme/cssTokens.
 export {
     GLASS_INSET_PIXELS, GLASS_MENU_RADIUS_PIXELS, GLASS_OPACITY, GLASS_PANEL_RADIUS_PIXELS, ambientBackgroundOf, glassDropOf, glassStylesOf, glassSurfaceOf,
     FIELD_TONES, accentTextStylesOf, canvasFieldStylesOf, fieldPaletteOf, fieldWellStylesOf, fixedBackgroundLayerOf, isGlassTheme, materialBackgroundOf, materialStylesOf, materialSurfaceOf,
-    scrollEdgeStylesOf,
+    scrollEdgeStylesOf, DEFAULT_GLASS_SURFACES, GLASS_SELECTED_TAB, GLASS_SURFACE, hasGlassSurface, surfaceStylesOf,
 } from '@/theme/glassSurface.js';
 
 // ─── el marco de la app, el menú compuesto y los permisos (RBAC / ABAC del proyecto) ─
@@ -109,7 +109,7 @@ export {createChunkedUpload} from '@/upload/chunkedUpload.js';
 
 // ─── pantalla: esqueleto, navegación, filtros, etiquetas, acciones y métricas ─
 export {
-    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer,
+    APP_BAR_HEIGHT_CSS_VARIABLE, BackButton, COMPARISON_OPERATOR, FILTER_DRAWER_ANCHOR, FILTER_DRAWER_CLOSE_PLACEMENT, FILTER_FIELD_KIND, FilterDrawer,
     activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf, filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf, CHART_VIEW, CalendarHeatmap, CollapsibleSection, ColorSchemeToggle, ContentDialog, CopyButton, DateRangeFilter,
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
     HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,

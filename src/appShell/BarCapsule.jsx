@@ -17,7 +17,7 @@
 import Box from '@mui/material/Box';
 
 import {paletteOf} from '@/theme/components/paletteOf.js';
-import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {GLASS_SURFACE, isGlassTheme, surfaceStylesOf} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaBarCapsule)
@@ -62,7 +62,8 @@ function BarCapsuleContent(props) {
     return (
         <CapsuleRoot role={role} {...rest}
              ownSx={(theme) => ({
-                 ...(isGlassTheme(theme) ? glassStylesOf(theme, {isControl: true}) : {backgroundColor: paletteOf(theme).background.paper}),
+                 // la barra de arriba es la superficie «topBar»: sin su vidrio (glass.surfaces.topBar: false), sólida
+                 ...(isGlassTheme(theme) ? surfaceStylesOf(theme, GLASS_SURFACE.topBar, {isControl: true}) : {backgroundColor: paletteOf(theme).background.paper}),
                  ...(isGlassTheme(theme) && monochromeButtonsSxOf(paletteOf(theme).text.primary)),
                  display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0, minWidth: 0,
                  height: BAR_CAPSULE_HEIGHT_PIXELS, px: 0.75, borderRadius: '999px',

@@ -5,7 +5,11 @@ import {test} from 'node:test';
 import {createTheme} from '@mui/material/styles';
 
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
-import {GLASS_INSET_PIXELS, GLASS_OPACITY, PANEL_RADIUS, glassOpacityOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {
+    DEFAULT_GLASS_SURFACES, GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_SELECTED_TAB, GLASS_SURFACE, PANEL_RADIUS, glassOpacityOf, hasGlassSurface,
+    isGlassTheme, surfaceStylesOf,
+} from '@/theme/glassSurface.js';
+import {WHITE_LABEL} from '@/theme/components/glassComponents.js';
 import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {FIELD_TONES, fieldVariablesOf, fieldWellFromVariablesOf, fieldWellStylesOf} from '@/theme/glassSurface.js';
 
@@ -127,6 +131,82 @@ test('el grupo de botones con borde es una sola cápsula de vidrio y sus botones
     assert.match(groupRoot.backdropFilter, /blur/);
     assert.equal(button.backdropFilter, 'none');
     assert.equal(button.boxShadow, 'none');
+});
+
+// las reglas del lente van en una llave propia (body[data-glass-lens="on"] &): una superficie apagada no la trae
+const LENS_KEY = 'body[data-glass-lens="on"] &';
+
+test('de fábrica, todo lo que flota va de vidrio y las tarjetas sólidas; surfaces: true suma las tarjetas como antes', () => {
+    assert.deepEqual(createToolkitTheme({glass: true}).toolkit.glass.bySurface, DEFAULT_GLASS_SURFACES);
+    assert.equal(DEFAULT_GLASS_SURFACES.cards, false);
+    assert.ok(Object.entries(DEFAULT_GLASS_SURFACES).every(([surface, isGlass]) => isGlass === (surface !== GLASS_SURFACE.cards)));
+
+    const withCards = createToolkitTheme({glass: {surfaces: true}});
+    assert.equal(withCards.toolkit.glass.surfaces, true);
+    assert.deepEqual(withCards.toolkit.glass.bySurface, {...DEFAULT_GLASS_SURFACES, cards: true});
+});
+
+test('cada superficie se apaga sola: se pinta sólida, sin desenfoque ni lente, y las demás siguen de vidrio', () => {
+    const theme = createToolkitTheme({glass: {surfaces: {drawers: false, menus: false, backdrop: false}}});
+    const drawerPaperOf = (variant) => theme.components.MuiDrawer.styleOverrides.paper({theme, ownerState: {variant, anchor: 'right'}});
+    const filterDrawer = drawerPaperOf('temporary');
+    const sideMenu = drawerPaperOf('permanent');
+    const menu = theme.components.MuiPopover.styleOverrides.paper({theme});
+    const dialog = theme.components.MuiDialog.styleOverrides.paper({theme, ownerState: {}});
+    const veil = theme.components.MuiBackdrop.styleOverrides.root({theme})['&:not(.MuiBackdrop-invisible)'];
+
+    // apagadas: sólidas y sin la regla del lente (un tema del proyecto les gana sin pelear con su peso)
+    [filterDrawer, menu].forEach((surface) => {
+        assert.equal(surface.backdropFilter, 'none');
+        assert.equal(surface[LENS_KEY], undefined);
+    });
+    assert.equal(veil.backdropFilter, undefined, 'el velo solo oscurece');
+    assert.equal(veil.backgroundColor, 'rgba(0, 0, 0, 0.4)');
+    // la forma se queda: el cajón sigue flotando separado de la orilla y el menú con su esquina
+    assert.equal(filterDrawer.borderRadius, PANEL_RADIUS);
+    assert.equal(menu.borderRadius, theme.components.MuiPopover.styleOverrides.paper({theme: createToolkitTheme({glass: true})}).borderRadius);
+    // prendidas: las de siempre
+    [sideMenu, dialog].forEach((surface) => {
+        assert.match(surface.backdropFilter, /blur/);
+        assert.ok(surface[LENS_KEY]);
+    });
+    assert.equal(hasGlassSurface(theme, GLASS_SURFACE.dialogs), true);
+    assert.equal(hasGlassSurface(theme, GLASS_SURFACE.drawers), false);
+    assert.equal(hasGlassSurface(createToolkitTheme(), GLASS_SURFACE.dialogs), false, 'sin vidrio en el tema, ninguna');
+});
+
+test('una superficie apagada se ve como con «Reducir transparencia»: su color sólido, aclarado en oscuro como el vidrio', () => {
+    const theme = createToolkitTheme({glass: {surfaces: {dialogs: false}}});
+    const solid = surfaceStylesOf(theme, GLASS_SURFACE.dialogs);
+    const darkKey = Object.keys(theme.applyStyles('dark', {}))[0];
+    const lightBackground = valueOf(solid, 'backgroundColor');
+    const darkBackground = darkValueOf(solid, darkKey, 'backgroundColor');
+
+    assert.match(lightBackground, /100%/);
+    assert.notEqual(darkBackground, lightBackground);
+    assert.match(darkBackground, /white 16%/);
+    assert.equal(solid.backdropFilter, 'none');
+});
+
+test('un nombre de superficie mal escrito o un valor que no es true/false truenan con su motivo', () => {
+    assert.throws(() => createToolkitTheme({glass: {surfaces: {drawer: false}}}), /no conoce «drawer»/);
+    assert.throws(() => createToolkitTheme({glass: {surfaces: {menus: 'no'}}}), /true o false/);
+});
+
+test('la pestaña elegida: la gota de fábrica; con selectedTab accent, el color de la marca con letra blanca', () => {
+    const tabsOf = (theme) => ({
+        indicator: theme.components.MuiTabs.styleOverrides.indicator({theme, ownerState: {vertical: false}}),
+        selected: theme.components.MuiTabs.styleOverrides.root({theme, ownerState: {vertical: false}})['& .MuiTab-root.Mui-selected'],
+    });
+    const drop = tabsOf(createToolkitTheme({glass: true}));
+    const accent = tabsOf(createToolkitTheme({glass: {selectedTab: GLASS_SELECTED_TAB.accent}}));
+
+    assert.equal(drop.indicator.backgroundImage, undefined);
+    assert.notEqual(drop.selected.color, WHITE_LABEL);
+    assert.match(accent.indicator.backgroundImage, /linear-gradient/);
+    assert.ok(valueOf(accent.indicator, 'backgroundColor'));
+    assert.equal(accent.selected.color, WHITE_LABEL);
+    assert.throws(() => createToolkitTheme({glass: {selectedTab: 'brand'}}), /selectedTab es 'drop' o 'accent'/);
 });
 
 test('un cajón que sale encima va un punto arriba de la barra del marco y debajo de los diálogos; el fijo no cambia', () => {

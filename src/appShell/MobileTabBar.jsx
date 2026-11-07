@@ -45,7 +45,7 @@ import {useTabBarMinimized} from '@/appShell/useTabBarMinimized.js';
 import {menuBadgeOf, menuItemKeyOf, mobileTabsOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
-import {accentTextStylesOf, glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {GLASS_SURFACE, accentTextStylesOf, isGlassTheme, surfaceStylesOf} from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {useToolkitNavigation} from '@/toolkit/toolkitContext.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -121,7 +121,8 @@ function floatingSurfaceOf(theme) {
         return {...minimalFloatingStylesOf(theme), position: 'relative', borderRadius: '999px', height: '100%'};
     }
     return {
-        ...glassStylesOf(theme, {opacity: FLOATING_GLASS_OPACITY}),
+        // la superficie «tabBar»: sin su vidrio (glass.surfaces.tabBar: false), sólida con su misma orilla
+        ...surfaceStylesOf(theme, GLASS_SURFACE.tabBar, {opacity: FLOATING_GLASS_OPACITY}),
         position: 'relative',
         borderRadius: '999px',
         height: '100%',

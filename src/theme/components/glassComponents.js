@@ -14,14 +14,18 @@
 //   - Esquinas concéntricas (los renglones de los menús a 4 px del borde) y títulos sin mayúsculas.
 // createToolkitTheme({glass: …}) los suma después de los normales (mergeComponents).
 //
+// Cada superficie que flota (la barra, los menús, los cajones, las ventanas, el velo) se puede apagar sola con
+// glass: {surfaces: {…}} (GLASS_SURFACE): apagada se pinta sólida, como con «Reducir transparencia» (surfaceStylesOf). Por
+// eso aquí cada una pide su estilo con surfaceStylesOf(theme, GLASS_SURFACE.x) y no con glassStylesOf.
+//
 // Lo que NO lleva vidrio a propósito: un diálogo a pantalla completa (fullScreen) y ContentDialog, que son para leer, y lo
 // que solo informa dentro del contenido (la etiqueta del estado en un renglón de la tabla).
 //
 // Funciones puras, sin React: function (regla de la casa).
 import {
-    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf, glassDropOf, glassOpacityOf,
-    canvasFieldStylesOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, whiteLabelFillOf,
-    insideContentSelectorOf, materialStylesOf, solidFallbackOf,
+    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, GLASS_SELECTED_TAB, GLASS_SURFACE, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf,
+    glassDropOf, glassOpacityOf, canvasFieldStylesOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, hasGlassSurface,
+    surfaceStylesOf, whiteLabelFillOf, insideContentSelectorOf, materialStylesOf, solidFallbackOf,
 } from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
@@ -103,6 +107,16 @@ const chevronSvgOf = (path) => `url("data:image/svg+xml,${encodeURIComponent(
 )}")`;
 const UP_DOWN_CHEVRON_MASK = chevronSvgOf(CHEVRON_PATHS.upDown);
 const CHEVRON_DOWN_MASK = chevronSvgOf(CHEVRON_PATHS.down);
+
+/**
+ * La flechita doble ⌃⌄ de las listas para elegir de Apple («pop-up buttons»), la del Select con vidrio: un dibujo de 16 px
+ * del color del texto. La usa también el «Página N de M» de la tabla (GoToPage), para verse igual que «Filas por página».
+ *
+ * @returns {object}
+ */
+export function popUpChevronStylesOf() {
+    return {width: 16, height: 16, ...chevronMaskOf(UP_DOWN_CHEVRON_MASK)};
+}
 
 /**
  * Un chevrón dibujado con máscara: el color lo pone el texto (currentColor).
@@ -218,6 +232,31 @@ function whiteLabelOf(theme, colorName) {
         };
     };
     return lightDarkStylesOf(theme, schemeStylesOf('light'), schemeStylesOf('dark'));
+}
+
+/**
+ * La pestaña elegida del color de la marca (glass: {selectedTab: 'accent'}): el relleno del botón principal (su color
+ * oscurecido lo justo para la letra blanca, whiteLabelFillOf) con su brillo. La gota de fábrica es del color del papel y,
+ * sobre un papel blanco, casi no se distinguía cuál estaba elegida (lo reportaron). Sin un color en hexadecimal no se puede
+ * medir la letra: se queda la gota.
+ *
+ * @param {object} theme
+ * @returns {object|null} el estilo de la pastilla elegida, o null si va la gota
+ */
+function accentTabPillOf(theme) {
+    if (theme.toolkit?.glass?.selectedTab !== GLASS_SELECTED_TAB.accent) {
+        return null;
+    }
+    const fillOf = (scheme) => whiteLabelFillOf(theme.colorSchemes?.[scheme]?.palette?.primary?.main);
+    const lightFill = fillOf('light');
+    if (!lightFill) {
+        return null;
+    }
+    return {
+        ...lightDarkStylesOf(theme, {backgroundColor: lightFill}, {backgroundColor: fillOf('dark') ?? lightFill}),
+        backgroundImage: PROMINENT_SHEEN_IMAGE,
+        boxShadow: PROMINENT_SHEEN_SHADOW,
+    };
 }
 
 /**
@@ -393,13 +432,13 @@ export function glassComponents({surfaces = false} = {}) {
                     if (!isPrimary) {
                         return {};
                     }
-                    return {...glassStylesOf(theme), color: paletteOf(theme).text.primary, borderBottom: 'none'};
+                    return {...surfaceStylesOf(theme, GLASS_SURFACE.topBar), color: paletteOf(theme).text.primary, borderBottom: 'none'};
                 },
             },
         },
         MuiPopover: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
+                paper: ({theme}) => ({...surfaceStylesOf(theme, GLASS_SURFACE.menus), borderRadius: MENU_RADIUS}),
             },
         },
         // los renglones de un menú: concéntricos con el menú, y el elegido (la opción actual de una lista) con su palomita
@@ -428,7 +467,7 @@ export function glassComponents({surfaces = false} = {}) {
         // al final; abierto, el ⌄ no gira (en Apple se queda igual)
         MuiAutocomplete: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
+                paper: ({theme}) => ({...surfaceStylesOf(theme, GLASS_SURFACE.menus), borderRadius: MENU_RADIUS}),
                 option: {marginInline: MENU_ROW_INSET_PIXELS, borderRadius: MENU_ROW_RADIUS},
                 popupIndicator: ({theme}) => ({
                         width: COMBO_BUTTON_PIXELS,
@@ -457,11 +496,9 @@ export function glassComponents({surfaces = false} = {}) {
         MuiSelect: {
             styleOverrides: {
                 icon: {
-                    width: 16,
-                    height: 16,
+                    ...popUpChevronStylesOf(),
                     top: 'calc(50% - 8px)',
                     '& path': {display: 'none'},
-                    ...chevronMaskOf(UP_DOWN_CHEVRON_MASK),
                 },
                 iconOpen: {transform: 'none'},
             },
@@ -469,7 +506,7 @@ export function glassComponents({surfaces = false} = {}) {
         // el calendario de MUI X (/date-pickers) en escritorio; en el teléfono sale en un diálogo (MuiDialog)
         MuiPickerPopper: {
             styleOverrides: {
-                paper: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
+                paper: ({theme}) => ({...surfaceStylesOf(theme, GLASS_SURFACE.menus), borderRadius: MENU_RADIUS}),
             },
         },
         // la tabla (MUI X Data Grid): el menú de cada columna y los paneles de filtros y columnas
@@ -484,23 +521,24 @@ export function glassComponents({surfaces = false} = {}) {
                 ...(surfaces && {
                     root: {'&.MuiDataGrid-root': {'--DataGrid-t-color-background-base': 'transparent', '--DataGrid-t-header-background-base': 'transparent'}},
                 }),
-                panelContent: ({theme}) => ({...glassStylesOf(theme), borderRadius: MENU_RADIUS}),
-                menu: ({theme}) => ({'& .MuiPaper-root': {...glassStylesOf(theme), borderRadius: MENU_RADIUS}}),
+                panelContent: ({theme}) => ({...surfaceStylesOf(theme, GLASS_SURFACE.menus), borderRadius: MENU_RADIUS}),
+                menu: ({theme}) => ({'& .MuiPaper-root': {...surfaceStylesOf(theme, GLASS_SURFACE.menus), borderRadius: MENU_RADIUS}}),
             },
         },
         // los cajones: de vidrio; los que salen encima del contenido flotan separados de la orilla (Adopting Liquid Glass:
-        // «half sheets are inset from the edge of the display to allow content to peek through from beneath them»)
+        // «half sheets are inset from the edge of the display to allow content to peek through from beneath them»). El que
+        // sale encima es la superficie «drawers»; el fijo (el menú lateral, o uno persistent del proyecto), «sideMenu»
         MuiDrawer: {
             styleOverrides: {
                 paper: ({ownerState, theme}) => ({
-                    ...glassStylesOf(theme),
+                    ...surfaceStylesOf(theme, ownerState.variant === 'temporary' ? GLASS_SURFACE.drawers : GLASS_SURFACE.sideMenu),
                     ...(ownerState.variant === 'temporary' && floatingDrawerOf(ownerState.anchor ?? 'left')),
                 }),
             },
         },
         MuiDialog: {
             styleOverrides: {
-                paper: ({ownerState, theme}) => (ownerState.fullScreen ? {} : {...glassStylesOf(theme), borderRadius: PANEL_RADIUS}),
+                paper: ({ownerState, theme}) => (ownerState.fullScreen ? {} : {...surfaceStylesOf(theme, GLASS_SURFACE.dialogs), borderRadius: PANEL_RADIUS}),
                 // la hoja de lectura (ContentDialog) deja la barra de arriba a la vista para no perder dónde se está: sin
                 // desenfoque detrás, o la barra se volvía ilegible
                 backdrop: ({ownerState}) => (ownerState.fullScreen
@@ -508,17 +546,20 @@ export function glassComponents({surfaces = false} = {}) {
                     : {}),
             },
         },
-        // detrás de un diálogo: menos oscuro y desenfocado (el vidrio del diálogo se lee mejor sobre algo ya borroso)
+        // detrás de un diálogo: menos oscuro y desenfocado (el vidrio del diálogo se lee mejor sobre algo ya borroso). Con la
+        // superficie «backdrop» apagada solo oscurece: es la más cara (la pantalla entera, en cada cuadro de la entrada)
         MuiBackdrop: {
             styleOverrides: {
-                root: {
-                    '&:not(.MuiBackdrop-invisible)': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                        backdropFilter: 'blur(6px)',
-                        WebkitBackdropFilter: 'blur(6px)',
-                        ...solidFallbackOf({backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'none', WebkitBackdropFilter: 'none'}),
-                    },
-                },
+                root: ({theme}) => ({
+                    '&:not(.MuiBackdrop-invisible)': hasGlassSurface(theme, GLASS_SURFACE.backdrop)
+                        ? {
+                            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                            backdropFilter: 'blur(6px)',
+                            WebkitBackdropFilter: 'blur(6px)',
+                            ...solidFallbackOf({backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'none', WebkitBackdropFilter: 'none'}),
+                        }
+                        : {backgroundColor: 'rgba(0, 0, 0, 0.4)'},
+                }),
             },
         },
         MuiTooltip: {
@@ -899,6 +940,7 @@ export function glassComponents({surfaces = false} = {}) {
             },
         },
         // las pestañas: la misma tira, y la marca de abajo se vuelve la gota detrás de la pestaña elegida (se desliza sola)
+        // la elegida: la gota (de fábrica) o, con glass: {selectedTab: 'accent'}, el color de la marca (accentTabPillOf)
         MuiTabs: {
             styleOverrides: {
                 root: ({ownerState, theme}) => (ownerState.vertical ? {} : {
@@ -909,9 +951,11 @@ export function glassComponents({surfaces = false} = {}) {
                     width: 'fit-content',
                     maxWidth: '100%',
                     '& .MuiTab-root': {minHeight: 36, paddingBlock: 6, paddingInline: 16, borderRadius: PILL_RADIUS, zIndex: 1},
-                    '& .MuiTab-root.Mui-selected': {color: paletteOf(theme).text.primary},
+                    '& .MuiTab-root.Mui-selected': {color: accentTabPillOf(theme) ? WHITE_LABEL : paletteOf(theme).text.primary},
                 }),
-                indicator: ({ownerState, theme}) => (ownerState.vertical ? {display: 'none'} : {...glassDropOf(theme), height: '100%', borderRadius: PILL_RADIUS, zIndex: 0}),
+                indicator: ({ownerState, theme}) => (ownerState.vertical
+                    ? {display: 'none'}
+                    : {...(accentTabPillOf(theme) ?? glassDropOf(theme)), height: '100%', borderRadius: PILL_RADIUS, zIndex: 0}),
                 // de pie son una lista para navegar, como el menú lateral: la elegida en su gota y no con la rayita de MUI
                 // OJO: la gota iba pegada a la línea de la derecha y sin aire entre pestañas («todo pegado»): se separan
                 vertical: ({theme}) => ({
@@ -920,7 +964,9 @@ export function glassComponents({surfaces = false} = {}) {
                         minHeight: 40, borderRadius: MENU_RADIUS, alignItems: 'flex-start', marginBlock: 3, paddingInline: theme.spacing(2),
                     },
                     '& .MuiTab-root.Mui-focusVisible': {outlineOffset: 2},
-                    '& .MuiTab-root.Mui-selected': {...glassDropOf(theme), color: paletteOf(theme).text.primary},
+                    '& .MuiTab-root.Mui-selected': accentTabPillOf(theme)
+                        ? {...accentTabPillOf(theme), color: WHITE_LABEL}
+                        : {...glassDropOf(theme), color: paletteOf(theme).text.primary},
                 }),
             },
         },
