@@ -959,6 +959,19 @@ export default Object.freeze({
         "emptyFiltered": "Ninguna tarjeta de aquí coincide con la búsqueda.",
         "empty": "Sin tarjetas. Arrastre una aquí."
     },
+    "sortableTable": {
+        "instructions": "Para mover un renglón con el teclado: espacio para levantarlo, flechas arriba y abajo para moverlo y espacio para soltarlo. Escape lo deja donde estaba.",
+        "handleHeader": "Mover",
+        "handle": "Mover «{{title}}», posición {{position}}",
+        "position": "Orden",
+        "lifted": "Levantó «{{title}}», posición {{position}} de {{total}}.",
+        "moving": "Va a la posición {{position}} de {{total}}.",
+        "dropped": "Soltó «{{title}}» en la posición {{position}} de {{total}}.",
+        "cancelled": "«{{title}}» se quedó en la posición {{position}}.",
+        "reverted": "No se pudo mover «{{title}}»: regresó a la posición {{position}}.",
+        "empty": "Sin renglones.",
+        "noValue": "—"
+    },
     "inbox": {
         "labels": "Etiquetas",
         "select": "Elegir «{{subject}}»",

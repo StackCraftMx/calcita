@@ -1,7 +1,7 @@
 // Las llamadas de la pantalla de sucursales, con los datos ya en la forma de MapView (position como [latitud, longitud]).
 //
 // Funciones que no renderizan: function (regla de la casa).
-import {BRANCH_CITIES, BRANCH_STATUS, createBranch, listBranches} from '@/fakeServer/branchesServer.js';
+import {BRANCH_CITIES, BRANCH_STATUS, createBranch, getDeliveryRoute, listBranches, saveDeliveryRoute} from '@/fakeServer/branchesServer.js';
 
 export {BRANCH_STATUS};
 
@@ -34,4 +34,26 @@ export async function loadBranches(filters, signal) {
 export async function addBranch(values) {
     const {branch, message} = await createBranch(values);
     return {branch: toScreen(branch), message};
+}
+
+/**
+ * La ruta de reparto en la forma de la tabla: cada parada con el id de su sucursal, en su orden.
+ *
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<Array<{id: string, name: string, city: string, orders: number}>>}
+ */
+export async function loadDeliveryRoute(signal) {
+    const stops = await getDeliveryRoute(signal);
+    return stops.map(({branch_id: id, name, city, orders}) => ({id, name, city, orders}));
+}
+
+/**
+ * Guarda el orden de la ruta: cada sucursal con su número de parada (desde 1), como lo pide el API. Si el servidor dice que
+ * no (422), truena con su ApiError: el formulario pone el error abajo de la tabla.
+ *
+ * @param {Array<{id: string}>} stops en su orden nuevo
+ * @returns {Promise<{message: string}>}
+ */
+export function saveRoute(stops) {
+    return saveDeliveryRoute(stops.map((stop, index) => ({branch_id: stop.id, stop: index + 1})));
 }

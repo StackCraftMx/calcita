@@ -20,6 +20,7 @@ import TextFieldsOutlinedIcon from '@mui/icons-material/TextFieldsOutlined';
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
 import TranslateOutlinedIcon from '@mui/icons-material/TranslateOutlined';
 import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined';
+import SwapVertOutlinedIcon from '@mui/icons-material/SwapVertOutlined';
 import ViewQuiltOutlinedIcon from '@mui/icons-material/ViewQuiltOutlined';
 import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined';
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined';
@@ -104,6 +105,7 @@ export function buildMenuItems() {
             {to: BUILT_IN_PATHS.maps, labelKey: 'catalog:nav.maps', Icon: MapOutlinedIcon},
             {to: BUILT_IN_PATHS.calendar, labelKey: 'catalog:nav.calendar', Icon: CalendarMonthOutlinedIcon},
             {to: BUILT_IN_PATHS.kanban, labelKey: 'catalog:nav.kanban', Icon: ViewKanbanOutlinedIcon},
+            {to: BUILT_IN_PATHS.sortable, labelKey: 'catalog:nav.sortable', Icon: SwapVertOutlinedIcon},
             {to: BUILT_IN_PATHS.inbox, labelKey: 'catalog:nav.inbox', Icon: MailOutlineIcon},
             {to: BUILT_IN_PATHS.translations, labelKey: 'catalog:nav.translations', Icon: TranslateOutlinedIcon},
             {to: BUILT_IN_PATHS.themeAndGlass, labelKey: 'catalog:nav.themeAndGlass', Icon: PaletteOutlinedIcon},

@@ -41,6 +41,7 @@ import {
 import {MapView, OPEN_STREET_MAP_TILES, boundsOfMarkers} from '@stackcraftmx/calcita/maps';
 import {CALENDAR_VIEW, EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard, isOverLimit, moveCard} from '@stackcraftmx/calcita/kanban';
+import {FormSortableField, SortableTable, moveRow} from '@stackcraftmx/calcita/sortable';
 import {InboxLayout, MessageList, MessageView, createAccessChecker, useConfirmAction} from '@stackcraftmx/calcita';
 import {facetColumn, textColumn} from '@stackcraftmx/calcita/table';
 import {createElement} from 'react';
@@ -592,6 +593,26 @@ const ownPieceElement = createElement(OwnPiece, {title: 'Hola', slots: {root: 'a
 // @ts-expect-error a la pieza propia le falta su title
 const ownPieceWithoutTitle = createElement(OwnPiece, {slots: {}});
 
-export {cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
+// la tabla que se ordena arrastrando: el renglón de la pantalla (una interfaz) llega tal cual a renderCell y regresa en onReorder
+interface RouteStop {
+    id: string;
+    name: string;
+    orders: number;
+}
+const routeStops: RouteStop[] = [{id: 'centro', name: 'Centro', orders: 412}, {id: 'polanco', name: 'Polanco', orders: 388}];
+const reorderedStops: RouteStop[] = moveRow(routeStops, 0, 1);
+const sortableStops = createElement(SortableTable<RouteStop>, {
+    rows: routeStops, ariaLabel: 'Ruta de reparto', getRowLabel: (stop) => stop.name,
+    columns: [{field: 'name', headerName: 'Sucursal', flex: 1}, {field: 'orders', headerName: 'Pedidos', width: 100, align: 'right', renderCell: (stop) => stop.orders.toFixed(0)}],
+    onReorder: ({rows}) => {
+        const savedOrder: Array<{branch_id: string, stop: number}> = rows.map((stop, index) => ({branch_id: stop.id, stop: index + 1}));
+        return Promise.resolve(savedOrder);
+    },
+});
+const sortableField = createElement(FormSortableField<RouteStop>, {name: 'stops', ariaLabel: 'Ruta de reparto', columns: [{field: 'name', headerName: 'Sucursal'}]});
+// @ts-expect-error align es 'left', 'center' o 'right'
+const wrongSortableAlign = createElement(SortableTable<RouteStop>, {rows: routeStops, ariaLabel: 'Ruta', onReorder: () => undefined, columns: [{field: 'name', headerName: 'Sucursal', align: 'end'}]});
+
+export {reorderedStops, sortableStops, sortableField, wrongSortableAlign, cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, blockedWizard, blockedFormWizard, documentsSection, fixedLabelSection, wrongLabelWidth, postedDownload, batchDownload, wrappedMenuLayout, boundedDrawer, tableDrawerWithCalendar, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
     ProfileHeader, SignInForm, ForgotPasswordForm, ChangePasswordForm, forge, crumbs, topMenu, nextNavigation, AppLayout, PageHeading, dateFormat, travelFormats, zoneName, pickerFields, uploaders, screened, rejectionReason, pdfLook, filePickerHook, copyRow, cleanPhone, remaining, countdownHook, consentHook, smallPieces, isCompany, companyKind, yupRules, invoiceTotal, certificateStatus, mexicoPieces, keyCheck, recordCardPieces, drawerSetup, parsedComparison, drawerPieces, choicePieces, badgePieces, routeTabPieces, activeTabHook, helpHook, helpPieces, repeatingPieces, listRules, splitRule, splitTotal, strictestMinimum, uploadSpeed, ruleChecks, minuteHook, publishPieces, publishEnd, safeLink, emptyHtml, richTextPieces, serverProblemRoot, emailSchema, HookFormTextField, applyToHookForm, DateInput, FormDateField, Formik, FormWizard, attachmentsServer, chunkedServer, chunkedZone, wrongChunkSize, uploadInPieces, miniInPieces, folioOfMini, PondFileDropzone, amount, title, label, headerLength, cancelText, installmentText, wrongFormat, reactRouterNavigation, translateWithI18next, ServerTable, FormTextField, createCsrfRetryHandler};

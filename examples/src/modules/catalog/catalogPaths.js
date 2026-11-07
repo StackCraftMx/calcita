@@ -25,6 +25,7 @@ export const BUILT_IN_PATHS = Object.freeze({
     maps: `${BUILT_IN_ROOT}/maps`,
     calendar: `${BUILT_IN_ROOT}/calendar`,
     kanban: `${BUILT_IN_ROOT}/kanban`,
+    sortable: `${BUILT_IN_ROOT}/sortable`,
     inbox: `${BUILT_IN_ROOT}/inbox`,
     installApp: `${BUILT_IN_ROOT}/install-app`,
     errorsAndLogs: `${BUILT_IN_ROOT}/errors-and-logs`,

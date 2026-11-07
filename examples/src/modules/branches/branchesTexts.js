@@ -3,6 +3,17 @@ export const branchesTexts = {
     es: {
         branches: {
             menu: {label: 'Sucursales', description: 'La lista y el mapa: elija una sucursal y el mapa vuela a ella.'},
+            nav: {ariaLabel: 'Secciones de sucursales', map: 'Mapa', route: 'Ruta de reparto'},
+            route: {
+                title: 'Ruta de reparto',
+                description: 'En qué orden visita el camión las sucursales abiertas. Arrastre un renglón por su asa (o con el teclado: espacio, flechas y espacio) y guarde. El camión sale de la bodega de Ciudad de México.',
+                table: 'Paradas de la ruta de reparto',
+                name: 'Sucursal',
+                city: 'Ciudad',
+                orders: 'Pedidos del mes',
+                save: 'Guardar la ruta',
+                undo: 'Deshacer cambios',
+            },
             page: {
                 title: 'Sucursales',
                 description: 'Elija una sucursal en la lista o pique su alfiler. El color dice su estado; el mapa se acomoda para que se vean todas.',
@@ -33,6 +44,17 @@ export const branchesTexts = {
     en: {
         branches: {
             menu: {label: 'Branches', description: 'The list and the map: choose a branch and the map flies to it.'},
+            nav: {ariaLabel: 'Branch sections', map: 'Map', route: 'Delivery route'},
+            route: {
+                title: 'Delivery route',
+                description: 'The order in which the truck visits the open branches. Drag a row by its handle (or with the keyboard: space, arrows and space) and save. The truck leaves the Mexico City warehouse.',
+                table: 'Delivery route stops',
+                name: 'Branch',
+                city: 'City',
+                orders: 'Orders this month',
+                save: 'Save the route',
+                undo: 'Undo changes',
+            },
             page: {
                 title: 'Branches',
                 description: 'Choose a branch in the list or click its pin. The color says its status; the map fits so all of them show.',

@@ -30,6 +30,7 @@ import {CfdiSummary, EfirmaFields, readCfdi} from '@stackcraftmx/calcita/mexico'
 import {RichTextEditor, RichTextView} from '@stackcraftmx/calcita/rich-text';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
 import {KanbanBoard} from '@stackcraftmx/calcita/kanban';
+import {SortableTable} from '@stackcraftmx/calcita/sortable';
 import {AccountProvider, ProfileScreen, ResetPasswordScreen, SignInScreen} from '@stackcraftmx/calcita/account';
 import {createDemoAccountConnector} from '@stackcraftmx/calcita/account-demo';
 // MapView (/maps) no entra: Leaflet usa window al cargarse; en el servidor se carga aparte (en Next, con ssr: false)
@@ -297,6 +298,12 @@ const CASES = [
         cards: [{id: 'c1', columnId: 'doing', title: 'Cerrar el mes'}, {id: 'c2', columnId: 'doing', title: 'Capacitar'}],
         onMove: () => {}, ariaLabel: 'Tablero',
     }), '2 / 1'],
+    // la tabla que se ordena: el orden 1..n, el asa con el nombre del renglón y el aviso de la lista
+    ['SortableTable con su orden', h(SortableTable, {
+        rows: [{id: 'centro', name: 'Centro'}, {id: 'polanco', name: 'Polanco'}], columns: [{field: 'name', headerName: 'Sucursal', flex: 1}],
+        onReorder: () => {}, ariaLabel: 'Ruta de reparto', error: 'La primera parada sale de la bodega',
+    }), 'Mover «Polanco», posición 2'],
+    ['SortableTable vacía', h(SortableTable, {rows: [], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta'}), 'Sin renglones.'],
     ['EventCalendar', h(EventCalendar, {events: [], ariaLabel: 'Calendario'}), 'Calendario'],
     ['MessageList', h(MessageList, {messages: [INBOX_MESSAGE], onSelect: () => {}}), 'Entrega del lunes'],
     // el texto del mensaje se pinta como texto: las etiquetas salen escapadas
