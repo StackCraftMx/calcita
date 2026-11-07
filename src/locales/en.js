@@ -959,6 +959,19 @@ export default Object.freeze({
         "emptyFiltered": "No card here matches the search.",
         "empty": "No cards. Drag one here."
     },
+    "sortableTable": {
+        "instructions": "To move a row with the keyboard: space to lift it, up and down arrows to move it and space to drop it. Escape leaves it where it was.",
+        "handleHeader": "Move",
+        "handle": "Move “{{title}}”, position {{position}}",
+        "position": "Order",
+        "lifted": "You lifted “{{title}}”, position {{position}} of {{total}}.",
+        "moving": "Going to position {{position}} of {{total}}.",
+        "dropped": "You dropped “{{title}}” in position {{position}} of {{total}}.",
+        "cancelled": "“{{title}}” stayed in position {{position}}.",
+        "reverted": "“{{title}}” could not be moved: it went back to position {{position}}.",
+        "empty": "No rows.",
+        "noValue": "—"
+    },
     "inbox": {
         "labels": "Labels",
         "select": "Select “{{subject}}”",
