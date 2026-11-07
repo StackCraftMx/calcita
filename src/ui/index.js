@@ -38,6 +38,11 @@ export {default as HelpButton} from '@/ui/help/HelpButton.jsx';
 export {HELP_CLOSE_REASON, default as HelpCarouselDialog} from '@/ui/help/HelpCarouselDialog.jsx';
 export {RECORD_CARD_FOOTER_ALIGN, default as RecordCard} from '@/ui/cards/RecordCard.jsx';
 export {default as RecordCardSkeleton} from '@/ui/cards/RecordCardSkeleton.jsx';
+export {default as DashboardSkeleton} from '@/ui/skeletons/DashboardSkeleton.jsx';
+export {default as DefinitionListSkeleton} from '@/ui/skeletons/DefinitionListSkeleton.jsx';
+export {default as DetailHeaderSkeleton} from '@/ui/skeletons/DetailHeaderSkeleton.jsx';
+export {default as SkeletonOverlay} from '@/ui/skeletons/SkeletonOverlay.jsx';
+export {default as TableSkeleton} from '@/ui/skeletons/TableSkeleton.jsx';
 export {useHelpCarousel} from '@/ui/help/useHelpCarousel.js';
 
 // ─── filters ─────────────────────────────────────────────────────────────────

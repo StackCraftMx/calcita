@@ -228,6 +228,9 @@ export default Object.freeze({
             "hideDetails": "Hide details",
             "loading": "Loading"
         },
+        "skeleton": {
+            "loading": "Loading"
+        },
         "actionsMenu": {
             "back": "Back"
         },

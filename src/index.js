@@ -114,6 +114,7 @@ export {
     DefinitionList, DetailHeader, DictionaryText, DocumentTitle, DownloadMenu, FONT_SIZE_LEVELS, FontSizeToggle, FullPageLoader, GlassLensFilter, GlassPanel, HELP_CLOSE_REASON,
     HelpButton, HelpCarouselDialog, ICON_BADGE_CLASSES, ICON_BADGE_VARIANT, IconBadge, LANGUAGES,
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RECORD_CARD_FOOTER_ALIGN, RecordCard, RecordCardSkeleton, RouteTabs,
+    DashboardSkeleton, DefinitionListSkeleton, DetailHeaderSkeleton, SkeletonOverlay, TableSkeleton,
     TREND_DIRECTION,
     PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
     StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher, useHelpCarousel,
