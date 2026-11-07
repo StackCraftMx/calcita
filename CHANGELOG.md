@@ -4,6 +4,16 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.59.0] - 2026-11-06
+
+### Agregado
+
+- `SortableTable` (y `FormSortableField`) trae «Subir» y «Bajar» en cada renglón, para mover sin arrastrar: la regla de
+  accesibilidad lo pide (WCAG 2.5.7). Cada clic mueve el renglón un lugar y guarda igual que soltarlo (en un formulario o al
+  soltar, con su regreso si el servidor dice que no). El primero no sube y el último no baja; el foco se queda en el botón
+  aunque el renglón cambie de lugar (o pasa al de enfrente si llegó a la orilla) y el lector de pantalla dice en qué
+  posición quedó. Salen por omisión; `moveButtons={false}` los quita. Partes nuevas en el tema: `moveCell` y `moveButton`.
+
 ## [0.58.0] - 2026-11-06
 
 ### Agregado
