@@ -290,6 +290,26 @@ const theme = createToolkitTheme({glass: {surfaces: true}});          // tambié
 equipos modestos) y la guía de Apple pide el contenido sin vidrio. Va bien en una portada o una demostración, no en
 pantallas de trabajo.
 
+**Superficie por superficie.** `surfaces` también recibe un objeto con cada superficie que flota (`GLASS_SURFACE`):
+`topBar` (la barra de arriba y su orilla), `tabBar` (la barra de pestañas del teléfono), `sideMenu` (el menú lateral),
+`backdrop` (el velo detrás de cajones y ventanas), `drawers` (los cajones que salen encima), `dialogs` (las ventanas),
+`menus` (lo que se despliega: acciones, la cuenta, listas de `Select`, `Autocomplete`, el calendario, los menús de la
+tabla) y `cards` (el contenido). Lo que no se diga queda de fábrica: todo lo que flota con vidrio y las tarjetas sólidas.
+Una superficie apagada se pinta sólida, como con «Reducir transparencia» (su color, con el aclarado de oscuro, su orilla
+y su sombra), sin desenfoque ni lente, así que el tema del proyecto le gana como a cualquier otra cosa.
+
+```js
+// el vidrio solo en lo que flota encima del contenido; lo que se lee, sólido. El velo es lo que más cuesta: desenfoca la
+// pantalla entera en cada cuadro mientras entra el panel
+const theme = createToolkitTheme({glass: {surfaces: {backdrop: false, drawers: false, dialogs: false, menus: false}}});
+// algo propio que obedece a la misma superficie (un cajón del proyecto, igual que los de MUI)
+<Box sx={(theme) => surfaceStylesOf(theme, GLASS_SURFACE.drawers)} />
+```
+
+Con vidrio, la pestaña elegida de `Tabs` es una gota del color del papel, como el control segmentado de Apple. Sobre un
+papel blanco casi no se distingue cuál es; `glass: {selectedTab: GLASS_SELECTED_TAB.accent}` la pinta del color de la marca
+con el brillo del botón principal y letra blanca (el color se oscurece lo justo para que se lea, como en el botón).
+
 La barra de arriba va sin franja, como las ventanas de macOS Tahoe: la ☰ con el nombre, el menú y la cuenta en cápsulas,
 y el título suelto. Con vidrio las cápsulas son de vidrio y el contenido pasa por debajo, desenfocado en la orilla para
 que todo se lea (`scrollEdgeStylesOf`); con el minimalista son bloques del tono de las tarjetas, también en el teléfono.
@@ -343,6 +363,10 @@ const FIELDS = [
 <ServerTableFilterDrawer fields={FIELDS} width={460} stackPairsBelow={420} drawerProps={{slots: {dateInput: DateInput}}} />
 // o para todas las listas: createTheme({components: {CalcitaFilterDrawer: {defaultProps: {slots: {dateInput: DateInput}}}}})
 ```
+
+La × de cerrar va al principio del encabezado. En el teléfono el cajón ocupa casi toda la pantalla y el pulgar no
+alcanza esa esquina: `closePlacement={FILTER_DRAWER_CLOSE_PLACEMENT.end}` la pasa al final (también en el orden del lector de
+pantalla y del tabulador). Para toda la app, en el tema: `CalcitaFilterDrawer: {defaultProps: {closePlacement: 'end'}}`.
 
 ```jsx
 <BarActions label="Buscar en pedidos" order={1}>
@@ -735,6 +759,10 @@ const columns = [
   `getRowHeight` también acepta `'auto'`. `StackedCell` es la misma celda para un `renderCell` propio.
 - `statusColumn`: el estatus desde su diccionario, con filtro de facetas y, con `t`, el ancho de su etiqueta más larga.
 - `actionsColumn`: el «⋯» de cada renglón en su columna, de ancho fijo.
+- `density`: el aire de los renglones (`TABLE_DENSITY`): `compact` (36 px, de fábrica), `standard` (52) o `comfortable`
+  (67), los del DataGrid. En la compacta, entre el «⋯» de un renglón y el del siguiente quedan 6 px: con el dedo se pica el
+  de al lado. Para toda la app, una vez en el tema: `components: {CalcitaServerTable: {defaultProps: {density: 'standard'}}}`.
+  Sirve también con renglones de dos líneas (`'auto'`), que `getRowHeight` con un número recortaría.
 - `fixedColumn` acepta una lista: cada una se pega donde termina la anterior (las que no son la última llevan `width`).
 - `renderCard`: la misma lista en tarjetas, con la misma búsqueda, filtros, orden y páginas; un botón cambia de vista y con
   `prefix` la vista va en la dirección (`?clientes_view=cards`). `view`, `defaultView`, `onViewChange` y `showViewToggle`
