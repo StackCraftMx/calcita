@@ -786,7 +786,10 @@ const columns = [
 - `density`: el aire de los renglones (`TABLE_DENSITY`): `compact` (36 px, de fábrica), `standard` (52) o `comfortable`
   (67), los del DataGrid. En la compacta, entre el «⋯» de un renglón y el del siguiente quedan 6 px: con el dedo se pica el
   de al lado. Para toda la app, una vez en el tema: `components: {CalcitaServerTable: {defaultProps: {density: 'standard'}}}`.
-  Sirve también con renglones de dos líneas (`'auto'`), que `getRowHeight` con un número recortaría.
+  También con renglones de alto automático (`'auto'`, o una `stackedColumn`), que toman el alto de su contenido: ahí la
+  densidad le pone a cada celda su aire arriba y abajo (8 px la estándar, 16 la cómoda) y, como mínimo, el alto del renglón
+  fijo; un renglón de una línea mide lo mismo con alto fijo que con automático. Un alto fijo con número (`getRowHeight`)
+  recortaría lo que no cabe.
 - `fixedColumn` acepta una lista: cada una se pega donde termina la anterior (las que no son la última llevan `width`).
 - `renderCard`: la misma lista en tarjetas, con la misma búsqueda, filtros, orden y páginas; un botón cambia de vista y con
   `prefix` la vista va en la dirección (`?clientes_view=cards`). `view`, `defaultView`, `onViewChange` y `showViewToggle`
