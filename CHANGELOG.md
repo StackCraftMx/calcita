@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.60.1] - 2026-11-07
+
+### Arreglado
+
+- Cada parte de una pieza escribe su clase fija en el HTML, con el nombre de la pieza y el de la parte, como las de MUI:
+  `CalcitaRecordCard-titles`, `CalcitaAccountMenu-settings`. Antes solo salía la clase `css-…`, que cambia en cada versión,
+  y desde CSS no se le podía atinar a una parte: `:has([class*="CalcitaAccountMenu-settings"])` nunca coincidía. La clase que
+  pase la pantalla (`className` o `slotProps`) se suma. Una parte cambiada por `slots` es del proyecto y no la recibe.
+- Un `Drawer` de MUI que se abre encima (`variant="temporary"`) ya no queda debajo de la barra de `AppLayout`: la barra va
+  en `zIndex.drawer + 1` (encima del menú lateral) y el cajón salía en `drawer`, un punto abajo. Ahora va en `drawer + 2`,
+  todavía debajo de los diálogos, para que una confirmación abierta desde el cajón salga por delante. También arregla el
+  cajón del menú en el teléfono sin vidrio: la barra le tapaba el logo. El cajón de filtros no cambia (ya iba en `modal`).
+
 ## [0.60.0] - 2026-11-07
 
 ### Agregado
