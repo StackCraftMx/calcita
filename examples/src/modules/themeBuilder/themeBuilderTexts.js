@@ -38,6 +38,15 @@ export const themeBuilderTexts = {
                 barBand: 'Franja',
                 barCapsules: 'Cápsulas',
                 glassSurfacesWarning: 'Vidrio también en las tarjetas: pesa más en equipos modestos y la guía de Apple pide el contenido sin vidrio. Úselo en una portada o una demostración, no en pantallas de trabajo.',
+                surfaces: 'Vidrio en cada superficie',
+                surfacesHelp: 'Una superficie sin vidrio se pinta sólida, como con «Reducir transparencia». El velo es el que más cuesta: desenfoca la pantalla entera mientras entra un cajón o una ventana.',
+                surface: {
+                    topBar: 'Barra de arriba', tabBar: 'Barra de pestañas del teléfono', sideMenu: 'Menú lateral', menus: 'Menús y listas',
+                    drawers: 'Cajones', dialogs: 'Ventanas', backdrop: 'Velo detrás de cajones y ventanas',
+                },
+                selectedTab: 'Pestaña elegida',
+                selectedTabDrop: 'Gota',
+                selectedTabAccent: 'Color de la marca',
                 reset: 'Restablecer valores de fábrica',
             },
             preview: {
@@ -104,6 +113,15 @@ export const themeBuilderTexts = {
                 barBand: 'Band',
                 barCapsules: 'Capsules',
                 glassSurfacesWarning: 'Glass on cards too: heavier on modest devices, and Apple\'s guidelines keep content without glass. Use it on a landing page or a demo, not on work screens.',
+                surfaces: 'Glass on each surface',
+                surfacesHelp: 'A surface without glass is painted solid, like with «Reduce transparency». The backdrop costs the most: it blurs the whole screen while a drawer or a window comes in.',
+                surface: {
+                    topBar: 'Top bar', tabBar: 'Phone tab bar', sideMenu: 'Side menu', menus: 'Menus and lists',
+                    drawers: 'Drawers', dialogs: 'Windows', backdrop: 'Backdrop behind drawers and windows',
+                },
+                selectedTab: 'Selected tab',
+                selectedTabDrop: 'Drop',
+                selectedTabAccent: 'Brand color',
                 reset: 'Reset to defaults',
             },
             preview: {

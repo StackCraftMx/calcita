@@ -829,6 +829,7 @@ export const catalogPageTexts = {
                         kinds: 'Los tipos: texto, una o varias opciones, catálogo, casillas, rango de números, de fechas, comparación o uno propio.',
                         keys: 'Los nombres con que viaja un rango (los del backend) y qué operadores se ofrecen.',
                         side: 'De qué lado sale, su ancho, su título y el texto del botón.',
+                        closePlacement: 'La × de cerrar al principio (de fábrica) o al final del encabezado, donde la alcanza el pulgar en el teléfono. Cambia el orden también para el lector de pantalla y el tabulador.',
                         table: 'El botón «Filtros (N)» con su cajón, conectado a los filtros de la tabla.',
                         setup: 'Lo que la tabla necesita de los campos: sus valores vacíos, sus tipos y sus chips.',
                         custom: 'Un campo propio dentro del cajón. Recibe todo el borrador para acotar un campo con otro.',
@@ -856,8 +857,16 @@ export const catalogPageTexts = {
                         theme: 'Las partes en el tema: la lista de tarjetas (en dos columnas, por ejemplo), el botón y la celda de datos apilados.',
                     },
                 },
+                density: {
+                    title: '5. El aire de los renglones',
+                    description: 'Compacta (de fábrica), estándar o cómoda: los altos del DataGrid (36, 52 y 67 px). En la compacta, entre el «⋯» de un renglón y el del siguiente quedan 6 px y con el dedo se pica el de al lado. Pruebe las tres y mire el espacio entre los «⋯».',
+                    extend: {
+                        prop: 'El aire de esta tabla. También sirve con renglones de dos líneas, que un alto fijo (getRowHeight) recortaría.',
+                        theme: 'Para todas las tablas de la app, una vez en el tema, en lugar de repetirlo en cada pantalla.',
+                    },
+                },
                 api: {
-                    title: '5. Conectarla a su API',
+                    title: '6. Conectarla a su API',
                     description: 'La tabla le dice qué página, qué filtros y qué orden quiere; usted lo manda a su API y regresa los renglones con el total. toServerTableParams lo convierte a lo que espera un backend como el de Laravel (la página desde 1, los filtros vacíos no viajan).',
                     extend: {
                         fetchPage: 'Cómo pedir una página. Recibe lo que pide la tabla y una señal que cancela la consulta anterior si la persona sigue escribiendo.',
@@ -1751,6 +1760,7 @@ export const catalogPageTexts = {
                         panelSx: 'Sus estilos (se suman y ganan) y qué etiqueta HTML es.',
                         glassStyles: 'El vidrio para un componente suyo: glassStylesOf para lo que flota, materialStylesOf para el contenido.',
                         isGlass: 'Saber si el tema trae vidrio, para decidir algo propio.',
+                        surfaceStyles: 'Algo suyo que obedece a una superficie del tema: de vidrio si esa superficie lo trae y sólido si el proyecto la apagó.',
                     },
                 },
                 setup: {
@@ -1759,6 +1769,8 @@ export const catalogPageTexts = {
                     extend: {
                         colors: 'Sus colores en claro y en oscuro (de cada uno, el principal); solo claro con {light: true}.',
                         glass: 'Vidrio líquido en lo que flota; con opacity, más o menos transparente; con surfaces, también en las tarjetas.',
+                        glassSurfaces: 'Superficie por superficie: topBar, tabBar, sideMenu, backdrop, drawers, dialogs, menus y cards. Lo que no se diga queda de fábrica (todo lo que flota de vidrio, las tarjetas sólidas). Una apagada se pinta sólida, como con «Reducir transparencia», y el tema del proyecto le gana sin pelear.',
+                        selectedTab: 'La pestaña elegida del color de la marca, con el brillo del botón principal, en lugar de la gota del color del papel.',
                         look: 'El estilo: el de Stackcraft (por omisión) o el minimalista (sin bordes ni sombras).',
                         pieces: 'Todas las piezas de Calcita, como las de MUI: con su nombre en el tema (CalcitaAppLayout, CalcitaServerTable, CalcitaMetricCard…; la lista con sus partes está en el README), estilos de cada parte y props por omisión. Gana lo del proyecto; también con el tema que ya tenía su sistema.',
                         fields: 'Cómo se ven los campos de captura, por modo: el relleno, el relleno con el cursor encima, la orilla y la orilla con el cursor encima; y sus esquinas. Vale con vidrio, con el minimalista y dentro de FormSection; también se escribe en la paleta (palette.field).',
@@ -3099,6 +3111,7 @@ export const catalogPageTexts = {
                         kinds: 'The kinds: text, one or several options, catalog, checkboxes, number range, date range, comparison or your own.',
                         keys: 'The names a range travels with (the backend ones) and which operators are offered.',
                         side: 'Which side it slides from, its width, its title and the button text.',
+                        closePlacement: 'The close × at the start (default) or at the end of the header, where the thumb reaches it on the phone. It also changes the order for screen readers and the Tab key.',
                         table: 'The «Filters (N)» button with its drawer, connected to the table filters.',
                         setup: 'What the table needs from the fields: their empty values, their kinds and their chips.',
                         custom: 'Your own field inside the drawer. It gets the whole draft to limit one field with another.',
@@ -3126,8 +3139,16 @@ export const catalogPageTexts = {
                         theme: 'The parts in the theme: the card list (in two columns, for example), the button and the stacked cell.',
                     },
                 },
+                density: {
+                    title: '5. Row spacing',
+                    description: 'Compact (default), standard or comfortable: the DataGrid heights (36, 52 and 67 px). In compact, there are 6 px between one row «⋯» and the next, and with a finger you tap the wrong one. Try the three and look at the space between the «⋯».',
+                    extend: {
+                        prop: 'The spacing of this table. It also works with two-line rows, which a fixed height (getRowHeight) would cut.',
+                        theme: 'For every table in the app, once in the theme, instead of repeating it on each screen.',
+                    },
+                },
                 api: {
-                    title: '5. Connect it to your API',
+                    title: '6. Connect it to your API',
                     description: 'The table tells you which page, filters and order it wants; you send it to your API and return the rows with the total. toServerTableParams converts it to what a backend like Laravel expects (page from 1, empty filters do not travel).',
                     extend: {
                         fetchPage: 'How to request a page. It receives what the table asks for and a signal that cancels the previous request if the person keeps typing.',
@@ -4021,6 +4042,7 @@ export const catalogPageTexts = {
                         panelSx: 'Your styles (they add up and win) and which HTML tag it is.',
                         glassStyles: 'Glass for your own component: glassStylesOf for what floats, materialStylesOf for content.',
                         isGlass: 'Know whether the theme has glass, to decide something of your own.',
+                        surfaceStyles: 'Something of yours that follows a theme surface: glass if that surface has it and solid if the project turned it off.',
                     },
                 },
                 setup: {
@@ -4029,6 +4051,8 @@ export const catalogPageTexts = {
                     extend: {
                         colors: 'Your colors in light and dark (the main one of each); light only with {light: true}.',
                         glass: 'Liquid glass on what floats; with opacity, more or less transparent; with surfaces, also on cards.',
+                        glassSurfaces: 'Surface by surface: topBar, tabBar, sideMenu, backdrop, drawers, dialogs, menus and cards. Whatever is not said stays as shipped (everything that floats in glass, cards solid). One turned off is painted solid, like with «Reduce transparency», and the project theme wins over it without a fight.',
+                        selectedTab: 'The selected tab in the brand color, with the main button sheen, instead of the paper-colored drop.',
                         look: 'The style: Stackcraft’s (default) or the minimal one (no borders or shadows).',
                         pieces: 'Every Calcita piece, like MUI ones: by its name in the theme (CalcitaAppLayout, CalcitaServerTable, CalcitaMetricCard…; the list with their parts is in the README), styles per part and default props. Your project wins; also with the theme your system already had.',
                         fields: 'How the input fields look, per mode: the fill, the fill on hover, the edge and the edge on hover; and their corners. It applies with glass, with the minimal style and inside FormSection; it can also go in the palette (palette.field).',

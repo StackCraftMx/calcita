@@ -18,9 +18,12 @@
 //     antes era un botón montado en la orilla del menú y se encimaba con él.
 //   - El título de la página sube a la barra cuando su título grande sale de la vista (pageTitle.jsx).
 //   - Escritorio y teléfono se eligen con CSS, no con useMediaQuery: el servidor (Next.js) ya pinta lo correcto.
-//   - Dentro de la barra, para que se queden pegados al deslizar: los avisos del proyecto (ribbons), el de versión nueva
-//     (NewBuildNotice; con vidrio flota aparte en su cápsula, ver NewBuildNotice.jsx) y la rayita de «cargando la pantalla»
-//     (isNavigating). La barra publica su alto real, y el menú lateral empieza justo debajo de ella aunque crezca con un aviso.
+//   - Dentro de la barra, para que se queden pegados al deslizar: los avisos del proyecto (ribbons) y el de versión nueva
+//     (NewBuildNotice; con vidrio flota aparte en su cápsula, ver NewBuildNotice.jsx). La barra publica su alto real, y el
+//     menú lateral empieza justo debajo de ella aunque crezca con un aviso.
+//   - La rayita de «cargando la pantalla» (isNavigating) va hasta arriba de la página, de orilla a orilla y encima de todo,
+//     del color de la marca: así la ven con cualquier barra (en cápsulas casi no se veía en la orilla de abajo de la barra) y
+//     en el teléfono, donde la barra de arriba va escondida y no salía nada.
 //   - Con vidrio, en el teléfono la barra flota ABAJO en una cápsula, como la de Safari en el iPhone; y en escritorio, con
 //     el menú encogido, la barra desaparece y se funde con el menú (☰ y logo arriba, ajustes y cuenta abajo).
 //   - El primer Tab lleva a «Saltar al contenido» (WCAG 2.4.1) y el contenido es <main>. Respeta el área segura del
@@ -85,7 +88,7 @@ import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotic
 import {activeMenuItemOf, menuItemsWithIconsOf} from '@/navigation/appMenu.js';
 import {useNavigationTrail} from '@/navigationTrail.js';
 import {THEME_LOOK, TOP_BAR} from '@/theme/createToolkitTheme.js';
-import {PANEL_RADIUS, ambientBackgroundOf, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
+import {GLASS_SURFACE, PANEL_RADIUS, ambientBackgroundOf, hasGlassSurface, isGlassTheme, scrollEdgeStylesOf} from '@/theme/glassSurface.js';
 import GlassLensFilter from '@/ui/layout/GlassLensFilter.jsx';
 import {APP_BAR_HEIGHT, useAppBarHeightPublisher} from '@/ui/layout/appBarHeight.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
@@ -123,7 +126,8 @@ const LayoutPhoneDrawer = piecePart(THEME_NAME, 'PhoneDrawer', Drawer);
 /** Los dos estilos de barra. */
 export const MENU_POSITION = Object.freeze({side: 'side', top: 'top'});
 
-const NAVIGATING_BAR_PIXELS = 2;
+// lo grueso de la rayita de «cargando la pantalla» (px): visible en la orilla de arriba sin tapar nada
+const NAVIGATING_BAR_PIXELS = 3;
 
 /**
  * Un grupo de la barra: con la barra en cápsulas, su cápsula (BarCapsule: de vidrio, o con el minimalista un bloque del
@@ -285,6 +289,8 @@ const AppLayoutFrame = ({
                 <LayoutScrollEdge aria-hidden="true"
                      ownSx={(theme) => ({
                          ...scrollEdgeStylesOf(theme), display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'block'},
+                         // sin el vidrio de la barra (glass.surfaces.topBar: false) la orilla solo se desvanece, sin desenfoque
+                         ...(!hasGlassSurface(theme, GLASS_SURFACE.topBar) && {backdropFilter: 'none', WebkitBackdropFilter: 'none'}),
                          position: 'fixed', top: 0, left: 0, right: 0, height: `calc(${APP_BAR_HEIGHT} + ${panelGap}px)`,
                          zIndex: theme.zIndex.drawer - 1, pointerEvents: 'none',
                      })} />
@@ -356,11 +362,18 @@ const AppLayoutFrame = ({
                 {/* con la barra de pestañas el aviso de versión nueva flota aparte, en su cápsula (en el teléfono esta barra no
                     se ve); sin ella, franja dentro de la barra */}
                 {!usesTabBar && <NewBuildNotice />}
-                {isNavigating && (
-                    <LayoutProgress aria-label={t('navigating')} color="inherit"
-                                    ownSx={{position: 'absolute', bottom: 0, left: 0, right: 0, height: NAVIGATING_BAR_PIXELS}} />
-                )}
             </LayoutBar>
+            {/* la pantalla siguiente se está descargando: la rayita hasta arriba, encima de todo (ver el encabezado) */}
+            {isNavigating && (
+                <LayoutProgress aria-label={t('navigating')} color="primary"
+                                ownSx={(theme) => ({
+                                    position: 'fixed', top: 'env(safe-area-inset-top, 0px)', left: 0, right: 0, zIndex: theme.zIndex.tooltip + 1,
+                                    // una línea sin carril, como las de carga de siempre. OJO: con dos clases, porque con vidrio el
+                                    // tema le pone a toda barra de progreso una cápsula de 6 px con carril gris y le ganaba
+                                    '&.MuiLinearProgress-root': {height: NAVIGATING_BAR_PIXELS, borderRadius: 0, backgroundColor: 'transparent'},
+                                    '& .MuiLinearProgress-bar': {borderRadius: 0},
+                                })} />
+            )}
             {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}

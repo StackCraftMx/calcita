@@ -41,7 +41,8 @@ const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
  * @param {string} [props.buttonLabel] ya traducido; por omisión «Filtros» (con los puestos, «Filtros (3)»)
  * @param {(values: Record<string, unknown>) => void} [props.onApply] aviso de lo que se buscó (la tabla ya se filtró)
  * @param {number} [props.stackPairsBelow] en px: si el cajón mide menos, cada par («desde» y «hasta») va uno arriba del otro
- * @param {object} [props.drawerProps] lo demás de FilterDrawer: slots (dateInput, body…), slotProps, applyLabel, closeOnApply
+ * @param {object} [props.drawerProps] lo demás de FilterDrawer: slots (dateInput, body…), slotProps, applyLabel, closeOnApply,
+ *     closePlacement
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos del cajón
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
  */

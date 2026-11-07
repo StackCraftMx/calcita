@@ -50,6 +50,11 @@ import {todayInZone} from '@/ui/metrics/heatmapScale.js';
 
 /** De qué lado sale el cajón. */
 export const FILTER_DRAWER_ANCHOR = Object.freeze({left: 'left', right: 'right'});
+/**
+ * Dónde va la × de cerrar en el encabezado: al principio (start, de fábrica, antes del título) o al final (end). En el
+ * teléfono el cajón ocupa casi toda la pantalla y, con la mano derecha, el pulgar no alcanza la esquina de la izquierda.
+ */
+export const FILTER_DRAWER_CLOSE_PLACEMENT = Object.freeze({start: 'start', end: 'end'});
 const DEFAULT_WIDTH = 380;
 // «Cualquiera» de una lista de una sola opción: no es una opción y viaja como '' (sin filtro)
 const ANY_OPTION = '__calcita_any__';
@@ -186,6 +191,8 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
  * @param {Record<string, unknown>} props.values los filtros puestos hoy (de ahí sale el borrador al abrir)
  * @param {(values: Record<string, unknown>) => void} props.onApply todos los campos del cajón juntos, al picar «Buscar»
  * @param {'left'|'right'} [props.anchor] de qué lado sale (FILTER_DRAWER_ANCHOR); por omisión la derecha
+ * @param {'start'|'end'} [props.closePlacement] dónde va la × de cerrar (FILTER_DRAWER_CLOSE_PLACEMENT); por omisión al
+ *     principio. Para toda la app, en el tema: components.CalcitaFilterDrawer.defaultProps.closePlacement
  * @param {number} [props.width] su ancho en escritorio, en px
  * @param {string} [props.title] ya traducido; por omisión «Filtros»
  * @param {string} [props.applyLabel] ya traducido; por omisión «Buscar»
@@ -198,7 +205,7 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
 function FilterDrawerContent(props) {
     const {
         open, onClose, fields, values, onApply, anchor = FILTER_DRAWER_ANCHOR.right, width = DEFAULT_WIDTH, title, applyLabel,
-        closeOnApply = true, stackPairsBelow, children, texts,
+        closeOnApply = true, stackPairsBelow, children, texts, closePlacement = FILTER_DRAWER_CLOSE_PLACEMENT.start,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -221,6 +228,10 @@ function FilterDrawerContent(props) {
     // lo que está mal en una llave, ya dicho (con la fecha del tope que se pasó)
     const errorOf = (key) => (problems[key] ? t(`filterDrawer.${problems[key].problem}`, {date: formatDate(problems[key].date)}) : undefined);
     const setValue = (key, value) => setDraft((current) => ({...current, [key]: value}));
+    const isCloseAtEnd = closePlacement === FILTER_DRAWER_CLOSE_PLACEMENT.end;
+    const closeButton = (
+        <IconButton aria-label={t('filterDrawer.close')} onClick={onClose} edge={isCloseAtEnd ? 'end' : 'start'}><CloseRoundedIcon /></IconButton>
+    );
     const apply = () => {
         onApply(draft);
         if (closeOnApply) {
@@ -247,8 +258,11 @@ function FilterDrawerContent(props) {
                      }
                  }}>
                 <FilterDrawerHeader direction="row" ownSx={{alignItems: 'center', gap: 1, px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider'}}>
-                    <IconButton aria-label={t('filterDrawer.close')} onClick={onClose} edge="start"><CloseRoundedIcon /></IconButton>
+                    {/* la × va antes o después del título en el HTML (no solo a la vista): el lector de pantalla y el tabulador la
+                        encuentran en el mismo orden en que se ve */}
+                    {!isCloseAtEnd && closeButton}
                     <Typography id={titleId} variant="h6" component="h2" sx={{flexGrow: 1}}>{title ?? t('filterDrawer.title')}</Typography>
+                    {isCloseAtEnd && closeButton}
                 </FilterDrawerHeader>
                 <FilterDrawerBody spacing={1} ownSx={{flex: 1, overflowY: 'auto', px: 2.5, py: 2}}>
                     {fields.map((field) => (

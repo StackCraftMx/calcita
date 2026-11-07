@@ -19,6 +19,8 @@ import Paper from '@mui/material/Paper';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import {ThemeProvider} from '@mui/material/styles';
 import DownloadOutlinedIcon from '@mui/icons-material/DownloadOutlined';
@@ -29,7 +31,9 @@ import {
 } from '@stackcraftmx/calcita';
 
 import {GLASS_MODES, STACKCRAFT_COLORS, THEME_COLOR_KEYS, paletteWithColors, useAppThemeChoice} from '@/core';
-import {THEME_BAR, THEME_GLASS, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
+import {
+    THEME_BAR, THEME_FLOATING_SURFACES, THEME_GLASS, THEME_SELECTED_TAB, glassOptionOf, themeCodeOf,
+} from '@/modules/themeBuilder/themeCode.js';
 
 const PREVIEW_MODES = Object.freeze({light: 'light', dark: 'dark'});
 const CODE_LANGUAGES = Object.freeze({js: 'js', ts: 'ts'});
@@ -60,6 +64,10 @@ const PreviewContent = () => {
         <Stack spacing={2.5}>
             <SegmentedControl ariaLabel={t('preview.title')} value={tab} onChange={setTab}
                               options={['orders', 'customers', 'reports'].map((key) => ({value: key, label: t(`preview.tabs.${key}`)}))} />
+            {/* las pestañas de MUI: aquí se ve la pestaña elegida (la gota o el color de la marca) */}
+            <Tabs value={tab} onChange={(event, nextTab) => setTab(nextTab)} aria-label={t('look.selectedTab')}>
+                {['orders', 'customers', 'reports'].map((key) => <Tab key={key} value={key} label={t(`preview.tabs.${key}`)} />)}
+            </Tabs>
             <Stack direction="row" spacing={1} useFlexGap sx={{flexWrap: 'wrap'}}>
                 <Button variant="contained">{t('preview.save')}</Button>
                 <Button variant="outlined">{t('preview.cancel')}</Button>
@@ -102,6 +110,14 @@ export const ThemeBuilderPage = () => {
     const setLook = (nextLook) => setGlassMode(nextLook === THEME_LOOK.minimal ? GLASS_MODES.minimal : GLASS_MODES.floating);
     const setColors = (update) => setThemeChoices((current) => ({...current, colors: update(current.colors)}));
     const setCornerRadius = (nextRadius) => setThemeChoices((current) => ({...current, cornerRadius: nextRadius}));
+    // las superficies sin vidrio y la pestaña elegida (se ven en toda la app y van al código)
+    const surfacesOff = themeChoices.surfacesOff ?? [];
+    const selectedTab = themeChoices.selectedTab ?? THEME_SELECTED_TAB.drop;
+    const toggleSurface = (surface, isGlass) => setThemeChoices((current) => {
+        const currentOff = current.surfacesOff ?? [];
+        return {...current, surfacesOff: isGlass ? currentOff.filter((name) => name !== surface) : [...currentOff, surface]};
+    });
+    const setSelectedTab = (nextTab) => setThemeChoices((current) => ({...current, selectedTab: nextTab}));
     const [previewMode, setPreviewMode] = useState(PREVIEW_MODES.light);
     const [codeLanguage, setCodeLanguage] = useState(CODE_LANGUAGES.js);
 
@@ -112,12 +128,13 @@ export const ThemeBuilderPage = () => {
         colorSchemes: {[previewMode]: {palette: {
             ...paletteWithColors(isDarkPreview ? stackcraftDarkPalette : stackcraftLightPalette, colors, isDarkPreview), mode: previewMode,
         }}},
-        glass: glassOptionOf(glass),
+        glass: glassOptionOf(glass, {surfacesOff, selectedTab}),
         look,
         bar,
         overrides: {cssVariables: false, defaultColorScheme: previewMode, shape: {borderRadius: cornerRadius}},
-    }), [colors, glass, bar, look, cornerRadius, previewMode, isDarkPreview]);
-    const code = themeCodeOf({colors, glass, cornerRadius, look, bar}, codeLanguage === CODE_LANGUAGES.ts);
+    }), [colors, glass, bar, look, cornerRadius, previewMode, isDarkPreview, surfacesOff, selectedTab]);
+    const code = themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff, selectedTab}, codeLanguage === CODE_LANGUAGES.ts);
+    const hasGlassChoices = !isMinimal && glass !== THEME_GLASS.off;
 
     return (
         <Stack spacing={3}>
@@ -159,6 +176,28 @@ export const ThemeBuilderPage = () => {
                         )}
                         {/* las tarjetas de vidrio se permiten, pero con su advertencia (también sale en la consola del proyecto) */}
                         {!isMinimal && glass === THEME_GLASS.surfaces && <Alert severity="warning">{t('look.glassSurfacesWarning')}</Alert>}
+                        {/* cada superficie que flota con su interruptor (glass.surfaces) y la pestaña elegida (glass.selectedTab) */}
+                        {hasGlassChoices && (
+                            <FormRow label={t('look.surfaces')}>
+                                <Stack>
+                                    {THEME_FLOATING_SURFACES.map((surface) => (
+                                        <FormControlLabel key={surface} label={t(`look.surface.${surface}`)}
+                                                          control={<Switch checked={!surfacesOff.includes(surface)}
+                                                                           onChange={(event) => toggleSurface(surface, event.target.checked)} />} />
+                                    ))}
+                                    <Typography variant="caption" color="text.secondary">{t('look.surfacesHelp')}</Typography>
+                                </Stack>
+                            </FormRow>
+                        )}
+                        {hasGlassChoices && (
+                            <FormRow label={t('look.selectedTab')}>
+                                <SegmentedControl ariaLabel={t('look.selectedTab')} value={selectedTab} onChange={setSelectedTab}
+                                                  options={[
+                                                      {value: THEME_SELECTED_TAB.drop, label: t('look.selectedTabDrop')},
+                                                      {value: THEME_SELECTED_TAB.accent, label: t('look.selectedTabAccent')},
+                                                  ]} />
+                            </FormRow>
+                        )}
                         <FormRow label={t('look.corners')}>
                             <Stack direction="row" spacing={2} sx={{alignItems: 'center', minHeight: 40}}>
                                 <Slider value={cornerRadius} min={CORNER_RADIUS.min} max={CORNER_RADIUS.max} step={1} aria-label={t('look.corners')}

@@ -42,7 +42,7 @@ export {useHelpCarousel} from '@/ui/help/useHelpCarousel.js';
 
 // ─── filters ─────────────────────────────────────────────────────────────────
 export {default as DateRangeFilter} from '@/ui/filters/DateRangeFilter.jsx';
-export {FILTER_DRAWER_ANCHOR, default as FilterDrawer} from '@/ui/filters/FilterDrawer.jsx';
+export {FILTER_DRAWER_ANCHOR, FILTER_DRAWER_CLOSE_PLACEMENT, default as FilterDrawer} from '@/ui/filters/FilterDrawer.jsx';
 export {
     COMPARISON_OPERATOR, FILTER_FIELD_KIND, activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, filterDrawerChipsOf,
     filterDrawerDefaultsOf, filterDrawerKindsOf, filterKeysOf,

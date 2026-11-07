@@ -5,6 +5,8 @@
 //   const theme = createToolkitTheme({glass: true});                     // con vidrio líquido en lo que flota
 //   const theme = createToolkitTheme({glass: {opacity: 0.7}});           // con vidrio más transparente (por omisión 0.8)
 //   const theme = createToolkitTheme({glass: {surfaces: true}});         // también las tarjetas del contenido (con advertencia)
+//   const theme = createToolkitTheme({glass: {surfaces: {backdrop: false, drawers: false}}});  // superficie por superficie
+//   const theme = createToolkitTheme({glass: {selectedTab: GLASS_SELECTED_TAB.accent}});      // la pestaña elegida de color
 //   const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});  // la barra de arriba en franja (por omisión, cápsulas)
 //   const theme = createToolkitTheme({colorSchemes: {light: {palette: {primary: {main: '#0B5FFF'}}}, dark: {...}}});
 //
@@ -26,7 +28,7 @@
 import {createTheme, responsiveFontSizes} from '@mui/material/styles';
 
 import {glassComponents} from '@/theme/components/glassComponents.js';
-import {GLASS_OPACITY} from '@/theme/glassSurface.js';
+import {DEFAULT_GLASS_SURFACES, GLASS_OPACITY, GLASS_SELECTED_TAB} from '@/theme/glassSurface.js';
 import {mergeComponents} from '@/theme/mergeComponents.js';
 import {stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 import {trackingOf} from '@/theme/appleTracking.js';
@@ -59,10 +61,33 @@ export const THEME_LOOK = Object.freeze({standard: 'standard', minimal: 'minimal
 export const TOP_BAR = Object.freeze({band: 'band', capsules: 'capsules'});
 
 /**
- * Lo que pidió el proyecto del vidrio, ya revisado: false (sin vidrio) o {opacity, surfaces}.
+ * El vidrio de cada superficie: `surfaces: true` (lo de antes) suma las tarjetas a lo de fábrica; un objeto prende o apaga
+ * cada una y lo que no diga queda de fábrica (DEFAULT_GLASS_SURFACES). Un nombre mal escrito truena: se perdía sin avisar.
  *
- * @param {boolean|{opacity?: number, surfaces?: boolean}} glass
- * @returns {false|{opacity: number, surfaces: boolean}}
+ * @param {boolean|Record<string, boolean>|undefined} surfaces
+ * @returns {Record<string, boolean>}
+ */
+function glassSurfacesOf(surfaces) {
+    if (!surfaces || typeof surfaces !== 'object') {
+        return {...DEFAULT_GLASS_SURFACES, cards: Boolean(surfaces)};
+    }
+    Object.entries(surfaces).forEach(([surface, isGlass]) => {
+        if (!(surface in DEFAULT_GLASS_SURFACES)) {
+            throw new RangeError(`createToolkitTheme: glass.surfaces no conoce «${surface}» (son ${Object.keys(DEFAULT_GLASS_SURFACES).join(', ')}).`);
+        }
+        if (typeof isGlass !== 'boolean') {
+            throw new TypeError(`createToolkitTheme: glass.surfaces.${surface} va con true o false (llegó ${isGlass}).`);
+        }
+    });
+    return {...DEFAULT_GLASS_SURFACES, ...surfaces};
+}
+
+/**
+ * Lo que pidió el proyecto del vidrio, ya revisado: false (sin vidrio) o {opacity, surfaces, bySurface}. `surfaces` sigue
+ * diciendo si las tarjetas van de vidrio (lo lee ServerTable); `bySurface`, cada superficie (hasGlassSurface).
+ *
+ * @param {boolean|{opacity?: number, surfaces?: boolean|Record<string, boolean>}} glass
+ * @returns {false|{opacity: number, surfaces: boolean, bySurface: Record<string, boolean>}}
  */
 function glassSettingsOf(glass) {
     if (!glass) {
@@ -74,7 +99,8 @@ function glassSettingsOf(glass) {
     if (typeof opacity !== 'number' || opacity < 0 || opacity > 1) {
         throw new RangeError(`createToolkitTheme: glass.opacity va de 0 a 1 (llegó ${opacity}).`);
     }
-    const surfaces = Boolean(requested.surfaces);
+    const bySurface = glassSurfacesOf(requested.surfaces);
+    const surfaces = bySurface.cards;
     // se permite, pero con advertencia: la guía de Apple pide el contenido sin vidrio y cada tarjeta desenfoca lo de atrás
     if (surfaces && !hasWarnedAboutGlassSurfaces) {
         hasWarnedAboutGlassSurfaces = true;
@@ -82,7 +108,12 @@ function glassSettingsOf(glass) {
             + 'y la guía de Apple no lo recomienda («no use Liquid Glass en la capa del contenido»). Úselo en una portada o una '
             + 'demostración, no en pantallas de trabajo.');
     }
-    return {opacity, surfaces};
+    // la pestaña elegida: la gota de vidrio (de fábrica) o el color de la marca (GLASS_SELECTED_TAB)
+    const selectedTab = requested.selectedTab ?? GLASS_SELECTED_TAB.drop;
+    if (!Object.values(GLASS_SELECTED_TAB).includes(selectedTab)) {
+        throw new RangeError(`createToolkitTheme: glass.selectedTab es '${GLASS_SELECTED_TAB.drop}' o '${GLASS_SELECTED_TAB.accent}' (llegó ${selectedTab}).`);
+    }
+    return {opacity, surfaces, bySurface, selectedTab};
 }
 
 /** Las variables CSS del proyecto declaradas en :root (con el CssBaseline de MUI); sin valores, nada. */
@@ -97,9 +128,12 @@ function cssTokenComponentsOf(cssTokens) {
  *     Stackcraft; true: los de MUI tal cual
  * @param {'class'|'data'|'media'|string} [options.colorSchemeSelector] cómo se elige el modo; por omisión 'class'
  * @param {string} [options.fontFamily] por omisión la letra del sistema
- * @param {boolean|{opacity?: number, surfaces?: boolean}} [options.glass] vidrio líquido en lo que flota y en los
- *     controles; por omisión no. Con {opacity} se elige qué tan opaco (0 a 1; por omisión GLASS_OPACITY, 0.6) y con
- *     {surfaces: true} también las tarjetas del contenido (por omisión sólidas, como pide la guía; avisa en consola)
+ * @param {boolean|{opacity?: number, surfaces?: boolean|{topBar?: boolean, tabBar?: boolean, sideMenu?: boolean, backdrop?: boolean, drawers?: boolean, dialogs?: boolean, menus?: boolean, cards?: boolean}, selectedTab?: 'drop'|'accent'}} [options.glass]
+ *     vidrio líquido en lo que flota y en los controles; por omisión no. Con {opacity} se elige qué tan opaco (0 a 1; por
+ *     omisión GLASS_OPACITY, 0.6); con {surfaces: true} también las tarjetas del contenido (por omisión sólidas, como pide
+ *     la guía; avisa en consola) y con {surfaces: {…}} cada superficie por su nombre (GLASS_SURFACE; lo que no se diga
+ *     queda de fábrica: todo lo que flota con vidrio, las tarjetas sólidas). Con {selectedTab: 'accent'} la pestaña
+ *     elegida va del color de la marca en lugar de la gota (GLASS_SELECTED_TAB)
  * @param {'standard'|'minimal'} [options.look] el estilo (THEME_LOOK): el de Stackcraft (por omisión) o el minimalista,
  *     plano y tonal (sin bordes ni sombras: las superficies se separan por su tono; sin vidrio aunque se pida)
  * @param {'capsules'|'band'} [options.bar] la barra de arriba con vidrio o con el minimalista (TOP_BAR): por omisión en

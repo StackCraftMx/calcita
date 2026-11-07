@@ -245,6 +245,85 @@ export function glassStylesOf(theme, {color, darkColor, opacity, isControl = fal
 }
 
 /**
+ * Las superficies de vidrio que el proyecto prende o apaga una por una: createToolkitTheme({glass: {surfaces: {…}}}).
+ *   - topBar: la barra de arriba (sus cápsulas o su franja) y la orilla que desenfoca lo que pasa por debajo;
+ *   - tabBar: la barra de pestañas del teléfono;
+ *   - sideMenu: el menú lateral fijo (y cualquier Drawer permanent o persistent);
+ *   - backdrop: el velo detrás de un diálogo o un cajón. Es la superficie más grande y la única que se anima: desenfoca la
+ *     pantalla entera en cada cuadro mientras el panel entra y sale;
+ *   - drawers: los cajones que salen encima (Drawer temporary: el de filtros, el «Más» del teléfono);
+ *   - dialogs: las ventanas (Dialog, y el calendario en el teléfono);
+ *   - menus: lo que se despliega (Popover y Menu: acciones, la cuenta, las listas de Select; Autocomplete, el calendario
+ *     de escritorio, los menús y paneles de la tabla);
+ *   - cards: el contenido (tarjetas, acordeón, avisos, la tabla). Es el `surfaces: true` de antes.
+ * Lo demás (tooltips, avisos, el botón flotante, los controles) sigue la regla del tema.
+ */
+export const GLASS_SURFACE = Object.freeze({
+    topBar: 'topBar', tabBar: 'tabBar', sideMenu: 'sideMenu', backdrop: 'backdrop', drawers: 'drawers', dialogs: 'dialogs', menus: 'menus', cards: 'cards',
+});
+
+/**
+ * La pestaña elegida (Tabs) con vidrio: la gota (drop, de fábrica: una pastilla del color del papel con su sombra, como el
+ * control segmentado de Apple) o el color de la marca con el brillo del botón principal (accent). La gota sobre un papel
+ * blanco casi no se distingue (lo reportaron: 1.99 : 1 contra el papel); con la marca se sabe de lejos cuál es.
+ */
+export const GLASS_SELECTED_TAB = Object.freeze({drop: 'drop', accent: 'accent'});
+
+/**
+ * Cómo viene cada superficie si el proyecto no dice nada: vidrio en todo lo que flota y el contenido sólido, lo que pide la
+ * guía de Apple («Don't use Liquid Glass in the content layer», HIG «Materials»; las barras y los «sidebars» sí van de
+ * vidrio).
+ */
+export const DEFAULT_GLASS_SURFACES = Object.freeze({
+    topBar: true, tabBar: true, sideMenu: true, backdrop: true, drawers: true, dialogs: true, menus: true, cards: false,
+});
+
+/**
+ * Si una superficie va de vidrio en este tema: el vidrio prendido y la superficie no apagada por el proyecto.
+ *
+ * @param {object} theme el tema de MUI
+ * @param {string} surface una de GLASS_SURFACE
+ * @returns {boolean}
+ */
+export function hasGlassSurface(theme, surface) {
+    if (!isGlassTheme(theme)) {
+        return false;
+    }
+    const bySurface = theme.toolkit.glass.bySurface ?? DEFAULT_GLASS_SURFACES;
+    return Boolean(bySurface[surface]);
+}
+
+/**
+ * Una superficie con o sin vidrio, según lo que pidió el proyecto para ella (hasGlassSurface). Apagada se pinta como con
+ * «Reducir transparencia» del sistema: su color sólido (en oscuro con el mismo aclarado del vidrio, para que no se pierda
+ * contra el fondo), su orilla y su sombra, sin desenfoque y sin lente. Es lo que usan el marco y los ajustes del tema, y lo
+ * que usa el proyecto para algo suyo que deba obedecer a la misma superficie:
+ *   sx={(theme) => surfaceStylesOf(theme, GLASS_SURFACE.drawers)}   // un cajón propio, igual que los de MUI
+ *
+ * @param {object} theme el tema de MUI
+ * @param {string} surface una de GLASS_SURFACE
+ * @param {object} [options] las mismas de glassStylesOf
+ * @param {string} [options.color]
+ * @param {string} [options.darkColor]
+ * @param {number} [options.opacity]
+ * @param {boolean} [options.isControl]
+ * @returns {object}
+ */
+export function surfaceStylesOf(theme, surface, options = {}) {
+    if (hasGlassSurface(theme, surface)) {
+        return glassStylesOf(theme, options);
+    }
+    const {color, darkColor, isControl = false} = options;
+    const lightColor = color ?? paletteOf(theme).background.paper;
+    // la misma superficie con opacidad completa: su color (aclarado en oscuro) y su orilla, sin desenfoque
+    const solidOf = (solidColor, isDark) => ({
+        ...glassSurfaceOf(solidColor, {opacity: 1, isDark, isControl}),
+        backgroundImage: 'none', backdropFilter: 'none', WebkitBackdropFilter: 'none',
+    });
+    return lightDarkStylesOf(theme, solidOf(lightColor, false), solidOf(darkColor ?? lightColor, true));
+}
+
+/**
  * El LENTE: lo que, según Apple, define al vidrio líquido («The primary way Liquid Glass visually defines itself is through
  * something called Lensing… previous materials scattered light, this new set of materials dynamically bends, shapes, and
  * concentrates light», WWDC25 «Meet Liquid Glass»). La orilla dobla lo de atrás (un filtro SVG de desplazamiento,

@@ -4,7 +4,7 @@ export {default as AuditTrailTable} from '@/DataTable/AuditTrailTable.jsx';
 export {default as EmptyState} from '@/DataTable/EmptyState.jsx';
 export {default as FilterChips} from '@/DataTable/FilterChips.jsx';
 export {default as GoToPage} from '@/DataTable/GoToPage.jsx';
-export {SELECTION_PHONE_LAYOUT, default as ServerTable} from '@/DataTable/ServerTable.jsx';
+export {SELECTION_PHONE_LAYOUT, TABLE_DENSITY, default as ServerTable} from '@/DataTable/ServerTable.jsx';
 export {default as ServerTableFilterDrawer} from '@/DataTable/ServerTableFilterDrawer.jsx';
 export {buildChipConfig} from '@/DataTable/buildChipConfig.js';
 export {
