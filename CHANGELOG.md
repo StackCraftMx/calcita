@@ -4,6 +4,34 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.64.0] - 2026-11-08
+
+### Agregado
+
+- `AppLayout maxMobileTabs`: lo más que van en la barra de pestañas del teléfono y la tableta, contando «Más» (2 o más). Sin
+  él, como antes: las que quepan a lo ancho (en un iPad, unas 9). En «Editar la barra» se eligen hasta las que caben junto
+  a «Más». También desde el tema: `components.CalcitaMobileTabBar.defaultProps.maxTabs`. Un tope que no sea un entero de 2
+  o más truena con su motivo.
+- Una entrada del menú puede traer un nombre corto solo para esa barra: `mobileLabelKey` o `mobileLabel` en su `menu.js`. El
+  menú lateral y «Más» siguen con el largo.
+- `BarActionButton showLabel={BAR_ACTION_LABEL.desktop}`: en la cápsula de la barra va ícono y nombre en escritorio y solo
+  el ícono en el teléfono. De fábrica sigue solo el ícono (`BAR_ACTION_LABEL.auto`). También desde el tema
+  (`CalcitaBarActionButton`).
+- Públicas: `MOBILE_TAB_BAR_HEIGHT` (el alto de verdad de la barra de pestañas, para CSS: crece con la letra y con sus
+  renglones), `MOBILE_TAB_BAR_HEIGHT_PIXELS` (60 y 46 px con la letra normal) y `MOBILE_TAB_LABEL_LINES`.
+- `CalcitaMobileTabBar tabLabelLines`: `MOBILE_TAB_LABEL_LINES.one` deja el nombre en un renglón con «…» y la barra en 60
+  px, como antes.
+- Ejemplos: la barra de pestañas con tope de 6, «Avisos» y «Descargas» como nombres cortos, y «Agregar sucursal» con su
+  nombre en escritorio. Hecho en Calcita trae las filas nuevas en «Marco y menú». «Vidrio líquido» se llama «Liquid Glass»
+  en el menú y en su pantalla, también en español: es el nombre de Apple y no se traduce.
+
+### Arreglado
+
+- Barra de pestañas: un nombre largo se cortaba con «…» en un renglón («Inteligenci…»). Ahora baja hasta a dos renglones y
+  solo se corta si no cabe en ellos; los nombres que ya cabían se ven igual. Con la letra «Grande» o «Muy grande» la barra
+  crece para que quepan (60 px con la normal, 66 y 73), y el espacio al final de la página y lo que flota encima de la
+  barra crecen con ella. Encogida, la cuenta sigue del alto de la cápsula chica con cualquier tamaño de letra.
+
 ## [0.63.1] - 2026-11-08
 
 ### Arreglado
