@@ -22,7 +22,12 @@
          - se va sola: React pinta dentro de #root y reemplaza lo que haya adentro (también este <style>);
          - el color sale del gusto del sistema (prefers-color-scheme) y NUNCA escribe color-scheme: MUI escucha esa misma
            consulta y, si la página la fija, la pantalla parpadea entre claro y oscuro.
-         En el teléfono, el contenido y la barra de pestañas abajo; en escritorio, la barra arriba y el menú a la izquierda. -->
+         En el teléfono, el contenido y la barra de pestañas abajo; en escritorio, la barra arriba y el menú a la izquierda.
+         Si le agregan algo, dos trampas que ya se pagaron en un proyecto real:
+         - un texto (el nombre de la marca) lleva interlineado con número (line-height: 1.2), nunca normal: con normal el
+           alto lo decide la FUENTE, cambia cuando carga la letra propia y, si la app pinta el mismo texto, brinca en el relevo;
+         - una salida que se desvanece lleva su @keyframes con from{opacity:1}: con solo to{opacity:0} arranca de la
+           opacidad base (aquí 0; la visible la pone la entrada) y la pantalla se va de golpe, sin desvanecerse. -->
     <style>
         .calcita-boot{position:fixed;inset:0;box-sizing:border-box;display:grid;gap:8px;padding:8px;background:#F2F2F7;
             grid-template:"bar bar" 56px "menu main" 1fr / 240px 1fr;opacity:0;animation:calcita-boot-in .2s ease-out .25s forwards}
