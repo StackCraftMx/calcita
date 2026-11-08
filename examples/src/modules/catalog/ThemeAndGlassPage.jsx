@@ -62,7 +62,7 @@ const SLOTS_EXTENSIONS = [
     {id: 'theme', option: 'components.Calcita… defaultProps.slots · slotProps', example: "CalcitaRecordCard: {defaultProps: {slotProps: {root: {elevation: 3}}}}"},
     {id: 'merge', option: 'className · style · sx', example: "slotProps={{root: {sx: {borderColor: 'primary.main'}}}}  // se suma al de Calcita"},
     {id: 'partClass', option: '.CalcitaPieza-parte', example: "'.MuiPopover-paper:has(.CalcitaAccountMenu-settings)': {…}  // el panel del menú de la cuenta, y solo ese"},
-    {id: 'ownPiece', option: 'piecePart · usePieceProps · withPieceSlots', example: "const Root = piecePart('MiPieza', 'Root', Paper);  // una pieza propia, igual que las de Calcita"},
+    {id: 'ownPiece', option: 'piecePart · usePieceProps · withPieceSlots', example: "const Button = piecePart('MiPieza', 'Button', MuiButton);  // en slots, slotProps y styleOverrides: button"},
 ];
 
 export const ThemeAndGlassPage = () => {

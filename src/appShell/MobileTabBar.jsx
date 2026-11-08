@@ -14,9 +14,10 @@
 //   - Cuántas pestañas van se mide (useFittingTabCount): las que caben con al menos MIN_TAB_PIXELS cada una; las demás van
 //     a «Más». En una ventana angosta salen menos y en una ancha más, y los nombres no se cortan («Compone…»).
 //   - Acostado (pantalla bajita), la barra va compacta: ícono y nombre lado a lado, para dejarle el alto al contenido.
-//   - Al leer hacia abajo se encoge (como iOS 26): queda una cápsula chica con la pestaña donde está la persona, y la cuenta
-//     más chica; al subir un poco, o al tocar la cápsula, regresa completa (cuándo: tabBarScroll.js). Se mueve solo con
-//     opacidad y escala, lo que el navegador anima sin volver a acomodar la página: en un teléfono barato no se traba.
+//   - Al leer hacia abajo se encoge (como iOS 26): queda una cápsula chica en la esquina izquierda con la pestaña donde está
+//     la persona, y la cuenta más chica en la esquina derecha; al subir un poco, o al tocar la cápsula, regresa completa
+//     (cuándo: tabBarScroll.js). Se mueve solo con opacidad, escala y recorrido (transform), lo que el navegador anima sin
+//     volver a acomodar la página: en un teléfono barato no se traba.
 // Solo se ve en el teléfono (PHONE_MEDIA_QUERY); en escritorio no ocupa nada.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaMobileTabBar con defaultProps y
@@ -218,6 +219,35 @@ function useFittingTabCount(capsule, minTabPixels) {
 }
 
 /**
+ * Cuánto le falta a la cuenta para llegar a la orilla derecha de la barra (px). En el teléfono parado es cero: la cápsula
+ * ocupa todo el ancho y la cuenta ya está en su esquina. En tableta (o el teléfono acostado) la cápsula se queda en su tope
+ * y todo va centrado, así que la cuenta queda metida hacia adentro; encogida, se recorre eso para irse a su esquina, como la
+ * cápsula chica se va a la suya. Se vuelve a medir al girar o cambiar la ventana.
+ *
+ * OJO: se mide con offsetLeft y offsetWidth, que no cambian con transform. Medida ya recorrida daría cero y, al girar la
+ * tableta con la barra encogida, la cuenta regresaría a medio camino.
+ *
+ * @param {HTMLElement|null} root la barra completa (nav), la caja contra la que se mide
+ * @param {HTMLElement|null} account el círculo de la cuenta
+ * @returns {number}
+ */
+function useAccountDistanceToEdge(root, account) {
+    const [distance, setDistance] = useState(0);
+    useLayoutEffect(() => {
+        if (!root || !account) {
+            return undefined;
+        }
+        const measure = () => setDistance(Math.max(0, root.clientWidth - account.offsetLeft - account.offsetWidth));
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(root);
+        observer.observe(account);
+        return () => observer.disconnect();
+    }, [root, account]);
+    return distance;
+}
+
+/**
  * @param {object} props
  * @param {object[]} props.menuItems lo que regresa composeMenu
  * @param {object|null} props.activeItem la entrada de la pantalla abierta
@@ -258,6 +288,14 @@ function MobileTabBarContent(props) {
         setReturnsFromEditor(false);
     };
     const {isMinimized, expand} = useTabBarMinimized(minimizeOnScroll);
+    const [tabBarRoot, setTabBarRoot] = useState(null);
+    const [accountCircle, setAccountCircle] = useState(null);
+    const accountDistanceToEdge = useAccountDistanceToEdge(tabBarRoot, accountCircle);
+    // encogida, la cuenta se recorre a su esquina y se hace del alto de la cápsula chica (crece y se encoge desde su esquina)
+    // (orientation: 'portrait' o 'landscape', las llaves de MINIMIZED_PIXELS y MOBILE_TAB_BAR_HEIGHT_PIXELS)
+    const minimizedAccountTransformOf = (orientation) => (
+        `translateX(${accountDistanceToEdge}px) scale(${MINIMIZED_PIXELS[orientation] / MOBILE_TAB_BAR_HEIGHT_PIXELS[orientation]})`
+    );
     const closeSubmenu = () => setSubmenu({anchorElement: null, menuItem: null});
     const isInside = (menuItem) => menuItem === activeItem || (menuItem.children ?? []).includes(activeItem);
     const moreHasActive = more.some(isInside);
@@ -275,7 +313,7 @@ function MobileTabBarContent(props) {
 
     return (
         <>
-            <TabBarRoot component="nav" aria-label={t('drawer.ariaLabel')}
+            <TabBarRoot ref={setTabBarRoot} component="nav" aria-label={t('drawer.ariaLabel')}
                  ownSx={(theme) => ({
                      display: 'none',
                      [PHONE_MEDIA_QUERY]: {display: 'flex'},
@@ -316,17 +354,18 @@ function MobileTabBarContent(props) {
                     <MinimizedIcon sx={{fontSize: TAB_ICON_SIZE}} />
                 </TabBarMinimized>
                 {account && (
-                    <TabBarAccount ownSx={(theme) => ({
+                    <TabBarAccount ref={setAccountCircle} ownSx={(theme) => ({
                         ...glassSurfaceSx(theme), flexShrink: 0, minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait, px: 0.5, display: 'flex', alignItems: 'center',
                         justifyContent: 'center', [PHONE_LANDSCAPE_MEDIA_QUERY]: {minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
                         '& .MuiButtonBase-root': {color: 'inherit'},
-                        // encogida, la cuenta se queda pero del alto de la cápsula chica, pegada a su esquina
+                        // encogida, la cuenta se queda pero del alto de la cápsula chica y en la esquina derecha (en tableta
+                        // estaba metida hacia adentro, junto a la cápsula centrada: useAccountDistanceToEdge)
                         transformOrigin: 'right bottom',
-                        transform: isMinimized ? `scale(${MINIMIZED_PIXELS.portrait / MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait})` : 'none',
+                        transform: isMinimized ? minimizedAccountTransformOf('portrait') : 'none',
                         transition: theme.transitions.create('transform', {duration: theme.transitions.duration.short}),
                         ...(isMinimized && {[PHONE_LANDSCAPE_MEDIA_QUERY]: {
                             minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape,
-                            transform: `scale(${MINIMIZED_PIXELS.landscape / MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape})`,
+                            transform: minimizedAccountTransformOf('landscape'),
                         }}),
                     })}>
                         {account}
