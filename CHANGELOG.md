@@ -4,6 +4,22 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.63.0] - 2026-11-07
+
+### Agregado
+
+- `createToolkitTheme({glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}})`: el botón con borde lleva un borde de
+  verdad, el color de su letra al 70 %, encima del vidrio y también dentro de una tarjeta. De fábrica sigue la cápsula de
+  vidrio sin borde (`GLASS_OUTLINED_BUTTON.glass`), que sobre un fondo claro da 1.15 : 1 y se lee como texto suelto; con el
+  borde, el más bajo de los colores de Stackcraft da 3.83 : 1 contra la página y el papel. Un valor que no sea `glass` ni
+  `bordered` truena con su motivo.
+- `AccountMenu`: el panel es la parte `menu` (el `Menu` de MUI), con su clase `CalcitaAccountMenu-menu`. Desde el tema,
+  `components.CalcitaAccountMenu.defaultProps.slotProps.menu` le pasa sus props (`anchorOrigin`, `transformOrigin`…) y le
+  gana a la colocación de Calcita; `styleOverrides.menu` lo pinta.
+- Ejemplos: el configurador de tema trae «Botón con borde» (Vidrio o Con borde), que se ve en toda la app y va al código
+  exportado. Hecho en Calcita trae las dos filas nuevas: `glass.outlinedButton` en «Tema y vidrio» y
+  `CalcitaAccountMenu · slotProps.menu` en «Marco y menú».
+
 ## [0.62.2] - 2026-11-07
 
 ### Arreglado
