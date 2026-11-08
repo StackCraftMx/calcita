@@ -4,6 +4,8 @@ export const feedbackTexts = {
         feedback: {
             menu: {
                 label: 'Avisos y confirmación',
+                // el nombre corto en la barra de pestañas del teléfono (mobileLabelKey)
+                tabLabel: 'Avisos',
                 description: 'Cada tipo de aviso, confirmaciones que salen bien y que el servidor rechaza, y la espera.',
             },
             page: {
@@ -60,6 +62,7 @@ export const feedbackTexts = {
         feedback: {
             menu: {
                 label: 'Notices and confirmation',
+                tabLabel: 'Notices',
                 description: 'Each kind of notice, confirmations that succeed and that the server rejects, and the wait.',
             },
             page: {

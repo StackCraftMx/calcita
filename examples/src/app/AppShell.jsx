@@ -7,6 +7,7 @@
 // Lo que se agrega sin tocar el framework: el estilo y «Instalar la app» en el menú de la cuenta (accountSettings), «Entrar con otro
 // perfil» en el menú de la cuenta (accountMenuItems) y la tarjeta de abajo del menú (sidebarFooter). Un nombre del menú que no
 // cabe baja de renglón en lugar de cortarse (menuLabelOverflow): en el menú se tiene que leer a dónde lleva cada entrada.
+// En el teléfono y la tableta, la barra de pestañas lleva hasta MAX_MOBILE_TABS (maxMobileTabs); lo demás, en «Más».
 //
 // El menú no se escribe aquí: composeMenu descubre los menu.js de los módulos y deja solo los que la sesión puede ver;
 // al cambiar los permisos de su perfil, el menú cambia solo.
@@ -33,6 +34,8 @@ import {APP_PATHS, publicUrlOf} from '@/core';
 
 // cada módulo declara su entrada en su menu.js (orden, permiso, sección, texto e ícono)
 const MENU_MODULES = import.meta.glob('@/modules/*/menu.js', {eager: true});
+// lo más que van en la barra de pestañas, contando «Más»: en un iPad cabían 9 y se leían apretadas
+const MAX_MOBILE_TABS = 6;
 
 /** El logo de los ejemplos: el de Stackcraft, redondo. */
 const Logo = () => <Box component="img" src={publicUrlOf('branding/stackcraft-logo.svg')} alt="" sx={{width: 28, height: 28, borderRadius: '50%'}} />;
@@ -94,7 +97,7 @@ export const AppShell = () => {
             <AppLayout logo={<Logo />} brandName={t('title')} brandCaption={t('caption')} menuItems={menuItems} user={session.user}
                        profilePath={APP_PATHS.profile} accountMenuItems={accountMenuItems} onSignOut={leave} isSigningOut={isSigningOut}
                        isNavigating={isNavigating} menuBadges={menuBadges} accountSettings={<><GlassModeSetting /><InstallAppSetting /></>}
-                       sidebarFooter={<SidebarCard />} menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap}>
+                       sidebarFooter={<SidebarCard />} menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap} maxMobileTabs={MAX_MOBILE_TABS}>
                 <Outlet />
             </AppLayout>
             <TermsAcceptanceDialog open={termsPending} version={session.terms?.current} title={t('legal.termsTitle')} onDecline={leave}
