@@ -39,6 +39,10 @@ const LAYOUT_EXTENSIONS = [
     {id: 'defaultCollapsed', option: 'defaultCollapsed', example: 'defaultCollapsed'},
     {id: 'menuLabelOverflow', option: 'menuLabelOverflow', example: 'menuLabelOverflow={MENU_LABEL_OVERFLOW.wrap}'},
     {id: 'minimizeTabBar', option: 'minimizeTabBarOnScroll', example: 'minimizeTabBarOnScroll={false}'},
+    {id: 'maxMobileTabs', option: 'maxMobileTabs', example: 'maxMobileTabs={6}'},
+    {id: 'tabLabelLines', option: 'CalcitaMobileTabBar · tabLabelLines', example: 'CalcitaMobileTabBar: {defaultProps: {tabLabelLines: MOBILE_TAB_LABEL_LINES.one}}'},
+    {id: 'mobileLabel', option: 'menu.js · mobileLabelKey', example: "{labelKey: 'reports:menu.label', mobileLabelKey: 'reports:menu.tabLabel'}"},
+    {id: 'tabBarHeight', option: 'MOBILE_TAB_BAR_HEIGHT', example: 'bottom: `calc(${MOBILE_TAB_BAR_HEIGHT.portrait} + 24px)`'},
     {id: 'contentMaxWidth', option: 'contentMaxWidth', example: 'contentMaxWidth={1200}'},
     {id: 'bar', option: 'createToolkitTheme({bar})', example: 'createToolkitTheme({glass: true, bar: TOP_BAR.band})'},
 ];
@@ -61,6 +65,7 @@ const MENU_EXTENSIONS = [
 const CAPSULES_EXTENSIONS = [
     {id: 'barActions', option: '<BarActions>', example: '<BarActions label="Pedidos">…</BarActions>'},
     {id: 'barActionButton', option: '<BarActionButton>', example: '<BarActionButton label="Agregar" icon={<AddIcon />} onClick={open} />'},
+    {id: 'barActionLabel', option: 'showLabel', example: '<BarActionButton … showLabel={BAR_ACTION_LABEL.desktop} />'},
     {id: 'more', option: '«⋯» en el teléfono', example: '(sale solo cuando no caben)'},
     {id: 'order', option: 'order', example: '<BarActions order={1}>'},
     {id: 'sx', option: 'sx · inlineSx', example: "<BarActions sx={{gap: 1}} inlineSx={{justifyContent: 'flex-end'}}>"},
