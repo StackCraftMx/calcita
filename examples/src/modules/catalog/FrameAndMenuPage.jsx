@@ -32,6 +32,7 @@ const LAYOUT_EXTENSIONS = [
     {id: 'accountMenuItems', option: 'accountMenuItems', example: "accountMenuItems={[{to: '/billing', label: 'Facturación', Icon: ReceiptIcon}]}"},
     {id: 'accountMenuLinks', option: 'accountMenuItems · href · onClick', example: "{label: 'Regresar al sistema', href: LEGACY_URL}"},
     {id: 'accountSettings', option: 'accountSettings', example: 'accountSettings={<MySetting />}'},
+    {id: 'accountMenuPanel', option: 'CalcitaAccountMenu · slotProps.menu', example: "CalcitaAccountMenu: {defaultProps: {slotProps: {menu: {anchorOrigin: {vertical: 'top', horizontal: 'left'}}}}}"},
     {id: 'sidebarFooter', option: 'sidebarFooter', example: 'sidebarFooter={<HelpCard />}'},
     {id: 'ribbons', option: 'ribbons', example: 'ribbons={<MaintenanceNotice />}'},
     {id: 'toggles', option: 'showFontSizeToggle · showLanguageToggle · showColorSchemeToggle', example: 'showLanguageToggle={false}'},

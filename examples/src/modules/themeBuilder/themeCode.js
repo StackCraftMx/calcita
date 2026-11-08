@@ -24,6 +24,9 @@ export const THEME_FLOATING_SURFACES = Object.freeze(['topBar', 'tabBar', 'sideM
 /** La pestaña elegida con vidrio: la gota (de fábrica) o el color de la marca (GLASS_SELECTED_TAB de Calcita). */
 export const THEME_SELECTED_TAB = Object.freeze({drop: 'drop', accent: 'accent'});
 
+/** El botón con borde con vidrio: la cápsula sin borde (de fábrica) o con un borde de verdad (GLASS_OUTLINED_BUTTON de Calcita). */
+export const THEME_OUTLINED_BUTTON = Object.freeze({glass: 'glass', bordered: 'bordered'});
+
 /**
  * La opción glass de createToolkitTheme para lo elegido (la misma en la vista previa y en el código exportado). Con lo
  * de fábrica queda lo más corto: glass: true. Las superficies apagadas van con false; las demás no se escriben (quedan de
@@ -33,9 +36,10 @@ export const THEME_SELECTED_TAB = Object.freeze({drop: 'drop', accent: 'accent'}
  * @param {object} [options]
  * @param {string[]} [options.surfacesOff] las de THEME_FLOATING_SURFACES que van sin vidrio
  * @param {string} [options.selectedTab] una de THEME_SELECTED_TAB
- * @returns {boolean|{surfaces?: boolean|Record<string, boolean>, selectedTab?: string}}
+ * @param {string} [options.outlinedButton] una de THEME_OUTLINED_BUTTON
+ * @returns {boolean|{surfaces?: boolean|Record<string, boolean>, selectedTab?: string, outlinedButton?: string}}
  */
-export function glassOptionOf(glass, {surfacesOff = [], selectedTab = THEME_SELECTED_TAB.drop} = {}) {
+export function glassOptionOf(glass, {surfacesOff = [], selectedTab = THEME_SELECTED_TAB.drop, outlinedButton = THEME_OUTLINED_BUTTON.glass} = {}) {
     if (glass !== THEME_GLASS.floating && glass !== THEME_GLASS.surfaces) {
         return false;
     }
@@ -48,6 +52,9 @@ export function glassOptionOf(glass, {surfacesOff = [], selectedTab = THEME_SELE
     }
     if (selectedTab === THEME_SELECTED_TAB.accent) {
         option.selectedTab = selectedTab;
+    }
+    if (outlinedButton === THEME_OUTLINED_BUTTON.bordered) {
+        option.outlinedButton = outlinedButton;
     }
     return Object.keys(option).length > 0 ? option : true;
 }
@@ -70,6 +77,9 @@ function glassTextOf(option) {
     }
     if (option.selectedTab) {
         parts.push(`selectedTab: '${option.selectedTab}'`);
+    }
+    if (option.outlinedButton) {
+        parts.push(`outlinedButton: '${option.outlinedButton}'`);
     }
     return `{${parts.join(', ')}}`;
 }
@@ -95,10 +105,11 @@ function colorTextOf(color) {
  * @param {string} [choices.bar] la barra de arriba con vidrio o minimalista, una de THEME_BAR
  * @param {string[]} [choices.surfacesOff] las superficies que van sin vidrio (THEME_FLOATING_SURFACES)
  * @param {string} [choices.selectedTab] la pestaña elegida, una de THEME_SELECTED_TAB
+ * @param {string} [choices.outlinedButton] el botón con borde, una de THEME_OUTLINED_BUTTON
  * @param {boolean} [typed] la versión de TypeScript (con el tipo del tema)
  * @returns {string}
  */
-export function themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff, selectedTab}, typed = false) {
+export function themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff, selectedTab, outlinedButton}, typed = false) {
     const colorLinesOf = (isDark) => THEME_COLOR_KEYS
         .filter((key) => colors[key])
         .map((key) => {
@@ -109,7 +120,7 @@ export function themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff
             return `        ${key}: {main: '${colorTextOf(colors[key])}'},`;
         })
         .join('\n');
-    const glassText = glassTextOf(glassOptionOf(glass, {surfacesOff, selectedTab}));
+    const glassText = glassTextOf(glassOptionOf(glass, {surfacesOff, selectedTab, outlinedButton}));
     // la barra va solo si se aparta de lo de omisión (las cápsulas) y solo donde aplica: con vidrio o con el minimalista
     const hasBarChoice = look === 'minimal' || glass !== THEME_GLASS.off;
     const barLine = hasBarChoice && bar === THEME_BAR.band ? `    bar: '${THEME_BAR.band}',` : null;

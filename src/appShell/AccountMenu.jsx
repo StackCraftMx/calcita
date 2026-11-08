@@ -3,7 +3,12 @@
 // Mis llaves…) y Salir.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaAccountMenu con defaultProps y
-// styleOverrides de sus partes: button, avatar, header, name, settings.
+// styleOverrides de sus partes: button, avatar, menu, header, name, settings.
+//
+// La parte menu es el Menu de MUI: con slotProps.menu la app le pasa sus props (anchorOrigin, transformOrigin…) y ganan a
+// la colocación de Calcita (barMenuPlacementOf: hacia arriba si el botón está abajo). Así un marco propio acomoda el panel
+// sin pedirlo. OJO: slotProps.menu.slotProps reemplaza el de Calcita entero (el ancho y la separación del papel); para
+// cambiar el papel, styleOverrides.menu con '& .MuiMenu-paper'.
 //
 // Genérico del paquete: function (regla de la casa).
 import {useState} from 'react';
@@ -33,6 +38,7 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 const THEME_NAME = 'CalcitaAccountMenu';
 const AccountButton = piecePart(THEME_NAME, 'Button', IconButton);
 const AccountAvatar = piecePart(THEME_NAME, 'Avatar', Avatar);
+const AccountPanel = piecePart(THEME_NAME, 'Menu', Menu);
 const AccountHeader = piecePart(THEME_NAME, 'Header', Box);
 const AccountName = piecePart(THEME_NAME, 'Name', Typography);
 const AccountSettings = piecePart(THEME_NAME, 'Settings', Box);
@@ -80,9 +86,9 @@ function AccountMenuContent(props) {
                     </AccountAvatar>
                 </AccountButton>
             </Tooltip>
-            <Menu anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={closeMenu}
-                  anchorOrigin={placement.anchorOrigin} transformOrigin={placement.transformOrigin}
-                  slotProps={{paper: {sx: {minWidth: settings ? 300 : 240, maxWidth: 360, ...placement.gapSx}}}}>
+            <AccountPanel anchorEl={anchorElement} open={Boolean(anchorElement)} onClose={closeMenu}
+                          anchorOrigin={placement.anchorOrigin} transformOrigin={placement.transformOrigin}
+                          slotProps={{paper: {sx: {minWidth: settings ? 300 : 240, maxWidth: 360, ...placement.gapSx}}}}>
                 <AccountHeader ownSx={{px: 2, py: 1.25}}>
                     <AccountName variant="subtitle2" noWrap ownSx={{fontWeight: 600}}>{user.name}</AccountName>
                     {user.email && <Typography variant="body2" color="text.secondary" noWrap>{user.email}</Typography>}
@@ -100,7 +106,7 @@ function AccountMenuContent(props) {
                         <ListItemText primary={t('signOut')} />
                     </MenuItem>
                 )}
-            </Menu>
+            </AccountPanel>
         </>
     );
 }

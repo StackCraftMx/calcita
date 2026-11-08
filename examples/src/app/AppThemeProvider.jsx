@@ -8,7 +8,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
-import {DEFAULT_GLASS_SURFACES, GLASS_SELECTED_TAB, GLASS_SURFACE, TOP_BAR, isAndroidDevice} from '@stackcraftmx/calcita';
+import {DEFAULT_GLASS_SURFACES, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB, GLASS_SURFACE, TOP_BAR, isAndroidDevice} from '@stackcraftmx/calcita';
 
 import {DEFAULT_THEME_CHOICES, GLASS_MODES, buildAppTheme} from '@/app/appTheme.js';
 import {AppThemeChoiceContext, THEME_COLOR_KEYS, useAppThemeChoice} from '@/core';
@@ -42,7 +42,7 @@ const readStoredGlassMode = () => {
 /**
  * Los colores, las esquinas y la barra guardados, revisados: lo que no sea válido se queda con lo de fábrica.
  *
- * @returns {{colors: Record<string, string>, cornerRadius: number, bar: string, surfacesOff: string[], selectedTab: string}}
+ * @returns {{colors: Record<string, string>, cornerRadius: number, bar: string, surfacesOff: string[], selectedTab: string, outlinedButton: string}}
  */
 const readStoredThemeChoices = () => {
     try {
@@ -62,7 +62,9 @@ const readStoredThemeChoices = () => {
             ? [...new Set(stored.surfacesOff.filter((surface) => surface in DEFAULT_GLASS_SURFACES && surface !== GLASS_SURFACE.cards))]
             : DEFAULT_THEME_CHOICES.surfacesOff;
         const selectedTab = Object.values(GLASS_SELECTED_TAB).includes(stored.selectedTab) ? stored.selectedTab : DEFAULT_THEME_CHOICES.selectedTab;
-        return {colors, cornerRadius, bar, surfacesOff, selectedTab};
+        const outlinedButton = Object.values(GLASS_OUTLINED_BUTTON).includes(stored.outlinedButton)
+            ? stored.outlinedButton : DEFAULT_THEME_CHOICES.outlinedButton;
+        return {colors, cornerRadius, bar, surfacesOff, selectedTab, outlinedButton};
     } catch {
         return DEFAULT_THEME_CHOICES;
     }

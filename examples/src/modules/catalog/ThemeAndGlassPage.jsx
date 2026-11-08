@@ -43,6 +43,7 @@ const SETUP_EXTENSIONS = [
     {id: 'glass', option: 'glass', example: 'glass: true  ·  glass: {opacity: 0.7, surfaces: true}'},
     {id: 'glassSurfaces', option: 'glass.surfaces', example: 'glass: {surfaces: {backdrop: false, drawers: false, menus: false}}'},
     {id: 'selectedTab', option: 'glass.selectedTab', example: 'glass: {selectedTab: GLASS_SELECTED_TAB.accent}'},
+    {id: 'outlinedButton', option: 'glass.outlinedButton', example: 'glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}'},
     {id: 'look', option: 'look', example: 'look: THEME_LOOK.minimal'},
     {id: 'fields', option: 'fields', example: "fields: {radius: 8, light: {fill: '#FFFFFF', hoverFill: '#FFFFFF', border: '#C4CDD5'}}"},
     {id: 'minimalTones', option: 'minimalTones', example: "minimalTones: {light: {default: '#EEF4FF', fill: '#DCE6F5'}, dark: {default: '#101827', paper: '#1A2333'}}"},

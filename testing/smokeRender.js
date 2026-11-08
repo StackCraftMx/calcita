@@ -251,6 +251,13 @@ const CASES = [
     }), 'data-own-avatar="sí"'],
     ['RecordCard con slotProps desde el tema', h(RecordCard, {title: 'Ana López'}), 'data-desde-el-tema="sí"',
         createTheme({components: {CalcitaRecordCard: {defaultProps: {slotProps: {root: {'data-desde-el-tema': 'sí'}}}}}})],
+    // el panel del menú de la cuenta es la parte menu: lo que la app le pase desde su tema le gana a la colocación de Calcita
+    // (el menú cerrado no se pinta en el servidor: una parte propia de prueba dice qué colocación le llegó)
+    ['el menú de la cuenta toma su colocación de slotProps.menu del tema', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, user: {name: 'Ana López'}}, 'contenido'),
+        'panel: top/left', createTheme({components: {CalcitaAccountMenu: {defaultProps: {
+            slots: {menu: ({anchorOrigin}) => h('span', null, `panel: ${anchorOrigin.vertical}/${anchorOrigin.horizontal}`)},
+            slotProps: {menu: {anchorOrigin: {vertical: 'top', horizontal: 'left'}}},
+        }}}})],
     ['RecordCard dentro de otra: la de adentro no toma los slots de la de afuera', h(RecordCard, {
         title: 'Afuera', slots: {titles: ({children}) => h('div', {'data-titulos-afuera': 'sí'}, children)},
     }, h(RecordCard, {title: 'Adentro'})), 'data-titulos-afuera="sí"'],

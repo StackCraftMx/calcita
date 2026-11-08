@@ -23,7 +23,7 @@
 //
 // Funciones puras, sin React: function (regla de la casa).
 import {
-    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, GLASS_SELECTED_TAB, GLASS_SURFACE, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf,
+    GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB, GLASS_SURFACE, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf,
     glassDropOf, glassOpacityOf, canvasFieldStylesOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, hasGlassSurface,
     surfaceStylesOf, whiteLabelFillOf, insideContentSelectorOf, materialStylesOf, solidFallbackOf,
 } from '@/theme/glassSurface.js';
@@ -72,6 +72,11 @@ const SHEET_MAX_WIDTH_PIXELS = 640;
 // el relleno del control «bordered» (por ciento de su color): quieto y con el cursor encima; en oscuro, más, porque sobre
 // gris oscuro un tinte tenue no se ve
 const TINTED_FILL_PERCENT = Object.freeze({light: {rest: 12, hover: 18}, dark: {rest: 22, hover: 30}});
+// el borde del botón con borde con glass: {outlinedButton: 'bordered'}: el color de su letra al 70 %. Medido con los colores
+// de Stackcraft contra la página y el papel, en claro y en oscuro: el más bajo da 3.83 : 1 (success sobre blanco), arriba
+// del 3 : 1 que pide WCAG cuando el contorno hace falta para ver el control; con 60 % daba 3.05, muy justo para la paleta de
+// otra marca. Con currentColor sigue sola a la letra: en claro, en oscuro, de color y deshabilitado
+const BORDERED_OUTLINE_COLOR = 'color-mix(in srgb, currentColor 70%, transparent)';
 // la letra de los controles llenos de color, y cuánto más se oscurecen con el cursor encima (whiteLabelOf)
 export const WHITE_LABEL = '#FFFFFF';
 const PROMINENT_HOVER_SHADE_PERCENT = 12;
@@ -656,13 +661,22 @@ export function glassComponents({surfaces = false} = {}) {
                     const label = isDefaultColor || !palette[ownerState.color] ? {color: palette.text.primary} : accentTextStylesOf(theme, ownerState.color);
                     const glass = glassStylesOf(theme, {isControl: true});
                     const hoverTint = `color-mix(in srgb, ${isDefaultColor ? palette.text.primary : toneColor} 10%, transparent)`;
+                    // con glass: {outlinedButton: 'bordered'} (GLASS_OUTLINED_BUTTON), un borde de verdad del color de su letra,
+                    // sobre el vidrio y dentro de una tarjeta; de fábrica, sin borde
+                    const isBordered = theme.toolkit?.glass?.outlinedButton === GLASS_OUTLINED_BUTTON.bordered;
+                    const edgeColor = isBordered ? BORDERED_OUTLINE_COLOR : 'transparent';
+                    const tinted = tintedControlOf(theme, toneColor);
                     return {
                         // con mergeStyles: el vidrio y la letra traen su modo oscuro; la suma simple borraba el del vidrio
                         ...mergeStyles(glass, label),
-                        borderColor: 'transparent',
-                        '&:hover': {...glass, borderColor: 'transparent', backgroundImage: `linear-gradient(${hoverTint}, ${hoverTint})`},
-                        '&.Mui-disabled': {borderColor: 'transparent'},
-                        [insideContentSelectorOf(':not(.MuiButtonGroup-grouped)')]: tintedControlOf(theme, toneColor),
+                        borderColor: edgeColor,
+                        '&:hover': {...glass, borderColor: edgeColor, backgroundImage: `linear-gradient(${hoverTint}, ${hoverTint})`},
+                        '&.Mui-disabled': {borderColor: edgeColor},
+                        // el relleno tenue de adentro de una tarjeta quita el borde (también al pasar el cursor): con el borde
+                        // de verdad, se le devuelve
+                        [insideContentSelectorOf(':not(.MuiButtonGroup-grouped)')]: isBordered
+                            ? mergeStyles(tinted, {borderColor: edgeColor, '&:hover': {borderColor: edgeColor}})
+                            : tinted,
                     };
                 },
             },

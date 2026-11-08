@@ -47,6 +47,9 @@ export const themeBuilderTexts = {
                 selectedTab: 'Pestaña elegida',
                 selectedTabDrop: 'Gota',
                 selectedTabAccent: 'Color de la marca',
+                outlinedButton: 'Botón con borde',
+                outlinedButtonGlass: 'Vidrio',
+                outlinedButtonBordered: 'Con borde',
                 reset: 'Restablecer valores de fábrica',
             },
             preview: {
@@ -122,6 +125,9 @@ export const themeBuilderTexts = {
                 selectedTab: 'Selected tab',
                 selectedTabDrop: 'Drop',
                 selectedTabAccent: 'Brand color',
+                outlinedButton: 'Outlined button',
+                outlinedButtonGlass: 'Glass',
+                outlinedButtonBordered: 'Bordered',
                 reset: 'Reset to defaults',
             },
             preview: {
