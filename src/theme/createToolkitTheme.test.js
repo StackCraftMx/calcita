@@ -6,8 +6,8 @@ import {createTheme} from '@mui/material/styles';
 
 import {THEME_LOOK, TOP_BAR, createToolkitTheme} from '@/theme/createToolkitTheme.js';
 import {
-    DEFAULT_GLASS_SURFACES, GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_SELECTED_TAB, GLASS_SURFACE, PANEL_RADIUS, glassOpacityOf, hasGlassSurface,
-    isGlassTheme, surfaceStylesOf,
+    DEFAULT_GLASS_SURFACES, GLASS_INSET_PIXELS, GLASS_OPACITY, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB, GLASS_SURFACE, PANEL_RADIUS, glassOpacityOf, hasGlassSurface,
+    insideContentSelectorOf, isGlassTheme, surfaceStylesOf,
 } from '@/theme/glassSurface.js';
 import {WHITE_LABEL} from '@/theme/components/glassComponents.js';
 import {MINIMAL_BACKGROUND, MINIMAL_TONES, minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
@@ -207,6 +207,26 @@ test('la pestaña elegida: la gota de fábrica; con selectedTab accent, el color
     assert.ok(valueOf(accent.indicator, 'backgroundColor'));
     assert.equal(accent.selected.color, WHITE_LABEL);
     assert.throws(() => createToolkitTheme({glass: {selectedTab: 'brand'}}), /selectedTab es 'drop' o 'accent'/);
+});
+
+test('el botón con borde: sin borde de fábrica; con outlinedButton bordered, el color de su letra, también dentro de una tarjeta', () => {
+    const outlinedOf = (theme, color = 'primary') => theme.components.MuiButton.styleOverrides.outlined({theme, ownerState: {variant: 'outlined', color}});
+    const insideCard = insideContentSelectorOf(':not(.MuiButtonGroup-grouped)');
+    const glass = outlinedOf(createToolkitTheme({glass: true}));
+    const bordered = outlinedOf(createToolkitTheme({glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}}));
+    const borderedError = outlinedOf(createToolkitTheme({glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}}), 'error');
+
+    assert.equal(glass.borderColor, 'transparent');
+    assert.equal(glass[insideCard].borderColor, 'transparent');
+    assert.match(bordered.borderColor, /currentColor 70%/);
+    assert.match(bordered['&:hover'].borderColor, /currentColor 70%/);
+    assert.match(bordered[insideCard].borderColor, /currentColor 70%/);
+    assert.match(bordered[insideCard]['&:hover'].borderColor, /currentColor 70%/);
+    assert.match(borderedError.borderColor, /currentColor 70%/);
+    // el vidrio y el relleno de adentro de una tarjeta no cambian con el borde
+    assert.equal(bordered.boxShadow, glass.boxShadow);
+    assert.equal(bordered[insideCard].backgroundColor, glass[insideCard].backgroundColor);
+    assert.throws(() => createToolkitTheme({glass: {outlinedButton: 'outline'}}), /outlinedButton es 'glass' o 'bordered'/);
 });
 
 test('un cajón que sale encima va un punto arriba de la barra del marco y debajo de los diálogos; el fijo no cambia', () => {

@@ -7,6 +7,7 @@
 //   const theme = createToolkitTheme({glass: {surfaces: true}});         // también las tarjetas del contenido (con advertencia)
 //   const theme = createToolkitTheme({glass: {surfaces: {backdrop: false, drawers: false}}});  // superficie por superficie
 //   const theme = createToolkitTheme({glass: {selectedTab: GLASS_SELECTED_TAB.accent}});      // la pestaña elegida de color
+//   const theme = createToolkitTheme({glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}});  // botón con borde de verdad
 //   const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});  // la barra de arriba en franja (por omisión, cápsulas)
 //   const theme = createToolkitTheme({colorSchemes: {light: {palette: {primary: {main: '#0B5FFF'}}}, dark: {...}}});
 //
@@ -28,7 +29,7 @@
 import {createTheme, responsiveFontSizes} from '@mui/material/styles';
 
 import {glassComponents} from '@/theme/components/glassComponents.js';
-import {DEFAULT_GLASS_SURFACES, GLASS_OPACITY, GLASS_SELECTED_TAB} from '@/theme/glassSurface.js';
+import {DEFAULT_GLASS_SURFACES, GLASS_OPACITY, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB} from '@/theme/glassSurface.js';
 import {mergeComponents} from '@/theme/mergeComponents.js';
 import {stackcraftDarkPalette, stackcraftLightPalette} from '@/theme/stackcraftPalette.js';
 import {trackingOf} from '@/theme/appleTracking.js';
@@ -113,7 +114,12 @@ function glassSettingsOf(glass) {
     if (!Object.values(GLASS_SELECTED_TAB).includes(selectedTab)) {
         throw new RangeError(`createToolkitTheme: glass.selectedTab es '${GLASS_SELECTED_TAB.drop}' o '${GLASS_SELECTED_TAB.accent}' (llegó ${selectedTab}).`);
     }
-    return {opacity, surfaces, bySurface, selectedTab};
+    // el botón con borde: la cápsula de vidrio sin borde (de fábrica) o con un borde de verdad (GLASS_OUTLINED_BUTTON)
+    const outlinedButton = requested.outlinedButton ?? GLASS_OUTLINED_BUTTON.glass;
+    if (!Object.values(GLASS_OUTLINED_BUTTON).includes(outlinedButton)) {
+        throw new RangeError(`createToolkitTheme: glass.outlinedButton es '${GLASS_OUTLINED_BUTTON.glass}' o '${GLASS_OUTLINED_BUTTON.bordered}' (llegó ${outlinedButton}).`);
+    }
+    return {opacity, surfaces, bySurface, selectedTab, outlinedButton};
 }
 
 /** Las variables CSS del proyecto declaradas en :root (con el CssBaseline de MUI); sin valores, nada. */
@@ -128,12 +134,13 @@ function cssTokenComponentsOf(cssTokens) {
  *     Stackcraft; true: los de MUI tal cual
  * @param {'class'|'data'|'media'|string} [options.colorSchemeSelector] cómo se elige el modo; por omisión 'class'
  * @param {string} [options.fontFamily] por omisión la letra del sistema
- * @param {boolean|{opacity?: number, surfaces?: boolean|{topBar?: boolean, tabBar?: boolean, sideMenu?: boolean, backdrop?: boolean, drawers?: boolean, dialogs?: boolean, menus?: boolean, cards?: boolean}, selectedTab?: 'drop'|'accent'}} [options.glass]
+ * @param {boolean|{opacity?: number, surfaces?: boolean|{topBar?: boolean, tabBar?: boolean, sideMenu?: boolean, backdrop?: boolean, drawers?: boolean, dialogs?: boolean, menus?: boolean, cards?: boolean}, selectedTab?: 'drop'|'accent', outlinedButton?: 'glass'|'bordered'}} [options.glass]
  *     vidrio líquido en lo que flota y en los controles; por omisión no. Con {opacity} se elige qué tan opaco (0 a 1; por
  *     omisión GLASS_OPACITY, 0.6); con {surfaces: true} también las tarjetas del contenido (por omisión sólidas, como pide
  *     la guía; avisa en consola) y con {surfaces: {…}} cada superficie por su nombre (GLASS_SURFACE; lo que no se diga
  *     queda de fábrica: todo lo que flota con vidrio, las tarjetas sólidas). Con {selectedTab: 'accent'} la pestaña
- *     elegida va del color de la marca en lugar de la gota (GLASS_SELECTED_TAB)
+ *     elegida va del color de la marca en lugar de la gota (GLASS_SELECTED_TAB). Con {outlinedButton: 'bordered'} el botón
+ *     con borde lleva un borde de verdad del color de su letra (GLASS_OUTLINED_BUTTON)
  * @param {'standard'|'minimal'} [options.look] el estilo (THEME_LOOK): el de Stackcraft (por omisión) o el minimalista,
  *     plano y tonal (sin bordes ni sombras: las superficies se separan por su tono; sin vidrio aunque se pida)
  * @param {'capsules'|'band'} [options.bar] la barra de arriba con vidrio o con el minimalista (TOP_BAR): por omisión en

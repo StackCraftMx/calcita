@@ -270,6 +270,14 @@ export const GLASS_SURFACE = Object.freeze({
 export const GLASS_SELECTED_TAB = Object.freeze({drop: 'drop', accent: 'accent'});
 
 /**
+ * El botón con borde (Button variant="outlined") con vidrio: la cápsula de vidrio sin borde de color (glass, de fábrica: el
+ * filo del vidrio la dibuja, como el botón de vidrio de Apple) o con un borde de verdad del color de su letra (bordered). Sobre
+ * un fondo claro el filo del vidrio da 1.15 : 1 y el botón se leía como texto suelto (lo reportaron); con el borde se ve de
+ * lejos que es un botón, junto a uno principal sin competir con él.
+ */
+export const GLASS_OUTLINED_BUTTON = Object.freeze({glass: 'glass', bordered: 'bordered'});
+
+/**
  * Cómo viene cada superficie si el proyecto no dice nada: vidrio en todo lo que flota y el contenido sólido, lo que pide la
  * guía de Apple («Don't use Liquid Glass in the content layer», HIG «Materials»; las barras y los «sidebars» sí van de
  * vidrio).
