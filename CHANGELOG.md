@@ -4,6 +4,15 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.63.1] - 2026-11-08
+
+### Arreglado
+
+- Ejemplos, tablero de tareas: la tarjeta «Programa de lealtad para mayoreo» enseñaba su descripción como código
+  (`<p>Ideas para <strong>…`). La descripción guarda el HTML del editor con formato y `KanbanBoard` la pinta como texto;
+  ahora la pantalla le pasa su texto, con cada párrafo y renglón de lista separado. El buscador también busca en ese texto:
+  «strong» ya no encontraba la tarea por una etiqueta.
+
 ## [0.63.0] - 2026-11-07
 
 ### Agregado
