@@ -6,6 +6,11 @@
 // Se decide al abrir (con la posición real del botón), no con el ancho de la pantalla: así sirve igual si la barra está
 // arriba o abajo, y no depende de nada que el servidor no pueda saber.
 //
+// Abajo, el menú se CENTRA sobre su botón, como el globo de un iPad que apunta a su botón, y MUI lo detiene a 16 px de la
+// orilla (marginThreshold del Popover). Antes se alineaba con la orilla derecha del botón, y en tableta el botón flota hacia
+// adentro, junto a la barra de pestañas centrada: el menú quedaba en medio de la pantalla (a 834 px, a 114 px de la orilla)
+// y se leía como un cuadro suelto. En el teléfono el botón ya está en la orilla: el menú se mueve 2 px (de 18 a 16).
+//
 // Funciones puras, sin React: function (regla de la casa).
 
 // lo que se separa el menú de su botón (px)
@@ -37,8 +42,8 @@ export function barMenuPlacementOf(anchorElement) {
         const bar = anchorElement.closest('header, nav') ?? anchorElement;
         const insideBarPixels = Math.max(0, box.top - bar.getBoundingClientRect().top);
         return {
-            anchorOrigin: {vertical: 'top', horizontal: 'right'},
-            transformOrigin: {vertical: 'bottom', horizontal: 'right'},
+            anchorOrigin: {vertical: 'top', horizontal: 'center'},
+            transformOrigin: {vertical: 'bottom', horizontal: 'center'},
             gapSx: {mt: `-${Math.round(insideBarPixels) + MENU_GAP_PIXELS}px`},
         };
     }
