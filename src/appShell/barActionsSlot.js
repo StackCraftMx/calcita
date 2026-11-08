@@ -12,6 +12,13 @@ import {createContext, useContext} from 'react';
 
 /** Dónde quedó un botón de acción: en una cápsula, en el menú «⋯» o suelto. */
 export const BAR_ACTIONS_PLACEMENT = Object.freeze({capsule: 'capsule', menu: 'menu', inline: 'inline'});
+/**
+ * Si un BarActionButton con ícono enseña su nombre en la cápsula de la barra (showLabel):
+ *   - auto (por omisión): solo el ícono, con su nombre en el tooltip, como pide la guía de Apple;
+ *   - desktop: ícono y nombre en escritorio, donde sobra lugar y dos íconos solos se confunden; en el teléfono solo el ícono.
+ * En el menú «⋯» y suelto (fuera de BarActions) siempre va con su nombre.
+ */
+export const BAR_ACTION_LABEL = Object.freeze({auto: 'auto', desktop: 'desktop'});
 
 export const BarActionsSlotContext = createContext({slot: null, phoneSlot: null, usesCapsules: false});
 export const BarActionsPlacementContext = createContext(BAR_ACTIONS_PLACEMENT.inline);
