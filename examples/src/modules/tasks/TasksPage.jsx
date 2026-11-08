@@ -49,7 +49,7 @@ const TODO_COLUMN_ID = 'todo';
 /** ¿La tarea se ve con la búsqueda y el filtro de responsable? */
 const isVisible = (task, {query, who, signedInUserId}) => {
     const words = query.trim().toLowerCase();
-    const matchesText = !words || [task.title, task.description, ...task.tagNames].some((text) => text?.toLowerCase().includes(words));
+    const matchesText = !words || [task.title, task.descriptionText, ...task.tagNames].some((text) => text?.toLowerCase().includes(words));
     if (who === WHO.mine) {
         return matchesText && task.assigneeIds.includes(signedInUserId);
     }
@@ -122,9 +122,11 @@ export const TasksPage = () => {
 
     const filters = {query, who, signedInUserId: board.signedInUserId};
     const visibleTasks = board.tasks.filter((task) => isVisible(task, filters));
-    // lo que pinta el tablero: la prioridad como la primera etiqueta (con su color) y el avance de la lista de pendientes
+    // lo que pinta el tablero: la prioridad como la primera etiqueta (con su color), el avance de la lista de pendientes y
+    // la descripción en texto (el tablero la pinta como texto; con el HTML del editor salían las etiquetas)
     const cards = visibleTasks.map((task) => ({
         ...task,
+        description: task.descriptionText,
         tags: [{label: t(`priority.${task.priority}`), color: PRIORITY_COLOR[task.priority]}, ...task.tagNames],
         checklist: {done: task.checklistItems.filter((item) => item.done).length, total: task.checklistItems.length},
     }));

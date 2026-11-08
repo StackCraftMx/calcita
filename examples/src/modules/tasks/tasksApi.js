@@ -5,6 +5,7 @@
 import {
     TASK_PRIORITIES, archiveDoneTasks, completeTask, createTask, deleteTask, getTaskBoard, moveTask, reopenTask, updateTask,
 } from '@/fakeServer/tasksServer.js';
+import {descriptionTextOf} from '@/modules/tasks/taskDescription.js';
 
 export {TASK_PRIORITIES};
 
@@ -16,7 +17,9 @@ function boardOf(response) {
         people: response.people,
         signedInUserId: response.signed_in_user_id,
         tasks: response.tasks.map((task) => ({
-            id: task.id, columnId: task.column_id, title: task.title, description: task.description, tagNames: task.tags,
+            // description: el HTML del editor (para la ventana); descriptionText: su texto (para la tarjeta y el buscador)
+            id: task.id, columnId: task.column_id, title: task.title, description: task.description,
+            descriptionText: descriptionTextOf(task.description), tagNames: task.tags,
             priority: task.priority, assigneeIds: task.assignee_ids, assignees: task.assignee_ids.map((id) => peopleById.get(id)).filter(Boolean),
             dueDate: task.due_date, checklistItems: task.checklist, comments: task.comments, attachments: task.attachments,
             completed: Boolean(task.completed_at), completedAt: task.completed_at,
