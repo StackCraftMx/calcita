@@ -451,7 +451,9 @@ Una parte cambiada por `slots` es del proyecto y no la recibe (como tampoco reci
 `className`, `style` y `sx` de `slotProps` se suman a los de Calcita; una pieza dentro de otra igual no toma los `slots` de la
 de afuera. Una parte propia no recibe el estilo de Calcita ni, si la parte es un `Stack`, su acomodo (`spacing`,
 `direction`): eso lo pone ella; lo que la pantalla le dé en `slotProps` sí le llega. `TextInput` es la excepción: su `slotProps` es el del `TextField` de MUI (`input`, `htmlInput`…). Una pieza propia
-del proyecto se arma con lo mismo: `piecePart`, `usePieceProps` y `withPieceSlots`.
+del proyecto se arma con lo mismo: `piecePart`, `usePieceProps` y `withPieceSlots`. Como en MUI, la parte se declara con
+mayúscula y se usa con minúscula: `piecePart('MiPieza', 'Button', Button)` se nombra `button` en `slots`, `slotProps`,
+`styleOverrides` y su clase (`MiPieza-button`).
 
 El `sx` de la pantalla se **combina regla por regla** con el de la pieza, no la reemplaza: en la tabla,
 `gridSx={{'& .MuiDataGrid-cell': {alignItems: 'flex-start'}}}` cambia solo la alineación y la celda conserva lo demás.
