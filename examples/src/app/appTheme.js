@@ -3,7 +3,7 @@
 // colores, sus esquinas, las superficies con vidrio y la pestaña elegida). Con los de fábrica queda idéntico al de siempre,
 // más dos ajustes de proyecto: el botón «⋯» y la × del cajón de filtros.
 import {
-    FILTER_DRAWER_CLOSE_PLACEMENT, GLASS_SELECTED_TAB, THEME_LOOK, TOP_BAR, createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette,
+    FILTER_DRAWER_CLOSE_PLACEMENT, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB, THEME_LOOK, TOP_BAR, createToolkitTheme, stackcraftDarkPalette, stackcraftLightPalette,
 } from '@stackcraftmx/calcita';
 
 import {DEFAULT_CORNER_RADIUS, GLASS_MODES, STACKCRAFT_COLORS, changedColorsOf, paletteWithColors} from '@/core';
@@ -26,14 +26,16 @@ const PROJECT_COMPONENTS = Object.freeze({
 /** Lo que trae el configurador de tema de fábrica: los colores de Stackcraft, las esquinas y la barra del framework. */
 export const DEFAULT_THEME_CHOICES = Object.freeze({
     colors: STACKCRAFT_COLORS, cornerRadius: DEFAULT_CORNER_RADIUS, bar: TOP_BAR.capsules, surfacesOff: [], selectedTab: GLASS_SELECTED_TAB.drop,
+    outlinedButton: GLASS_OUTLINED_BUTTON.glass,
 });
 
 /**
  * @param {object} options
  * @param {string} options.glassMode uno de GLASS_MODES
- * @param {{colors: Record<string, string>, cornerRadius: number, bar?: string, surfacesOff?: string[], selectedTab?: string}} [options.themeChoices]
+ * @param {{colors: Record<string, string>, cornerRadius: number, bar?: string, surfacesOff?: string[], selectedTab?: string, outlinedButton?: string}} [options.themeChoices]
  *     lo del configurador de tema (bar: la barra de arriba con vidrio o minimalista, TOP_BAR; surfacesOff: las superficies
- *     que van sin vidrio, GLASS_SURFACE; selectedTab: la pestaña elegida, GLASS_SELECTED_TAB)
+ *     que van sin vidrio, GLASS_SURFACE; selectedTab: la pestaña elegida, GLASS_SELECTED_TAB; outlinedButton: el botón con
+ *     borde, GLASS_OUTLINED_BUTTON)
  * @returns {object} el tema de MUI
  */
 export function buildAppTheme({glassMode, themeChoices = DEFAULT_THEME_CHOICES}) {
@@ -57,6 +59,10 @@ export function buildAppTheme({glassMode, themeChoices = DEFAULT_THEME_CHOICES})
         ...Object.fromEntries((themeChoices.surfacesOff ?? []).map((surface) => [surface, false])),
         cards: glassMode === GLASS_MODES.surfaces,
     };
-    const glass = {surfaces, selectedTab: themeChoices.selectedTab ?? GLASS_SELECTED_TAB.drop};
+    const glass = {
+        surfaces,
+        selectedTab: themeChoices.selectedTab ?? GLASS_SELECTED_TAB.drop,
+        outlinedButton: themeChoices.outlinedButton ?? GLASS_OUTLINED_BUTTON.glass,
+    };
     return createToolkitTheme({colorSchemes, overrides, glass, bar, components: PROJECT_COMPONENTS});
 }

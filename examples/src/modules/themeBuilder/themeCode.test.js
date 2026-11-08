@@ -4,7 +4,7 @@ import {test} from 'node:test';
 import {DEFAULT_GLASS_SURFACES} from '@stackcraftmx/calcita';
 
 import {STACKCRAFT_COLORS, changedColorsOf, paletteWithColors} from '@/core/themeColors.js';
-import {THEME_BAR, THEME_FLOATING_SURFACES, THEME_GLASS, THEME_SELECTED_TAB, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
+import {THEME_BAR, THEME_FLOATING_SURFACES, THEME_GLASS, THEME_OUTLINED_BUTTON, THEME_SELECTED_TAB, glassOptionOf, themeCodeOf} from '@/modules/themeBuilder/themeCode.js';
 
 const CHOICES = {colors: {primary: '#ff6b1a', error: '#b91c1c'}, glass: THEME_GLASS.surfaces, cornerRadius: 12};
 
@@ -67,6 +67,15 @@ test('el vidrio por superficie: solo se escriben las apagadas; con las tarjetas,
     const code = themeCodeOf({...CHOICES, glass: THEME_GLASS.floating, surfacesOff: ['backdrop'], selectedTab: THEME_SELECTED_TAB.accent});
     assert.match(code, /^ {4}glass: \{surfaces: \{backdrop: false\}, selectedTab: 'accent'\},$/m);
     assert.match(themeCodeOf({...CHOICES, glass: THEME_GLASS.floating}), /^ {4}glass: true,$/m);
+});
+
+test('el botón con borde: con borde de verdad se escribe; la cápsula de vidrio (de fábrica) no', () => {
+    assert.deepEqual(glassOptionOf(THEME_GLASS.floating, {outlinedButton: THEME_OUTLINED_BUTTON.bordered}), {outlinedButton: 'bordered'});
+    assert.equal(glassOptionOf(THEME_GLASS.floating, {outlinedButton: THEME_OUTLINED_BUTTON.glass}), true);
+    assert.equal(glassOptionOf(THEME_GLASS.off, {outlinedButton: THEME_OUTLINED_BUTTON.bordered}), false);
+
+    const code = themeCodeOf({...CHOICES, glass: THEME_GLASS.floating, selectedTab: THEME_SELECTED_TAB.accent, outlinedButton: THEME_OUTLINED_BUTTON.bordered});
+    assert.match(code, /^ {4}glass: \{selectedTab: 'accent', outlinedButton: 'bordered'\},$/m);
 });
 
 test('las superficies del configurador son las de Calcita que flotan (sin las tarjetas, que van aparte)', () => {

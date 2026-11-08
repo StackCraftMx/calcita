@@ -32,7 +32,7 @@ import {
 
 import {GLASS_MODES, STACKCRAFT_COLORS, THEME_COLOR_KEYS, paletteWithColors, useAppThemeChoice} from '@/core';
 import {
-    THEME_BAR, THEME_FLOATING_SURFACES, THEME_GLASS, THEME_SELECTED_TAB, glassOptionOf, themeCodeOf,
+    THEME_BAR, THEME_FLOATING_SURFACES, THEME_GLASS, THEME_OUTLINED_BUTTON, THEME_SELECTED_TAB, glassOptionOf, themeCodeOf,
 } from '@/modules/themeBuilder/themeCode.js';
 
 const PREVIEW_MODES = Object.freeze({light: 'light', dark: 'dark'});
@@ -110,14 +110,16 @@ export const ThemeBuilderPage = () => {
     const setLook = (nextLook) => setGlassMode(nextLook === THEME_LOOK.minimal ? GLASS_MODES.minimal : GLASS_MODES.floating);
     const setColors = (update) => setThemeChoices((current) => ({...current, colors: update(current.colors)}));
     const setCornerRadius = (nextRadius) => setThemeChoices((current) => ({...current, cornerRadius: nextRadius}));
-    // las superficies sin vidrio y la pestaña elegida (se ven en toda la app y van al código)
+    // las superficies sin vidrio, la pestaña elegida y el botón con borde (se ven en toda la app y van al código)
     const surfacesOff = themeChoices.surfacesOff ?? [];
     const selectedTab = themeChoices.selectedTab ?? THEME_SELECTED_TAB.drop;
+    const outlinedButton = themeChoices.outlinedButton ?? THEME_OUTLINED_BUTTON.glass;
     const toggleSurface = (surface, isGlass) => setThemeChoices((current) => {
         const currentOff = current.surfacesOff ?? [];
         return {...current, surfacesOff: isGlass ? currentOff.filter((name) => name !== surface) : [...currentOff, surface]};
     });
     const setSelectedTab = (nextTab) => setThemeChoices((current) => ({...current, selectedTab: nextTab}));
+    const setOutlinedButton = (nextButton) => setThemeChoices((current) => ({...current, outlinedButton: nextButton}));
     const [previewMode, setPreviewMode] = useState(PREVIEW_MODES.light);
     const [codeLanguage, setCodeLanguage] = useState(CODE_LANGUAGES.js);
 
@@ -128,12 +130,12 @@ export const ThemeBuilderPage = () => {
         colorSchemes: {[previewMode]: {palette: {
             ...paletteWithColors(isDarkPreview ? stackcraftDarkPalette : stackcraftLightPalette, colors, isDarkPreview), mode: previewMode,
         }}},
-        glass: glassOptionOf(glass, {surfacesOff, selectedTab}),
+        glass: glassOptionOf(glass, {surfacesOff, selectedTab, outlinedButton}),
         look,
         bar,
         overrides: {cssVariables: false, defaultColorScheme: previewMode, shape: {borderRadius: cornerRadius}},
-    }), [colors, glass, bar, look, cornerRadius, previewMode, isDarkPreview, surfacesOff, selectedTab]);
-    const code = themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff, selectedTab}, codeLanguage === CODE_LANGUAGES.ts);
+    }), [colors, glass, bar, look, cornerRadius, previewMode, isDarkPreview, surfacesOff, selectedTab, outlinedButton]);
+    const code = themeCodeOf({colors, glass, cornerRadius, look, bar, surfacesOff, selectedTab, outlinedButton}, codeLanguage === CODE_LANGUAGES.ts);
     const hasGlassChoices = !isMinimal && glass !== THEME_GLASS.off;
 
     return (
@@ -195,6 +197,16 @@ export const ThemeBuilderPage = () => {
                                                   options={[
                                                       {value: THEME_SELECTED_TAB.drop, label: t('look.selectedTabDrop')},
                                                       {value: THEME_SELECTED_TAB.accent, label: t('look.selectedTabAccent')},
+                                                  ]} />
+                            </FormRow>
+                        )}
+                        {/* el botón con borde: la cápsula de vidrio o con un borde de verdad (glass.outlinedButton) */}
+                        {hasGlassChoices && (
+                            <FormRow label={t('look.outlinedButton')}>
+                                <SegmentedControl ariaLabel={t('look.outlinedButton')} value={outlinedButton} onChange={setOutlinedButton}
+                                                  options={[
+                                                      {value: THEME_OUTLINED_BUTTON.glass, label: t('look.outlinedButtonGlass')},
+                                                      {value: THEME_OUTLINED_BUTTON.bordered, label: t('look.outlinedButtonBordered')},
                                                   ]} />
                             </FormRow>
                         )}
