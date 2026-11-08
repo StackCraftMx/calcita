@@ -77,7 +77,7 @@ import Wordmark from '@/appShell/Wordmark.jsx';
 import {PageTitleProvider, usePageTitle} from '@/appShell/pageTitle.jsx';
 import {
     APP_BAR_HEIGHT_PIXELS, DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, GLASS_PANEL_GAP_PIXELS, MAIN_CONTENT_ID,
-    FLOATING_BOTTOM_SPACE_CSS_VARIABLE, MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_MEDIA_QUERY, drawerTransitionOf,
+    FLOATING_BOTTOM_SPACE_CSS_VARIABLE, MOBILE_TAB_BAR_HEIGHT, PHONE_MEDIA_QUERY, drawerTransitionOf,
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
 import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
@@ -222,7 +222,7 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
     accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    menuLabelOverflow, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, declaredPath, children,
+    menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, declaredPath, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
@@ -377,7 +377,7 @@ const AppLayoutFrame = ({
             {usesTabBar && <NewBuildNotice variant={NEW_BUILD_NOTICE_VARIANT.floating} />}
             {usesTabBar && (
                 <MobileTabBar menuItems={menuItems} activeItem={activeItem} menuBadges={menuBadges} moreFooter={sidebarFooter} minimizeOnScroll={minimizeTabBarOnScroll}
-                              labelOverflow={menuLabelOverflow} onPinnedTabsChange={onMobileTabsChange}
+                              labelOverflow={menuLabelOverflow} maxTabs={maxMobileTabs} onPinnedTabsChange={onMobileTabsChange}
                               account={(
                                   <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle}
                                                showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} user={user}
@@ -430,7 +430,7 @@ const AppLayoutFrame = ({
                          ...(usesTabBar && {
                              [PHONE_MEDIA_QUERY]: {
                                  pt: `calc(${theme.spacing(3)} + env(safe-area-inset-top))`,
-                                 pb: `calc(${MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + GLASS_PANEL_GAP_PIXELS * 2}px + env(safe-area-inset-bottom) + ${theme.spacing(3)} + var(${FLOATING_BOTTOM_SPACE_CSS_VARIABLE}, 0px))`,
+                                 pb: `calc(${GLASS_PANEL_GAP_PIXELS * 2}px + ${MOBILE_TAB_BAR_HEIGHT.portrait} + env(safe-area-inset-bottom) + ${theme.spacing(3)} + var(${FLOATING_BOTTOM_SPACE_CSS_VARIABLE}, 0px))`,
                              },
                          }),
                      })}>
@@ -496,6 +496,9 @@ const AppLayoutFrame = ({
  * @param {boolean} [props.defaultCollapsed] el menú lateral empieza encogido (la persona lo cambia y se recuerda)
  * @param {boolean} [props.minimizeTabBarOnScroll] en el teléfono con vidrio, la barra de pestañas se encoge al leer hacia
  *     abajo y regresa al subir (como iOS 26); por omisión sí
+ * @param {number} [props.maxMobileTabs] lo más que van en esa barra de pestañas, contando «Más» (2 o más); sin él, las que
+ *     quepan a lo ancho (en un iPad, unas 9). Cuáles: las que el menu.js marca con mobileTab: true. También desde el tema
+ *     (components.CalcitaMobileTabBar.defaultProps.maxTabs), junto con tabLabelLines (los renglones de cada nombre)
  * @param {number|string} [props.contentMaxWidth] por omisión 1400
  * @param {string} [props.menuLabelOverflow] un nombre del menú lateral que no cabe en su renglón: MENU_LABEL_OVERFLOW.ellipsis
  *     (por omisión, se corta con «…») o MENU_LABEL_OVERFLOW.wrap (baja a otro renglón y se lee completo). También desde el
@@ -513,7 +516,7 @@ const AppLayoutContent = (props) => {
     const {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
-    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, menuLabelOverflow, onMenuCollapse, onMobileMenuChange,
+    isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange,
     onMobileTabsChange, texts, children,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
@@ -534,7 +537,7 @@ const AppLayoutContent = (props) => {
                                     headerActions={headerActions} accountSettings={accountSettings} menuBadges={menuBadges} sidebarFooter={sidebarFooter} showFontSizeToggle={showFontSizeToggle}
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
                                     isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
-                                    contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
+                                    contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} maxMobileTabs={maxMobileTabs} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
                                     onMobileTabsChange={onMobileTabsChange} declaredPath={declaredPath}>
                         {children}
                     </AppLayoutFrame>

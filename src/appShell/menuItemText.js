@@ -17,6 +17,19 @@ export function menuItemLabelOf(menuItem, t) {
 }
 
 /**
+ * El nombre de una entrada en la barra de pestañas del teléfono: el corto si lo trae (mobileLabel o mobileLabelKey) y, si
+ * no, el de siempre. Así «Inteligencia de mercado» sale completo en el menú lateral y en «Más», y «Mercado» en la pestaña,
+ * donde caben unas 11 letras por renglón (la guía de Apple pide nombres de pestaña cortos).
+ *
+ * @param {{label?: string, labelKey?: string, mobileLabel?: string, mobileLabelKey?: string}} menuItem
+ * @param {(key: string) => string} t el traductor de la pantalla
+ * @returns {string}
+ */
+export function menuItemTabLabelOf(menuItem, t) {
+    return menuItem.mobileLabel ?? (menuItem.mobileLabelKey ? t(menuItem.mobileLabelKey) : menuItemLabelOf(menuItem, t));
+}
+
+/**
  * Para qué sirve una entrada (para las tarjetas de un inicio).
  *
  * @param {{description?: string, descriptionKey?: string}} menuItem

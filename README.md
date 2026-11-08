@@ -384,6 +384,11 @@ pantalla y del tabulador). Para toda la app, en el tema: `CalcitaFilterDrawer: {
 <BarCapsule aria-label="Zoom">…</BarCapsule>                              {/* la misma cápsula, fuera de la barra */}
 ```
 
+En la cápsula, `BarActionButton` va solo con su ícono, como pide la guía de Apple. Con
+`showLabel={BAR_ACTION_LABEL.desktop}` lleva ícono y nombre en escritorio, donde sobra lugar y dos íconos solos se
+confunden («Descargar» y «Filtrar»), y solo el ícono en el teléfono. Para toda la app, en el tema:
+`CalcitaBarActionButton: {defaultProps: {showLabel: 'desktop'}}`.
+
 En Android conviene arrancar con el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa
 en los teléfonos baratos. `isAndroidDevice()` lo dice; con Next, desde el servidor, se le pasa la identificación del
 navegador: `isAndroidDevice({userAgent: headers.get('user-agent')})`. Sirve para elegir un estilo, no para seguridad.
@@ -661,7 +666,20 @@ en un cajón y los ajustes se juntan detrás de un engrane. Con vidrio, en el te
 pestañas abajo que se encoge al leer hacia abajo y regresa al subir, como en iOS 26 (`minimizeTabBarOnScroll={false}` la
 deja fija). Van las que el `menu.js` marca con `mobileTab: true`, y en «Más» → «Editar la barra» cada quien elige las suyas
 (se recuerda en su navegador; «Como venía» regresa a las del proyecto). Van tantas como quepan a lo ancho sin cortar su
-nombre; las demás, en «Más».
+nombre; las demás, en «Más». `maxMobileTabs` pone un tope contando «Más» (en un iPad caben unas 9): `maxMobileTabs={6}`.
+
+El nombre de una pestaña baja hasta a dos renglones y la barra crece con el tamaño de letra para que quepan (60 px con la
+letra normal, 66 con «Grande» y 73 con «Muy grande»). Una entrada con nombre largo puede traer uno corto solo para la barra:
+`mobileLabelKey` (o `mobileLabel`) en su `menu.js`; el menú lateral y «Más» siguen con el largo. Con
+`CalcitaMobileTabBar: {defaultProps: {tabLabelLines: MOBILE_TAB_LABEL_LINES.one}}` va en un renglón con «…» y la barra se
+queda en 60 px. Para acomodar algo suyo encima de la barra, `MOBILE_TAB_BAR_HEIGHT.portrait` es su alto de verdad en CSS
+(`MOBILE_TAB_BAR_HEIGHT_PIXELS`, los 60 y 46 px de la letra normal).
+
+```js
+export function buildMenuItem() {
+    return {to: '/reports', labelKey: 'reports:menu.label', mobileLabelKey: 'reports:menu.tabLabel', mobileTab: true};
+}
+```
 
 Claro u oscuro tiene tres opciones en el menú de la cuenta: Claro, Oscuro y Automático, que sigue lo que diga el equipo y
 es lo de omisión. El botón de la barra fija claro u oscuro; Automático es la forma de volver a seguir al equipo.

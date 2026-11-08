@@ -2,8 +2,8 @@
 // globo; picar un alfiler la marca en la lista. Arriba, las pestañas entre el mapa y la ruta de reparto (BranchesNav) y el
 // filtro por estado (abiertas, en remodelación, cerradas).
 // «Agregar sucursal» abre el formulario en una ventana (NewBranchDialog); al guardar, la nueva sale en la lista y el mapa
-// vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra como ícono con su tooltip
-// (BarActionButton); en el teléfono flota arriba a la derecha.
+// vuela a ella. El botón va en el encabezado: con la barra en cápsulas sube solo a la barra (BarActionButton); en
+// escritorio con su nombre junto al ícono (showLabel desktop) y en el teléfono solo el ícono, flotando arriba a la derecha.
 // El globo de cada alfiler es del proyecto (renderPopup de MapView): la foto de la fachada (si se subió con ImageInput al
 // darla de alta), su estado, sus pedidos del mes y «Cómo llegar», que abre la ruta en OpenStreetMap.
 //
@@ -22,7 +22,9 @@ import Stack from '@mui/material/Stack';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import DirectionsOutlinedIcon from '@mui/icons-material/DirectionsOutlined';
 import Typography from '@mui/material/Typography';
-import {BarActionButton, PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {
+    BAR_ACTION_LABEL, BarActionButton, PageHeading, SegmentedControl, Tag, formatNumber, useToolkitTranslation,
+} from '@stackcraftmx/calcita';
 import {MapView} from '@stackcraftmx/calcita/maps';
 
 import {BranchesNav} from '@/modules/branches/BranchesNav.jsx';
@@ -73,7 +75,8 @@ export const BranchesPage = () => {
     return (
         <Stack spacing={3}>
             <PageHeading title={t('page.title')} description={t('page.description')}
-                         actions={<BarActionButton label={t('add.button')} icon={<AddRoundedIcon />} onClick={openNewBranch} />} />
+                         actions={<BarActionButton label={t('add.button')} icon={<AddRoundedIcon />} onClick={openNewBranch}
+                                                   showLabel={BAR_ACTION_LABEL.desktop} />} />
             <BranchesNav />
             <SegmentedControl ariaLabel={t('status.label')} value={status} onChange={setStatus} options={statusOptions} />
             {error && <Alert severity="error">{error}</Alert>}

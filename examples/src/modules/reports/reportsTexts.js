@@ -4,6 +4,8 @@ export const reportsTexts = {
         reports: {
             menu: {
                 label: 'Descargas y Excel',
+                // el nombre corto en la barra de pestañas del teléfono (mobileLabelKey)
+                tabLabel: 'Descargas',
                 description: 'El reporte en Excel y CSV, y el panel de descargas con avance, cancelación y error.',
             },
             permissions: {
@@ -78,6 +80,7 @@ export const reportsTexts = {
         reports: {
             menu: {
                 label: 'Downloads and Excel',
+                tabLabel: 'Downloads',
                 description: 'The Excel and CSV report, and the downloads panel with progress, cancellation and errors.',
             },
             permissions: {

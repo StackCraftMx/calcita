@@ -33,8 +33,45 @@ export const DESKTOP_MEDIA_QUERY = '@media (min-width: 900px) and (min-height: 5
 /** El teléfono acostado: la barra de pestañas va compacta (ícono y nombre lado a lado) para dejarle el alto al contenido. */
 export const PHONE_LANDSCAPE_MEDIA_QUERY = '@media (max-height: 499.95px)';
 
-/** La barra de pestañas del teléfono con vidrio (MobileTabBar): su alto parado y acostado. */
+/** La barra de pestañas del teléfono con vidrio (MobileTabBar): su alto parado y acostado con la letra normal (px). */
 export const MOBILE_TAB_BAR_HEIGHT_PIXELS = Object.freeze({portrait: 60, landscape: 46});
+// Lo que lleva cada pestaña de esa barra: su ícono (rem), su nombre parado y acostado (px con la letra normal) y el
+// interlineado del nombre, que por omisión baja hasta a dos renglones (tabLabelLines de MobileTabBar: 1 o 2).
+export const MOBILE_TAB_ICON_REM = 1.5;
+export const MOBILE_TAB_LABEL_PIXELS = Object.freeze({portrait: 10, landscape: 12});
+export const MOBILE_TAB_LABEL_LINE_HEIGHT = 1.15;
+export const MOBILE_TAB_LABEL_LINES = Object.freeze({one: 1, two: 2});
+// parada: lo de arriba y abajo del ícono y el nombre (la orilla de la barra, la separación entre los dos y un poco de aire)
+const MOBILE_TAB_EDGES_PIXELS = 12;
+/**
+ * Lo que la barra pone en esta variable de CSS: su alto parado de verdad. Lo leen el marco (el espacio al final de la
+ * página) y lo que flota encima de la barra; sin barra, valen los dos renglones de omisión.
+ */
+export const MOBILE_TAB_BAR_HEIGHT_CSS_VARIABLE = '--calcita-mobile-tab-bar-height';
+
+/**
+ * El alto parado de la barra para tantos renglones del nombre, en CSS: 60 px con la letra normal (como siempre) y, con la
+ * letra «Grande» o «Muy grande», lo que pidan el ícono y sus renglones. Con dos renglones: unos 66 y 73 px (sin crecer, el
+ * segundo renglón se salía); con uno, 60 px con cualquier letra, como antes.
+ *
+ * @param {number} labelLines MOBILE_TAB_LABEL_LINES.one o .two
+ * @returns {string} p. ej. 'max(60px, calc(2.9375rem + 12px))'
+ */
+export function mobileTabBarHeightOf(labelLines) {
+    const contentRem = MOBILE_TAB_ICON_REM + labelLines * (MOBILE_TAB_LABEL_PIXELS.portrait / 16) * MOBILE_TAB_LABEL_LINE_HEIGHT;
+    return `max(${MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait}px, calc(${contentRem}rem + ${MOBILE_TAB_EDGES_PIXELS}px))`;
+}
+
+/**
+ * El alto de verdad de la barra de pestañas, para CSS: lo que la barra dijo en su variable (crece con la letra que elige la
+ * persona y con sus renglones) o, sin barra, el de dos renglones. Acostada, el nombre va al lado del ícono y dos renglones
+ * caben en sus 46 px con cualquier tamaño de letra. Todo lo que se acomoda junto a la barra (el espacio al final de la
+ * página, lo que flota encima) usa este mismo alto, dentro de un calc() con lo que se le sume.
+ */
+export const MOBILE_TAB_BAR_HEIGHT = Object.freeze({
+    portrait: `var(${MOBILE_TAB_BAR_HEIGHT_CSS_VARIABLE}, ${mobileTabBarHeightOf(MOBILE_TAB_LABEL_LINES.two)})`,
+    landscape: `${MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape}px`,
+});
 
 // Lo que flota abajo encima de la barra de pestañas y dura un rato (las acciones de los elegidos de una tabla) pide su alto
 // aquí mientras se ve: el marco lo suma al espacio de abajo del contenido y el final de la página (el paginador) no queda
@@ -53,10 +90,10 @@ export function aboveMobileTabBarOf(gapPixels) {
     return {
         [PHONE_MEDIA_QUERY]: {
             top: 'auto',
-            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait + gapPixels}px + env(safe-area-inset-bottom))`,
+            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + gapPixels}px + ${MOBILE_TAB_BAR_HEIGHT.portrait} + env(safe-area-inset-bottom))`,
         },
         [PHONE_LANDSCAPE_MEDIA_QUERY]: {
-            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape + gapPixels}px + env(safe-area-inset-bottom))`,
+            bottom: `calc(${GLASS_PANEL_GAP_PIXELS + gapPixels}px + ${MOBILE_TAB_BAR_HEIGHT.landscape} + env(safe-area-inset-bottom))`,
         },
     };
 }

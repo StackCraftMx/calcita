@@ -18,6 +18,8 @@ export function buildMenuItem() {
     return {
         to: APP_PATHS.reports,
         labelKey: 'reports:menu.label',
+        // en la barra de pestañas del teléfono, «Descargas»: el largo se cortaba
+        mobileLabelKey: 'reports:menu.tabLabel',
         descriptionKey: 'reports:menu.description',
         sectionKey: 'shell:sections.files',
         Icon: FileDownloadOutlinedIcon,

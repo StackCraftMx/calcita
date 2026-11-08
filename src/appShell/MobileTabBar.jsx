@@ -12,7 +12,10 @@
 //     pendiente, del servidor); un badge de texto («Nuevo») no va en la pestaña, se queda en el menú: Apple los reserva para
 //     lo que pide atención.
 //   - Cuántas pestañas van se mide (useFittingTabCount): las que caben con al menos MIN_TAB_PIXELS cada una; las demás van
-//     a «Más». En una ventana angosta salen menos y en una ancha más, y los nombres no se cortan («Compone…»).
+//     a «Más». En una ventana angosta salen menos y en una ancha más. maxTabs pone un tope (contando «Más»).
+//   - El nombre de la pestaña baja hasta a dos renglones (tabLabelLines) y se corta con «…» solo si no cabe en ellos; la
+//     barra crece con el tamaño de letra para que quepan (mobileTabBarHeightOf). Una entrada con nombre largo puede traer
+//     uno corto solo para la barra (mobileLabel o mobileLabelKey en su menu.js).
 //   - Acostado (pantalla bajita), la barra va compacta: ícono y nombre lado a lado, para dejarle el alto al contenido.
 //   - Al leer hacia abajo se encoge (como iOS 26): queda una cápsula chica en la esquina izquierda con la pestaña donde está
 //     la persona, y la cuenta más chica en la esquina derecha; al subir un poco, o al tocar la cápsula, regresa completa
@@ -25,6 +28,7 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import {useLayoutEffect, useState} from 'react';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -34,16 +38,18 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 
-import {menuItemLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
+import {menuItemLabelOf, menuItemTabLabelOf, menuLinkPropsOf} from '@/appShell/menuItemText.js';
 import {
-    GLASS_PANEL_GAP_PIXELS, MOBILE_TAB_BAR_HEIGHT_PIXELS, PHONE_LANDSCAPE_MEDIA_QUERY, PHONE_MEDIA_QUERY,
+    GLASS_PANEL_GAP_PIXELS, MOBILE_TAB_BAR_HEIGHT, MOBILE_TAB_BAR_HEIGHT_CSS_VARIABLE, MOBILE_TAB_BAR_HEIGHT_PIXELS, MOBILE_TAB_ICON_REM,
+    MOBILE_TAB_LABEL_LINE_HEIGHT, MOBILE_TAB_LABEL_LINES, MOBILE_TAB_LABEL_PIXELS, PHONE_LANDSCAPE_MEDIA_QUERY, PHONE_MEDIA_QUERY,
+    mobileTabBarHeightOf,
 } from '@/appShell/shellSizes.js';
 import SideMenu from '@/appShell/SideMenu.jsx';
 import SubmenuActionsMenu, {SUBMENU_PLACEMENT} from '@/appShell/SubmenuActionsMenu.jsx';
 import TabBarEditor from '@/appShell/TabBarEditor.jsx';
 import {usePinnedMobileTabs} from '@/appShell/usePinnedMobileTabs.js';
 import {useTabBarMinimized} from '@/appShell/useTabBarMinimized.js';
-import {menuBadgeOf, menuItemKeyOf, mobileTabsOf} from '@/navigation/appMenu.js';
+import {PINNABLE_TAB_LIMIT, menuBadgeOf, menuItemKeyOf, mobileTabsOf} from '@/navigation/appMenu.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {minimalFloatingStylesOf} from '@/theme/components/minimalComponents.js';
 import {GLASS_SURFACE, accentTextStylesOf, isGlassTheme, surfaceStylesOf} from '@/theme/glassSurface.js';
@@ -64,15 +70,17 @@ const TabBarMinimized = piecePart(THEME_NAME, 'Minimized', ButtonBase);
 const TabBarAccount = piecePart(THEME_NAME, 'Account', Box);
 const TabBarSheetHeader = piecePart(THEME_NAME, 'SheetHeader', Box);
 
-// el nombre de la pestaña parado y acostado (px), lo ancho máximo de la cápsula y lo alto de la hoja de «Más»
-const TAB_LABEL_PIXELS = Object.freeze({portrait: 10, landscape: 12});
-const TAB_ICON_SIZE = '1.5rem';
+// el ícono de la pestaña (sus medidas y las del nombre viven en shellSizes.js: el alto de la barra sale de ellas), lo ancho
+// máximo de la cápsula y lo alto de la hoja de «Más»
+const TAB_ICON_SIZE = `${MOBILE_TAB_ICON_REM}rem`;
 const TAB_BAR_MAX_WIDTH_PIXELS = 560;
 // lo menos que mide una pestaña (px) para que su nombre se lea entero: parada, un nombre de unas 11 letras («Formularios»
 // pide 61 px, medido en Chrome); acostada, ícono y nombre lado a lado. Con menos, la pestaña se va a «Más»
 const MIN_TAB_PIXELS = Object.freeze({portrait: 60, landscape: 104});
 // antes de medir (o si la barra no se ve): las de siempre, 4 y «Más»
 const DEFAULT_TAB_COUNT = 5;
+// lo menos que puede pedir maxTabs: una pestaña y «Más»
+const MIN_MAX_TABS = 2;
 const MORE_SHEET_MAX_WIDTH_PIXELS = 640;
 const MORE_SHEET_MAX_HEIGHT = '75vh';
 const BADGE_MAX = 99;
@@ -153,6 +161,13 @@ function activeTabOf(theme) {
     }, accentTextStylesOf(theme));
 }
 
+// el nombre en dos renglones: baja de renglón entre palabras (o parte una palabra que no cabe sola, con guion si el
+// navegador sabe el idioma) y se corta con «…» al final del segundo
+const twoLineLabelStyles = {
+    display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: MOBILE_TAB_LABEL_LINES.two, overflow: 'hidden',
+    lineHeight: MOBILE_TAB_LABEL_LINE_HEIGHT, textAlign: 'center', overflowWrap: 'anywhere', hyphens: 'auto',
+};
+
 /**
  * Una pestaña: liga a su pantalla o, con submenú, botón que abre el menú de acciones.
  *
@@ -164,8 +179,9 @@ function activeTabOf(theme) {
  * @param {object} [props.linkProps] {component, to} si navega
  * @param {(event: object) => void} [props.onClick]
  * @param {boolean} [props.hasPopup] abre un menú
+ * @param {number} props.labelLines hasta cuántos renglones baja el nombre (MOBILE_TAB_LABEL_LINES)
  */
-function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPopup = false}) {
+function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPopup = false, labelLines}) {
     return (
         <TabBarTab {...linkProps} onClick={onClick} aria-haspopup={hasPopup ? 'menu' : undefined} aria-current={isActive ? 'page' : undefined}
                     ownSx={(theme) => mergeStyles({
@@ -178,9 +194,10 @@ function TabButton({label, Icon, isActive, badge, linkProps = {}, onClick, hasPo
             <Badge invisible={!badge?.isCount} color="error" max={BADGE_MAX} overlap="circular" badgeContent={badge?.isCount ? badge.content : undefined}>
                 {Icon ? <Icon sx={{fontSize: TAB_ICON_SIZE}} /> : <TabBarTabIconPlaceholder ownSx={{width: TAB_ICON_SIZE, height: TAB_ICON_SIZE}} />}
             </Badge>
-            <TabBarTabLabel component="span" noWrap
-                        ownSx={{...textSizeOf(TAB_LABEL_PIXELS.portrait), fontWeight: 500, maxWidth: '100%',
-                             [PHONE_LANDSCAPE_MEDIA_QUERY]: textSizeOf(TAB_LABEL_PIXELS.landscape)}}>
+            <TabBarTabLabel component="span" noWrap={labelLines === MOBILE_TAB_LABEL_LINES.one}
+                        ownSx={{...textSizeOf(MOBILE_TAB_LABEL_PIXELS.portrait), fontWeight: 500, maxWidth: '100%',
+                             [PHONE_LANDSCAPE_MEDIA_QUERY]: textSizeOf(MOBILE_TAB_LABEL_PIXELS.landscape),
+                             ...(labelLines > MOBILE_TAB_LABEL_LINES.one && twoLineLabelStyles)}}>
                 {label}
             </TabBarTabLabel>
         </TabBarTab>
@@ -219,32 +236,39 @@ function useFittingTabCount(capsule, minTabPixels) {
 }
 
 /**
- * Cuánto le falta a la cuenta para llegar a la orilla derecha de la barra (px). En el teléfono parado es cero: la cápsula
+ * La caja de la cuenta: cuánto le falta para llegar a la orilla derecha de la barra y lo alto que mide (px); con el alto se
+ * calcula cuánto se encoge para quedar del alto de la cápsula chica (la barra crece con la letra). En el teléfono parado la
+ * distancia es cero: la cápsula
  * ocupa todo el ancho y la cuenta ya está en su esquina. En tableta (o el teléfono acostado) la cápsula se queda en su tope
  * y todo va centrado, así que la cuenta queda metida hacia adentro; encogida, se recorre eso para irse a su esquina, como la
  * cápsula chica se va a la suya. Se vuelve a medir al girar o cambiar la ventana.
  *
- * OJO: se mide con offsetLeft y offsetWidth, que no cambian con transform. Medida ya recorrida daría cero y, al girar la
- * tableta con la barra encogida, la cuenta regresaría a medio camino.
+ * OJO: se mide con offsetLeft, offsetWidth y offsetHeight, que no cambian con transform. Medida ya recorrida (o encogida)
+ * daría otra cosa y, al girar la tableta con la barra encogida, la cuenta regresaría a medio camino.
  *
  * @param {HTMLElement|null} root la barra completa (nav), la caja contra la que se mide
  * @param {HTMLElement|null} account el círculo de la cuenta
- * @returns {number}
+ * @returns {{distanceToEdge: number, height: number}} height 0 antes de medir
  */
-function useAccountDistanceToEdge(root, account) {
-    const [distance, setDistance] = useState(0);
+function useAccountBox(root, account) {
+    const [box, setBox] = useState({distanceToEdge: 0, height: 0});
     useLayoutEffect(() => {
         if (!root || !account) {
             return undefined;
         }
-        const measure = () => setDistance(Math.max(0, root.clientWidth - account.offsetLeft - account.offsetWidth));
+        const measure = () => setBox((current) => {
+            const distanceToEdge = Math.max(0, root.clientWidth - account.offsetLeft - account.offsetWidth);
+            const height = account.offsetHeight;
+            // la misma caja: el mismo objeto, para no volver a pintar
+            return current.distanceToEdge === distanceToEdge && current.height === height ? current : {distanceToEdge, height};
+        });
         measure();
         const observer = new ResizeObserver(measure);
         observer.observe(root);
         observer.observe(account);
         return () => observer.disconnect();
     }, [root, account]);
-    return distance;
+    return box;
 }
 
 /**
@@ -256,22 +280,37 @@ function useAccountDistanceToEdge(root, account) {
  * @param {import('react').ReactNode} [props.moreFooter] lo que va al final de la hoja de «Más» (la tarjeta del menú lateral)
  * @param {boolean} [props.minimizeOnScroll] se encoge al leer hacia abajo; por omisión sí
  * @param {string} [props.labelOverflow] un nombre que no cabe en su renglón de la hoja de «Más»: MENU_LABEL_OVERFLOW
+ * @param {number} [props.maxTabs] lo más que van en la barra, contando «Más» (2 o más); sin él, las que quepan a lo ancho
+ * @param {number} [props.tabLabelLines] hasta cuántos renglones baja el nombre de una pestaña: MOBILE_TAB_LABEL_LINES.two
+ *     (por omisión; la barra crece con la letra para que quepan) o .one (un renglón con «…», en 60 px)
  * @param {(keys: string[]|null) => void} [props.onPinnedTabsChange] la persona eligió sus pestañas (null: regresó a las de
  *     omisión)
  */
 function MobileTabBarContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMobileTabBar.defaultProps) y encima lo que llega aquí
     const {
-        menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, labelOverflow, onPinnedTabsChange, ...unknownProps
+        menuItems, activeItem, menuBadges, account, moreFooter, minimizeOnScroll = true, labelOverflow, maxTabs,
+        tabLabelLines = MOBILE_TAB_LABEL_LINES.two, onPinnedTabsChange, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
+    // un tope o unos renglones que no existen se dicen al arrancar, no se arreglan callados
+    if (maxTabs !== undefined && (!Number.isInteger(maxTabs) || maxTabs < MIN_MAX_TABS)) {
+        throw new RangeError(`MobileTabBar: maxTabs es un entero de ${MIN_MAX_TABS} o más, contando «Más» (llegó ${maxTabs}).`);
+    }
+    if (!Object.values(MOBILE_TAB_LABEL_LINES).includes(tabLabelLines)) {
+        throw new RangeError(`MobileTabBar: tabLabelLines es ${Object.values(MOBILE_TAB_LABEL_LINES).join(' o ')} (llegó ${tabLabelLines}).`);
+    }
     const {t} = useToolkitTranslation('layout');
     const {Link: RouterLink} = useToolkitNavigation();
     const {pinnedKeys, setPinnedKeys} = usePinnedMobileTabs();
     const [tabsCapsule, setTabsCapsule] = useState(null);
     const isLandscape = useMediaQuery(PHONE_LANDSCAPE_MEDIA_QUERY);
     const tabCount = useFittingTabCount(tabsCapsule, isLandscape ? MIN_TAB_PIXELS.landscape : MIN_TAB_PIXELS.portrait);
-    const {tabs, more} = mobileTabsOf(menuItems, pinnedKeys, tabCount);
+    // las que caben a lo ancho, sin pasar del tope del proyecto
+    const tabLimit = maxTabs === undefined ? tabCount : Math.min(tabCount, maxTabs);
+    const {tabs, more} = mobileTabsOf(menuItems, pinnedKeys, tabLimit);
+    // en «Editar la barra» se eligen las que caben junto a «Más»: hasta 4, o menos si el tope es más chico
+    const pinnableLimit = maxTabs === undefined ? PINNABLE_TAB_LIMIT : Math.min(PINNABLE_TAB_LIMIT, maxTabs - 1);
     const [submenu, setSubmenu] = useState({anchorElement: null, menuItem: null});
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isEditingTabs, setIsEditingTabs] = useState(false);
@@ -290,12 +329,14 @@ function MobileTabBarContent(props) {
     const {isMinimized, expand} = useTabBarMinimized(minimizeOnScroll);
     const [tabBarRoot, setTabBarRoot] = useState(null);
     const [accountCircle, setAccountCircle] = useState(null);
-    const accountDistanceToEdge = useAccountDistanceToEdge(tabBarRoot, accountCircle);
-    // encogida, la cuenta se recorre a su esquina y se hace del alto de la cápsula chica (crece y se encoge desde su esquina)
+    const accountBox = useAccountBox(tabBarRoot, accountCircle);
+    // encogida, la cuenta se recorre a su esquina y se hace del alto de la cápsula chica (crece y se encoge desde su esquina).
+    // Su alto se mide: la barra crece con la letra. Antes de medir, el alto con la letra normal.
     // (orientation: 'portrait' o 'landscape', las llaves de MINIMIZED_PIXELS y MOBILE_TAB_BAR_HEIGHT_PIXELS)
-    const minimizedAccountTransformOf = (orientation) => (
-        `translateX(${accountDistanceToEdge}px) scale(${MINIMIZED_PIXELS[orientation] / MOBILE_TAB_BAR_HEIGHT_PIXELS[orientation]})`
-    );
+    const minimizedAccountTransformOf = (orientation) => {
+        const accountHeight = accountBox.height || MOBILE_TAB_BAR_HEIGHT_PIXELS[orientation];
+        return `translateX(${accountBox.distanceToEdge}px) scale(${MINIMIZED_PIXELS[orientation] / accountHeight})`;
+    };
     const closeSubmenu = () => setSubmenu({anchorElement: null, menuItem: null});
     const isInside = (menuItem) => menuItem === activeItem || (menuItem.children ?? []).includes(activeItem);
     const moreHasActive = more.some(isInside);
@@ -313,6 +354,8 @@ function MobileTabBarContent(props) {
 
     return (
         <>
+            {/* el alto de la barra con sus renglones: lo leen el marco (el espacio al final de la página) y lo que flota encima */}
+            <GlobalStyles styles={{':root': {[MOBILE_TAB_BAR_HEIGHT_CSS_VARIABLE]: mobileTabBarHeightOf(tabLabelLines)}}} />
             <TabBarRoot ref={setTabBarRoot} component="nav" aria-label={t('drawer.ariaLabel')}
                  ownSx={(theme) => ({
                      display: 'none',
@@ -320,8 +363,8 @@ function MobileTabBarContent(props) {
                      position: 'fixed', zIndex: theme.zIndex.appBar, gap: 0.75, justifyContent: 'center',
                      left: GLASS_PANEL_GAP_PIXELS, right: GLASS_PANEL_GAP_PIXELS,
                      bottom: `calc(${GLASS_PANEL_GAP_PIXELS}px + env(safe-area-inset-bottom))`,
-                     height: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait,
-                     [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
+                     height: MOBILE_TAB_BAR_HEIGHT.portrait,
+                     [PHONE_LANDSCAPE_MEDIA_QUERY]: {height: MOBILE_TAB_BAR_HEIGHT.landscape},
                  })}>
                 {/* minWidth 0: sin él la barra no se encoge por debajo de sus rótulos (lo mínimo de una caja flexible es lo
                     que mide su contenido). Con nombres largos crecía hasta su tope, contaba más pestañas de las que caben y,
@@ -332,14 +375,15 @@ function MobileTabBarContent(props) {
                     {tabs.map((menuItem) => {
                         const hasChildren = (menuItem.children ?? []).length > 0;
                         return (
-                            <TabButton key={menuItem.to ?? menuItem.href ?? menuItemLabelOf(menuItem, t)} label={menuItemLabelOf(menuItem, t)} Icon={menuItem.Icon}
+                            <TabButton key={menuItem.to ?? menuItem.href ?? menuItemLabelOf(menuItem, t)} label={menuItemTabLabelOf(menuItem, t)} Icon={menuItem.Icon}
+                                       labelLines={tabLabelLines}
                                        isActive={isInside(menuItem)} badge={menuBadgeOf(menuItem, menuBadges)} hasPopup={hasChildren}
                                        linkProps={hasChildren ? {} : menuLinkPropsOf(menuItem, RouterLink)}
                                        onClick={hasChildren ? (event) => setSubmenu({anchorElement: event.currentTarget, menuItem}) : undefined} />
                         );
                     })}
                     {more.length > 0 && (
-                        <TabButton label={t('drawer.more')} Icon={MoreHorizRoundedIcon} isActive={moreHasActive} badge={moreBadge} hasPopup
+                        <TabButton label={t('drawer.more')} Icon={MoreHorizRoundedIcon} isActive={moreHasActive} badge={moreBadge} hasPopup labelLines={tabLabelLines}
                                    onClick={() => setIsMoreOpen(true)} />
                     )}
                 </TabBarBar>
@@ -355,16 +399,16 @@ function MobileTabBarContent(props) {
                 </TabBarMinimized>
                 {account && (
                     <TabBarAccount ref={setAccountCircle} ownSx={(theme) => ({
-                        ...glassSurfaceSx(theme), flexShrink: 0, minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.portrait, px: 0.5, display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', [PHONE_LANDSCAPE_MEDIA_QUERY]: {minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape},
+                        ...glassSurfaceSx(theme), flexShrink: 0, minWidth: MOBILE_TAB_BAR_HEIGHT.portrait, px: 0.5, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', [PHONE_LANDSCAPE_MEDIA_QUERY]: {minWidth: MOBILE_TAB_BAR_HEIGHT.landscape},
                         '& .MuiButtonBase-root': {color: 'inherit'},
                         // encogida, la cuenta se queda pero del alto de la cápsula chica y en la esquina derecha (en tableta
-                        // estaba metida hacia adentro, junto a la cápsula centrada: useAccountDistanceToEdge)
+                        // estaba metida hacia adentro, junto a la cápsula centrada: useAccountBox)
                         transformOrigin: 'right bottom',
                         transform: isMinimized ? minimizedAccountTransformOf('portrait') : 'none',
                         transition: theme.transitions.create('transform', {duration: theme.transitions.duration.short}),
                         ...(isMinimized && {[PHONE_LANDSCAPE_MEDIA_QUERY]: {
-                            minWidth: MOBILE_TAB_BAR_HEIGHT_PIXELS.landscape,
+                            minWidth: MOBILE_TAB_BAR_HEIGHT.landscape,
                             transform: minimizedAccountTransformOf('landscape'),
                         }}),
                     })}>
@@ -386,7 +430,7 @@ function MobileTabBarContent(props) {
                         maxHeight: MORE_SHEET_MAX_HEIGHT, borderRadius: '20px', overflow: 'hidden',
                     }}}}>
                 {isEditingTabs ? (
-                    <TabBarEditor menuItems={menuItems} pinnedKeys={tabs.map(menuItemKeyOf)}
+                    <TabBarEditor menuItems={menuItems} pinnedKeys={tabs.map(menuItemKeyOf)} limit={pinnableLimit}
                                   onDone={(keys) => {
                                       setPinnedKeys(keys);
                                       onPinnedTabsChange?.(keys);

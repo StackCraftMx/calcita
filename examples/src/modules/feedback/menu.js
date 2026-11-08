@@ -13,6 +13,8 @@ export function buildMenuItem() {
     return {
         to: APP_PATHS.feedback,
         labelKey: 'feedback:menu.label',
+        // en la barra de pestañas del teléfono, «Avisos»: el largo se cortaba («Avisos y c…»)
+        mobileLabelKey: 'feedback:menu.tabLabel',
         descriptionKey: 'feedback:menu.description',
         sectionKey: 'shell:sections.interface',
         Icon: NotificationsActiveOutlinedIcon,
