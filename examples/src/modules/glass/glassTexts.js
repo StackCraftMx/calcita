@@ -3,11 +3,12 @@ export const glassTexts = {
     es: {
         glass: {
             menu: {
-                label: 'Vidrio líquido',
+                // el nombre de Apple no se traduce
+                label: 'Liquid Glass',
                 description: 'Todo lo que flota sobre el contenido, de vidrio: la barra, el menú, los diálogos, los avisos y los controles.',
             },
             page: {
-                title: 'Vidrio líquido',
+                title: 'Liquid Glass',
                 subtitle: 'Con createToolkitTheme({glass: true}), lo que flota sobre el contenido es de vidrio y deja ver, desenfocado, lo que pasa por detrás. El contenido (estas tarjetas) se queda sólido para que el texto largo se lea, salvo que el proyecto pida glass: {surfaces: true} («También en las tarjetas» en el botón de vidrio de la barra).',
                 off: 'El vidrio está apagado: elija «En lo que flota» o «También en las tarjetas» en el botón de vidrio de la barra de arriba para comparar.',
                 reduced: 'Si su equipo tiene «Reducir transparencia» o «Aumentar contraste», el vidrio se pinta sólido a propósito.',
@@ -74,11 +75,11 @@ export const glassTexts = {
     en: {
         glass: {
             menu: {
-                label: 'Liquid glass',
+                label: 'Liquid Glass',
                 description: 'Everything that floats over the content, made of glass: the bar, the menu, dialogs, toasts and controls.',
             },
             page: {
-                title: 'Liquid glass',
+                title: 'Liquid Glass',
                 subtitle: 'With createToolkitTheme({glass: true}), whatever floats over the content is glass and shows, blurred, what passes behind it. The content (these cards) stays solid so long text reads well, unless the project asks for glass: {surfaces: true} (“On cards too” in the glass button of the top bar).',
                 off: 'Glass is off: choose “On what floats” or “On cards too” in the glass button of the top bar to compare.',
                 reduced: 'If your device has “Reduce transparency” or “Increase contrast” on, glass is painted solid on purpose.',
