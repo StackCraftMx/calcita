@@ -67,12 +67,15 @@ export {default as BarActionButton} from '@/appShell/BarActionButton.jsx';
 export {default as BarSearch} from '@/appShell/BarSearch.jsx';
 export {ACTIONS_MENU_ROW, default as ActionsMenu} from '@/ui/actions/ActionsMenu.jsx';
 export {SELECTION_PHONE_LAYOUT, default as SelectionActions, selectionFloatsOnPhone} from '@/ui/actions/SelectionActions.jsx';
-export {BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
+export {BAR_ACTION_LABEL, BAR_ACTIONS_PLACEMENT, useBarActionsPlacement, useCloseBarActionsMenu} from '@/appShell/barActionsSlot.js';
 export {BAR_CAPSULE_HEIGHT_PIXELS, default as BarCapsule} from '@/appShell/BarCapsule.jsx';
 export {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 export {SettingSection, default as AppearanceSettings} from '@/appShell/AppearanceSettings.jsx';
 export {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
-export {DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, MAIN_CONTENT_ID, PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
+export {
+    DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, MAIN_CONTENT_ID, MOBILE_TAB_BAR_HEIGHT, MOBILE_TAB_BAR_HEIGHT_PIXELS,
+    MOBILE_TAB_LABEL_LINES, PHONE_MEDIA_QUERY,
+} from '@/appShell/shellSizes.js';
 export {useActiveMenuPath, useAppMenu} from '@/appShell/appMenuContext.js';
 export {usePageTitle} from '@/appShell/pageTitle.jsx';
 export {initialsOf, menuItemDescriptionOf, menuItemLabelOf, menuItemSectionOf, menuSectionsOf} from '@/appShell/menuItemText.js';
