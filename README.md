@@ -310,6 +310,11 @@ Con vidrio, la pestaña elegida de `Tabs` es una gota del color del papel, como 
 papel blanco casi no se distingue cuál es; `glass: {selectedTab: GLASS_SELECTED_TAB.accent}` la pinta del color de la marca
 con el brillo del botón principal y letra blanca (el color se oscurece lo justo para que se lea, como en el botón).
 
+El botón con borde (`variant="outlined"`) es, con vidrio, una cápsula de vidrio sin borde de color: el filo del vidrio la
+dibuja. Sobre un fondo claro ese filo casi no se ve (1.15 : 1) y el botón se lee como texto suelto;
+`glass: {outlinedButton: GLASS_OUTLINED_BUTTON.bordered}` le pone un borde de verdad, el color de su letra al 70 % (3.83 : 1
+el más bajo con los colores de Stackcraft), encima del vidrio y también dentro de una tarjeta.
+
 La barra de arriba va sin franja, como las ventanas de macOS Tahoe: la ☰ con el nombre, el menú y la cuenta en cápsulas,
 y el título suelto. Con vidrio las cápsulas son de vidrio y el contenido pasa por debajo, desenfocado en la orilla para
 que todo se lea (`scrollEdgeStylesOf`); con el minimalista son bloques del tono de las tarjetas, también en el teléfono.
@@ -465,7 +470,7 @@ Para hacer lo mismo en un componente propio: `sx={[{p: 2}, ...sxListOf(sx)]}` (u
 
 | Nombre en el tema | Partes |
 | --- | --- |
-| `CalcitaAccountMenu` | `button`, `avatar`, `header`, `name`, `settings` |
+| `CalcitaAccountMenu` | `button`, `avatar`, `menu`, `header`, `name`, `settings` |
 | `CalcitaAccountSecurity` | `title`, `form` |
 | `CalcitaActionsMenu` | `button`, `item`, `itemIcon` |
 | `CalcitaActivityLog` | `itemIcon` |
@@ -694,6 +699,16 @@ const menuItems = composeMenu(import.meta.glob('@/modules/*/menu.js', {eager: tr
         …
     </AppLayout>
 </ToolkitProvider>
+```
+
+El menú de la cuenta abre hacia abajo si su botón está arriba y, si está abajo (junto a la barra de pestañas del teléfono),
+hacia arriba y centrado sobre el botón, sin salirse de la pantalla. Un marco propio que lo quiera en otro lado lo dice desde
+su tema, con la parte `menu`, que es el `Menu` de MUI: lo que pase ahí le gana a la colocación de Calcita.
+
+```js
+components: {CalcitaAccountMenu: {defaultProps: {slotProps: {menu: {
+    anchorOrigin: {vertical: 'top', horizontal: 'right'}, transformOrigin: {vertical: 'bottom', horizontal: 'right'},
+}}}}}
 ```
 
 En cada pantalla, `PageHeading` pone el título, la descripción y los botones, y arma las migas solo desde el menú
