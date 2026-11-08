@@ -2,7 +2,9 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
-import {initialsOf, menuItemDescriptionOf, menuItemLabelOf, menuItemSectionOf, menuSectionsOf} from '@/appShell/menuItemText.js';
+import {
+    initialsOf, menuItemDescriptionOf, menuItemLabelOf, menuItemSectionOf, menuItemTabLabelOf, menuSectionsOf,
+} from '@/appShell/menuItemText.js';
 
 const translate = (key) => `«${key}»`;
 
@@ -11,6 +13,16 @@ test('el texto escrito manda; si no hay, se traduce la llave', () => {
     assert.equal(menuItemLabelOf({labelKey: 'orders:menu.label'}, translate), '«orders:menu.label»');
     assert.equal(menuItemDescriptionOf({}, translate), undefined);
     assert.equal(menuItemSectionOf({sectionKey: 'app:menu.operation'}, translate), '«app:menu.operation»');
+});
+
+test('en la barra de pestañas va el nombre corto si lo trae; si no, el de siempre', () => {
+    const marketIntelligence = {labelKey: 'menu.marketIntelligence', mobileLabelKey: 'menu.marketShort'};
+    assert.equal(menuItemTabLabelOf(marketIntelligence, translate), '«menu.marketShort»');
+    // el menú lateral y «Más» siguen con el largo
+    assert.equal(menuItemLabelOf(marketIntelligence, translate), '«menu.marketIntelligence»');
+    assert.equal(menuItemTabLabelOf({label: 'Inteligencia de mercado', mobileLabel: 'Mercado'}, translate), 'Mercado');
+    assert.equal(menuItemTabLabelOf({label: 'Pedidos'}, translate), 'Pedidos');
+    assert.equal(menuItemTabLabelOf({labelKey: 'orders:menu.label'}, translate), '«orders:menu.label»');
 });
 
 test('las secciones salen en el orden de su primera entrada y no se parten aunque el orden las intercale', () => {

@@ -1,7 +1,8 @@
 // Elegir qué pantallas van en la barra de pestañas del teléfono: una lista de todo el menú con un interruptor por renglón.
 // Sale dentro de la hoja de «Más» (MobileTabBar) al picar «Editar la barra».
 //
-//   - Hasta PINNABLE_TAB_LIMIT (las que caben junto a «Más»); llenas, las demás se apagan hasta quitar una.
+//   - Hasta `limit` (por omisión PINNABLE_TAB_LIMIT, las que caben junto a «Más»; menos si la barra tiene maxTabs); llenas,
+//     las demás se apagan hasta quitar una.
 //   - Al menos una: el interruptor de la última no se puede apagar (sin ninguna, la barra volvería sola a las del proyecto
 //     y parecería que no hizo caso).
 //   - Lo elegido se guarda al picar «Listo»; «Como venía» regresa a las que eligió el proyecto.
@@ -42,14 +43,15 @@ const EditorFooter = piecePart(THEME_NAME, 'Footer', Box);
  * @param {string[]} props.pinnedKeys las que van hoy en la barra (menuItemKeyOf)
  * @param {(keys: string[]) => void} props.onDone con las elegidas, en el orden del menú
  * @param {() => void} props.onReset regresar a las del proyecto
+ * @param {number} [props.limit] cuántas se pueden elegir (por omisión PINNABLE_TAB_LIMIT)
  */
 function TabBarEditorContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTabBarEditor.defaultProps) y encima lo que llega aquí
-    const {menuItems, pinnedKeys, onDone, onReset, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {menuItems, pinnedKeys, onDone, onReset, limit = PINNABLE_TAB_LIMIT, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout');
     const [chosenKeys, setChosenKeys] = useState(pinnedKeys);
-    const isFull = chosenKeys.length >= PINNABLE_TAB_LIMIT;
+    const isFull = chosenKeys.length >= limit;
 
     const toggle = (key, isOn) => setChosenKeys((current) => (isOn ? [...current, key] : current.filter((chosenKey) => chosenKey !== key)));
     // en el orden del menú, no en el que se fueron picando
@@ -59,7 +61,7 @@ function TabBarEditorContent(props) {
         <EditorRoot ownSx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
             <EditorHeader ownSx={{px: 2, pt: 2, pb: 1, flexShrink: 0}}>
                 <EditorTitle variant="subtitle1" component="h2" ownSx={{fontWeight: 600}}>{t('drawer.editTabs')}</EditorTitle>
-                <Typography variant="body2" color="text.secondary">{t('drawer.editTabsHint', {count: PINNABLE_TAB_LIMIT})}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('drawer.editTabsHint', {count: limit})}</Typography>
             </EditorHeader>
             <EditorList dense ownSx={{overflowY: 'auto', flex: '1 1 auto', minHeight: 0, px: 1}}>
                 {menuItems.map((menuItem) => {

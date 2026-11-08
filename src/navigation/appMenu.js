@@ -16,6 +16,7 @@
 //           href: 'https://sistema-anterior/inicio',   // en lugar de to: una liga a otro sistema (carga la página completa)
 //           badge: 3,                                  // opcional: el numerito o la palabra a la derecha («Nuevo»)
 //           mobileTab: true,                           // opcional: va en la barra de pestañas del teléfono (mobileTabsOf)
+//           mobileLabel: 'Mercado',                    // opcional, o mobileLabelKey: el nombre corto en esa barra
 //           badgeKey: 'pendingPayment',                 // opcional: su conteo llega del servidor (AppLayout menuBadges)
 //           matchPrefix: '/orders',                    // opcional: desde dónde se marca activo (por omisión, to)
 //           access: {...},                             // opcional: una entrada con otra regla que su módulo
