@@ -4,6 +4,25 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.62.2] - 2026-11-07
+
+### Arreglado
+
+- Menú de la cuenta (y el de ajustes) en tableta: cuando el botón está abajo, el menú se centra sobre él y no se sale de la
+  pantalla (MUI lo detiene a 16 px de la orilla). Antes se alineaba con la orilla derecha del botón; en tableta el botón
+  flota hacia adentro, junto a la barra de pestañas centrada, y el menú quedaba en medio de la pantalla: a 834 px, a 114 px
+  de la orilla; ahora, a 16. En el teléfono se mueve 2 px y en escritorio no cambia. `barMenuPlacementOf` ya trae sus
+  pruebas.
+- Barra de pestañas encogida (al bajar en la página) en tableta o con el teléfono acostado: la cuenta se va a la esquina
+  derecha, como la cápsula chica se va a la izquierda (las dos a 8 px de la orilla). Antes se quedaba metida hacia adentro,
+  donde estaba junto a la barra completa: en un iPad de 834 px, a 104 px de la orilla. Con la barra completa y en el
+  teléfono parado no cambia nada.
+- El armazón del primer arranque avisa en su comentario dos trampas para quien le agregue algo: un texto lleva interlineado
+  con número (con `normal` el alto lo decide la fuente y brinca cuando carga la letra propia) y una salida que se desvanece
+  lleva `from{opacity:1}` (con solo `to` se va de golpe).
+- README y Hecho en Calcita: en una pieza propia, la parte se declara con mayúscula (`piecePart('MiPieza', 'Button', …)`) y
+  se usa con minúscula (`button`) en `slots`, `slotProps`, `styleOverrides` y su clase.
+
 ## [0.62.1] - 2026-11-07
 
 ### Arreglado
