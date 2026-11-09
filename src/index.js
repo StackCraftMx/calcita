@@ -74,7 +74,7 @@ export {SettingSection, default as AppearanceSettings} from '@/appShell/Appearan
 export {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
 export {
     DESKTOP_MEDIA_QUERY, DRAWER_WIDTH_COLLAPSED, DRAWER_WIDTH_EXPANDED, MAIN_CONTENT_ID, MOBILE_TAB_BAR_HEIGHT, MOBILE_TAB_BAR_HEIGHT_PIXELS,
-    MOBILE_TAB_LABEL_LINES, PHONE_MEDIA_QUERY,
+    MOBILE_TAB_LABEL_LINES, PHONE_LANDSCAPE_MEDIA_QUERY, PHONE_MEDIA_QUERY, aboveMobileTabBarOf,
 } from '@/appShell/shellSizes.js';
 export {useActiveMenuPath, useAppMenu} from '@/appShell/appMenuContext.js';
 export {usePageTitle} from '@/appShell/pageTitle.jsx';
