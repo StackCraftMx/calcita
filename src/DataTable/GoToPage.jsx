@@ -4,11 +4,10 @@
 // explicarlas: se abre y se ve la lista, se teclea y se filtra, se elige y ya.
 //
 // Cuatro detalles:
-//   1. sin teclear, la lista es CORTA: la primera, la última, las vecinas de la actual y saltos de 10 en 10 (de 100 en 100
-//      con cientos). Con 100 páginas son 16 renglones y no cinco pantallas por deslizar (goToPageOptions.js). Tecleando
-//      se busca en todas, que pueden ser miles: se pintan solo las que se ven (react-window, el «Virtualization» de la
-//      documentación del Autocomplete de MUI). La lista mide lo que el número más largo, no lo que el campo: con el campo
-//      angosto cortaba el «12» y se deslizaba de lado;
+//   1. la lista trae TODAS las páginas, pero pinta solo las que se ven (react-window, el «Virtualization» de la
+//      documentación del Autocomplete de MUI): con decenas de miles de páginas abre igual de rápido y se desliza hasta la
+//      última. Antes se cortaba en 100 y la 101 solo se alcanzaba tecleando. La lista mide lo que el número más largo, no
+//      lo que el campo: con el campo angosto cortaba el «12» y se deslizaba de lado;
 //   2. abre en la página donde está la tabla, no en la 1;
 //   3. filtra por PREFIJO primero (teclear 13 da 13, 130, 131...) y luego por "contiene" (goToPageOptions.js);
 //   4. con una sola página no se pinta: sería un control que no lleva a ningún lado;
@@ -25,7 +24,7 @@
 // styleOverrides de sus partes: root, field.
 //
 // Genérico del paquete: function (regla de la casa).
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -113,13 +112,13 @@ function PageOption({index, style, pageOptions}) {
  * @param {object} props
  * @param {Array<[object, number]>} props.children las opciones ya armadas por MUI
  * @param {import('react').Ref<HTMLDivElement>} [props.ref]
- * @param {boolean} props.isTyping si la persona ya tecleó desde que abrió la lista
+ * @param {number} props.pageCount cuántas páginas tiene la tabla: con todas en la lista, nadie ha tecleado
  * @param {{current: object|null}} props.pageListRef la API de react-window, para deslizar hasta una página
  * @param {{current: Map<number, number>}} props.pageIndexesRef se llena con página → lugar en la lista, para seguir con el
  *     teclado a la resaltada
  * @param {string} [props.className]
  */
-function PageListbox({children: pageOptions, ref, isTyping, pageListRef, pageIndexesRef, className, style, ...listboxProps}) {
+function PageListbox({children: pageOptions, ref, pageCount, pageListRef, pageIndexesRef, className, style, ...listboxProps}) {
     const isWideScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'), {noSsr: true});
     const optionHeight = isWideScreen ? OPTION_HEIGHT : PHONE_OPTION_HEIGHT;
     const listHeight = Math.min(pageOptions.length * optionHeight, LISTBOX_MAX_HEIGHT);
@@ -131,8 +130,8 @@ function PageListbox({children: pageOptions, ref, isTyping, pageListRef, pageInd
         pageIndexesRef.current = pageIndexes;
     }, [pageOptions, pageIndexesRef]);
 
-    // al abrir sin teclear (la lista corta) se acomoda en la página elegida, la opción que MUI marca como seleccionada;
-    // tecleando se queda arriba, en la primera que coincide.
+    // al abrir sin teclear (la lista trae TODAS las páginas) se acomoda en la página elegida, la opción que MUI marca como
+    // seleccionada; tecleando se queda arriba, en la primera que coincide.
     // OJO: no va en un useEffect al montar: en ese momento react-window todavía no guarda su contenedor y scrollToRow no
     // hace nada. Se hace cuando react-window entrega su API ya con el contenedor (listRef como función), una sola vez por
     // lista armada: después no pelea con quien desliza
@@ -144,7 +143,7 @@ function PageListbox({children: pageOptions, ref, isTyping, pageListRef, pageInd
             return;
         }
         placedListElementsRef.current.add(listElement);
-        if (isTyping) {
+        if (pageOptions.length !== pageCount) {
             return;
         }
         const selectedIndex = pageOptions.findIndex(([optionProps]) => optionProps['aria-selected'] === true);
@@ -193,8 +192,6 @@ function GoToPageContent(props) {
     const pageNumbers = useMemo(() => pageNumbersOf(pageCount), [pageCount]);
     const pageListRef = useRef(null);
     const pageIndexesRef = useRef(new Map());
-    // si la persona ya tecleó desde que abrió la lista: sin teclear, la lista abre en la página actual
-    const [isTyping, setIsTyping] = useState(false);
 
     // guard clause: con una página no hay a dónde ir
     if (pageCount <= 1) {
@@ -221,10 +218,7 @@ function GoToPageContent(props) {
                 openOnFocus
                 autoHighlight
                 options={pageNumbers}
-                // sin teclear, la lista corta alrededor de la página actual
-                filterOptions={(options, state) => filterPages(options, state, page + 1)}
-                onOpen={() => setIsTyping(false)}
-                onInputChange={(event, inputValue, reason) => setIsTyping(reason === 'input')}
+                filterOptions={filterPages}
                 value={page + 1}
                 isOptionEqualToValue={(option, selectedValue) => option === selectedValue}
                 getOptionLabel={(option) => String(option)}
@@ -248,7 +242,7 @@ function GoToPageContent(props) {
                     '& .MuiInputBase-root': {fontSize: 'inherit', '@media (pointer: coarse)': {fontSize: TOUCH_INPUT_FONT_PIXELS}},
                 }}
                 slotProps={{
-                    listbox: {component: PageListbox, isTyping, pageListRef, pageIndexesRef},
+                    listbox: {component: PageListbox, pageCount, pageListRef, pageIndexesRef},
                     popupIndicator: {sx: popupIndicatorStylesOf},
                     // la lista mide lo que el número más largo y no solo lo que el campo (MUI le da el ancho del campo)
                     popper: {sx: {minWidth: `calc(${String(pageCount).length}ch + ${LIST_ROOM_BESIDE_NUMBER_PIXELS}px)`}},
