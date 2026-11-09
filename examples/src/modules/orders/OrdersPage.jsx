@@ -7,7 +7,8 @@
 //     chips de lo que está filtrado, que se quitan de a uno;
 //   - el orden con clic en el encabezado y el icono de la última columna para abrir el detalle (no la fila entera);
 //   - todo vive en la URL con el prefijo «orders»: se comparte por enlace y sobrevive a recargar;
-//   - «Ir a la página N» (showGoToPage): la lista trae todas las páginas (con 10 por página, más de 100) y abre en la actual;
+//   - «Ir a la página N» (showGoToPage): sin teclear, una lista corta alrededor de la actual (la primera, la última, las
+//     vecinas y de 10 en 10; con 10 por página son 139 y la lista trae 14); tecleando se llega a cualquiera;
 //   - elegir pedidos con su casilla y actuar sobre ellos (selectionActions): «Recordar pago» y, con el permiso
 //     orders.cancel, «Cancelar» con motivo. Se conservan al cambiar de página; con toda la página elegida se ofrece «Elegir
 //     los N que coinciden» y entonces al servidor le llegan los filtros. El servidor aplica sus reglas: cancela los que puede
