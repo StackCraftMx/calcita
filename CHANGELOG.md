@@ -4,6 +4,24 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.65.0] - 2026-11-08
+
+### Agregado
+
+- Públicas: `aboveMobileTabBarOf(gap)` (los estilos para que algo propio flote encima de la barra de pestañas, con el teléfono
+  parado y acostado y el borde del iPhone) y `PHONE_LANDSCAPE_MEDIA_QUERY` (la regla del teléfono acostado).
+- Hecho en Calcita: la fila de `aboveMobileTabBarOf` en «Marco y menú», la de dónde va el panel en «Descargas», y en «Botones
+  de una pantalla en la barra» un interruptor que les pone su nombre para ver el «⋯» en escritorio.
+
+### Arreglado
+
+- La barra de arriba en escritorio: con una ventana angosta, la letra grande o botones con nombre (`showLabel` desktop), lo
+  que no cabía se metía debajo de la cuenta. Ahora las últimas acciones van al menú «⋯» con su nombre, como ya pasaba en el
+  teléfono (con cápsulas y con la franja). Si caben todas, nada cambia.
+- El panel de descargas se pegaba abajo sin contar el borde del iPhone y, en el teléfono, quedaba encima de la barra de
+  pestañas. Ahora lo de adentro queda arriba de la raya del iPhone y, en el teléfono con barra de pestañas, flota encima de
+  ella, redondeado completo. Un ajuste propio de la parte `panel` en el tema sigue ganando.
+
 ## [0.64.0] - 2026-11-08
 
 ### Agregado
