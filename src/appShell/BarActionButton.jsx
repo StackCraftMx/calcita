@@ -4,7 +4,7 @@
 //     y para el lector de pantalla. En el teléfono el tooltip sale al dejar el dedo encima, como en iOS. Con
 //     showLabel={BAR_ACTION_LABEL.desktop}, en escritorio va ícono y nombre (sobra lugar y dos íconos solos se confunden) y
 //     en el teléfono, solo el ícono. También desde el tema: components.CalcitaBarActionButton.defaultProps.showLabel;
-//   - en el menú «⋯» del teléfono (las que ya no caben en el renglón flotante): un renglón con ícono y texto;
+//   - en el menú «⋯» (las que ya no caben en su renglón, en el teléfono o en la barra de escritorio): un renglón con ícono y texto;
 //   - suelto (fuera de BarActions): ícono con texto, botón sin relleno.
 // Lo demás va al botón (disabled, color, component y to para una liga…). Sin ícono, en la cápsula va su texto (un botón sin
 // relleno) y en el «⋯» el renglón sin ícono: mejor un texto que un botón vacío.

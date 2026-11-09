@@ -758,6 +758,7 @@ export const catalogPageTexts = {
                     description: 'Va una sola vez en la raíz de la app, junto a los avisos. Sin descargas no se pinta nada.',
                     extend: {
                         manager: 'El panel. Una vez, en la raíz.',
+                        panelPlace: 'Dónde se ve: abajo a la derecha, pegado a la orilla y con lo de adentro arriba de la raya del iPhone. En el teléfono con barra de pestañas flota encima de ella. Se mueve desde el tema, con la parte panel.',
                     },
                 },
                 fromApi: {
@@ -1675,6 +1676,7 @@ export const catalogPageTexts = {
                         tabLabelLines: 'El nombre de una pestaña baja hasta a dos renglones y la barra crece con el tamaño de letra para que quepan (60, 66 y 73 px). Con un renglón se corta con «…» y la barra se queda en 60 px.',
                         mobileLabel: 'Un nombre corto solo para la barra de pestañas («Descargas»); el menú lateral y «Más» siguen con el largo («Descargas y Excel»). O mobileLabel con el texto.',
                         tabBarHeight: 'El alto de verdad de la barra de pestañas, para acomodar algo suyo encima: crece con la letra y con sus renglones. MOBILE_TAB_BAR_HEIGHT_PIXELS trae los 60 y 46 px de la letra normal.',
+                        aboveTabBar: 'Para que algo suyo flote encima de la barra de pestañas sin hacer la cuenta: los estilos de una vez, con el teléfono parado y acostado y el borde del iPhone (así se acomodan el panel de descargas y el aviso de versión nueva). PHONE_LANDSCAPE_MEDIA_QUERY es la regla del teléfono acostado.',
                         contentMaxWidth: 'Qué tan ancho llega el contenido en pantallas grandes (por omisión 1400).',
                         bar: 'La barra en cápsulas (por omisión) o en franja de lado a lado. Va en el tema.',
                     },
@@ -1706,7 +1708,7 @@ export const catalogPageTexts = {
                         barActions: 'Un grupo de botones de esta pantalla. Cada uno es una cápsula en la barra.',
                         barActionButton: 'El botón que se acomoda solo: en la cápsula, solo el ícono con su nombre al pasar el cursor o al dejar el dedo encima; en el menú «⋯», con su nombre; fuera de BarActions, ícono y texto.',
                         barActionLabel: 'En la cápsula, ícono y nombre en escritorio (donde sobra lugar y dos íconos solos se confunden) y solo el ícono en el teléfono. Así va «Agregar sucursal» en Sucursales. También desde el tema (CalcitaBarActionButton).',
-                        more: 'En el teléfono se ven todas las que caben a lo ancho; las que no, van al menú «⋯». Si hay varios grupos, el último es el que cede. No se programa: el marco mide.',
+                        more: 'Se ven todas las que caben a lo ancho; las que no, van al menú «⋯» con su nombre. Pasa en el teléfono y también en escritorio con una ventana angosta o la letra grande (antes se metían debajo de la cuenta). Si hay varios grupos, el último es el que cede. No se programa: el marco mide.',
                         order: 'Qué grupo va primero cuando la pantalla pone varios.',
                         sx: 'El estilo de la cápsula (sx) y el de donde se quedan en el teléfono (inlineSx).',
                         bare: 'Sin cápsula alrededor, cuando lo de adentro ya es una (un buscador).',
@@ -3070,6 +3072,7 @@ export const catalogPageTexts = {
                     description: 'It goes once at the app root, next to the notices. With no downloads nothing is drawn.',
                     extend: {
                         manager: 'The panel. Once, at the root.',
+                        panelPlace: 'Where it shows: bottom right, against the edge, with its content above the iPhone bar. On a phone with the tab bar it floats above it. It moves from the theme, with the panel part.',
                     },
                 },
                 fromApi: {
@@ -3987,6 +3990,7 @@ export const catalogPageTexts = {
                         tabLabelLines: 'A tab name goes down to two lines and the bar grows with the text size so they fit (60, 66 and 73 px). With one line it is cut with «…» and the bar stays at 60 px.',
                         mobileLabel: 'A short name only for the tab bar («Downloads»); the side menu and «More» keep the long one («Downloads and Excel»). Or mobileLabel with the text.',
                         tabBarHeight: 'The real height of the tab bar, to place something of yours above it: it grows with the text and its lines. MOBILE_TAB_BAR_HEIGHT_PIXELS has the 60 and 46 px of normal text.',
+                        aboveTabBar: 'To float something of yours above the tab bar without doing the math: the styles in one go, with the phone upright and sideways and the iPhone edge (that is how the downloads panel and the new version notice sit). PHONE_LANDSCAPE_MEDIA_QUERY is the rule for a phone on its side.',
                         contentMaxWidth: 'How wide the content gets on large screens (1400 by default).',
                         bar: 'The bar in capsules (default) or as a full-width band. It goes in the theme.',
                     },
@@ -4018,7 +4022,7 @@ export const catalogPageTexts = {
                         barActions: 'A group of buttons for this screen. Each one is a capsule in the bar.',
                         barActionButton: 'The button that adapts by itself: in the capsule, only the icon with its name on hover or long press; in the «⋯» menu, with its name; outside BarActions, icon and text.',
                         barActionLabel: 'In the capsule, icon and name on desktop (where there is room and two lone icons get confused) and only the icon on a phone. That is how «Add branch» goes in Branches. Also from the theme (CalcitaBarActionButton).',
-                        more: 'On a phone, all that fit across are shown; the rest go to the «⋯» menu. With several groups, the last one gives way. Nothing to code: the frame measures.',
+                        more: 'All that fit across are shown; the rest go to the «⋯» menu with their names. It happens on a phone and also on desktop with a narrow window or large text (before, they slipped under the account). With several groups, the last one gives way. Nothing to code: the frame measures.',
                         order: 'Which group goes first when the screen places several.',
                         sx: 'The capsule style (sx) and the style where they stay on a phone (inlineSx).',
                         bare: 'No capsule around it, when what is inside already is one (a search box).',

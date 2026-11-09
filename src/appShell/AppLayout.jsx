@@ -350,8 +350,11 @@ const AppLayoutFrame = ({
                         </>
                     )}
                     {/* las acciones de la pantalla abierta (BarActions, y las de PageHeading con cápsulas): cada grupo cae aquí,
-                        antes de la cuenta. Solo en escritorio: en el teléfono flotan arriba (phoneBarActionsSlot, en el contenido) */}
-                    <LayoutTools ref={setBarActionsSlot} ownSx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}, alignItems: 'center', gap: 1, minWidth: 0}} />
+                        antes de la cuenta. Solo en escritorio: en el teléfono flotan arriba (phoneBarActionsSlot, en el contenido).
+                        OJO: no se encoge (flexShrink 0); cuando falta lugar se corta el título y lo que no cabe va al «⋯»
+                        (useFittingActionCount). Si se encogía junto con el título, la cuenta daba por libre el lugar del título
+                        y el último botón se metía debajo de la cuenta (medido a 900 px) */}
+                    <LayoutTools ref={setBarActionsSlot} ownSx={{display: 'none', [DESKTOP_MEDIA_QUERY]: {display: 'flex'}, alignItems: 'center', gap: 1, flexShrink: 0}} />
                     <BarGroup isCapsule={usesBarCapsules}>
                         <HeaderTools headerActions={headerActions} accountSettings={accountSettings} showFontSizeToggle={showFontSizeToggle} showLanguageToggle={showLanguageToggle}
                                      showColorSchemeToggle={showColorSchemeToggle} user={user} profilePath={profilePath} accountMenuItems={accountMenuItems}

@@ -43,6 +43,7 @@ const LAYOUT_EXTENSIONS = [
     {id: 'tabLabelLines', option: 'CalcitaMobileTabBar · tabLabelLines', example: 'CalcitaMobileTabBar: {defaultProps: {tabLabelLines: MOBILE_TAB_LABEL_LINES.one}}'},
     {id: 'mobileLabel', option: 'menu.js · mobileLabelKey', example: "{labelKey: 'reports:menu.label', mobileLabelKey: 'reports:menu.tabLabel'}"},
     {id: 'tabBarHeight', option: 'MOBILE_TAB_BAR_HEIGHT', example: 'bottom: `calc(${MOBILE_TAB_BAR_HEIGHT.portrait} + 24px)`'},
+    {id: 'aboveTabBar', option: 'aboveMobileTabBarOf · PHONE_LANDSCAPE_MEDIA_QUERY', example: "sx={{position: 'fixed', right: 16, ...aboveMobileTabBarOf(8)}}"},
     {id: 'contentMaxWidth', option: 'contentMaxWidth', example: 'contentMaxWidth={1200}'},
     {id: 'bar', option: 'createToolkitTheme({bar})', example: 'createToolkitTheme({glass: true, bar: TOP_BAR.band})'},
 ];
@@ -66,7 +67,7 @@ const CAPSULES_EXTENSIONS = [
     {id: 'barActions', option: '<BarActions>', example: '<BarActions label="Pedidos">…</BarActions>'},
     {id: 'barActionButton', option: '<BarActionButton>', example: '<BarActionButton label="Agregar" icon={<AddIcon />} onClick={open} />'},
     {id: 'barActionLabel', option: 'showLabel', example: '<BarActionButton … showLabel={BAR_ACTION_LABEL.desktop} />'},
-    {id: 'more', option: '«⋯» en el teléfono', example: '(sale solo cuando no caben)'},
+    {id: 'more', option: '«⋯»', example: '(sale solo cuando no caben)'},
     {id: 'order', option: 'order', example: '<BarActions order={1}>'},
     {id: 'sx', option: 'sx · inlineSx', example: "<BarActions sx={{gap: 1}} inlineSx={{justifyContent: 'flex-end'}}>"},
     {id: 'bare', option: 'bare', example: '<BarActions bare><MySearchBox /></BarActions>'},

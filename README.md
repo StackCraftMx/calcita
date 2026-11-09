@@ -329,8 +329,10 @@ const theme = createToolkitTheme({glass: true, bar: TOP_BAR.band});   // la fran
 Cada pantalla puede poner sus propias cápsulas en la barra (buscar, agregar, exportar) con `BarActions`: las escribe en
 su código donde quiera y, en escritorio con cápsulas, el marco las sube a la barra; con la franja entran a la franja, y en
 el teléfono, con cápsulas, flotan arriba a la derecha y se quedan al bajar: las que caben, solo con ícono, y las que no,
-en un menú «⋯». Las `actions` de `PageHeading` ya suben solas, y `ServerTable` sube su búsqueda con
-`searchInBar`. «Hecho en Calcita» → «Marco y menú» lo enseña vivo.
+en un menú «⋯». En escritorio pasa lo mismo cuando la ventana es angosta o la letra es grande: las últimas que no caben van
+al «⋯» con su nombre, como en la barra de una ventana de la Mac, en vez de meterse debajo de la cuenta. Las `actions` de
+`PageHeading` ya suben solas, y `ServerTable` sube su búsqueda con `searchInBar`. «Hecho en Calcita» → «Marco y menú» lo
+enseña vivo.
 
 Cuando los filtros de una lista ya no caben arriba de la tabla, la búsqueda en cajón: `FilterDrawer` sale de un lado
 (`anchor`) con los campos declarados una vez (`FILTER_FIELD_KIND`: texto, una o varias opciones, catálogo, casillas, rango de
@@ -672,8 +674,10 @@ El nombre de una pestaña baja hasta a dos renglones y la barra crece con el tam
 letra normal, 66 con «Grande» y 73 con «Muy grande»). Una entrada con nombre largo puede traer uno corto solo para la barra:
 `mobileLabelKey` (o `mobileLabel`) en su `menu.js`; el menú lateral y «Más» siguen con el largo. Con
 `CalcitaMobileTabBar: {defaultProps: {tabLabelLines: MOBILE_TAB_LABEL_LINES.one}}` va en un renglón con «…» y la barra se
-queda en 60 px. Para acomodar algo suyo encima de la barra, `MOBILE_TAB_BAR_HEIGHT.portrait` es su alto de verdad en CSS
-(`MOBILE_TAB_BAR_HEIGHT_PIXELS`, los 60 y 46 px de la letra normal).
+queda en 60 px. Para acomodar algo suyo encima de la barra, `aboveMobileTabBarOf(8)` da los estilos de una vez (8 px
+arriba de la barra, parada y acostada, con el borde del iPhone): `sx={{position: 'fixed', ...aboveMobileTabBarOf(8)}}`.
+Para una cuenta propia, `MOBILE_TAB_BAR_HEIGHT.portrait` es su alto de verdad en CSS (`MOBILE_TAB_BAR_HEIGHT_PIXELS`, los
+60 y 46 px de la letra normal) y `PHONE_LANDSCAPE_MEDIA_QUERY` es la regla del teléfono acostado.
 
 ```js
 export function buildMenuItem() {
@@ -1011,7 +1015,8 @@ const template = await api.download('/documents/template', {method: 'POST', body
 - Un Excel que llegó cortado no se entrega (también en una descarga con POST).
 
 Para que la descarga siga mientras la persona trabaja, `startDownload` la pone en el panel de descargas (`DownloadManager`,
-montado una vez en la raíz) con su avance, su cancelación y el motivo si falla. Un lote de varios archivos que cuenta como
+montado una vez en la raíz) con su avance, su cancelación y el motivo si falla. El panel va pegado abajo con lo de adentro
+arriba de la raya del iPhone y, en el teléfono con barra de pestañas, flota encima de ella. Un lote de varios archivos que cuenta como
 **una** descarga dice en cuál va con `onLabelChange`, en el mismo renglón:
 
 ```js
