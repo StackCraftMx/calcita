@@ -8,6 +8,8 @@
 //   - suelto (fuera de BarActions): ícono con texto, botón sin relleno.
 // Lo demás va al botón (disabled, color, component y to para una liga…). Sin ícono, en la cápsula va su texto (un botón sin
 // relleno) y en el «⋯» el renglón sin ícono: mejor un texto que un botón vacío.
+// Desactivado en la barra: el color de los demás botones de la barra, tenue (BAR_DISABLED_OPACITY). Cada proyecto lo cambia
+// con disabledSx, por botón o en el tema para todos.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaBarActionButton con defaultProps, styleOverrides de
 // sus partes (button, iconButton, menuItem) y slots/slotProps para cambiarlas.
@@ -31,6 +33,22 @@ const BarActionButtonButton = piecePart(THEME_NAME, 'Button', Button);
 const BarActionButtonIconButton = piecePart(THEME_NAME, 'IconButton', IconButton);
 const BarActionButtonMenuItem = piecePart(THEME_NAME, 'MenuItem', MenuItem);
 
+// DESACTIVADO EN LA BARRA: el mismo color que los demás botones de la barra, a la mitad. OJO: MUI lo pinta con su gris pensado
+// para un fondo claro (action.disabled), y los activos de la barra toman el color de la barra: sobre una franja oscura el
+// desactivado casi desaparecía (gris oscuro sobre azul marino) y en el vidrio apenas se notaba. Con `inherit` toma el color de
+// la cápsula o de la franja. Medido en Chrome contra 38 % (el de Material 3) y 60 %: con 38 el vidrio claro quedaba igual que
+// antes y con 60 ya se confundía con uno activo.
+const BAR_DISABLED_OPACITY = 0.5;
+const BAR_DISABLED_SX = Object.freeze({'&.Mui-disabled': {color: 'inherit', opacity: BAR_DISABLED_OPACITY}});
+
+/** El sx de la pantalla como lista (MUI acepta un objeto, una función o una lista), para ponerle algo antes. */
+const sxListOf = (sx) => {
+    if (Array.isArray(sx)) {
+        return sx;
+    }
+    return sx ? [sx] : [];
+};
+
 /**
  * @param {object} props
  * @param {string} props.label el nombre de la acción, ya traducido: «Agregar sucursal»
@@ -40,10 +58,17 @@ const BarActionButtonMenuItem = piecePart(THEME_NAME, 'MenuItem', MenuItem);
  * @param {'inherit'|'primary'|'secondary'|'success'|'error'|'info'|'warning'} [props.color] por omisión primary
  * @param {'auto'|'desktop'} [props.showLabel] en la cápsula de la barra: BAR_ACTION_LABEL.auto (por omisión, solo el ícono)
  *     o BAR_ACTION_LABEL.desktop (ícono y nombre en escritorio; en el teléfono, solo el ícono)
+ * @param {object|Function} [props.disabledSx] cómo se ve cuando está desactivado, en la barra, en el «⋯» y suelto:
+ *     {opacity: 0.6} o {color: 'text.secondary'}. En el tema (components.CalcitaBarActionButton.defaultProps.disabledSx) vale
+ *     para todos los botones; de fábrica, en la barra, el color de los demás botones a la mitad
  * @param {object} [props.sx] ajustes del botón; lo demás que se le pase también llega al botón (o al renglón del «⋯»)
  */
 function BarActionButtonContent(props) {
-    const {label, icon, onClick, disabled, color = 'primary', showLabel = BAR_ACTION_LABEL.auto, ...buttonProps} = usePieceProps(props, THEME_NAME);
+    const {
+        label, icon, onClick, disabled, color = 'primary', showLabel = BAR_ACTION_LABEL.auto, disabledSx, sx, ...otherProps
+    } = usePieceProps(props, THEME_NAME);
+    // lo desactivado de la pantalla o del tema va antes del sx de la pantalla (que sigue ganando a todo)
+    const buttonProps = {...otherProps, sx: [disabledSx ? {'&.Mui-disabled': disabledSx} : {}, ...sxListOf(sx)]};
     const placement = useBarActionsPlacement();
     const closeMenu = useCloseBarActionsMenu();
     // la misma regla con la que el marco decide si es teléfono (useMediaQuery acepta el «@media» de adelante)
@@ -72,12 +97,16 @@ function BarActionButtonContent(props) {
         return (
             <Tooltip title={label}>
                 <span>
-                    <BarActionButtonIconButton aria-label={label} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{icon}</BarActionButtonIconButton>
+                    <BarActionButtonIconButton aria-label={label} onClick={onClick} disabled={disabled} color={color} ownSx={BAR_DISABLED_SX} {...buttonProps}>
+                        {icon}
+                    </BarActionButtonIconButton>
                 </span>
             </Tooltip>
         );
     }
-    return <BarActionButtonButton startIcon={icon} onClick={onClick} disabled={disabled} color={color} {...buttonProps}>{label}</BarActionButtonButton>;
+    // en la barra con su nombre (o sin ícono): desactivado, del color de la barra; suelto, como cualquier botón de MUI
+    const ownSx = placement === BAR_ACTIONS_PLACEMENT.capsule ? BAR_DISABLED_SX : undefined;
+    return <BarActionButtonButton startIcon={icon} onClick={onClick} disabled={disabled} color={color} ownSx={ownSx} {...buttonProps}>{label}</BarActionButtonButton>;
 }
 
 // lo que se exporta: la pieza con slots y slotProps para cambiar sus partes (themePieces.js)

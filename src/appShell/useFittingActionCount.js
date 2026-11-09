@@ -85,12 +85,12 @@ const freeWidthOf = (slot, capsule) => {
 /**
  * @param {Element|null} slot el renglón donde caen los grupos (null: no se mide y se ven todos)
  * @param {HTMLElement|null} capsule la cápsula (o el grupo) de este grupo de acciones
- * @param {number} actionCount cuántos botones trae el grupo
- * @returns {number} cuántos se ven en el renglón; si es menor que actionCount, los demás van al «⋯»
+ * @param {number} maxCount lo más que pueden verse: los botones del grupo, o menos si la pantalla puso tope (maxVisible)
+ * @returns {number} cuántos se ven en el renglón; los demás van al «⋯»
  */
-export default function useFittingActionCount(slot, capsule, actionCount) {
-    const [visibleCount, setVisibleCount] = useState(actionCount);
-    const shownCount = Math.min(visibleCount, actionCount);
+export default function useFittingActionCount(slot, capsule, maxCount) {
+    const [visibleCount, setVisibleCount] = useState(maxCount);
+    const shownCount = Math.min(visibleCount, maxCount);
     // lo que midió el grupo con cada cuenta de botones a la vista (cuenta → px)
     const widthByCountRef = useRef(new Map());
     // la medición de ahora, para el ResizeObserver (que se arma una vez y necesita la cuenta de este momento)
@@ -115,7 +115,7 @@ export default function useFittingActionCount(slot, capsule, actionCount) {
             setVisibleCount(shownCount - 1);
             return;
         }
-        if (shownCount < actionCount) {
+        if (shownCount < maxCount) {
             // hay escondidos: si con uno más cabía (o nunca se midió), se enseña; si no cabe, la siguiente medición lo regresa
             const widthWithOneMore = widthByCount.get(shownCount + 1);
             if (widthWithOneMore === undefined || widthWithOneMore <= freeWidth + MEASURE_TOLERANCE_PIXELS) {
@@ -144,8 +144,8 @@ export default function useFittingActionCount(slot, capsule, actionCount) {
             [...slot.parentElement.children].forEach((part) => observer.observe(part));
         }
         return () => observer.disconnect();
-    }, [slot, capsule, actionCount]);
+    }, [slot, capsule, maxCount]);
 
     // sin renglón que medir (fuera del marco): se ven todos
-    return slot && capsule ? shownCount : actionCount;
+    return slot && capsule ? shownCount : maxCount;
 }

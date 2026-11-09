@@ -24,6 +24,9 @@ const ScreenCapsules = () => {
     // con su nombre en escritorio (showLabel desktop): con siete acciones ya no caben todas y las últimas van al «⋯»
     const [withLabels, setWithLabels] = useState(false);
     const showLabel = withLabels ? BAR_ACTION_LABEL.desktop : BAR_ACTION_LABEL.auto;
+    // con tope (maxVisible): como mucho 3 en el teléfono y 5 en escritorio, contando el «⋯»
+    const [isCapped, setIsCapped] = useState(false);
+    const maxVisible = isCapped ? {phone: 3, desktop: 5} : undefined;
 
     return (
         <Stack spacing={2}>
@@ -34,10 +37,11 @@ const ScreenCapsules = () => {
             </BarActions>
             {/* 2. Muchas acciones: van las que caben y las demás al menú «⋯» con su nombre. En el teléfono flotan arriba; en
                 escritorio pasa con una ventana angosta, la letra grande o con su nombre (showLabel). No se programa: el marco mide */}
-            <BarActions label="Acciones de pedidos" order={2}>
+            <BarActions label="Acciones de pedidos" order={2} maxVisible={maxVisible}>
                 <BarActionButton label="Agregar pedido" icon={<AddRoundedIcon />} showLabel={showLabel} onClick={() => toastSuccess('Aquí abre su formulario de alta.')} />
                 <BarActionButton label="Exportar a Excel" icon={<FileDownloadOutlinedIcon />} showLabel={showLabel} onClick={() => toastSuccess('Se empezó a descargar el Excel.')} />
-                <BarActionButton label="Imprimir" icon={<PrintOutlinedIcon />} showLabel={showLabel} onClick={() => toastInfo('Aquí abre la impresión.')} />
+                {/* desactivado: del color de los demás, tenue (se cambia con disabledSx, aquí o en el tema) */}
+                <BarActionButton label="Imprimir" icon={<PrintOutlinedIcon />} showLabel={showLabel} disabled onClick={() => toastInfo('Aquí abre la impresión.')} />
                 <BarActionButton label="Compartir" icon={<ShareOutlinedIcon />} showLabel={showLabel} onClick={() => toastInfo('Aquí copia la liga para compartir.')} />
                 <BarActionButton label="Enviar por correo" icon={<EmailOutlinedIcon />} showLabel={showLabel} onClick={() => toastInfo('Aquí abre el correo.')} />
                 <BarActionButton label="Duplicar" icon={<ContentCopyRoundedIcon />} showLabel={showLabel} onClick={() => toastInfo('Aquí duplica el pedido.')} />
@@ -49,6 +53,8 @@ const ScreenCapsules = () => {
             </Typography>
             <FormControlLabel control={<Switch checked={withLabels} onChange={(event) => setWithLabels(event.target.checked)} />}
                               label="Con su nombre en escritorio (showLabel desktop)" />
+            <FormControlLabel control={<Switch checked={isCapped} onChange={(event) => setIsCapped(event.target.checked)} />}
+                              label="Con tope: 3 en el teléfono y 5 en escritorio, contando el «⋯» (maxVisible)" />
 
             {/* 3. La misma cápsula, fuera de la barra: unos controles encima de un mapa o de una imagen */}
             <BarCapsule aria-label="Acercar o alejar" sx={{alignSelf: 'flex-start'}}>
