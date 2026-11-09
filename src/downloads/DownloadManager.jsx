@@ -11,6 +11,9 @@
 //
 // Se monta UNA sola vez en la raíz de la aplicación. Lee la lista de downloadsActor; las descargas las arranca startDownload desde cada
 // pantalla. Los avisos (sonner) salen abajo a la izquierda, así que el panel va a la derecha.
+// Dónde va abajo: pegado a la orilla, con su contenido arriba de la raya del iPhone (el borde seguro). En el teléfono con la
+// barra de pestañas (vidrio, o minimalista con cápsulas) flota encima de ella, redondeado completo, como el aviso de versión
+// nueva: pegado a la orilla quedaba encima de la barra y la tapaba.
 // Con el vidrio del tema (createToolkitTheme({glass: true})) el panel es de vidrio: flota sobre la pantalla.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDownloadManager con defaultProps y
@@ -45,6 +48,8 @@ import {UNKNOWN_FILE_TYPE, useFileTypes} from '@/downloads/fileTypes.js';
 import {DOWNLOAD_STATUS} from '@/downloads/downloadsMachine.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {glassStylesOf, isGlassTheme} from '@/theme/glassSurface.js';
+import {DESKTOP_MEDIA_QUERY, aboveMobileTabBarOf} from '@/appShell/shellSizes.js';
+import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import {piecePart, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -73,6 +78,12 @@ const AUTO_DISMISS_MILLISECONDS = 5000;
 const SCREEN_EDGE_SPACING = 3;
 const PANEL_WIDTH_PIXELS = 360;
 const LIST_MAX_HEIGHT = '40vh';
+// en el teléfono con barra de pestañas: lo que se separa de la barra (px), lo mismo que la invitación a instalar
+const TAB_BAR_GAP_PIXELS = 8;
+
+// pegado a la orilla de abajo como en Drive: solo se redondean las esquinas de arriba, y lo de adentro queda arriba de la
+// raya del iPhone (fuera de un iPhone o un iPad el borde seguro vale cero)
+const STUCK_TO_BOTTOM_STYLES = {bottom: 0, pb: 'env(safe-area-inset-bottom)', borderBottomLeftRadius: 0, borderBottomRightRadius: 0};
 const PROGRESS_RING_PIXELS = 22;
 
 /**
@@ -246,14 +257,14 @@ function DownloadManagerContent({texts, ...unknownProps} = {}) {
                     ownSx={[{
                         position: 'fixed',
                         right: (theme) => theme.spacing(SCREEN_EDGE_SPACING),
-                        bottom: 0,
                         width: (theme) => `min(${PANEL_WIDTH_PIXELS}px, calc(100vw - ${theme.spacing(SCREEN_EDGE_SPACING * 2)}))`,
-                        // pegado al borde de abajo como en Drive: solo se redondean las esquinas de arriba
-                        borderBottomLeftRadius: 0,
-                        borderBottomRightRadius: 0,
                         overflow: 'hidden',
                         zIndex: (theme) => theme.zIndex.snackbar,
-                    }, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
+                    }, (theme) => (usesMobileTabBar(theme)
+                        // con barra de pestañas: en escritorio pegado abajo; en el teléfono, encima de la barra (parado y acostado)
+                        ? {[DESKTOP_MEDIA_QUERY]: STUCK_TO_BOTTOM_STYLES, ...aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)}
+                        : STUCK_TO_BOTTOM_STYLES
+                    ), (theme) => (isGlassTheme(theme) ? glassStylesOf(theme) : {})]}
                 >
                     <DownloadsHeader direction="row" ownSx={{alignItems: 'center', gap: 0.5, pl: 2, pr: 1, py: 1, bgcolor: 'action.hover'}}>
                         <DownloadsTitle variant="subtitle2" component="h2" noWrap ownSx={{flex: 1}} aria-live="polite">
