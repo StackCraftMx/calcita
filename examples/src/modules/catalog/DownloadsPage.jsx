@@ -28,6 +28,7 @@ const PANEL_EXTENSIONS = [
 ];
 const SETUP_EXTENSIONS = [
     {id: 'manager', option: '<DownloadManager />', example: '<DownloadManager />  // en la raíz, junto a <Toaster />'},
+    {id: 'panelPlace', option: 'CalcitaDownloadManager · panel', example: "CalcitaDownloadManager: {styleOverrides: {panel: {right: 'auto', left: 24}}}"},
 ];
 const FROM_API_EXTENSIONS = [
     {id: 'download', option: 'api.download(path, {signal, onDownloadProgress})', example: "request: ({signal, onDownloadProgress}) => api.download('/orders/export', {signal, onDownloadProgress})"},
