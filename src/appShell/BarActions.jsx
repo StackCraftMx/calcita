@@ -2,12 +2,14 @@
 // donde quiera y el marco decide dónde se ven.
 //
 //   - Escritorio con la barra en cápsulas (TOP_BAR.capsules): suben a la barra, cada <BarActions> en su cápsula. Dos grupos
-//     que no van juntos (buscar; exportar y agregar) son dos <BarActions>, como Apple separa los grupos.
+//     que no van juntos (buscar; exportar y agregar) son dos <BarActions>, como Apple separa los grupos. Si en una ventana
+//     angosta no caben (con su nombre, showLabel desktop, o con la letra «Muy grande»), las últimas van al «⋯» como en el
+//     teléfono y en la barra de una ventana de la Mac: antes se metían debajo de la cuenta.
 //   - Teléfono con cápsulas: las mismas cápsulas flotan arriba a la derecha y se quedan al bajar, como los botones de iOS 26
 //     (en el teléfono no hay barra de arriba: la de pestañas va abajo). Se ven todas las que caben, solo con ícono; las que
 //     ya no caben a lo ancho van a un menú «⋯» con su nombre (useFittingActionCount mide el renglón de verdad). Así una
 //     pantalla con muchas acciones arriba no rompe el teléfono.
-//   - Escritorio con la franja: entran a la franja como botones (con el color de la franja).
+//   - Escritorio con la franja: entran a la franja como botones (con el color de la franja); lo que no cabe, al «⋯».
 //   - Sin lugar (sin AppLayout, la barra fundida al menú, o el teléfono sin cápsulas): se quedan donde la pantalla las puso,
 //     también en una cápsula de solo íconos. PageHeading ya las usa para sus `actions`.
 //
@@ -60,7 +62,7 @@ const InCapsule = ({children}) => (
     <BarActionsPlacementContext.Provider value={BAR_ACTIONS_PLACEMENT.capsule}>{children}</BarActionsPlacementContext.Provider>
 );
 
-/** El «⋯» del teléfono con las acciones que no caben, como renglones de menú con su nombre. */
+/** El «⋯» con las acciones que no caben en su renglón, como renglones de menú con su nombre. */
 const MoreActionsMenu = ({label, children}) => {
     const [anchorElement, setAnchorElement] = useState(null);
     const close = () => setAnchorElement(null);
@@ -84,18 +86,21 @@ const MoreActionsMenu = ({label, children}) => {
     );
 };
 
-/** La cápsula que flota en el teléfono: las que caben como ícono y, si sobran, el «⋯» con las demás. */
-const PhoneFloatingCapsule = ({phoneSlot, label, sx, texts, children, ...rest}) => {
+/**
+ * Un grupo en su renglón (el que flota en el teléfono o el de la barra de escritorio): las acciones que caben y, si sobran,
+ * el «⋯» con las demás. Container es lo que las envuelve: la cápsula (BarCapsule) o, en la franja, el grupo sin cápsula.
+ */
+const FittingActions = ({Container, slot, texts, children, ...containerProps}) => {
     const {t} = useToolkitTranslation('layout', texts);
-    const [capsuleElement, setCapsuleElement] = useState(null);
+    const [containerElement, setContainerElement] = useState(null);
     const actions = Children.toArray(children);
-    const visibleCount = useFittingActionCount(phoneSlot, capsuleElement, actions.length);
+    const visibleCount = useFittingActionCount(slot, containerElement, actions.length);
     const hiddenActions = actions.slice(visibleCount);
     return (
-        <BarCapsule ref={setCapsuleElement} aria-label={label} sx={sx} {...rest}>
+        <Container ref={setContainerElement} {...containerProps}>
             <InCapsule>{actions.slice(0, visibleCount)}</InCapsule>
             {hiddenActions.length > 0 && <MoreActionsMenu label={t('barActions.more')}>{hiddenActions}</MoreActionsMenu>}
-        </BarCapsule>
+        </Container>
     );
 };
 
@@ -144,13 +149,21 @@ function BarActionsContent(props) {
         return (
             <>
                 {hideOthers}
-                {createPortal(<PhoneFloatingCapsule phoneSlot={phoneSlot} label={label} sx={[orderSx, ...extraSx]} texts={texts} {...exclusiveProps}>{children}</PhoneFloatingCapsule>, target)}
+                {createPortal(
+                    <FittingActions Container={BarCapsule} slot={phoneSlot} texts={texts} aria-label={label} sx={[orderSx, ...extraSx]} {...exclusiveProps}>
+                        {children}
+                    </FittingActions>,
+                    target,
+                )}
             </>
         );
     }
-    // arriba en la barra (o el buscador flotando en el teléfono)
+    // arriba en la barra (o el buscador flotando en el teléfono): las que caben y el «⋯»
     if (usesCapsules && !bare) {
-        return createPortal(<BarCapsule aria-label={label} sx={[orderSx, ...extraSx]}><InCapsule>{children}</InCapsule></BarCapsule>, target);
+        return createPortal(
+            <FittingActions Container={BarCapsule} slot={target} texts={texts} aria-label={label} sx={[orderSx, ...extraSx]}>{children}</FittingActions>,
+            target,
+        );
     }
     if (usesCapsules) {
         return (
@@ -161,12 +174,12 @@ function BarActionsContent(props) {
         );
     }
     // en la franja: botones sueltos (solo ícono) con el color de la franja (sobre el naranja de Stackcraft, el color
-    // principal no se vería)
+    // principal no se vería); las que no caben, al «⋯»
     return createPortal(
-        <ActionsGroup role="group" aria-label={label}
-                      ownSx={[{display: 'flex', alignItems: 'center', gap: 0.5, ...monochromeButtonsSxOf('inherit')}, orderSx]} sx={extraSx}>
-            <InCapsule>{children}</InCapsule>
-        </ActionsGroup>,
+        <FittingActions Container={ActionsGroup} slot={target} texts={texts} role="group" aria-label={label}
+                        ownSx={[{display: 'flex', alignItems: 'center', gap: 0.5, ...monochromeButtonsSxOf('inherit')}, orderSx]} sx={extraSx}>
+            {children}
+        </FittingActions>,
         target,
     );
 }

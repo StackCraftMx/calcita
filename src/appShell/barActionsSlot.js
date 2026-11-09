@@ -4,7 +4,7 @@
 // Fuera de AppLayout (una prueba, una pantalla sin marco) no hay lugar y las acciones se quedan donde la pantalla las pone.
 // También dice a lo de adentro dónde quedó, para que un botón se acomode solo (BarActionButton):
 //   - en una cápsula (arriba en la barra, flotando en el teléfono o en la pantalla): solo el ícono, con su nombre en el tooltip;
-//   - en el menú «⋯» del teléfono (las que ya no caben en el renglón): un renglón del menú con ícono y texto;
+//   - en el menú «⋯» (las que ya no caben en su renglón, en el teléfono o en la barra de escritorio): un renglón del menú con ícono y texto;
 //   - suelto (fuera de BarActions): ícono con texto.
 //
 // Contexto del paquete: no renderiza (regla de la casa).
@@ -43,7 +43,7 @@ export function useBarActionsPlacement() {
 }
 
 /**
- * En el menú «⋯» del teléfono, la función que lo cierra (para algo propio que haga su acción y deba cerrarlo); fuera de él
+ * En el menú «⋯», la función que lo cierra (para algo propio que haga su acción y deba cerrarlo); fuera de él
  * no hace nada.
  *
  * @returns {() => void}
