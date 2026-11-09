@@ -4,6 +4,14 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.66.2] - 2026-11-09
+
+### Arreglado
+
+- «Ir a la página» vuelve a traer TODAS las páginas sin teclear, como en la 0.66.0: la lista corta de la 0.66.1 se quitó.
+  La lista se sigue desplazando sin trabas aunque haya miles (pinta solo las que se ven). Se queda el arreglo del ancho de
+  la 0.66.1: los números no se cortan y la lista no se desliza de lado.
+
 ## [0.66.1] - 2026-11-09
 
 ### Arreglado
