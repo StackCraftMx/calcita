@@ -330,9 +330,10 @@ Cada pantalla puede poner sus propias cápsulas en la barra (buscar, agregar, ex
 su código donde quiera y, en escritorio con cápsulas, el marco las sube a la barra; con la franja entran a la franja, y en
 el teléfono, con cápsulas, flotan arriba a la derecha y se quedan al bajar: las que caben, solo con ícono, y las que no,
 en un menú «⋯». En escritorio pasa lo mismo cuando la ventana es angosta o la letra es grande: las últimas que no caben van
-al «⋯» con su nombre, como en la barra de una ventana de la Mac, en vez de meterse debajo de la cuenta. Las `actions` de
-`PageHeading` ya suben solas, y `ServerTable` sube su búsqueda con `searchInBar`. «Hecho en Calcita» → «Marco y menú» lo
-enseña vivo.
+al «⋯» con su nombre, como en la barra de una ventana de la Mac, en vez de meterse debajo de la cuenta. Si una pantalla
+quiere menos a la vista aunque quepan, `maxVisible={{phone: 3, desktop: 5}}` les pone tope, contando el «⋯» (para toda la
+app: `CalcitaBarActions: {defaultProps: {maxVisible: …}}`). Las `actions` de `PageHeading` ya suben solas, y `ServerTable`
+sube su búsqueda con `searchInBar`. «Hecho en Calcita» → «Marco y menú» lo enseña vivo.
 
 Cuando los filtros de una lista ya no caben arriba de la tabla, la búsqueda en cajón: `FilterDrawer` sale de un lado
 (`anchor`) con los campos declarados una vez (`FILTER_FIELD_KIND`: texto, una o varias opciones, catálogo, casillas, rango de
@@ -389,7 +390,9 @@ pantalla y del tabulador). Para toda la app, en el tema: `CalcitaFilterDrawer: {
 En la cápsula, `BarActionButton` va solo con su ícono, como pide la guía de Apple. Con
 `showLabel={BAR_ACTION_LABEL.desktop}` lleva ícono y nombre en escritorio, donde sobra lugar y dos íconos solos se
 confunden («Descargar» y «Filtrar»), y solo el ícono en el teléfono. Para toda la app, en el tema:
-`CalcitaBarActionButton: {defaultProps: {showLabel: 'desktop'}}`.
+`CalcitaBarActionButton: {defaultProps: {showLabel: 'desktop'}}`. Desactivado, en la barra se ve del color de los demás
+botones a la mitad, para que se note también sobre una franja oscura; `disabledSx={{opacity: 0.7}}` lo cambia en un botón
+y `CalcitaBarActionButton: {defaultProps: {disabledSx: …}}` en todos.
 
 En Android conviene arrancar con el minimalista: el vidrio es el estilo de Apple (allá se ve ajeno) y el desenfoque pesa
 en los teléfonos baratos. `isAndroidDevice()` lo dice; con Next, desde el servidor, se le pasa la identificación del
