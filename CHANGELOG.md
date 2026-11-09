@@ -4,6 +4,26 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.66.0] - 2026-11-09
+
+### Agregado
+
+- `BarActions maxVisible`: un tope de botones a la vista por pantalla, uno para el teléfono y otro para escritorio
+  (`{phone: 3, desktop: 5}`), contando el «⋯» como el tope de la barra de pestañas cuenta «Más». Con tope 3 y cinco acciones
+  se ven dos y el «⋯»; con justo tres, las tres. Si no caben, la medición sigue mandando al «⋯». Sin él, como antes. Para toda
+  la app, en `components.CalcitaBarActions.defaultProps.maxVisible`. Un tope que no existe (0, una llave mal escrita) truena
+  al arrancar.
+- `BarActionButton disabledSx`: cómo se ve desactivado, en la barra, en el «⋯» y suelto. Por botón o para todos en
+  `components.CalcitaBarActionButton.defaultProps.disabledSx`.
+- Hecho en Calcita: en «Botones de una pantalla en la barra», un interruptor con el tope y «Imprimir» desactivado; las filas
+  de `maxVisible` y `disabledSx` en «Marco y menú».
+
+### Arreglado
+
+- Un `BarActionButton` desactivado en la barra salía con el gris de MUI para fondos claros: sobre una franja oscura casi
+  desaparecía y en el vidrio apenas se notaba. Ahora toma el color de los demás botones de la barra, a la mitad. Fuera de la
+  barra y en el «⋯», como antes.
+
 ## [0.65.0] - 2026-11-08
 
 ### Agregado
