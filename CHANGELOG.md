@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.66.1] - 2026-11-09
+
+### Arreglado
+
+- «Ir a la página» de la tabla (`showGoToPage`): la lista medía lo que el campo angosto (40 px) y cortaba los números de dos
+  cifras; además, los 4 px de cada lado que el vidrio les da a los renglones la hacían deslizarse de lado. Ahora la lista
+  mide lo que el número más largo y el renglón deja lo mismo a cada lado.
+- «Ir a la página» con muchas páginas: sin teclear, la lista ya no trae todas (con 100 eran unas cinco pantallas por
+  deslizar en el teléfono). Trae una lista corta: la primera, la última, las vecinas de la actual y saltos de 10 en 10
+  dentro de su centena (de 100 en 100 dentro de su millar, y así). Con 100 páginas, parada en la 37, son 16 renglones; con
+  hasta 20 páginas salen todas. Tecleando se sigue buscando en todas, y abre en la página actual como antes.
+- Hecho en Calcita: el renglón del pie de la tabla y el comentario de Pedidos dicen cómo es la lista corta.
+
 ## [0.66.0] - 2026-11-09
 
 ### Agregado
