@@ -3,6 +3,7 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import {useHookFormField} from '@/hookForm/useHookFormField.js';
+import {filesLimitProblemOf} from '@/inputs/fieldLimits.js';
 import AttachmentsInput from '@/upload/AttachmentsInput.jsx';
 
 /**
@@ -10,6 +11,7 @@ import AttachmentsInput from '@/upload/AttachmentsInput.jsx';
  *     value ni error (su onChange y su onBlur corren después de los del formulario); control: el de useForm, si la pantalla no usa FormProvider
  */
 export default function FormAttachmentsField({name, control, ...inputProps}) {
-    const fieldProps = useHookFormField(name, control, inputProps);
+    // el mínimo de archivos también impide enviar, salvo con resolver (useHookFormField.js)
+    const fieldProps = useHookFormField(name, control, inputProps, inputProps.minFiles === undefined ? undefined : (value) => filesLimitProblemOf(value, inputProps));
     return <AttachmentsInput {...inputProps} {...fieldProps} />;
 }

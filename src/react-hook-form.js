@@ -31,3 +31,6 @@ export {default as FormTextField} from '@/hookForm/FormTextField.jsx';
 export {default as SubmitButton} from '@/hookForm/SubmitButton.jsx';
 export {SERVER_PROBLEM_ROOT, applyServerProblem} from '@/hookForm/applyServerProblem.js';
 export {useHookFormField} from '@/hookForm/useHookFormField.js';
+// el esquema a la vista de los campos: con él y ToolkitProvider limitsFromSchema, cada campo lee sus topes (useHookFormSchemaLimits)
+export {FormSchemaProvider} from '@/forms/FormSchemaProvider.jsx';
+export {useHookFormSchemaLimits} from '@/hookForm/useHookFormSchemaLimits.js';

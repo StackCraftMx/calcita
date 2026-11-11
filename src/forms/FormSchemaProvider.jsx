@@ -3,7 +3,8 @@
 //
 // OJO, por qué hace falta: formik NO comparte su validationSchema con los campos (su contexto trae valores, errores y
 // funciones, no el esquema; revisado en formik 2.4.9). El Formik de Calcita (@stackcraftmx/calcita/forms) ya lo pone solo;
-// con el Formik importado directo de 'formik', la pantalla envuelve sus campos:
+// con el Formik importado directo de 'formik', y con react-hook-form (que lo guarda dentro del resolver), la pantalla
+// envuelve sus campos:
 //
 //   <Formik validationSchema={schema} …>
 //       <Form noValidate>

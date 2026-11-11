@@ -10,7 +10,11 @@
 // (ToolkitProvider requiredFromSchema), lo que pida el esquema de yup del formulario (schemaRequired.js). El esquema llega
 // por FormSchemaProvider (el Formik de Calcita lo pone solo): formik no lo comparte con sus campos.
 //
+// Y el tope que la pantalla le puso al campo (min, max, maxLength, maxSelected…): se registra en formik como validación del
+// campo, así también impide enviar el formulario aunque el esquema no lo diga. El del esquema ya lo revisa yup.
+//
 // Hook genérico del paquete: function (regla de la casa).
+import {useCallback, useRef} from 'react';
 import {useField, useFormikContext} from 'formik';
 
 import {useFormSchema} from '@/forms/FormSchemaProvider.jsx';
@@ -20,10 +24,17 @@ import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 /**
  * @param {string} name el campo del formulario
  * @param {{required?: boolean, onChange?: Function, onBlur?: Function}} [screen] lo que la pantalla le dijo al campo
+ * @param {(value: any) => object|null} [limitProblemOf] el tope que rompe el valor según las props del campo (fieldLimits.js)
  * @returns {{name: string, value: unknown, onChange: (value: unknown, ...rest: unknown[]) => void, onBlur: (...args: unknown[]) => void, error: unknown, required: boolean}}
  */
-export function useFormikField(name, screen = {}) {
-    const [field, meta, helpers] = useField(name);
+export function useFormikField(name, screen = {}, limitProblemOf) {
+    // OJO: la función del tope cambia en cada pintada; formik guarda la validación al registrar el campo. Se le da una que
+    // siempre llama a la última, así no se vuelve a registrar en cada pintada
+    const limitProblemRef = useRef(limitProblemOf);
+    limitProblemRef.current = limitProblemOf;
+    const validateLimit = useCallback((value) => limitProblemRef.current?.(value) ?? undefined, []);
+    // sin tope, como antes: el campo no registra ninguna validación propia
+    const [field, meta, helpers] = useField(limitProblemOf ? {name, validate: validateLimit} : name);
     const {values} = useFormikContext();
     const schema = useFormSchema();
     const {requiredFromSchema} = useToolkitSettings();

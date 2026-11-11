@@ -3,6 +3,7 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import {useFormikField} from '@/forms/useFormikField.js';
+import {filesLimitProblemOf} from '@/inputs/fieldLimits.js';
 import AttachmentsInput from '@/upload/AttachmentsInput.jsx';
 
 /**
@@ -10,6 +11,7 @@ import AttachmentsInput from '@/upload/AttachmentsInput.jsx';
  *     AttachmentsInput (accept, maxFiles, maxTotalSize, template…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormAttachmentsField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name, inputProps);
+    // el mínimo de archivos de la pantalla también impide enviar el formulario
+    const fieldProps = useFormikField(name, inputProps, inputProps.minFiles === undefined ? undefined : (value) => filesLimitProblemOf(value, inputProps));
     return <AttachmentsInput {...inputProps} {...fieldProps} />;
 }
