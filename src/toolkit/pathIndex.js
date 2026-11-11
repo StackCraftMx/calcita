@@ -17,9 +17,14 @@
 //
 // Lo mismo sirve para las direcciones del API (uris.js con export const uris = {...}): createPathIndex(glob, {exportName: 'uris'}).
 //
+// Los tramos del nombre van con dos puntos por omisión. Un proyecto que escribe sus nombres con punto, como ya pide sus
+// textos ('admin.clients.providerList'), pasa {separator: '.'} y el índice busca y avisa con punto: no hay que traducir
+// el nombre al entrar ni el aviso al salir. OJO: los dos puntos de la RUTA (/orders/:orderId) son otra cosa y no cambian.
+//
 // Funciones puras, no renderizan: function (regla de la casa). Pruebas en pathIndex.test.js.
 
-const SEPARATOR = ':';
+// con lo que se separan los tramos del nombre si el proyecto no dice otro
+const DEFAULT_SEPARATOR = ':';
 // el camino de un módulo sale de su carpeta: …/modules/admin/clients/paths.js → ['admin', 'clients']
 const DEFAULT_MODULE_PATTERN = /(?:^|\/)modules\/(.+)\/[^/]+$/;
 
@@ -80,9 +85,14 @@ function placeInTree(tree, steps, value) {
  * @param {object} [options]
  * @param {string} [options.exportName] el export con las direcciones en cada archivo (por omisión 'paths'; para el API, 'uris')
  * @param {RegExp} [options.modulePattern] saca del nombre del archivo el camino del módulo (el primer grupo, con /)
+ * @param {string} [options.separator] con qué se separan los tramos del nombre (por omisión ':'; con '.', 'admin.clients.list')
  * @returns {{pathOf: (name: string, params?: Record<string, unknown>) => string, allPaths: () => object}}
+ * @throws {Error} si el separador viene vacío o trae una diagonal (la diagonal es de las rutas)
  */
-export function createPathIndex(modules, {exportName = 'paths', modulePattern = DEFAULT_MODULE_PATTERN} = {}) {
+export function createPathIndex(modules, {exportName = 'paths', modulePattern = DEFAULT_MODULE_PATTERN, separator = DEFAULT_SEPARATOR} = {}) {
+    if (typeof separator !== 'string' || separator === '' || separator.includes('/')) {
+        throw new Error(`separator «${separator}» no sirve: use un texto como ':' o '.', sin diagonales.`);
+    }
     const tree = {};
     for (const [file, moduleExports] of Object.entries(modules)) {
         const published = moduleExports?.[exportName];
@@ -100,10 +110,10 @@ export function createPathIndex(modules, {exportName = 'paths', modulePattern = 
     const pathOf = (name, params = {}) => {
         let current = tree;
         const walked = [];
-        for (const step of name.split(SEPARATOR)) {
+        for (const step of name.split(separator)) {
             if (current === null || typeof current !== 'object' || current[step] === undefined) {
                 const options = current && typeof current === 'object' ? Object.keys(current).join(', ') : '(nada)';
-                throw new Error(`No hay una dirección llamada «${name}». En ${walked.join(SEPARATOR) || 'el índice'} hay: ${options}`);
+                throw new Error(`No hay una dirección llamada «${name}». En ${walked.join(separator) || 'el índice'} hay: ${options}`);
             }
             current = current[step];
             walked.push(step);
