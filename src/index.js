@@ -143,6 +143,12 @@ export {WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, isStepCompleted, openingStepO
 export {default as TextInput} from '@/inputs/TextInput.jsx';
 export {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 export {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
+// los topes de los campos: LIMIT_MODE para elegir avisar o corregir; las funciones, para un campo propio del proyecto
+export {
+    LIMIT_KIND, LIMIT_MODE, compareNumberTexts, filesLimitProblemOf, fixedNumberText, isListFull, limitFixOf, limitModeOf, listLimitProblemOf,
+    numberLimitProblemOf, textLimitProblemOf, wouldOverfillList,
+} from '@/inputs/fieldLimits.js';
+export {useLimitWarning} from '@/inputs/useLimitWarning.js';
 export {fieldKeyOf, normalizedValidationMessage, ruleMessageOf, translateValidationMessage} from '@/forms/validationMessages.js';
 export {useValidationText} from '@/forms/useValidationText.js';
 

@@ -8,6 +8,8 @@
 // separados por coma, en el orden de las opciones. Al formulario llega la lista de valores (Yup.array().min(1) la valida).
 // Para catálogos largos, CatalogInput con `multiple` (busca y deja chips). Con varias, además: selectAll («Elegir todos»
 // arriba, con su casilla a medias si hay algunos) y checkboxes (una casilla en cada opción en lugar de la palomita).
+// Y minSelected / maxSelected (o leídos del esquema, array().min().max()): lo que se sale avisa o, con limitMode fix, una
+// lista ya llena apaga las opciones que faltan (y «Elegir todos» si se pasaría). El mínimo siempre avisa (fieldLimits.js).
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaSelectInput con defaultProps y
 // styleOverrides de sus partes: option, optionText.
@@ -23,7 +25,9 @@ import Typography from '@mui/material/Typography';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, isListFull, listLimitProblemOf, wouldOverfillList} from '@/inputs/fieldLimits.js';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -53,6 +57,10 @@ const WITHOUT_CHECKMARK = Object.freeze({'&.Mui-selected::after': {content: 'non
  * @param {boolean} [props.multiple] elegir varias opciones
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» arriba de la lista
  * @param {boolean} [props.checkboxes] con multiple: una casilla en cada opción
+ * @param {number} [props.minSelected] con multiple: cuántas pide como mínimo; ninguna no se revisa (eso es required)
+ * @param {number} [props.maxSelected] con multiple: cuántas caben
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al pasarse de maxSelected: LIMIT_MODE.warn lo dice en rojo (por omisión,
+ *     o el de ToolkitProvider) y LIMIT_MODE.fix apaga las opciones que faltan cuando ya está llena
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
@@ -61,7 +69,7 @@ function SelectInputContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSelectInput.defaultProps) y encima lo que llega aquí
     const {
     name, label, value, onChange, onBlur, options, error, helperText = ' ', placeholder, disabled = false, required = false, inputRef, multiple = false,
-    selectAll = false, checkboxes = false, messages, texts,
+    selectAll = false, checkboxes = false, minSelected, maxSelected, limitMode, messages, texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -73,7 +81,14 @@ function SelectInputContent(props) {
     // OJO: la lista desplegable de MUI es un div y no un <input>: el `for` de la etiqueta no la une. Se nombra con su etiqueta
     // por aria-labelledby (labelId); sin esto el lector de pantalla no decía «Ciudad», solo lo elegido
     const labelId = `${inputId}-label`;
-    const errorText = validationTextOf(error);
+    const currentValue = multiple ? (Array.isArray(value) ? value : []) : (value ?? '');
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({
+        limitMode, error, validationTextOf, limitProblem: multiple ? listLimitProblemOf(currentValue, {minSelected, maxSelected}) : null,
+    });
+    const errorText = limit.errorText;
+    // con fix y la lista llena, las que faltan se apagan
+    const isFull = multiple && limit.mode === LIMIT_MODE.fix && isListFull(currentValue, maxSelected);
     const placeholderText = (
         <Typography component="span"
                     // OJO: el placeholder de un select activo se lee (text.secondary); text.disabled solo con el campo inactivo
@@ -86,16 +101,20 @@ function SelectInputContent(props) {
         }
         return options.find((option) => option.value === selectedValue)?.label ?? placeholderText;
     };
-    const currentValue = multiple ? (Array.isArray(value) ? value : []) : (value ?? '');
     // «Elegir todos» solo existe con varias. OJO, trampa pagada: se calculaba también con una sola, y un valor que es número
     // (un recordatorio de 60 minutos) tumbaba la pantalla: new Set(60) no es una lista
     const selectAllState = multiple
         ? selectAllStateOf(currentValue, options.filter((option) => !option.disabled).map((option) => option.value))
         : null;
+    // con fix, «Elegir todos» se apaga si elegirlos todos se pasaría del máximo
+    const selectAllCandidateCount = options.filter((option) => !option.disabled).length;
+    const isSelectAllBlocked = multiple && limit.mode === LIMIT_MODE.fix && !selectAllState.allChosen
+        && wouldOverfillList([], selectAllCandidateCount, maxSelected);
     // OJO: con multiple, el autollenado del navegador puede mandar el valor como texto separado por comas (lo dice MUI)
     const handleChange = (event) => {
         const nextValue = event.target.value;
         const values = multiple && typeof nextValue === 'string' ? nextValue.split(',') : nextValue;
+        limit.markLeft();
         // «Elegir todos» llega como una opción más: se cambia por todos (o por ninguno, si ya estaban todos)
         if (multiple && values.includes(SELECT_ALL_VALUE)) {
             onChange(selectAllState.toggled());
@@ -117,14 +136,17 @@ function SelectInputContent(props) {
                 required={required}
                 value={currentValue}
                 onChange={handleChange}
-                onBlur={onBlur}
+                onBlur={(event) => {
+                    limit.markLeft();
+                    onBlur?.(event);
+                }}
                 error={Boolean(errorText)}
                 helperText={errorText ?? helperText}
                 slotProps={{select: {multiple, displayEmpty: true, renderValue: renderSelectedValue, labelId}}}>
                 {/* la opción vacía solo con una: con varias, se quitan picándolas otra vez */}
                 {!multiple && <MenuItem value="" disabled>{placeholderText}</MenuItem>}
                 {multiple && selectAll && (
-                    <SelectOption value={SELECT_ALL_VALUE} ownSx={{fontWeight: 600, ...WITHOUT_CHECKMARK}}>
+                    <SelectOption value={SELECT_ALL_VALUE} disabled={isSelectAllBlocked} ownSx={{fontWeight: 600, ...WITHOUT_CHECKMARK}}>
                         <Checkbox size="small" tabIndex={-1} disableRipple sx={{p: 0, mr: 1}}
                                   checked={selectAllState.allChosen} indeterminate={selectAllState.someChosen} />
                         {selectAllState.allChosen ? t('form.unselectAll') : t('form.selectAll', {count: options.length})}
@@ -133,7 +155,7 @@ function SelectInputContent(props) {
                 {options.map((option) => (
                     // la opción en renglón y su nombre con su explicación en un bloque: con la opción en columna, la palomita del
                     // elegido (el tema la pinta al final) se bajaba a otro renglón (lo cachó una captura de Tareas)
-                    <SelectOption key={option.value} value={option.value} disabled={option.disabled}
+                    <SelectOption key={option.value} value={option.value} disabled={option.disabled || (isFull && !currentValue.includes(option.value))}
                                   ownSx={{whiteSpace: 'normal', ...(multiple && checkboxes && WITHOUT_CHECKMARK)}}>
                         {multiple && checkboxes && (
                             <Checkbox size="small" tabIndex={-1} disableRipple sx={{p: 0, mr: 1}} checked={currentValue.includes(option.value)} />

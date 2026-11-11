@@ -5,6 +5,9 @@
 // selectAll pone «Elegir todos» arriba, con su casilla a medias si hay algunas marcadas. row las acomoda en renglón (en el
 // teléfono bajan solas). Dentro de una FormSection se vuelve renglón, como los demás campos.
 //
+// minSelected / maxSelected (o leídos del esquema, array().min().max()): lo que se sale avisa o, con limitMode fix, ya llena
+// apaga las casillas que faltan (y «Elegir todos» si se pasaría). El mínimo siempre avisa (fieldLimits.js).
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaCheckboxGroupInput con defaultProps y
 // styleOverrides de sus partes: root, selectAll, option.
 //
@@ -19,7 +22,9 @@ import Typography from '@mui/material/Typography';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, isListFull, listLimitProblemOf, wouldOverfillList} from '@/inputs/fieldLimits.js';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -44,6 +49,10 @@ const CheckboxGroupOption = piecePart(THEME_NAME, 'Option', FormControlLabel);
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
+ * @param {number} [props.minSelected] cuántas pide marcadas como mínimo; ninguna no se revisa (eso es required)
+ * @param {number} [props.maxSelected] cuántas caben marcadas
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al pasarse de maxSelected: LIMIT_MODE.warn lo dice en rojo (por omisión,
+ *     o el de ToolkitProvider) y LIMIT_MODE.fix apaga las casillas que faltan cuando ya está llena
  * @param {object} [props.sx]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -51,7 +60,8 @@ const CheckboxGroupOption = piecePart(THEME_NAME, 'Option', FormControlLabel);
  */
 function CheckboxGroupInputContent(props) {
     const {
-        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, required = false, sx, messages, texts,
+        name, label, value, onChange, onBlur, options, row = false, selectAll = false, error, helperText = ' ', disabled = false, required = false, sx,
+        minSelected, maxSelected, limitMode, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -61,12 +71,21 @@ function CheckboxGroupInputContent(props) {
     const generatedId = useId();
     const groupId = `${name ?? 'checkbox-group'}-${generatedId}`;
     const labelId = `${groupId}-label`;
-    const errorText = validationTextOf(error);
     const checkedValues = Array.isArray(value) ? value : [];
-    const selectAllState = selectAllStateOf(checkedValues, options.filter((option) => !option.disabled).map((option) => option.value));
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({limitMode, error, validationTextOf, limitProblem: listLimitProblemOf(checkedValues, {minSelected, maxSelected})});
+    const errorText = limit.errorText;
+    const candidateValues = options.filter((option) => !option.disabled).map((option) => option.value);
+    const selectAllState = selectAllStateOf(checkedValues, candidateValues);
+    // con fix: ya llena, las que faltan se apagan; y «Elegir todos» se apaga si se pasaría del máximo
+    const limitsChoosing = limit.mode === LIMIT_MODE.fix;
+    const isFull = limitsChoosing && isListFull(checkedValues, maxSelected);
+    const unchosenCount = candidateValues.filter((candidate) => !checkedValues.includes(candidate)).length;
+    const isSelectAllBlocked = limitsChoosing && !selectAllState.allChosen && wouldOverfillList(checkedValues, unchosenCount, maxSelected);
     // la lista en el orden de las opciones, no en el que se fueron marcando (así viaja siempre igual)
     const inOptionsOrder = (values) => options.map((option) => option.value).filter((optionValue) => values.includes(optionValue));
     const change = (values) => {
+        limit.markLeft();
         onChange(inOptionsOrder(values));
         onBlur?.();
     };
@@ -80,7 +99,7 @@ function CheckboxGroupInputContent(props) {
                 <CheckboxGroupRoot row={row} role="group" aria-labelledby={labelId} ownSx={{columnGap: 2}} sx={sx}>
                     {selectAll && (
                         <CheckboxGroupSelectAll
-                            disabled={disabled}
+                            disabled={disabled || isSelectAllBlocked}
                             label={selectAllState.allChosen ? t('form.unselectAll') : t('form.selectAll', {count: options.length})}
                             control={(
                                 <Checkbox size="small" checked={selectAllState.allChosen} indeterminate={selectAllState.someChosen}
@@ -92,7 +111,7 @@ function CheckboxGroupInputContent(props) {
                     {options.map((option, index) => (
                         <CheckboxGroupOption
                             key={option.value}
-                            disabled={disabled || option.disabled}
+                            disabled={disabled || option.disabled || (isFull && !checkedValues.includes(option.value))}
                             ownSx={{alignItems: option.description ? 'flex-start' : 'center'}}
                             control={(
                                 <Checkbox size="small" name={name} id={index === 0 ? `${groupId}-first` : undefined}

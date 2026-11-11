@@ -7,6 +7,9 @@
 // columna. Doble clic pasa uno directo. En el teléfono las columnas van una debajo de otra y los botones apuntan hacia
 // abajo y arriba. Va fuera de una FormSection: necesita el ancho completo.
 //
+// minSelected / maxSelected (o leídos del esquema, array().min().max()): lo que se sale avisa o, con limitMode fix, los
+// botones para pasar se apagan si se pasaría del máximo (y el doble clic no pasa). El mínimo siempre avisa (fieldLimits.js).
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTransferListInput con defaultProps y
 // styleOverrides de sus partes: root, list, actions.
 //
@@ -31,7 +34,9 @@ import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDou
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, listLimitProblemOf, wouldOverfillList} from '@/inputs/fieldLimits.js';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -130,6 +135,10 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
  * @param {string} [props.helperText] ya traducida
  * @param {boolean} [props.disabled]
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta (lo revisa el esquema del formulario)
+ * @param {number} [props.minSelected] cuántos pide elegidos como mínimo; ninguno no se revisa (eso es required)
+ * @param {number} [props.maxSelected] cuántos caben elegidos
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al pasarse de maxSelected: LIMIT_MODE.warn lo dice en rojo (por omisión,
+ *     o el de ToolkitProvider) y LIMIT_MODE.fix apaga los botones que pasarían de más
  * @param {object} [props.sx]
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
@@ -138,7 +147,7 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
 function TransferListInputContent(props) {
     const {
         name, label, value, onChange, onBlur, options, availableTitle, chosenTitle, searchable, listHeight = DEFAULT_LIST_HEIGHT, error,
-        helperText = ' ', disabled = false, required = false, sx, messages, texts,
+        helperText = ' ', disabled = false, required = false, minSelected, maxSelected, limitMode, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -147,8 +156,12 @@ function TransferListInputContent(props) {
     const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'transfer'}-${generatedId}`;
-    const errorText = validationTextOf(error);
     const chosenValues = Array.isArray(value) ? value : [];
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({limitMode, error, validationTextOf, limitProblem: listLimitProblemOf(chosenValues, {minSelected, maxSelected})});
+    const errorText = limit.errorText;
+    // con fix, pasar no puede dejar más elegidos que el máximo
+    const wouldOverfill = (values) => limit.mode === LIMIT_MODE.fix && wouldOverfillList(chosenValues, values.length, maxSelected);
     // lo marcado para pasar, de cada lado
     const [markedAvailable, setMarkedAvailable] = useState([]);
     const [markedChosen, setMarkedChosen] = useState([]);
@@ -159,6 +172,7 @@ function TransferListInputContent(props) {
     const titles = {available: availableTitle ?? t('transfer.available'), chosen: chosenTitle ?? t('transfer.chosen')};
 
     const change = (values) => {
+        limit.markLeft();
         onChange(values);
         onBlur?.();
     };
@@ -188,12 +202,16 @@ function TransferListInputContent(props) {
     const lists = (
         <TransferRoot direction={{xs: 'column', md: 'row'}} ownSx={{gap: 1.5, alignItems: 'stretch'}} sx={sx} id={inputId}>
             <TransferColumn title={titles.available} items={available} markedValues={markedAvailable}
-                            onMark={toggleIn(setMarkedAvailable)} onMarkMany={setMarkedAvailable} onMoveOne={(itemValue) => moveToChosen([itemValue])}
+                            onMark={toggleIn(setMarkedAvailable)} onMarkMany={setMarkedAvailable} onMoveOne={(itemValue) => {
+                                if (!wouldOverfill([itemValue])) {
+                                    moveToChosen([itemValue]);
+                                }
+                            }}
                             searchable={isSearchable} searchLabel={t('transfer.search')} emptyText={t('transfer.emptyAvailable')}
                             listHeight={listHeight} disabled={disabled} t={t} />
             <TransferActions direction={{xs: 'row', md: 'column'}} ownSx={{gap: 1, justifyContent: 'center', alignItems: 'center'}}>
-                {actionButton('transfer.moveMarked', ChevronRightRoundedIcon, () => moveToChosen(markedAvailable), markedAvailable.length === 0)}
-                {actionButton('transfer.moveAll', KeyboardDoubleArrowRightRoundedIcon, () => moveToChosen(movableOf(available)), movableOf(available).length === 0)}
+                {actionButton('transfer.moveMarked', ChevronRightRoundedIcon, () => moveToChosen(markedAvailable), markedAvailable.length === 0 || wouldOverfill(markedAvailable))}
+                {actionButton('transfer.moveAll', KeyboardDoubleArrowRightRoundedIcon, () => moveToChosen(movableOf(available)), movableOf(available).length === 0 || wouldOverfill(movableOf(available)))}
                 {actionButton('transfer.returnMarked', ChevronLeftRoundedIcon, () => moveToAvailable(markedChosen), markedChosen.length === 0)}
                 {actionButton('transfer.returnAll', KeyboardDoubleArrowLeftRoundedIcon, () => moveToAvailable(movableOf(chosen)), movableOf(chosen).length === 0)}
             </TransferActions>
