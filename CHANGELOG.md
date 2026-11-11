@@ -4,6 +4,60 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.67.0] - 2026-11-11
+
+### Agregado
+
+- Mínimo y máximo en los campos, y quien programa escoge qué pasa cuando lo escrito se sale (`limitMode`):
+  `LIMIT_MODE.warn` lo dice en rojo al salir del campo y el formulario no se envía (por omisión); `LIMIT_MODE.fix` lo
+  corrige solo. Se escoge una vez para toda la app (`ToolkitProvider limitMode`) o en un campo. Lo que no se puede
+  corregir solo (faltan letras, opciones o archivos) avisa con los dos modos. Sin tope, todo igual que antes.
+  Lo corregido solo se dice: una nota en el campo, que no va en rojo («Se ajustó al máximo: 500,000.»), y `onLimitFix`
+  con el objeto de la corrección (`{rule, limit, typedValue, fixedValue, message}`) para la pantalla: el número, las
+  fechas y el chip de rango.
+  - Número (`NumberInput`, `FormNumberField`): `min` y `max`. Con fix, al salir del campo lo de más se vuelve el tope
+    (1,500 → 1,000.00). Se compara como texto, sin perder centavos en números grandes.
+  - Texto (`TextInput`, `FormTextField`): `minLength` y `maxLength`. Con máximo sale el contador («12 de 80»); con fix el
+    campo no deja teclear ni pegar más.
+  - Listas de varias opciones (`SelectInput` y `CatalogInput` con `multiple`, `CheckboxGroupInput`, `TransferListInput`
+    y sus campos de formulario): `minSelected` y `maxSelected`. Con fix, la lista llena apaga las opciones que faltan
+    (también «Elegir todos» y los botones para pasar, si se pasarían).
+  - Adjuntos (`AttachmentsInput`, `FormAttachmentsField`): `minFiles`. El máximo ya existía.
+  - El chip de rango de fechas de la tabla (`DateRangeFilter`): `minDate`, `maxDate`, `disablePast` y `disableFuture`,
+    como el rango del cajón de filtros. El calendario no deja elegir fuera; tecleada fuera avisa y no deja aplicar o, con
+    fix, se vuelve el tope.
+- El tope se escribe una vez, en el esquema de yup: con `ToolkitProvider limitsFromSchema` los campos leen
+  `number().min().max()`, `string().min().max()` y `array().min().max()` del esquema, como el asterisco con
+  `requiredFromSchema`. Por omisión no. Lo que diga el campo gana. Con formik el esquema llega solo; con react-hook-form,
+  que lo guarda dentro del resolver, la pantalla envuelve sus campos en `FormSchemaProvider` (ahora también sale de
+  `/react-hook-form`, con `useHookFormSchemaLimits`).
+- El asterisco desde el esquema (`requiredFromSchema`) también con react-hook-form: con `FormSchemaProvider` los campos
+  ponen su asterisco igual que con formik. Antes, con react-hook-form, cada campo llevaba su `required` a mano.
+- `EfirmaFields`: `disabled` acepta cada parte (`{certificate, privateKey, password}`); `true` sigue apagando todo. Una
+  parte mal escrita truena.
+- Un tope puesto en el campo también impide enviar el formulario: con formik siempre; con react-hook-form, cuando el
+  formulario no tiene resolver (con resolver, react-hook-form no corre las reglas del campo: ahí va en el esquema).
+- `createPathIndex(glob, {separator: '.'})`: los tramos del nombre se pueden escribir con punto
+  (`pathOf('admin.clients.list')`), y el aviso de un nombre que no existe sale con el mismo. Por omisión, dos puntos como
+  antes. Los dos puntos de la ruta (`/orders/:orderId`) no cambian.
+- Para un campo propio: `numberLimitProblemOf`, `fixedNumberText`, `textLimitProblemOf`, `listLimitProblemOf`,
+  `filesLimitProblemOf`, `limitFixOf`, `useLimitWarning` y, en `/date-pickers`, `pickerLimitProblemOf` y `usePickerLimits`.
+- Textos nuevos: `validation.timeMin`, `timeMax`, `monthMin`, `monthMax`, `filesMin`, `fixedToMin`, `fixedToMax`,
+  `common.form.characterCount`, `table.dateRange.beforeMin`, `afterMax` y `mexico.efirma.lockedNotValid`, `lockedOtherRfc`.
+- Hecho en Calcita: «Formularios › 15. Mínimo y máximo», con el botón para ver los dos modos, y el separador en el índice
+  de direcciones. Ejemplos: la solicitud de crédito pide al menos $5,000 y su nombre trae tope de letras.
+
+### Arreglado
+
+- `EfirmaFields`: con un `.cer` que no sirve (no es certificado, venció, todavía no vale o es de otro RFC), la llave, la
+  contraseña y «Revisar la e.firma» se apagan, con el motivo abajo; el `.cer` sigue prendido para cambiarlo. Antes se
+  podía teclear la contraseña de una llave que no se iba a registrar, y con un certificado vigente de otro RFC «Revisar»
+  seguía prendido. Sin `.cer` elegido, todo como antes.
+- Una fecha, hora, mes o fecha con hora TECLEADA fuera de su tope (`minDate`, `maxDate`, `disablePast`, `disableFuture`,
+  `minTime`, `maxMonth`, `minDateTime`, `minimumMinutesFromNow`…) entraba sin aviso: el calendario apagaba los días de
+  fuera, pero el campo tapaba el error de MUI X con el del formulario. Ahora avisa al salir del campo («La fecha no puede
+  ser anterior a 11/11/2026.») y, con formik, no deja enviar; con `limitMode` fix se vuelve el tope.
+
 ## [0.66.2] - 2026-11-09
 
 ### Arreglado
