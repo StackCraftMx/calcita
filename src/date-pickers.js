@@ -27,3 +27,6 @@ export {
 } from '@/datePickers/pickerValues.js';
 export {minutesAfterRule, minutesFromNowRule} from '@/datePickers/dateTimeRules.js';
 export {useCurrentMinute} from '@/datePickers/useCurrentMinute.js';
+// el tope de una fecha tecleada (LIMIT_MODE para avisar o corregir sale de la puerta principal)
+export {PICKER_KIND, fixedPickerText, pickerBoundsOf, pickerLimitProblemOf} from '@/datePickers/pickerLimits.js';
+export {usePickerLimits} from '@/datePickers/usePickerLimits.js';

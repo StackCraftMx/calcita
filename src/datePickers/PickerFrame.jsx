@@ -23,6 +23,16 @@ const ADAPTER_BY_LANGUAGE = Object.freeze({
 });
 
 /**
+ * El idioma de dayjs de cada idioma de la app (el que no está, español): para escribir una fecha como la escribe el campo.
+ *
+ * @param {string} language
+ * @returns {string}
+ */
+export function adapterLocaleOf(language) {
+    return (ADAPTER_BY_LANGUAGE[language] ?? ADAPTER_BY_LANGUAGE.es).adapterLocale;
+}
+
+/**
  * Los slotProps del selector con el campo de la casa y, encima, lo que pasó la pantalla en pickerProps.slotProps.
  *
  * @param {object} textField lo de la casa: id, name, onBlur, error, helperText

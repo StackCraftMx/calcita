@@ -7,6 +7,9 @@
 //
 // Cada campo trae su LocalizationProvider con dayjs (PickerFrame): la pantalla no tiene que poner nada alrededor.
 //
+// Una fecha TECLEADA fuera del tope (minDate, maxDate, disablePast, disableFuture) avisa al salir del campo o, con limitMode fix, se vuelve
+// el tope (pickerLimits.js). El calendario ya apagaba lo de fuera, pero tecleada entraba sin aviso.
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDateInput con defaultProps, styleOverrides de
 // sus partes (picker) y slots/slotProps para cambiarlas.
 //
@@ -17,6 +20,10 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
 import {CALENDAR_DATE_FORMAT} from '@/datePickers/pickerValues.js';
 import {usePickerField} from '@/datePickers/usePickerField.js';
+import {PICKER_KIND} from '@/datePickers/pickerLimits.js';
+import {usePickerLimits} from '@/datePickers/usePickerLimits.js';
+import {LIMIT_MODE, limitFixOf} from '@/inputs/fieldLimits.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
@@ -56,6 +63,10 @@ function pickerValueOf(calendarDate) {
  *     entre día y mes); por omisión DD/MM/YYYY en español y MM/DD/YYYY en inglés
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa con una fecha TECLEADA fuera del tope: LIMIT_MODE.warn lo dice en rojo
+ *     (por omisión, o el de ToolkitProvider) y LIMIT_MODE.fix la vuelve el tope al salir del campo, con una nota que lo dice
+ * @param {(fix: ReturnType<typeof import('@/inputs/fieldLimits.js').limitFixOf>) => void} [props.onLimitFix]
+ *     con fix, cada vez que se corrige sola: qué tope, qué se había tecleado y en qué quedó
  * @param {object} [props.pickerProps] lo demás del DatePicker de MUI X que aquí no tiene nombre (shouldDisableDate, slots,
  *     slotProps…); value y onChange son del campo
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
@@ -65,11 +76,27 @@ function pickerValueOf(calendarDate) {
 function DateInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
-        openTo = 'day', disabled = false, required = false, format, inputRef, pickerProps, messages, texts,
+        openTo = 'day', disabled = false, required = false, format, inputRef, limitMode, onLimitFix, pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
-    const {language, inputId, errorText, formats} = usePickerField({name, kind: 'date', error, label, messages, texts});
+    const {language, inputId, formats, validationTextOf} = usePickerField({name, kind: 'date', error, label, messages, texts});
+    // la fecha tecleada fuera del tope: el aviso (el error del formulario gana) o, con fix, el tope al salir del campo
+    const limits = usePickerLimits(PICKER_KIND.date, {min: minDate, max: maxDate, disablePast, disableFuture});
+    const limit = useLimitWarning({limitMode, error, validationTextOf, limitProblem: limits.problemOf(value), value, onLimitFix});
+    const handleBlur = () => {
+        limit.markLeft();
+        onBlur?.();
+        // OJO: después de la salida y no antes. formik revisa la salida con el valor de la pintada anterior y esa revisión
+        // termina después: el aviso de la fecha vieja se quedaba con la fecha ya corregida
+        if (limit.mode === LIMIT_MODE.fix) {
+            const fixedValue = limits.fixedOf(value);
+            if (fixedValue !== value) {
+                onChange(fixedValue);
+                limit.noteFix(limitFixOf(limits.problemOf(value), value, fixedValue));
+            }
+        }
+    };
 
     return (
         <PickerFrame inputId={inputId} label={label} required={required} language={language}>
@@ -92,7 +119,7 @@ function DateInputContent(props) {
                     pickerProps?.onClose?.();
                     onBlur?.();
                 }}
-                slotProps={textFieldSlotPropsOf({id: inputId, name, onBlur, required, error: Boolean(errorText), helperText: errorText ?? helperText}, pickerProps)}
+                slotProps={textFieldSlotPropsOf({id: inputId, name, onBlur: handleBlur, required, error: Boolean(limit.errorText), helperText: limit.errorText ?? limit.noticeText ?? helperText}, pickerProps)}
             />
         </PickerFrame>
     );
