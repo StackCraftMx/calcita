@@ -138,6 +138,10 @@ const CASES = [
     // el modo de color se conoce hasta montar: en el servidor salen la letra y el idioma
     ['AppearanceSettings', h(AppearanceSettings), 'Tamaño de letra'],
     ['NumberInput con miles y decimales', h(NumberInput, {label: 'Importe', value: '2850000.5', onChange: () => {}}), '2,850,000.50'],
+    ['NumberInput con mínimo y máximo (sin aviso hasta salir del campo)', h(NumberInput, {label: 'Monto', value: '900000', onChange: () => {}, min: 5000, max: 500000}), '900,000.00'],
+    ['TextInput con máximo: el contador', h(TextInput, {label: 'Referencia', value: 'ABC', onChange: () => {}, maxLength: 12}), '3 de 12'],
+    ['TextInput con máximo y fix: el navegador no deja teclear más', h(ToolkitProvider, {limitMode: 'fix'}, h(TextInput, {label: 'Referencia', value: '', onChange: () => {}, maxLength: 12})), 'maxLength="12"'],
+    ['SelectInput llena con fix: las que faltan apagadas', h(ToolkitProvider, {limitMode: 'fix'}, h(MultiSelectInput, {label: 'Días', value: ['lun'], onChange: () => {}, multiple: true, maxSelected: 1, options: [{value: 'lun', label: 'Lunes'}, {value: 'mar', label: 'Martes'}]})), 'Lunes'],
     ['CatalogInput con la opción elegida', h(CatalogInput, {label: 'Estado', value: 'JAL', onChange: () => {}, options: [{code: 'JAL', label: 'Jalisco'}]}), 'Jalisco (JAL)'],
     ['ColorInput con su contraste', h(ColorInput, {label: 'Color', value: '#1976D2', onChange: () => {}}), 'Contraste sobre blanco'],
     ['SecretField tapado', h(SecretField, {label: 'Clave', value: 'secreto-123'}), 'type="password"'],
@@ -163,6 +167,7 @@ const CASES = [
         cfdi: readCfdi('<cfdi:Comprobante Version="4.0" Total="1160.00" Moneda="MXN" TipoDeComprobante="I"><cfdi:Emisor Rfc="AAA010101AAA" Nombre="EMISOR"/><cfdi:Receptor Rfc="XAXX010101000" Nombre="RECEPTOR"/><tfd:TimbreFiscalDigital UUID="6f2d1c8e-12ab-4cd3-9e0f-0123456789ab"/></cfdi:Comprobante>'),
     }), '6F2D1C8E-12AB-4CD3-9E0F-0123456789AB'],
     ['EfirmaFields vacío con su botón de revisar', h(EfirmaFields, {onChange: () => {}, onVerifyKey: async () => {}}), 'Revisar la e.firma'],
+    ['EfirmaFields con disabled por parte (solo el .cer apagado)', h(EfirmaFields, {onChange: () => {}, disabled: {certificate: true}}), 'Contraseña'],
     // el editor se arma en el navegador (immediatelyRender false): en el servidor sale su marco con la etiqueta
     ['RichTextEditor en el servidor con su etiqueta', h(RichTextEditor, {label: 'Notas del pedido', value: '<p>Hola</p>', onChange: () => {}, maxLength: 100}), 'Notas del pedido'],
     ['RichTextView en el servidor no truena', h(RichTextView, {value: '<p onclick="x()">Hola</p><script>x()</script>'}), ''],
