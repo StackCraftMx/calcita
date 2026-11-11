@@ -38,6 +38,8 @@ const EFIRMA_EXTENSIONS = [
     {id: 'value', option: 'value · onChange', example: '{certificateFile, keyFile, password}'},
     {id: 'verify', option: 'onVerifyKey', example: 'onVerifyKey={({certificateFile, keyFile, password}) => api.verifyEfirma(…)}'},
     {id: 'expected', option: 'expectedRfc · onCertificateRead', example: 'onCertificateRead={(certificate) => setRfc(certificate?.rfc)}'},
+    {id: 'locked', option: 'expectedRfc (la llave espera al certificado bueno)', example: '<EfirmaFields expectedRfc="AAA010101AAA" … />  // con otro RFC: llave y contraseña apagadas'},
+    {id: 'disabledParts', option: 'disabled · disabled={{certificate, privateKey, password}}', example: '<EfirmaFields disabled={{certificate: true}} … />  // el .cer ya registrado; solo pide la llave'},
     {id: 'reader', option: 'readCertificate · certificateStatusOf', example: 'const certificate = readCertificate(await file.arrayBuffer());'},
     {id: 'texts', option: 'verifyLabel · texts', example: 'verifyLabel="Probar el sello digital"'},
 ];

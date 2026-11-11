@@ -138,7 +138,7 @@ const OrdersTableDemo = () => {
         clears: {created_from: '', created_to: ''},
         isOverridden: (filters: Record<string, string>) => Boolean(filters.created_from || filters.created_to),
         renderExtra: ({filters, setFilters}: {filters: Record<string, string>, setFilters: (next: Record<string, string>) => void}) => (
-            <DateRangeFilter from={filters.created_from} to={filters.created_to}
+            <DateRangeFilter from={filters.created_from} to={filters.created_to} disableFuture
                              onChange={({from, to}) => setFilters({created_from: from, created_to: to, period: ''})} />
         ),
     }];

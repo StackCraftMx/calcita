@@ -18,6 +18,16 @@ export const CREDIT_REQUEST_INITIAL_VALUES = Object.freeze({
     company_color: '',
 });
 
+/**
+ * Los topes que pone la pantalla en sus campos (min, maxLength): avisan al salir del campo y no dejan avanzar. El monto
+ * llega como texto ('5000.00'): por eso su tope va en el campo y no en Yup.string(), donde min y max serían de letras.
+ */
+export const CREDIT_REQUEST_LIMITS = Object.freeze({
+    // el crédito más chico que se da; el más grande depende del ingreso y lo revisa el servidor
+    minimumAmount: 5000,
+    applicantNameLength: 120,
+});
+
 /** Los campos de cada paso: los que revisa «Siguiente» y los que limpia «Omitir». */
 export const CREDIT_REQUEST_STEP_FIELDS = Object.freeze({
     applicant: ['applicant_name', 'email', 'monthly_income', 'state'],

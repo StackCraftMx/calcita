@@ -28,7 +28,7 @@ import {
 } from '@stackcraftmx/calcita/forms';
 
 import {
-    CREDIT_REQUEST_INITIAL_VALUES, CREDIT_REQUEST_STEP_FIELDS, buildCreditRequestSchema,
+    CREDIT_REQUEST_INITIAL_VALUES, CREDIT_REQUEST_LIMITS, CREDIT_REQUEST_STEP_FIELDS, buildCreditRequestSchema,
 } from '@/modules/customers/creditRequestSchema.js';
 import {
     LOAN_TERMS_IN_MONTHS, downloadUploadedDocument, openCreditRequest, submitCreditRequest, updateCreditRequest, uploadDocument,
@@ -96,7 +96,8 @@ export const CreditRequestPage = () => {
                 key: 'applicant', label: t('credit.steps.applicant'), fields: CREDIT_REQUEST_STEP_FIELDS.applicant,
                 content: (
                     <FormSection>
-                        <FormTextField name="applicant_name" label={t('credit.applicantName')} autoComplete="off" />
+                        <FormTextField name="applicant_name" label={t('credit.applicantName')} autoComplete="off"
+                                       maxLength={CREDIT_REQUEST_LIMITS.applicantNameLength} />
                         <FormTextField name="email" label={t('credit.email')} type="email" normalizeOnBlur={normalizedEmailOf} autoComplete="off" />
                         <FormNumberField name="monthly_income" label={t('credit.monthlyIncome')} prefix="$" />
                         <FormCatalogField name="state" label={t('credit.state')} placeholder={t('form.statePlaceholder')} options={states} loading={isLoadingStates} />
@@ -107,7 +108,9 @@ export const CreditRequestPage = () => {
                 key: 'loan', label: t('credit.steps.loan'), fields: CREDIT_REQUEST_STEP_FIELDS.loan,
                 content: (
                     <FormSection>
-                        <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')} />
+                        {/* el monto más chico avisa aquí mismo; el más grande depende del ingreso y lo dice el servidor */}
+                        <FormNumberField name="requested_amount" label={t('credit.requestedAmount')} prefix="$" helperText={t('credit.requestedAmountHelp')}
+                                         min={CREDIT_REQUEST_LIMITS.minimumAmount} />
                         <FormSelectField name="term_months" label={t('credit.term')} options={termOptions} />
                         <FormMaskedField name="deposit_clabe" mask={INPUT_MASK.clabe} label={t('credit.depositClabe')} helperText={t('credit.depositClabeHelp')}
                                          placeholder="032 180 00011835971 9" autoComplete="off" />
