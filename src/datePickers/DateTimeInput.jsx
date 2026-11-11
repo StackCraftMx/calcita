@@ -13,6 +13,9 @@
 //
 // Para una hora del día sin fecha («abre a las 09:00») va TimeInput; para una fecha sin hora, DateInput.
 //
+// Una fecha TECLEADA fuera del tope (minDateTime, maxDateTime, minimumMinutesFromNow, disablePast, disableFuture) avisa al salir del campo o, con limitMode fix, se vuelve
+// el tope (pickerLimits.js). El calendario ya apagaba lo de fuera, pero tecleada entraba sin aviso.
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaDateTimeInput con defaultProps, styleOverrides de
 // sus partes (picker) y slots/slotProps para cambiarlas.
 //
@@ -21,10 +24,13 @@ import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
 
 import PickerFrame, {textFieldSlotPropsOf} from '@/datePickers/PickerFrame.jsx';
 import {
-    DEFAULT_MINUTES_STEP, earliestInstantFromNow, instantTextOf, latestInstantOf, pickerInstantOf, timeZoneNameOf,
+    DEFAULT_MINUTES_STEP, instantTextOf, pickerInstantOf, timeZoneNameOf,
 } from '@/datePickers/pickerValues.js';
-import {useCurrentMinute} from '@/datePickers/useCurrentMinute.js';
 import {usePickerField} from '@/datePickers/usePickerField.js';
+import {PICKER_KIND} from '@/datePickers/pickerLimits.js';
+import {usePickerLimits} from '@/datePickers/usePickerLimits.js';
+import {LIMIT_MODE, limitFixOf} from '@/inputs/fieldLimits.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {intlLocaleOf} from '@/toolkit/toolkitSettings.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
@@ -85,6 +91,10 @@ function helperLineOf(helperText, zoneText) {
  *     DD/MM/YYYY HH:mm en español y el reloj de ToolkitProvider hourCycle
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa con una fecha TECLEADA fuera del tope: LIMIT_MODE.warn lo dice en rojo
+ *     (por omisión, o el de ToolkitProvider) y LIMIT_MODE.fix la vuelve el tope al salir del campo, con una nota que lo dice
+ * @param {(fix: ReturnType<typeof import('@/inputs/fieldLimits.js').limitFixOf>) => void} [props.onLimitFix]
+ *     con fix, cada vez que se corrige sola: qué tope, qué se había tecleado y en qué quedó
  * @param {object} [props.pickerProps] lo demás del DateTimePicker de MUI X que aquí no tiene nombre (views, shouldDisableDate,
  *     slots, slotProps…); value y onChange son del campo
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
@@ -94,19 +104,31 @@ function helperLineOf(helperText, zoneText) {
 function DateTimeInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
-        disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, required = false, format, inputRef, pickerProps, messages, texts,
+        disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, required = false, format, inputRef, limitMode, onLimitFix, pickerProps, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'dateTime', error, label, messages, texts});
+    // la fecha tecleada fuera del tope: el aviso (el error del formulario gana) o, con fix, el tope al salir del campo
+    const limits = usePickerLimits(PICKER_KIND.dateTime, {min: minDateTime, max: maxDateTime, disablePast, disableFuture, minimumMinutesFromNow, timeZone});
+    const limit = useLimitWarning({limitMode, error, validationTextOf: field.validationTextOf, limitProblem: limits.problemOf(value), value, onLimitFix});
+    const handleBlur = () => {
+        limit.markLeft();
+        onBlur?.();
+        // OJO: después de la salida y no antes. formik revisa la salida con el valor de la pintada anterior y esa revisión
+        // termina después: el aviso de la fecha vieja se quedaba con la fecha ya corregida
+        if (limit.mode === LIMIT_MODE.fix) {
+            const fixedValue = limits.fixedOf(value);
+            if (fixedValue !== value) {
+                onChange(fixedValue);
+                limit.noteFix(limitFixOf(limits.problemOf(value), value, fixedValue));
+            }
+        }
+    };
     const {languages} = useToolkitSettings();
     const shownTimeZone = timeZone ?? field.timeZone;
     const zoneText = showTimeZone ? (timeZoneLabel ?? timeZoneNameOf(shownTimeZone, intlLocaleOf(field.language, languages))) : null;
     const helperLine = helperLineOf(helperText, zoneText);
-    // el mínimo que de verdad aplica: el que da la pantalla o el de «ahora + N minutos», el más tarde
-    const hasClockRule = minimumMinutesFromNow != null;
-    const currentMinute = useCurrentMinute(hasClockRule);
-    const earliest = latestInstantOf(minDateTime, hasClockRule ? earliestInstantFromNow(minimumMinutesFromNow, currentMinute) : '');
 
     return (
         <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
@@ -117,7 +139,8 @@ function DateTimeInputContent(props) {
                 format={format ?? pickerProps?.format ?? field.formats.dateTime}
                 ampm={pickerProps?.ampm ?? field.formats.ampm}
                 value={pickerInstantOf(value, shownTimeZone)}
-                minDateTime={pickerInstantOf(earliest, shownTimeZone) ?? undefined}
+                // el mínimo que de verdad aplica: el de la pantalla o el de «ahora + N minutos», el más tarde (usePickerLimits)
+                minDateTime={pickerInstantOf(limits.screenMin, shownTimeZone) ?? undefined}
                 maxDateTime={pickerInstantOf(maxDateTime, shownTimeZone) ?? undefined}
                 disableFuture={disableFuture}
                 disablePast={disablePast}
@@ -131,7 +154,7 @@ function DateTimeInputContent(props) {
                     onBlur?.();
                 }}
                 slotProps={textFieldSlotPropsOf(
-                    {id: field.inputId, name, onBlur, required, error: Boolean(field.errorText), helperText: field.errorText ?? helperLine},
+                    {id: field.inputId, name, onBlur: handleBlur, required, error: Boolean(limit.errorText), helperText: limit.errorText ?? limit.noticeText ?? helperLine},
                     pickerProps,
                 )}
             />

@@ -3,7 +3,8 @@
 // disco) y no cuenta doble.
 //
 // Solo ELIGE (controlado: value / onChange recibe la lista completa), con las reglas de los demás cargadores (accept,
-// maxSize por archivo, maxFiles y maxTotalSize; useFilePicker). La lista puede mezclar archivos nuevos (File) con los que ya
+// maxSize por archivo, maxFiles y maxTotalSize; useFilePicker) y minFiles: con menos archivos avisa en rojo («Adjunte al
+// menos 2 archivos.»); ninguno es cosa de required (fieldLimits.js). La lista puede mezclar archivos nuevos (File) con los que ya
 // están guardados ({id?, name, size?}): al editar un registro, los de antes se ven igual y también se quitan.
 //
 // Huecos: showButton={false} + pickerRef para abrir la ventana desde un botón suyo (el clip de la barra de un correo);
@@ -25,6 +26,8 @@ import Typography from '@mui/material/Typography';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 
 import {useValidationText} from '@/forms/useValidationText.js';
+import {filesLimitProblemOf} from '@/inputs/fieldLimits.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
@@ -57,6 +60,7 @@ const AttachmentsLimits = piecePart(THEME_NAME, 'Limits', Typography);
  * @param {string|string[]} [props.accept] 'excel' | ['pdf', 'image'] | '.xlsx,.xls' | 'image/*'
  * @param {number|string} [props.maxSize] el peso máximo de cada archivo: bytes o '10 MB'
  * @param {number} [props.maxFiles] cuántos como máximo
+ * @param {number} [props.minFiles] cuántos como mínimo; con menos avisa (ninguno no se revisa: eso es required)
  * @param {number|string} [props.maxTotalSize] cuánto pueden pesar todos juntos
  * @param {string|{key: string, values?: object}} [props.error]
  * @param {string} [props.helperText] ya traducida
@@ -79,7 +83,7 @@ const AttachmentsLimits = piecePart(THEME_NAME, 'Limits', Typography);
  */
 function AttachmentsInputContent(props) {
     const {
-        name, label, value = [], onChange, onBlur, onRemove, accept, maxSize, maxFiles, maxTotalSize, error, helperText, buttonLabel,
+        name, label, value = [], onChange, onBlur, onRemove, accept, maxSize, maxFiles, minFiles, maxTotalSize, error, helperText, buttonLabel,
         showButton = true, pickerRef, disabled = false, required = false, busy = false, onReject, template, actions, sx, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
@@ -90,9 +94,12 @@ function AttachmentsInputContent(props) {
     const {formatFileSize} = useFormatters();
     const generatedId = useId();
     const buttonId = `${name ?? 'attachments'}-${generatedId}`;
-    const errorText = validationTextOf(error);
+    // el error del formulario o el del mínimo de archivos (lo que falta no se inventa: siempre avisa)
+    const limit = useLimitWarning({error, validationTextOf, limitProblem: filesLimitProblemOf(value, {minFiles})});
+    const errorText = limit.errorText;
     const isLocked = disabled || busy;
     const change = (files) => {
+        limit.markLeft();
         onChange(files);
         onBlur?.();
     };

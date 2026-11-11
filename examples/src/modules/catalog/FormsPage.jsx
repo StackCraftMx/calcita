@@ -22,6 +22,7 @@ import EditingWizard from '@/modules/catalog/demos/forms/EditingWizard.tsx';
 import RequiredFromSchema from '@/modules/catalog/demos/forms/RequiredFromSchema.tsx';
 import PhoneLabels from '@/modules/catalog/demos/forms/PhoneLabels.tsx';
 import DocumentsWizard from '@/modules/catalog/demos/forms/DocumentsWizard.tsx';
+import FieldLimits from '@/modules/catalog/demos/forms/FieldLimits.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
 const loadHookForm = () => import('@/modules/catalog/demos/forms/NewCustomerHookForm.tsx?demo-source');
@@ -37,6 +38,7 @@ const loadEditingWizard = () => import('@/modules/catalog/demos/forms/EditingWiz
 const loadRequiredFromSchema = () => import('@/modules/catalog/demos/forms/RequiredFromSchema.tsx?demo-source');
 const loadPhoneLabels = () => import('@/modules/catalog/demos/forms/PhoneLabels.tsx?demo-source');
 const loadDocumentsWizard = () => import('@/modules/catalog/demos/forms/DocumentsWizard.tsx?demo-source');
+const loadFieldLimits = () => import('@/modules/catalog/demos/forms/FieldLimits.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -84,7 +86,7 @@ const REQUIRED_EXTENSIONS = [
     {id: 'provider', option: 'ToolkitProvider requiredFromSchema', example: '<ToolkitProvider requiredFromSchema>  // una vez, en la raíz'},
     {id: 'required', option: 'required', example: '<FormTextField name="rfc" label="RFC" required />  // gana al esquema'},
     {id: 'formikImport', option: 'Formik de Calcita · FormSchemaProvider', example: '<FormSchemaProvider schema={schema}>…</FormSchemaProvider>  // con el Formik de formik'},
-    {id: 'hookForm', option: 'react-hook-form: required', example: '<FormTextField name="email" label="Correo" required />'},
+    {id: 'hookForm', option: 'react-hook-form · FormSchemaProvider', example: '<FormProvider {...form}><FormSchemaProvider schema={schema}>…los campos…</FormSchemaProvider></FormProvider>'},
     {id: 'mark', option: "CalcitaFieldFrame · CalcitaFormRow label '&[data-required]::after'", example: "components: {CalcitaFormRow: {styleOverrides: {label: {'&[data-required]::after': {color: 'red'}}}}}"},
     {id: 'markText', option: "texts common.form.requiredMark", example: "texts={{es: {common: {form: {requiredMark: '(obligatorio)'}}}}}"},
     {id: 'pure', option: 'isRequiredInSchema(schema, name, values)', example: "isRequiredInSchema(schema, 'contacts.2.email', values)"},
@@ -151,6 +153,20 @@ const TRANSFER_LIST_EXTENSIONS = [
     {id: 'theme', option: 'theme.components.CalcitaTransferListInput', example: 'components: {CalcitaTransferListInput: {styleOverrides: {list: {borderRadius: 4}}}}'},
 ];
 
+const LIMITS_EXTENSIONS = [
+    {id: 'mode', option: 'ToolkitProvider limitMode · limitMode', example: '<ToolkitProvider limitMode={LIMIT_MODE.fix}>  // o en un campo: limitMode={LIMIT_MODE.warn}'},
+    {id: 'schema', option: 'ToolkitProvider limitsFromSchema', example: 'Yup.string().max(12)  ·  Yup.array().min(2).max(3)  ·  Yup.number().min(0).max(100)'},
+    {id: 'fixEvent', option: 'onLimitFix · messages fixedToMin · fixedToMax', example: "onLimitFix={(fix) => bitacora.push(fix)}  // {rule, limit, typedValue, fixedValue, message}"},
+    {id: 'number', option: 'NumberInput · FormNumberField min · max', example: '<FormNumberField name="amount" label="Monto" min={5000} max={500000} />'},
+    {id: 'text', option: 'TextInput · FormTextField minLength · maxLength', example: '<FormTextField name="reference" label="Referencia" maxLength={12} />  // «3 de 12»'},
+    {id: 'lists', option: 'minSelected · maxSelected', example: '<FormSelectField name="days" label="Días" options={days} multiple maxSelected={3} />'},
+    {id: 'files', option: 'AttachmentsInput · FormAttachmentsField minFiles', example: '<FormAttachmentsField name="evidence" label="Evidencia" minFiles={2} maxFiles={5} />'},
+    {id: 'dates', option: 'minDate · maxDate · disablePast · disableFuture · minTime · minMonth · minDateTime', example: '<FormDateField name="deliveryDate" label="Entrega" disablePast maxDate="2026-12-31" />'},
+    {id: 'hookForm', option: 'react-hook-form · FormSchemaProvider', example: '<FormProvider {...form}><FormSchemaProvider schema={schema}>…los campos…</FormSchemaProvider></FormProvider>'},
+    {id: 'messages', option: 'messages · validation.fields.<campo>.max', example: "<FormNumberField name=\"amount\" min={5000} messages={{min: 'El crédito empieza en $5,000'}} />"},
+    {id: 'pure', option: 'numberLimitProblemOf · fixedNumberText · textLimitProblemOf · listLimitProblemOf', example: "numberLimitProblemOf('1500', {max: 1000})  // {key: 'validation:numberMax', values: {max: '1,000'}}"},
+];
+
 const OWN_MESSAGES_EXTENSIONS = [
     {id: 'messages', option: 'messages (en el campo)', example: "<FormTextField name=\"rfc\" label=\"RFC\" messages={{rfc: 'Revise el RFC', required: 'Escriba el RFC'}} />"},
     {id: 'fieldTexts', option: 'validation.fields.<campo>.<regla>', example: "texts={{es: {validation: {fields: {postal_code: {postalCode: 'Lleva 5 dígitos'}}}}}}"},
@@ -195,6 +211,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('phoneLabels', PHONE_LABELS_EXTENSIONS)} Demo={PhoneLabels} loadSource={loadPhoneLabels} />
             <DemoSection title={t('forms.documentsStep.title')} description={t('forms.documentsStep.description')}
                          extensions={rowsOf('documentsStep', DOCUMENTS_STEP_EXTENSIONS)} Demo={DocumentsWizard} loadSource={loadDocumentsWizard} />
+            <DemoSection title={t('forms.limits.title')} description={t('forms.limits.description')}
+                         extensions={rowsOf('limits', LIMITS_EXTENSIONS)} Demo={FieldLimits} loadSource={loadFieldLimits} />
         </Stack>
     );
 };

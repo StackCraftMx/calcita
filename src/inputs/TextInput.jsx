@@ -11,7 +11,10 @@
 //     campo: la persona ve lo que se envía;
 //   - uppercase normaliza a mayúsculas mientras se escribe (claves, RFC);
 //   - el error llega como LLAVE de yup ({key, values}) o como texto ya traducido (el del servidor) y se pinta en el idioma
-//     activo. Cuándo enseñarlo (ya se tocó, ya se envió) lo decide quien lo conecta al formulario.
+//     activo. Cuándo enseñarlo (ya se tocó, ya se envió) lo decide quien lo conecta al formulario;
+//   - minLength y maxLength (o leídos del esquema, ToolkitProvider limitsFromSchema): con máximo, el contador «12 de 80»
+//     a la derecha del renglón de ayuda. Lo que se sale avisa al salir del campo o, con limitMode fix, el campo no deja
+//     teclear (ni pegar) más del máximo. El mínimo siempre avisa: las letras que faltan no se inventan (fieldLimits.js).
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaTextInput con defaultProps y
 // styleOverrides.field (el TextField). El sx de la pantalla sigue ganando a todo.
@@ -27,8 +30,12 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
+import Box from '@mui/material/Box';
+
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, textLimitProblemOf} from '@/inputs/fieldLimits.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {piecePart, usePieceProps} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y su parte (theme.components.CalcitaTextInput): el campo de MUI con lo de Calcita abajo,
@@ -64,6 +71,10 @@ const CLEAR_BUTTON_SX = Object.freeze({
  * @param {(value: string) => string} [props.normalizeOnBlur]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef] para enfocar el campo (react-hook-form lo usa)
  * @param {boolean} [props.clearable] la ⓧ para borrar el texto; por omisión sí (no en contraseñas ni con adorno propio)
+ * @param {number} [props.minLength] las letras que pide como mínimo; vacío no se revisa (eso es required)
+ * @param {number} [props.maxLength] las letras que caben: pone el contador «12 de 80»
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al pasarse de maxLength: LIMIT_MODE.warn lo dice en rojo (por omisión, o
+ *     el de ToolkitProvider) y LIMIT_MODE.fix no deja teclear más
  * @param {boolean} [props.multiline] (y lo demás de TextField de MUI: minRows, autoComplete, autoFocus, slotProps, sx…)
  * @param {number} [props.minRows]
  * @param {number} [props.maxRows]
@@ -83,7 +94,7 @@ export default function TextInput(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTextInput.defaultProps) y encima lo que llega aquí
     const {
         name, label, value, onChange, onBlur, error, type = 'text', helperText = ' ', startAdornment, endAdornment: customEndAdornment,
-        uppercase = false, normalizeOnBlur, inputRef, clearable = true, messages, texts, ...textFieldProps
+        uppercase = false, normalizeOnBlur, inputRef, clearable = true, minLength, maxLength, limitMode, messages, texts, ...textFieldProps
     } = usePieceProps(props, THEME_NAME, {ownSlotProps: true});  // su slotProps es el del TextField de MUI (input, htmlInput…)
     const {t} = useToolkitTranslation('common', texts);
     // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
@@ -91,7 +102,12 @@ export default function TextInput(props) {
     const [isRevealed, setIsRevealed] = useState(false);
     const generatedId = useId();
     const inputId = textFieldProps.id ?? `${name ?? 'text'}-${generatedId}`;
-    const errorText = validationTextOf(error);
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({limitMode, error, limitProblem: textLimitProblemOf(value, {minLength, maxLength}), validationTextOf});
+    const errorText = limit.errorText;
+    const helperLine = errorText ?? helperText;
+    // con máximo, el contador a la derecha del renglón de ayuda (o del error)
+    const counterText = maxLength === undefined ? null : t('form.characterCount', {count: (value ?? '').length, max: maxLength});
     const isPassword = type === 'password';
     const revealLabel = isRevealed ? t('form.hidePassword') : t('form.showPassword');
 
@@ -118,6 +134,7 @@ export default function TextInput(props) {
     const endAdornment = customEndAdornment ? <InputAdornment position="end">{customEndAdornment}</InputAdornment> : (passwordAdornment ?? clearAdornment);
 
     const handleBlur = () => {
+        limit.markLeft();
         if (normalizeOnBlur) {
             const normalizedValue = normalizeOnBlur(value ?? '');
             // solo si cambió: un cambio de más dispara una validación de más
@@ -142,13 +159,22 @@ export default function TextInput(props) {
                 ownSx={CLEAR_BUTTON_SX}
                 sx={textFieldProps.sx}
                 error={Boolean(errorText)}
-                helperText={errorText ?? helperText}
+                helperText={counterText === null ? helperLine : (
+                    <Box component="span" sx={{display: 'flex', gap: 1, justifyContent: 'space-between'}}>
+                        <span>{helperLine}</span>
+                        <Box component="span" sx={{flexShrink: 0}}>{counterText}</Box>
+                    </Box>
+                )}
                 fullWidth
                 size="small"
                 // OJO: lo que el proyecto pasó en slotProps (htmlInput: {maxLength}) se suma a los adornos de la casa. Antes se
                 // pisaba entero y el tope de caracteres de una pantalla se perdía sin avisar
                 slotProps={{
                     ...textFieldProps.slotProps,
+                    // con fix, el navegador no deja teclear ni pegar más del máximo
+                    htmlInput: limit.mode === LIMIT_MODE.fix && maxLength !== undefined
+                        ? {...textFieldProps.slotProps?.htmlInput, maxLength}
+                        : textFieldProps.slotProps?.htmlInput,
                     input: {
                         ...textFieldProps.slotProps?.input,
                         startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined,

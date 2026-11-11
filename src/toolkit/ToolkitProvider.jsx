@@ -15,6 +15,7 @@
 // Lo renderiza la app: arrow (regla de la casa).
 import {useContext, useMemo} from 'react';
 import {allowOnlyUnrestricted} from '@/access/accessRules.js';
+import {limitModeOf} from '@/inputs/fieldLimits.js';
 import {browserNavigation} from '@/toolkit/browserNavigation.js';
 import {ToolkitContext} from '@/toolkit/toolkitContext.js';
 import {useFontSize} from '@/ui/navigation/useFontSize.js';
@@ -39,9 +40,16 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  *     consola una vez por idioma y llave
  * @param {(namespace: string, key: string, values?: object) => string|undefined} [props.translate] traductor del
  *     proyecto (por ejemplo i18next); undefined deja el texto del paquete
- * @param {boolean} [props.requiredFromSchema] los campos de formik leen del esquema de yup del formulario (validationSchema)
- *     qué es obligatorio y le ponen su asterisco: el esquema manda y la pantalla no los marca a mano. Lo que la pantalla diga
- *     con required gana. Por omisión no (cada campo con su required, como antes)
+ * @param {boolean} [props.requiredFromSchema] los campos leen del esquema de yup del formulario qué es obligatorio y le ponen
+ *     su asterisco: el esquema manda y la pantalla no los marca a mano. Con formik, el validationSchema; con react-hook-form,
+ *     el que se les enseña con FormSchemaProvider. Lo que la pantalla diga con required gana. Por omisión no (cada campo con
+ *     su required, como antes)
+ * @param {boolean} [props.limitsFromSchema] los campos leen del esquema de yup del formulario sus topes (número min y max,
+ *     texto min y max de letras, lista min y max de opciones) para corregir, contar letras o apagar opciones: el tope se
+ *     escribe una vez, en el esquema (con react-hook-form, enseñado con FormSchemaProvider). Lo que la pantalla diga en el
+ *     campo gana. Por omisión no (como antes)
+ * @param {'warn'|'fix'} [props.limitMode] qué hacen los campos de toda la app cuando lo escrito se sale de su tope:
+ *     LIMIT_MODE.warn lo dice en rojo (por omisión) y LIMIT_MODE.fix lo corrige solo. El limitMode de un campo gana
  * @param {string} [props.timeZone] zona de las fechas (por omisión la del navegador)
  * @param {string} [props.currency] moneda de los montos, código ISO 4217 (por omisión MXN)
  * @param {'h23'|'h12'} [props.hourCycle] la hora de 24 horas («15:10», por omisión) o de 12 con a.m. y p.m. («3:10 p.m.»):
@@ -56,7 +64,8 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {import('react').ReactNode} props.children
  */
 export const ToolkitProvider = ({
-    language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess, fileTypes,
+    language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, limitsFromSchema, limitMode, texts, translate, timeZone, currency, hourCycle,
+    appName, navigation, buildId, canAccess, fileTypes,
     children,
     ...unknownProps
 }) => {
@@ -70,6 +79,9 @@ export const ToolkitProvider = ({
         onMissingText: onMissingText ?? parent?.onMissingText ?? null,
         readValidationMessage: readValidationMessage ?? parent?.readValidationMessage ?? null,
         requiredFromSchema: requiredFromSchema ?? parent?.requiredFromSchema ?? false,
+        limitsFromSchema: limitsFromSchema ?? parent?.limitsFromSchema ?? false,
+        // revisado aquí: un modo mal escrito truena al arrancar, no en el primer campo que lo use
+        limitMode: limitModeOf(limitMode ?? parent?.limitMode),
         texts: texts ?? parent?.texts ?? {},
         translate: translate ?? parent?.translate ?? null,
         timeZone: timeZone ?? parent?.timeZone ?? browserTimeZone(),
@@ -80,8 +92,8 @@ export const ToolkitProvider = ({
         buildId: buildId ?? parent?.buildId ?? '',
         canAccess: canAccess ?? parent?.canAccess ?? allowOnlyUnrestricted,
         fileTypes: fileTypes ?? parent?.fileTypes ?? null,
-    }), [parent, language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, texts, translate, timeZone, currency, hourCycle, appName, navigation, buildId, canAccess,
-        fileTypes]);
+    }), [parent, language, languages, onLanguageChange, onMissingText, readValidationMessage, requiredFromSchema, limitsFromSchema, limitMode, texts, translate, timeZone, currency,
+        hourCycle, appName, navigation, buildId, canAccess, fileTypes]);
 
     // solo el de la raíz: un proveedor de adentro le cambiaba el idioma y la zona a las funciones sueltas de toda la app.
     // OJO: se configura durante el render (no en un efecto) para que los formatos y avisos que se llaman en este mismo

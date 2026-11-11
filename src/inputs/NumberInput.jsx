@@ -6,6 +6,10 @@
 //
 // Mientras se escribe se respeta lo tecleado (no completa decimales a medias); al salir se completan con ceros.
 //
+// Con min y max (o leídos del esquema, ToolkitProvider limitsFromSchema): lo que se sale avisa al salir del campo
+// («No puede ser mayor que 1,000.») o, con limitMode fix, se vuelve el tope al salir (1,500 → 1,000.00) y lo dice en una
+// nota («Se ajustó al máximo: 1,000.») y en onLimitFix. fieldLimits.js.
+//
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaNumberInput con defaultProps, styleOverrides de
 // sus partes (field) y slots/slotProps para cambiarlas.
 //
@@ -16,7 +20,9 @@ import TextField from '@mui/material/TextField';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, fixedNumberText, limitFixOf, numberLimitProblemOf} from '@/inputs/fieldLimits.js';
 import {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
@@ -41,6 +47,12 @@ const SEPARATORS_ROOM = 6;
  * @param {import('react').ReactNode} [props.prefix] p. ej. «$»
  * @param {import('react').ReactNode} [props.suffix] p. ej. «MXN» o «%»
  * @param {number} [props.maxDigits] tope de dígitos (por omisión 17)
+ * @param {string|number} [props.min] el valor más chico que se acepta (1000 o '0.50'); vacío no se revisa (eso es required)
+ * @param {string|number} [props.max] el valor más grande que se acepta
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al salirse de min o max: LIMIT_MODE.warn lo dice en rojo (por omisión, o
+ *     el de ToolkitProvider) y LIMIT_MODE.fix lo vuelve el tope al salir del campo
+ * @param {(fix: ReturnType<typeof import('@/inputs/fieldLimits.js').limitFixOf>) => void} [props.onLimitFix]
+ *     con fix, cada vez que se corrige solo: qué tope, qué se había escrito y en qué quedó
  * @param {boolean} [props.disabled]
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
@@ -51,7 +63,7 @@ const SEPARATORS_ROOM = 6;
 function NumberInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-        disabled = false, required = false, inputRef, messages, texts: unusedTexts,
+        min, max, limitMode, onLimitFix, disabled = false, required = false, inputRef, messages, texts: unusedTexts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -60,8 +72,12 @@ function NumberInputContent(props) {
     const generatedId = useId();
     const inputId = `${name ?? 'number'}-${generatedId}`;
     const [isTyping, setIsTyping] = useState(false);
-    const errorText = validationTextOf(error);
     const valueText = value === null || value === undefined ? '' : String(value);
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({
+        limitMode, error, validationTextOf, value: valueText, onLimitFix, limitProblem: numberLimitProblemOf(valueText, {min, max}),
+    });
+    const errorText = limit.errorText;
     // escribiendo: lo que hay; fuera del campo: con sus decimales completos
     const shownText = groupThousands(isTyping ? valueText : completeDecimals(valueText, decimals));
 
@@ -77,7 +93,7 @@ function NumberInputContent(props) {
                 size="small"
                 fullWidth
                 error={Boolean(errorText)}
-                helperText={errorText ?? helperText}
+                helperText={errorText ?? limit.noticeText ?? helperText}
                 onFocus={(event) => {
                     const input = event.target;
                     // OJO: al entrar, el texto cambia («50,000.00» → «50,000») y el navegador pierde lo seleccionado; al entrar
@@ -96,7 +112,19 @@ function NumberInputContent(props) {
                 onChange={(event) => onChange(cleanNumberText(event.target.value, decimals, allowNegative))}
                 onBlur={() => {
                     setIsTyping(false);
+                    limit.markLeft();
                     const completedText = completeDecimals(cleanNumberText(valueText, decimals, allowNegative), decimals);
+                    // con fix, lo que se sale del tope se vuelve el tope
+                    const fixedText = limit.mode === LIMIT_MODE.fix ? fixedNumberText(completedText, {min, max}, decimals) : completedText;
+                    // OJO, trampa pagada: formik revisa la salida del campo con el valor de la pintada anterior (900,000) y esa
+                    // revisión termina después de la del valor nuevo: el aviso viejo se quedaba con el monto ya corregido. Al
+                    // corregir al tope, primero la salida y después el valor
+                    if (fixedText !== completedText) {
+                        onBlur?.();
+                        onChange(fixedText);
+                        limit.noteFix(limitFixOf(numberLimitProblemOf(completedText, {min, max}), completedText, fixedText));
+                        return;
+                    }
                     if (completedText !== valueText) {
                         onChange(completedText);
                     }

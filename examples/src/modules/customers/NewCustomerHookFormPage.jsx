@@ -4,15 +4,18 @@
 // El esquema de yup es el mismo (yupResolver lo conecta) y el error del servidor llega igual con applyServerProblem.
 // La fecha no tiene campo listo para react-hook-form (su puerta no pide react-hook-form): va DateInput en un Controller.
 //
+// El esquema se les enseña a los campos con FormSchemaProvider (react-hook-form lo guarda dentro del resolver): con
+// ToolkitProvider limitsFromSchema, el nombre saca su tope de letras y su contador del max del esquema, sin repetirlo aquí.
+//
 // Lo renderiza la app: arrow (regla de la casa).
 import {useMemo, useState} from 'react';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import {FormSection, INPUT_MASK, PageHeading, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {FormSection, INPUT_MASK, PageHeading, ToolkitProvider, newIdentifier, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {DateInput} from '@stackcraftmx/calcita/date-pickers';
 import {
-    Controller, FormCatalogField, FormFileField, FormMaskedField, FormNumberField, FormProblemAlert, FormProvider, FormSelectField, FormTextField, SubmitButton,
-    applyServerProblem, useForm, yupResolver,
+    Controller, FormCatalogField, FormFileField, FormMaskedField, FormNumberField, FormProblemAlert, FormProvider, FormSchemaProvider, FormSelectField,
+    FormTextField, SubmitButton, applyServerProblem, useForm, yupResolver,
 } from '@stackcraftmx/calcita/react-hook-form';
 
 import {customerTypeOptionsOf, deliveryDayOptionsOf} from '@/modules/customers/customerDictionaries.js';
@@ -44,7 +47,8 @@ export const NewCustomerHookFormPage = () => {
     const [simulatedResponse, setSimulatedResponse] = useState(SIMULATED_RESPONSES.normal);
     const [lastCreated, setLastCreated] = useState(null);
     const {states, isLoading: isLoadingStates} = useStatesCatalog();
-    const resolver = useMemo(() => yupResolver(buildNewCustomerSchema()), []);
+    const schema = useMemo(() => buildNewCustomerSchema(), []);
+    const resolver = useMemo(() => yupResolver(schema), [schema]);
     const form = useForm({resolver, defaultValues: NEW_CUSTOMER_INITIAL_VALUES});
 
     const submit = form.handleSubmit(async (values) => {
@@ -65,6 +69,9 @@ export const NewCustomerHookFormPage = () => {
             <Stack spacing={3} sx={{maxWidth: 640}}>
                 <ServerResponseCard value={simulatedResponse} onChange={setSimulatedResponse} />
                     <FormProvider {...form}>
+                        {/* el esquema a la vista de los campos; limitsFromSchema va normalmente una vez en la raíz de la app */}
+                        <ToolkitProvider limitsFromSchema>
+                        <FormSchemaProvider schema={schema}>
                         <form onSubmit={submit} noValidate>
                             <Stack spacing={3}>
                                 <FormProblemAlert />
@@ -95,6 +102,8 @@ export const NewCustomerHookFormPage = () => {
                                 </Stack>
                             </Stack>
                         </form>
+                        </FormSchemaProvider>
+                        </ToolkitProvider>
                     </FormProvider>
                 {lastCreated && <Alert severity="success">{t('form.lastCreated', lastCreated)}</Alert>}
             </Stack>

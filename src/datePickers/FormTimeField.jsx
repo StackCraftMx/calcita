@@ -4,6 +4,8 @@
 //
 // Genérico del paquete: function (regla de la casa).
 import TimeInput from '@/datePickers/TimeInput.jsx';
+import {PICKER_KIND} from '@/datePickers/pickerLimits.js';
+import {usePickerLimits} from '@/datePickers/usePickerLimits.js';
 import {useFormikField} from '@/forms/useFormikField.js';
 
 /**
@@ -11,6 +13,8 @@ import {useFormikField} from '@/forms/useFormikField.js';
  *     TimeInput (minTime, maxTime, minutesStep…), sin value ni error (su onChange y su onBlur corren después de los del formulario)
  */
 export default function FormTimeField({name, ...inputProps}) {
-    const fieldProps = useFormikField(name, inputProps);
+    // el tope del campo también impide enviar el formulario con una fecha tecleada fuera de él
+    const limits = usePickerLimits(PICKER_KIND.time, {min: inputProps.minTime, max: inputProps.maxTime});
+    const fieldProps = useFormikField(name, inputProps, limits.hasLimits ? limits.problemOf : undefined);
     return <TimeInput {...inputProps} {...fieldProps} />;
 }

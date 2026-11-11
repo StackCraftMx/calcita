@@ -13,6 +13,9 @@
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaCatalogInput con defaultProps, styleOverrides de
 // sus partes (field) y slots/slotProps para cambiarlas.
 //
+// Con `multiple`, también minSelected / maxSelected (o leídos del esquema, array().min().max()): lo que se sale avisa o, con
+// limitMode fix, una lista ya llena apaga las opciones que faltan (y «Elegir todos» si se pasaría). fieldLimits.js.
+//
 // Genérico del paquete: function (regla de la casa).
 import {useId, useState} from 'react';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -22,7 +25,9 @@ import TextField from '@mui/material/TextField';
 
 import {useValidationText} from '@/forms/useValidationText.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
+import {LIMIT_MODE, isListFull, listLimitProblemOf, wouldOverfillList} from '@/inputs/fieldLimits.js';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
+import {useLimitWarning} from '@/inputs/useLimitWarning.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 
@@ -65,6 +70,10 @@ function plainTextOf(text) {
  * @param {boolean} [props.selectAll] con multiple: «Elegir todos» (o los que coinciden con lo buscado) arriba de la lista
  * @param {boolean} [props.checkboxes] con multiple: una casilla en cada opción
  * @param {number} [props.limitTags] con multiple: cuántos chips se ven sin foco; los demás como «+3 más»
+ * @param {number} [props.minSelected] con multiple: cuántas claves pide como mínimo; ninguna no se revisa (eso es required)
+ * @param {number} [props.maxSelected] con multiple: cuántas claves caben
+ * @param {'warn'|'fix'} [props.limitMode] lo que pasa al pasarse de maxSelected: LIMIT_MODE.warn lo dice en rojo (por omisión,
+ *     o el de ToolkitProvider) y LIMIT_MODE.fix apaga las opciones que faltan cuando ya está llena
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
@@ -72,7 +81,7 @@ function plainTextOf(text) {
 function CatalogInputContent(props) {
     const {
         name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, required = false, inputRef, placeholder,
-        multiple = false, selectAll = false, checkboxes = false, limitTags, messages, texts,
+        multiple = false, selectAll = false, checkboxes = false, limitTags, minSelected, maxSelected, limitMode, messages, texts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -81,7 +90,12 @@ function CatalogInputContent(props) {
     const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
     const inputId = `${name ?? 'catalog'}-${generatedId}`;
-    const errorText = validationTextOf(error);
+    const selectedCodes = multiple && Array.isArray(value) ? value : [];
+    // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
+    const limit = useLimitWarning({
+        limitMode, error, validationTextOf, limitProblem: multiple ? listLimitProblemOf(selectedCodes, {minSelected, maxSelected}) : null,
+    });
+    const errorText = limit.errorText;
     // con varias, en el orden en que se eligieron (el de la lista de claves)
     const selectedOption = multiple
         ? (Array.isArray(value) ? value : []).map((code) => options.find((option) => option.code === code)).filter(Boolean)
@@ -93,7 +107,6 @@ function CatalogInputContent(props) {
         const wantedText = plainTextOf(text);
         return !wantedText || plainTextOf(optionLabelOf(option)).includes(wantedText);
     };
-    const selectedCodes = multiple && Array.isArray(value) ? value : [];
     const matchingCodes = options.filter((option) => matchesSearch(option, searchText)).map((option) => option.code);
     const selectAllState = selectAllStateOf(selectedCodes, matchingCodes);
     const selectAllLabel = (() => {
@@ -103,6 +116,12 @@ function CatalogInputContent(props) {
         return selectAllState.allChosen ? t('form.unselectAll') : t('form.selectAll', {count: matchingCodes.length});
     })();
     const showsSelectAll = multiple && selectAll;
+    // con fix: la lista llena apaga las que faltan, y «Elegir todos» se apaga si se pasaría del máximo
+    const limitsChoosing = multiple && limit.mode === LIMIT_MODE.fix;
+    const isFull = limitsChoosing && isListFull(selectedCodes, maxSelected);
+    const unchosenMatchingCount = matchingCodes.filter((code) => !selectedCodes.includes(code)).length;
+    const isSelectAllBlocked = limitsChoosing && !selectAllState.allChosen && wouldOverfillList(selectedCodes, unchosenMatchingCount, maxSelected);
+    const isOptionBlocked = (option) => (option.code === SELECT_ALL_CODE ? isSelectAllBlocked : isFull && !selectedCodes.includes(option.code));
 
     return (
         <FieldFrame inputId={inputId} label={label} required={required}>
@@ -120,6 +139,7 @@ function CatalogInputContent(props) {
                 loadingText={t('form.loadingOptions')}
                 getOptionLabel={(option) => (option.code === SELECT_ALL_CODE ? selectAllLabel : optionLabelOf(option))}
                 isOptionEqualToValue={(option, currentOption) => option.code === currentOption.code}
+                getOptionDisabled={limitsChoosing ? isOptionBlocked : undefined}
                 filterOptions={(allOptions, {inputValue}) => {
                     const matchingOptions = allOptions.filter((option) => matchesSearch(option, inputValue)).slice(0, MAX_VISIBLE_OPTIONS);
                     // «Elegir todos» va arriba solo si hay de dónde elegir
@@ -137,6 +157,7 @@ function CatalogInputContent(props) {
                     }
                 }}
                 onChange={(event, option, reason, details) => {
+                    limit.markLeft();
                     if (!multiple) {
                         onChange(option?.code ?? '');
                         return;
@@ -166,7 +187,10 @@ function CatalogInputContent(props) {
                         </li>
                     );
                 } : undefined}
-                onBlur={onBlur}
+                onBlur={(event) => {
+                    limit.markLeft();
+                    onBlur?.(event);
+                }}
                 renderInput={(inputProps) => (
                     <TextField {...inputProps} inputProps={{...inputProps.inputProps, 'aria-required': required || undefined}} name={name} inputRef={inputRef} placeholder={placeholder} error={Boolean(errorText)} helperText={errorText ?? helperText} />
                 )}

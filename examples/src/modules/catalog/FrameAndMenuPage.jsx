@@ -97,6 +97,7 @@ const PATH_INDEX_EXTENSIONS = [
     {id: 'index', option: 'createPathIndex(glob)', example: "export const {pathOf} = createPathIndex(import.meta.glob('@/modules/**/paths.js', {eager: true}));"},
     {id: 'parts', option: 'pathOf(nombre, partes)', example: "pathOf('admin:profile:detail', {groupId: 2, userId: 7675, tab: 'documentos'})"},
     {id: 'api', option: "createPathIndex(glob, {exportName: 'uris'})", example: "api.get(uriOf('billing:invoice', {id}))  // las del API, igual"},
+    {id: 'separator', option: "createPathIndex(glob, {separator: '.'})", example: "pathOf('admin.profile.detail', {groupId: 2, userId: 7675})  // con punto, como los textos"},
     {id: 'fill', option: 'fillPath(ruta, partes)', example: "fillPath('/orders/:orderId', {orderId: 12})  // '/orders/12'"},
     {id: 'base', option: 'documentBasePath()', example: "createBrowserRouter(routes, {basename: documentBasePath() || '/'})  // el prefijo del <base href>"},
     {id: 'texts', option: 'combineTexts(archivos)', example: "combineTexts(Object.values(import.meta.glob('@/modules/**/*Texts.js', {eager: true})).flatMap(Object.values))"},

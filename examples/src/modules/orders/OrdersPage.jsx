@@ -209,7 +209,8 @@ export const OrdersPage = () => {
         renderLabel: (value) => <DictionaryText dictionary={ORDER_STATUS} value={value} />,
         // el rango de fechas va al final de la misma tira: los dos deciden qué pedidos se ven
         renderExtra: ({filters, setFilters}) => (
-            <DateRangeFilter from={filters.created_from} to={filters.created_to}
+            // un pedido no se crea en el futuro: el calendario no deja elegir después de hoy y lo tecleado avisa
+            <DateRangeFilter from={filters.created_from} to={filters.created_to} disableFuture
                              onChange={({from, to}) => setFilters({created_from: from, created_to: to})} />
         ),
     }];

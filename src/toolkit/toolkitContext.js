@@ -12,7 +12,7 @@ export const ToolkitContext = createContext(null);
 /**
  * La configuración del proveedor; sin proveedor, la vigente con la navegación del navegador.
  *
- * @returns {{language: string, onLanguageChange: Function|null, requiredFromSchema?: boolean, texts: object, translate: Function|null, timeZone: string, currency: string, hourCycle: 'h23'|'h12', appName: string, buildId: string, navigation: object, canAccess: Function}}
+ * @returns {{language: string, onLanguageChange: Function|null, requiredFromSchema?: boolean, limitsFromSchema?: boolean, limitMode?: 'warn'|'fix', texts: object, translate: Function|null, timeZone: string, currency: string, hourCycle: 'h23'|'h12', appName: string, buildId: string, navigation: object, canAccess: Function}}
  */
 export function useToolkitSettings() {
     const settings = useContext(ToolkitContext);

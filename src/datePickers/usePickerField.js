@@ -17,7 +17,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
  * @param {string} [field.label] el nombre del campo, para los textos de error que lo dicen
  * @param {Record<string, string|object>} [field.messages] el texto del error por regla de validación (gana al de Calcita)
  * @param {object} [field.texts] los textos que cambian, con la forma de `common`
- * @returns {{language: string, timeZone: string, inputId: string, errorText: string|undefined, formats: ReturnType<typeof displayFormatsOf>}}
+ * @returns {{language: string, timeZone: string, inputId: string, errorText: string|undefined, validationTextOf: (error: unknown) => string|undefined, formats: ReturnType<typeof displayFormatsOf>}}
  */
 export function usePickerField({name, kind, error, label, messages, texts}) {
     const {language} = useToolkitTranslation('common', texts);
@@ -30,6 +30,8 @@ export function usePickerField({name, kind, error, label, messages, texts}) {
         timeZone,
         inputId: `${name ?? kind}-${generatedId}`,
         errorText: validationTextOf(error),
+        // para el aviso del tope (useLimitWarning)
+        validationTextOf,
         formats: displayFormatsOf(language, hourCycle),
     };
 }

@@ -37,6 +37,19 @@ test('las direcciones del API con su propio export (uris) y una dirección compl
     assert.equal(pathOf('billing:invoice', {id: 'F-12'}), 'https://api.ejemplo.mx/v1/invoices/F-12');
 });
 
+test('con separator el nombre se escribe con punto, y el aviso también; las partes de la ruta siguen con dos puntos', () => {
+    const {pathOf} = createPathIndex(MODULES, {separator: '.'});
+    assert.equal(pathOf('admin.profile.detail', {groupId: 2, userId: 7675}), '/admin/user/detail/2/7675');
+    assert.throws(() => pathOf('admin.clientes.list'), /No hay una dirección llamada «admin\.clientes\.list»\. En admin hay: clients, profile/);
+    assert.throws(() => pathOf('admin.profile.detail.extra'), /En admin\.profile\.detail hay: \(nada\)/);
+    assert.throws(() => pathOf('admin:profile:detail'), /En el índice hay: admin, orders/);
+});
+
+test('un separador vacío o con diagonal truena al armar el índice', () => {
+    assert.throws(() => createPathIndex(MODULES, {separator: ''}), /separator «» no sirve/);
+    assert.throws(() => createPathIndex(MODULES, {separator: '/'}), /sin diagonales/);
+});
+
 test('fillPath suelto codifica las partes', () => {
     assert.equal(fillPath('/search/:text', {text: 'a b/c'}), '/search/a%20b%2Fc');
 });

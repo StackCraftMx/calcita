@@ -34,15 +34,18 @@ function describesRequired(description) {
 }
 
 /**
+ * Lo que yup dice de un campo (describe), con sus condiciones resueltas. Lo usan el asterisco y los topes
+ * (schemaLimits.js).
+ *
  * @param {unknown} schema el validationSchema del formulario (un esquema de yup o una función que lo da, como en formik)
  * @param {string} name el campo, con la forma de formik ('contacts.2.email')
  * @param {object} [values] los valores del formulario, para las condiciones (.when)
- * @returns {boolean} false si no hay esquema, si no es de yup o si el campo no está en él
+ * @returns {object|null} null si no hay esquema, si no es de yup o si el campo no está en él
  */
-export function isRequiredInSchema(schema, name, values) {
+export function fieldDescriptionOf(schema, name, values) {
     let current = typeof schema === 'function' ? schema() : schema;
     if (!current || typeof current.describe !== 'function') {
-        return false;
+        return null;
     }
     let value = values;
     let parent;
@@ -51,11 +54,22 @@ export function isRequiredInSchema(schema, name, values) {
         const resolved = typeof current.resolve === 'function' ? current.resolve({value, parent}) : current;
         const next = resolved.fields ? resolved.fields[part] : resolved.innerType;
         if (!next) {
-            return false;
+            return null;
         }
         current = next;
         parent = value;
         value = value?.[part];
     }
-    return describesRequired(current.describe({value, parent}));
+    return current.describe({value, parent});
+}
+
+/**
+ * @param {unknown} schema el validationSchema del formulario (un esquema de yup o una función que lo da, como en formik)
+ * @param {string} name el campo, con la forma de formik ('contacts.2.email')
+ * @param {object} [values] los valores del formulario, para las condiciones (.when)
+ * @returns {boolean} false si no hay esquema, si no es de yup o si el campo no está en él
+ */
+export function isRequiredInSchema(schema, name, values) {
+    const description = fieldDescriptionOf(schema, name, values);
+    return description ? describesRequired(description) : false;
 }

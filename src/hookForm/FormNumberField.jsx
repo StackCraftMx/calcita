@@ -1,8 +1,12 @@
 // Campo de número de react-hook-form: NumberInput (inputs/) conectado a su campo con useController. Se ve y se porta igual que
-// el FormNumberField de formik (@stackcraftmx/calcita/forms).
+// el FormNumberField de formik (@stackcraftmx/calcita/forms). Sus min y max también impiden enviar, salvo con resolver
+// (useHookFormField.js). Los del esquema se leen con FormSchemaProvider y ToolkitProvider limitsFromSchema
+// (useHookFormSchemaLimits.js).
 //
 // Genérico del paquete: function (regla de la casa).
 import NumberInput from '@/inputs/NumberInput.jsx';
+import {LIMIT_KIND, numberLimitProblemOf} from '@/inputs/fieldLimits.js';
+import {useHookFormSchemaLimits} from '@/hookForm/useHookFormSchemaLimits.js';
 import {useHookFormField} from '@/hookForm/useHookFormField.js';
 
 /**
@@ -10,6 +14,9 @@ import {useHookFormField} from '@/hookForm/useHookFormField.js';
  *     value ni error (su onChange y su onBlur corren después de los del formulario); control: el de useForm, si la pantalla no usa FormProvider
  */
 export default function FormNumberField({name, control, ...inputProps}) {
-    const fieldProps = useHookFormField(name, control, inputProps);
-    return <NumberInput {...inputProps} {...fieldProps} />;
+    const hasLimits = inputProps.min !== undefined || inputProps.max !== undefined;
+    const fieldProps = useHookFormField(name, control, inputProps, hasLimits ? (value) => numberLimitProblemOf(value, inputProps) : undefined);
+    // los del esquema (con FormSchemaProvider y ToolkitProvider limitsFromSchema); los de la pantalla ganan
+    const schemaLimits = useHookFormSchemaLimits(name, control, LIMIT_KIND.number);
+    return <NumberInput {...schemaLimits} {...inputProps} {...fieldProps} />;
 }

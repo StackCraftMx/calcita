@@ -4,7 +4,8 @@
 // elegirla. Lo que la pantalla diga con required gana.
 //
 // El Formik de Calcita le enseña el esquema a los campos; con el de 'formik', envuelva los campos en
-// <FormSchemaProvider schema={schema}>. Con react-hook-form el esquema queda dentro del resolver: ahí cada campo lleva required.
+// <FormSchemaProvider schema={schema}>. Con react-hook-form, igual: el esquema queda dentro del resolver y los campos lo
+// ven con FormSchemaProvider (el alta con react-hook-form de Clientes lo usa).
 //
 // El onChange que la pantalla le pase a un campo también corre, después del de formik y con el valor nuevo.
 import {useMemo, useState} from 'react';

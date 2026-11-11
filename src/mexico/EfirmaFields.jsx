@@ -5,6 +5,13 @@
 // Avisa sin esperar al servidor: un .cer que no es certificado, uno vencido o que todavía no vale, y un RFC distinto al que se
 // espera (expectedRfc: el de la empresa).
 //
+// Mientras el .cer elegido no sirva (no es certificado, venció, todavía no vale o es de otro RFC), la llave, la contraseña y
+// «Revisar» se apagan, con el motivo abajo: no se pide la clave de una llave que no se va a registrar. El .cer sigue prendido
+// para cambiarlo por el bueno. Sin .cer elegido, todo prendido como siempre.
+//
+// disabled apaga todo (true) o cada parte ({certificate, privateKey, password}): un certificado que ya está registrado y solo
+// pide su llave, por ejemplo. Una llave mal escrita truena al pintar.
+//
 // «Revisar la e.firma» abre la llave con su contraseña y comprueba que es la de ese certificado, en el navegador
 // (verifyEfirmaKey, con jsrsasign: la llave del SAT viene cifrada con 3DES, que el navegador no trae), y dice el motivo de un
 // «no»: la contraseña, otra llave o un archivo que no es llave. Con onVerifyKey la revisión es del proyecto (su API con
@@ -47,6 +54,27 @@ const STATUS_COLORS = Object.freeze({
 // en qué va la revisión de la llave
 const VERIFY_STATE = Object.freeze({idle: 'idle', verifying: 'verifying', verified: 'verified', failed: 'failed'});
 const EMPTY_VALUE = Object.freeze({certificateFile: null, keyFile: null, password: ''});
+// las partes que se apagan una por una con disabled={{…}}
+const EFIRMA_PARTS = Object.freeze(['certificate', 'privateKey', 'password']);
+
+/**
+ * disabled como llega (todo o por parte) a una respuesta por parte. Una parte mal escrita truena: un {key: true} que no
+ * apagara nada sin avisar dejaría escribir la contraseña que la pantalla quería apagar.
+ *
+ * @param {boolean|Record<string, boolean>} disabled
+ * @returns {{certificate: boolean, privateKey: boolean, password: boolean}}
+ */
+function disabledPartsOf(disabled) {
+    if (disabled === null || typeof disabled !== 'object') {
+        const isOff = Boolean(disabled);
+        return {certificate: isOff, privateKey: isOff, password: isOff};
+    }
+    const unknownParts = Object.keys(disabled).filter((part) => !EFIRMA_PARTS.includes(part));
+    if (unknownParts.length > 0) {
+        throw new Error(`EfirmaFields: disabled no conoce ${unknownParts.join(', ')}; las partes son ${EFIRMA_PARTS.join(', ')}.`);
+    }
+    return {certificate: Boolean(disabled.certificate), privateKey: Boolean(disabled.privateKey), password: Boolean(disabled.password)};
+}
 
 /**
  * @param {object} props
@@ -58,7 +86,8 @@ const EMPTY_VALUE = Object.freeze({certificateFile: null, keyFile: null, passwor
  * @param {(input: {certificateFile: File, keyFile: File, password: string, certificate: ReturnType<typeof import('@/mexico/certificateReader.js').readCertificate>}) => Promise<void>} [props.onVerifyKey]
  *     la revisión del proyecto (su API); si truena, su mensaje se enseña. Sin él, se abre en el navegador con jsrsasign
  * @param {string} [props.verifyLabel] ya traducido; por omisión «Revisar la e.firma»
- * @param {boolean} [props.disabled]
+ * @param {boolean|{certificate?: boolean, privateKey?: boolean, password?: boolean}} [props.disabled] true apaga todo; con un
+ *     objeto, cada parte
  * @param {object} [props.sx]
  * @param {object} [props.texts] los textos que cambian, con la forma de `mexico` en los textos del paquete
  */
@@ -122,16 +151,27 @@ function EfirmaFieldsContent(props) {
 
     const status = certificate ? certificateStatusOf(certificate) : null;
     const isOtherRfc = Boolean(certificate && expectedRfc) && certificate.rfc?.toUpperCase() !== expectedRfc.toUpperCase();
-    const canVerify = Boolean(certificate && value.keyFile && value.password) && status === CERTIFICATE_STATUS.valid && !disabled;
+    const disabledParts = disabledPartsOf(disabled);
+    // el .cer elegido no sirve: la llave y la contraseña esperan al bueno (con el motivo abajo)
+    const lockReason = (() => {
+        if (readError || (certificate && status !== CERTIFICATE_STATUS.valid)) {
+            return t('efirma.lockedNotValid');
+        }
+        return isOtherRfc ? t('efirma.lockedOtherRfc', {expected: expectedRfc}) : null;
+    })();
+    const isKeyOff = disabledParts.privateKey || Boolean(lockReason);
+    const isPasswordOff = disabledParts.password || Boolean(lockReason);
+    const canVerify = Boolean(certificate && value.keyFile && value.password) && status === CERTIFICATE_STATUS.valid && !isOtherRfc
+        && !isKeyOff && !isPasswordOff;
 
     return (
         <EfirmaRoot ownSx={{gap: 1}} sx={sx}>
-            <FileInput label={t('efirma.certificate')} value={value.certificateFile} onChange={chooseCertificate} accept=".cer" disabled={disabled}
-                       error={readError ?? undefined} helperText={t('efirma.certificateHelp')} texts={texts} />
-            <FileInput label={t('efirma.privateKey')} value={value.keyFile} onChange={(keyFile) => change({keyFile})} accept=".key" disabled={disabled}
-                       helperText={t('efirma.privateKeyHelp')} texts={texts} />
+            <FileInput label={t('efirma.certificate')} value={value.certificateFile} onChange={chooseCertificate} accept=".cer"
+                       disabled={disabledParts.certificate} error={readError ?? undefined} helperText={t('efirma.certificateHelp')} texts={texts} />
+            <FileInput label={t('efirma.privateKey')} value={value.keyFile} onChange={(keyFile) => change({keyFile})} accept=".key" disabled={isKeyOff}
+                       helperText={lockReason ?? t('efirma.privateKeyHelp')} texts={texts} />
             <TextInput label={t('efirma.password')} type="password" value={value.password} onChange={(password) => change({password})}
-                       autoComplete="off" disabled={disabled} helperText={t('efirma.passwordHelp')} />
+                       autoComplete="off" disabled={isPasswordOff} helperText={lockReason ?? t('efirma.passwordHelp')} />
 
             {certificate && (
                 <EfirmaCertificate variant="outlined" ownSx={{p: 2, borderRadius: 2}}>
