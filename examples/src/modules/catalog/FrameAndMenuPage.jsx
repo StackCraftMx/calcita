@@ -45,6 +45,7 @@ const LAYOUT_EXTENSIONS = [
     {id: 'tabBarHeight', option: 'MOBILE_TAB_BAR_HEIGHT', example: 'bottom: `calc(${MOBILE_TAB_BAR_HEIGHT.portrait} + 24px)`'},
     {id: 'aboveTabBar', option: 'aboveMobileTabBarOf · PHONE_LANDSCAPE_MEDIA_QUERY', example: "sx={{position: 'fixed', right: 16, ...aboveMobileTabBarOf(8)}}"},
     {id: 'contentMaxWidth', option: 'contentMaxWidth', example: 'contentMaxWidth={1200}'},
+    {id: 'scrollRestoration', option: 'scrollRestoration', example: 'scrollRestoration={false}  // el proyecto ya lo maneja por su cuenta'},
     {id: 'bar', option: 'createToolkitTheme({bar})', example: 'createToolkitTheme({glass: true, bar: TOP_BAR.band})'},
 ];
 const MENU_EXTENSIONS = [
