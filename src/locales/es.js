@@ -173,7 +173,24 @@ export default Object.freeze({
             "confirmTitle": "¿Quitar «{{row}}»?",
             "confirmText": "Ya estaba guardado: se quita de verdad al guardar el formulario.",
             "blockedTitle": "No se puede quitar",
-            "understood": "Entendido"
+            "understood": "Entendido",
+            "rowHeader": "Renglón",
+            "actionsHeader": "Acciones",
+            "confirmTextNow": "Se quita en este momento.",
+            "saveRow": "Guardar «{{row}}»",
+            "discardRow": "Deshacer los cambios de «{{row}}»"
+        },
+        "editableTable": {
+            "pending_one": "{{count}} renglón con cambios sin guardar.",
+            "pending_other": "{{count}} renglones con cambios sin guardar.",
+            "saveAll": "Guardar todos",
+            "discardAll": "Descartar",
+            "notSaved_one": "{{count}} renglón no se guardó: revise sus errores.",
+            "notSaved_other": "{{count}} renglones no se guardaron: revise sus errores.",
+            "confirmTitle": "¿Descartar los cambios sin guardar?",
+            "confirmText_one": "Hay {{count}} renglón con cambios sin guardar; si sigue, se pierden.",
+            "confirmText_other": "Hay {{count}} renglones con cambios sin guardar; si sigue, se pierden.",
+            "discardAndContinue": "Descartar y seguir"
         },
         "transfer": {
             "available": "Disponibles",

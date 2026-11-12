@@ -81,6 +81,12 @@ export const FORM_LABEL_WIDTH = Object.freeze({auto: 'auto'});
  */
 export const FORM_SECTION_VARIANT = Object.freeze({card: 'card', bare: 'bare'});
 
+/**
+ * Cómo van los campos dentro de la celda de una tabla: como en una FormSection sin tarjeta y sin columna de etiqueta (la
+ * forma de la casa, la etiqueta solo para el lector). Lo usan la tabla de renglones (RepeatingFields) y la del servidor.
+ */
+export const TABLE_CELL_FIELD_LAYOUT = Object.freeze({labelPlacement: FORM_LABEL_PLACEMENT.side, labelWidth: 0, variant: FORM_SECTION_VARIANT.bare});
+
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
 
@@ -237,10 +243,11 @@ const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'F
  * @param {string} [props.labelId] el id de la etiqueta (para un campo que la nombra con aria-labelledby)
  * @param {boolean} [props.required] el asterisco en la etiqueta (el lector de pantalla no lo lee: el campo ya lo dice)
  * @param {import('react').ReactNode} props.children
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el renglón, encima de los del tema
  */
 export function FormRow(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormRow.defaultProps) y encima lo que llega aquí
-    const {label, htmlFor, labelId, required = false, children, ...unknownProps} = useThemeProps({props, name: ROW_THEME_NAME});
+    const {label, htmlFor, labelId, required = false, children, sx, ...unknownProps} = useThemeProps({props, name: ROW_THEME_NAME});
     warnUnknownProps(ROW_THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common');
     // dónde va la etiqueta lo pide la sección; un FormRow fuera de una sección, a la izquierda
@@ -252,7 +259,7 @@ export function FormRow(props) {
         requiredMark: required ? t('form.requiredMark') : null,
     };
     return (
-        <FormRowRoot className={FORM_ROW_CLASS} ownerState={ownerState}>
+        <FormRowRoot sx={sx} className={FORM_ROW_CLASS} ownerState={ownerState}>
             <FormRowLabel component="label" id={labelId} htmlFor={htmlFor} variant="body1" ownerState={ownerState}
                           {...(required && {[REQUIRED_LABEL_ATTRIBUTE]: 'true'})}>
                 {label}
