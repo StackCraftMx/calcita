@@ -58,10 +58,11 @@ function ValueLabel({x, y, width, height, value, colors, formatNumber}) {
  * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function BarListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarList.defaultProps) y encima lo que llega aquí
-    const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {items, onSelect, emptyLabel, tone = 'primary', texts, defaultView = CHART_VIEW.chart, onViewChange, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const [asTable, setAsTable] = useState(defaultView === CHART_VIEW.table);
     const toggleView = () => {
@@ -84,7 +85,7 @@ function BarListContent(props) {
     const longestValue = Math.max(...items.map((item) => `${formatNumber(item.value)} ${item.detail ?? ''}`.length));
 
     return (
-        <Box>
+        <Box sx={sx}>
             <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
             {asTable ? (
                 <Table size="small">

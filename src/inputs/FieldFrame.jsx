@@ -37,9 +37,10 @@ const FieldFrameLabel = piecePart(THEME_NAME, 'Label', Typography);
  * @param {import('react').ReactNode} props.label ya traducida
  * @param {boolean} [props.required] el asterisco en la etiqueta
  * @param {import('react').ReactNode} props.children el campo
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function FieldFrameContent(props) {
-    const {inputId, labelId, label, required = false, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {inputId, labelId, label, required = false, children, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const isRow = useIsInsideFormSection();
     const {t} = useToolkitTranslation('common');
@@ -49,7 +50,7 @@ function FieldFrameContent(props) {
     }
 
     return (
-        <FieldFrameRoot spacing={0.75}>
+        <FieldFrameRoot sx={sx} spacing={0.75}>
             <FieldFrameLabel component="label" id={labelId} htmlFor={inputId} variant="overline" color="text.secondary"
                              {...(required && {[REQUIRED_LABEL_ATTRIBUTE]: 'true'})} ownSx={required ? requiredMarkSxOf(t('form.requiredMark')) : undefined}>
                 {label}

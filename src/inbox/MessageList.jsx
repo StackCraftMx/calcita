@@ -77,12 +77,13 @@ const AVATAR_PIXELS = 40;
  * @param {(message: any) => import('react').ReactNode} [props.renderMessage] lo de adentro de cada renglón, a su manera
  * @param {string} [props.emptyText] ya traducido; por omisión el del paquete
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la lista
  */
 function MessageListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageList.defaultProps) y encima lo que llega aquí
     const {
     messages, selectedId = null, onSelect, onToggleStar, selectedIds = [], onSelectionChange, messageActions, renderMessage, emptyText, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
@@ -97,7 +98,7 @@ function MessageListContent(props) {
     };
 
     return (
-        <List disablePadding aria-label={t('listLabel')}>
+        <List sx={sx} disablePadding aria-label={t('listLabel')}>
             {messages.map((message) => {
                 const weight = message.isUnread ? 700 : 400;
                 const isChecked = selectedIds.includes(message.id);

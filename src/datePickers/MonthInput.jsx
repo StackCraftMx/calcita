@@ -58,12 +58,13 @@ const MONTH_VIEWS = ['year', 'month'];
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function MonthInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minMonth, maxMonth, disableFuture = false, disablePast = false,
         disabled = false, required = false, format, inputRef, limitMode, onLimitFix, pickerProps, messages, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'month', error, label, messages, texts});
@@ -86,7 +87,7 @@ function MonthInputContent(props) {
 
     return (
         <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
-            <MonthInputPicker
+            <MonthInputPicker sx={sx}
                 {...pickerProps}
                 views={MONTH_VIEWS}
                 openTo="month"

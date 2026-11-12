@@ -26,18 +26,19 @@ const CHART_TOOLTIP_OPACITY = 0.92;
 /**
  * @param {{active?: boolean, payload?: Array<{payload: any}>, render: (item: any) => import('react').ReactNode}} props
  *     active y payload los pone recharts; render recibe el renglón de data del punto o la columna
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function ChartTooltipContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaChartTooltip.defaultProps) y encima lo que llega aquí
     // OJO: sin aviso de opciones desconocidas (warnUnknownProps) a propósito: recharts le pasa al globo todas las suyas
     // (offset, wrapperStyle, coordinate…) y el aviso salía con unas veinte opciones que el globo no necesita
-    const {active, payload, render} = usePieceProps(props, THEME_NAME);
+    const {active, payload, render, sx} = usePieceProps(props, THEME_NAME);
     // guard clause: Recharts lo monta siempre; solo se pinta sobre una barra
     if (!active || !payload?.length) {
         return null;
     }
     return (
-        <TooltipRoot elevation={3} ownSx={[{px: 1.5, py: 1, pointerEvents: 'none'}, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme, {opacity: CHART_TOOLTIP_OPACITY}) : {})]}>
+        <TooltipRoot sx={sx} elevation={3} ownSx={[{px: 1.5, py: 1, pointerEvents: 'none'}, (theme) => (isGlassTheme(theme) ? glassStylesOf(theme, {opacity: CHART_TOOLTIP_OPACITY}) : {})]}>
             {/* div: el globo puede llevar varios renglones (una serie por renglón) */}
             <Typography variant="body2" component="div">{render(payload[0].payload)}</Typography>
         </TooltipRoot>

@@ -101,10 +101,11 @@ function MessageBody({entry, t, onAttachmentClick, renderBody}) {
  * @param {(threadMessageId: string) => void} [props.onExpand] al abrir un mensaje anterior de la conversación
  * @param {(message: any) => import('react').ReactNode} [props.renderBody] el texto a su manera (HTML ya limpio por el proyecto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el mensaje (el article)
  */
 function MessageViewContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMessageView.defaultProps) y encima lo que llega aquí
-    const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {message, actions, footer, onAttachmentClick, onExpand, renderBody, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
     const formatters = useFormatters();
@@ -122,7 +123,7 @@ function MessageViewContent(props) {
     };
 
     return (
-        <Stack spacing={2} component="article" aria-label={message.subject}>
+        <Stack sx={sx} spacing={2} component="article" aria-label={message.subject}>
             {actions && <MessageLabels direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap', alignItems: 'center'}}>{actions}</MessageLabels>}
             <Box>
                 <Typography variant="h5" component="h2">{message.subject}</Typography>

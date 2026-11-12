@@ -36,6 +36,7 @@ const NUMERIC_ONLY = /^[^AXH]*$/;
  *     Calcita y al de los textos
  * @param {object} [props.slotProps]
  * @param {object} [props.texts]
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 export default function MaskedInput({mask, value, onChange, inputRef, slotProps, ...textInputProps}) {
     const {unknownProps, knownProps} = splitTextInputProps(textInputProps);

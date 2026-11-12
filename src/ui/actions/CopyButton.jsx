@@ -22,7 +22,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
-import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots, sxListOf} from '@/theme/themePieces.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaCopyButton)
 const THEME_NAME = 'CalcitaCopyButton';
@@ -47,9 +47,10 @@ const VISUALLY_HIDDEN_SX = {position: 'absolute', width: '1px', height: '1px', o
  * @param {() => void} [props.onCopied]
  * @param {(error: unknown) => void} [props.onCopyFailed] el navegador no dejó copiar (el botón ya lo dice en rojo)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function CopyButtonContent(props) {
-    const {value, label, size = 'small', onCopied, onCopyFailed, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {value, label, size = 'small', onCopied, onCopyFailed, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const [copyState, setCopyState] = useState(COPY_STATE.idle);
@@ -84,7 +85,7 @@ function CopyButtonContent(props) {
             {/* la confirmación se queda abierta mientras dura, aunque el cursor ya no esté encima; arriba y no a un lado, para no
                 tapar el dato de junto */}
             <Tooltip title={feedbackText} open={copyState === COPY_STATE.idle ? undefined : true} placement="top">
-                <CopyButtonButton size={size} aria-label={buttonLabel} onClick={copy} sx={{color: COLOR_BY_STATE[copyState]}}>
+                <CopyButtonButton size={size} aria-label={buttonLabel} onClick={copy} sx={[{color: COLOR_BY_STATE[copyState]}, ...sxListOf(sx)]}>
                     <StateIcon fontSize="inherit" />
                 </CopyButtonButton>
             </Tooltip>

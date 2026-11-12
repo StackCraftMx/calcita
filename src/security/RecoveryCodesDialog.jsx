@@ -54,10 +54,11 @@ function todayText() {
  * @param {(method: 'copy'|'download') => void} [props.onCodesSaved] la persona los copió o los descargó (para la bitácora de
  *     seguridad)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function RecoveryCodesDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaRecoveryCodesDialog.defaultProps) y encima lo que llega aquí
-    const {codes, account = '', onClose, onCodesSaved, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {codes, account = '', onClose, onCodesSaved, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {appName} = useToolkitSettings();
@@ -88,7 +89,7 @@ function RecoveryCodesDialogContent(props) {
 
     return (
         // ni Esc ni un clic afuera lo cierran: solo «Listo», después de marcar que los guardó
-        <Dialog open={isOpen} maxWidth="xs" fullWidth disableEscapeKeyDown onClose={() => {}}>
+        <Dialog sx={sx} open={isOpen} maxWidth="xs" fullWidth disableEscapeKeyDown onClose={() => {}}>
             <DialogTitle>{t('recoveryCodes.title')}</DialogTitle>
             <DialogContent>
                 <Stack spacing={2}>

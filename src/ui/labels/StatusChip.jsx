@@ -65,7 +65,7 @@ const StatusChipChip = styled(Chip, {name: THEME_NAME, slot: 'Chip'})({});
  * @param {string} [props.suffix] texto que va después de la etiqueta con " · " (p. ej. un conteo ya formateado)
  * @param {import('react').ReactNode} [props.tooltip] SUSTITUYE al tooltip del diccionario; úsalo cuando el renglón tiene algo más
  *     que decir. OJO: no envuelvas este componente en otro Tooltip, porque el suyo sigue ahí y se ven los dos encimados
- * @param {object} [props.sx] ajustes de estilo del Chip (solo variant="chip")
+ * @param {object} [props.sx] los estilos de esta pantalla: en el Chip (variant="chip") o en la parte root (el punto con su nombre)
  */
 export default function StatusChip(props) {
     // lo que el proyecto puso en su tema (components.CalcitaStatusChip.defaultProps) y encima lo que llega aquí
@@ -90,7 +90,7 @@ export default function StatusChip(props) {
     const content = variant === 'chip' ? (
         <StatusChipChip size="small" label={label} color={dictionaryEntry.color} variant="outlined" sx={sx} />
     ) : (
-        <StatusChipRoot ownerState={ownerState}>
+        <StatusChipRoot ownerState={ownerState} sx={sx}>
             <StatusChipDot aria-hidden="true" ownerState={ownerState} />
             <StatusChipLabel ownerState={ownerState}>{label}</StatusChipLabel>
         </StatusChipRoot>

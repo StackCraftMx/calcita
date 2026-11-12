@@ -70,10 +70,11 @@ function compactCount(count) {
  * @param {string} [props.ariaLabel]
  * @param {import('react').ReactNode} [props.extra] al final de la tira (p. ej. un rango de fechas)
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function QuickFiltersContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaQuickFilters.defaultProps) y encima lo que llega aquí
-    const {value, onChange, options = [], caption, ariaLabel, extra, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {value, onChange, options = [], caption, ariaLabel, extra, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const activeChip = useRef(null);
@@ -96,7 +97,7 @@ function QuickFiltersContent(props) {
     }
 
     return (
-        <QuickRoot ownSx={{mb: 1}}>
+        <QuickRoot sx={sx} ownSx={{mb: 1}}>
             {caption && (
                 <QuickCaption variant="caption" color="text.secondary" ownSx={{px: 0.25}}>{caption}</QuickCaption>
             )}

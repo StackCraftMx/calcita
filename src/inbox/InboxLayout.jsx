@@ -90,18 +90,19 @@ function FolderRow({folder, isSelected, onSelect, t}) {
  * @param {() => void} [props.onCloseDetail] «Regresar» del teléfono
  * @param {import('react').ReactNode} [props.foldersHeader] arriba de las carpetas en escritorio (un botón «Redactar»)
  * @param {object} [props.texts] los textos que cambian, con la forma de `inbox` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function InboxLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInboxLayout.defaultProps) y encima lo que llega aquí
     const {
     folders, labels = [], selectedFolderId, onSelectFolder, toolbar, list, detail, isDetailOpen = false, onCloseDetail, foldersHeader, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('inbox', texts);
 
     return (
-        <InboxRoot ownSx={{
+        <InboxRoot sx={sx} ownSx={{
             display: 'grid', gap: 2,
             [DESKTOP_MEDIA_QUERY]: {
                 gridTemplateColumns: `${FOLDERS_WIDTH_PIXELS}px ${LIST_WIDTH_PIXELS}px minmax(0, 1fr)`, height: DESKTOP_HEIGHT, minHeight: DESKTOP_MIN_HEIGHT_PIXELS,

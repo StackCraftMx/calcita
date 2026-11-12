@@ -44,10 +44,11 @@ const CARD_PADDING = Object.freeze({xs: 2, md: 2.5});
  * @param {'inside'|'outside'} [props.titlePlacement] uno de SECTION_TITLE_PLACEMENT: adentro de la tarjeta (por omisión) o
  *     encima de ella. También desde el tema: components.CalcitaSectionCard.defaultProps
  * @param {import('react').ReactNode} props.children
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function SectionCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSectionCard.defaultProps) y encima lo que llega aquí
-    const {title, action, titlePlacement = SECTION_TITLE_PLACEMENT.inside, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {title, action, titlePlacement = SECTION_TITLE_PLACEMENT.inside, children, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     if (!Object.values(SECTION_TITLE_PLACEMENT).includes(titlePlacement)) {
         throw new Error(`SectionCard: titlePlacement «${titlePlacement}» no existe; use uno de SECTION_TITLE_PLACEMENT (${Object.values(SECTION_TITLE_PLACEMENT).join(', ')}).`);
@@ -56,7 +57,7 @@ function SectionCardContent(props) {
     if (titlePlacement === SECTION_TITLE_PLACEMENT.outside) {
         // el título como el de una FormSection: arriba de la tarjeta, alineado con el texto de adentro
         return (
-            <SectionOutsideRoot component="section" ownSx={{minWidth: 0}}>
+            <SectionOutsideRoot sx={sx} component="section" ownSx={{minWidth: 0}}>
                 <SectionHeader ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 0.75}}>
                     <SectionTitle variant="subtitle2" color="text.secondary" component="h2" ownSx={{px: 2, fontWeight: 600}}>{title}</SectionTitle>
                     {action}
@@ -69,7 +70,7 @@ function SectionCardContent(props) {
     }
 
     return (
-        <SectionRoot component="section" variant="outlined" ownSx={{p: CARD_PADDING, minWidth: 0}}>
+        <SectionRoot sx={sx} component="section" variant="outlined" ownSx={{p: CARD_PADDING, minWidth: 0}}>
             <SectionHeader ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1.5}}>
                 <SectionTitle variant="overline" color="text.secondary" component="h2" ownSx={{lineHeight: 1.6}}>{title}</SectionTitle>
                 {action}

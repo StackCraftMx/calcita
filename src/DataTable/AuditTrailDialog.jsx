@@ -35,16 +35,17 @@ const AuditDescription = piecePart(THEME_NAME, 'Description', Typography);
  * @param {import('react').ReactNode} [props.header] va entre el subtítulo y la tabla (p. ej. pestañas que cambian lo que se
  *     consulta)
  * @param {(row: any) => string|null} [props.eventSuffixOf] complemento del evento de un renglón (AuditTrailTable)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function AuditTrailDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAuditTrailDialog.defaultProps) y encima lo que llega aquí
     const {
     open, onClose, title, subtitle, subjectKey, fetchPage, eventDictionary, resultDictionary, extraColumns = [], header = null, eventSuffixOf = null,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     return (
-        <ContentDialog open={open} onClose={onClose} title={title}>
+        <ContentDialog sx={sx} open={open} onClose={onClose} title={title}>
             {subtitle && (
                 <AuditDescription variant="body2" color="text.secondary" ownSx={{mb: 2}}>{subtitle}</AuditDescription>
             )}

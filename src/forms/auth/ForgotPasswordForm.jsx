@@ -28,8 +28,9 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  *     problema
  * @param {string} [props.signInPath] la liga para regresar a iniciar sesión
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna del formulario
  */
-export default function ForgotPasswordForm({onSubmit, signInPath, texts, ...unknownProps}) {
+export default function ForgotPasswordForm({onSubmit, signInPath, texts, sx, ...unknownProps}) {
     warnUnknownProps('ForgotPasswordForm', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
@@ -50,7 +51,7 @@ export default function ForgotPasswordForm({onSubmit, signInPath, texts, ...unkn
 
     if (sentToEmail) {
         return (
-            <Stack spacing={2}>
+            <Stack sx={sx} spacing={2}>
                 <Alert severity="success" role="status">
                     <AlertTitle>{t('forgotPassword.sentTitle')}</AlertTitle>
                     {t('forgotPassword.sent', {email: sentToEmail})}
@@ -63,7 +64,7 @@ export default function ForgotPasswordForm({onSubmit, signInPath, texts, ...unkn
     return (
         <Formik initialValues={{email: ''}} validationSchema={schema} onSubmit={submit}>
             <Form noValidate>
-                <Stack spacing={2}>
+                <Stack sx={sx} spacing={2}>
                     <FormProblemAlert />
                     <FormTextField name="email" label={t('forgotPassword.email')} type="email" autoComplete="username" autoFocus />
                     <SubmitButton fullWidth>{t('forgotPassword.submit')}</SubmitButton>

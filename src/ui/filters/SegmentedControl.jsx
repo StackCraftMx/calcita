@@ -91,16 +91,17 @@ const SegmentedControlRoot = styled(ToggleButtonGroup, {name: THEME_NAME, slot: 
  * @param {string|null} props.value
  * @param {(value: string) => void} props.onChange
  * @param {string} props.ariaLabel ya traducido
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 export default function SegmentedControl(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSegmentedControl.defaultProps) y encima lo que llega aquí
-    const {options, value, onChange, ariaLabel, ...unknownProps} = useThemeProps({props, name: THEME_NAME});
+    const {options, value, onChange, ariaLabel, sx, ...unknownProps} = useThemeProps({props, name: THEME_NAME});
     warnUnknownProps(THEME_NAME, unknownProps);
     return (
         // la fila deja 4 px arriba y abajo para que la sombra no se corte (ScrollableRow, py 0.5); el margen negativo los
         // devuelve: el control mide sus 40 px y se alinea con los campos de junto (quedaba 4 px más arriba)
         <ScrollableRow gap={1} py={ROW_SHADOW_ROOM} sx={{alignItems: 'center', my: -ROW_SHADOW_ROOM}}>
-            <SegmentedControlRoot exclusive size="small" value={value} aria-label={ariaLabel}
+            <SegmentedControlRoot sx={sx} exclusive size="small" value={value} aria-label={ariaLabel}
                                // quitar la selección no existe: un clic en la pestaña elegida no la apaga
                                onChange={(event, nextValue) => nextValue !== null && onChange(nextValue)}>
                 {options.map((option) => (

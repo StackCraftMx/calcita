@@ -40,10 +40,11 @@ const ChipsClearButton = piecePart(THEME_NAME, 'ClearButton', Button);
  * @param {() => void} props.onClearAll
  * @param {number} [props.quickActiveCount] accesos rápidos puestos que no tienen chip aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function FilterChipsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFilterChips.defaultProps) y encima lo que llega aquí
-    const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {chipConfig, filters, onSetFilter, onClearAll, quickActiveCount = 0, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const chips = chipConfig
@@ -57,7 +58,7 @@ function FilterChipsContent(props) {
     }
 
     return (
-        <ChipsRoot ownSx={{mb: 1.5, minWidth: 0}}>
+        <ChipsRoot sx={sx} ownSx={{mb: 1.5, minWidth: 0}}>
             <ChipsHeader direction="row" spacing={1} ownSx={{px: 0.25, alignItems: 'center', justifyContent: 'space-between'}}>
                 <Typography variant="caption" color="text.secondary" noWrap>
                     {t('chips.applied', {count: activeCount})}

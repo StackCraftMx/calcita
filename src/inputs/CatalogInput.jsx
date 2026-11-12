@@ -77,12 +77,13 @@ function plainTextOf(text) {
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function CatalogInputContent(props) {
     const {
         name, label, value, onChange, onBlur, options = [], formatLabel, error, helperText = ' ', loading = false, disabled = false, required = false, inputRef, placeholder,
         multiple = false, selectAll = false, checkboxes = false, limitTags, minSelected, maxSelected, limitMode, messages, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -125,7 +126,7 @@ function CatalogInputContent(props) {
 
     return (
         <FieldFrame inputId={inputId} label={label} required={required}>
-            <CatalogInputField
+            <CatalogInputField sx={sx}
                 id={inputId}
                 multiple={multiple}
                 disableCloseOnSelect={multiple}

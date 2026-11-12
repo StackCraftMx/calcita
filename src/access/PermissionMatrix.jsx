@@ -96,15 +96,16 @@ function PermissionGroup({group, value, onChange, isReadOnly}) {
  * @param {(value: string[]) => void} [props.onChange] sin ella, o con readOnly, solo se ven
  * @param {boolean} [props.readOnly] un perfil que no se puede cambiar (el de administración)
  * @param {object} [props.texts] los textos que cambian, con la forma de `access` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la lista de grupos
  */
 function PermissionMatrixContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPermissionMatrix.defaultProps) y encima lo que llega aquí
-    const {groups, value, onChange, readOnly = false, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {groups, value, onChange, readOnly = false, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const isReadOnly = readOnly || !onChange;
     return (
         <ComponentTexts namespace="access" texts={texts}>
-            <Stack spacing={1.5}>
+            <Stack sx={sx} spacing={1.5}>
                 {groups.map((group) => <PermissionGroup key={group.key} group={group} value={value} onChange={onChange} isReadOnly={isReadOnly} />)}
             </Stack>
         </ComponentTexts>

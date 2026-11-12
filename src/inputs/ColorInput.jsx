@@ -54,12 +54,13 @@ const SWATCH_EDGE = Object.freeze({light: 'rgba(15, 23, 42, 0.18)', dark: 'rgba(
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function ColorInputContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorInput.defaultProps) y encima lo que llega aquí
     const {
     name, label, value, onChange, onBlur, error, helperText = ' ', checkContrast = true, disabled = false, required = false, inputRef, messages, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -81,7 +82,7 @@ function ColorInputContent(props) {
                 {/* un solo campo: la muestra redonda al inicio (el «color well» de Apple) y el código al lado. Picar la muestra
                     abre el selector de colores del sistema (un input type=color invisible encima de ella). Antes eran dos cajas
                     sueltas (el selector del navegador en la suya y el código en otra) y se veían como piezas sueltas */}
-                <TextField
+                <TextField sx={sx}
                     name={name}
                     id={inputId}
                     inputRef={inputRef}

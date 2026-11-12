@@ -219,8 +219,9 @@ function DownloadRow({download}) {
 /**
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el panel de las descargas, encima de los del tema
  */
-function DownloadManagerContent({texts, ...unknownProps} = {}) {
+function DownloadManagerContent({texts, sx, ...unknownProps} = {}) {
     warnUnknownProps('DownloadManager', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const downloads = useSelector(downloadsActor, (snapshot) => snapshot.context.downloads);
@@ -250,7 +251,7 @@ function DownloadManagerContent({texts, ...unknownProps} = {}) {
     return (
         <ComponentTexts namespace="common" texts={texts}>
             <Slide direction="up" in={downloads.length > 0} mountOnEnter unmountOnExit>
-                <DownloadsPanel
+                <DownloadsPanel sx={sx}
                     elevation={8}
                     role="region"
                     aria-label={t('downloads.title')}

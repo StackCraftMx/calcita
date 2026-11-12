@@ -31,8 +31,9 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {boolean} [props.requireCurrentPassword] por omisión sí; sin ella para la pantalla del enlace del correo
  * @param {object} [props.policy] las reglas de la nueva; por omisión DEFAULT_PASSWORD_POLICY
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna del formulario
  */
-export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY, texts, ...unknownProps}) {
+export default function ChangePasswordForm({onSubmit, requireCurrentPassword = true, policy = DEFAULT_PASSWORD_POLICY, texts, sx, ...unknownProps}) {
     warnUnknownProps('ChangePasswordForm', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const [isDone, setIsDone] = useState(false);
@@ -62,7 +63,7 @@ export default function ChangePasswordForm({onSubmit, requireCurrentPassword = t
             <Formik initialValues={{currentPassword: '', newPassword: '', confirmPassword: ''}} validationSchema={schema} onSubmit={submit}>
                 {({values}) => (
                     <Form noValidate>
-                        <Stack spacing={2}>
+                        <Stack sx={sx} spacing={2}>
                             {isDone && <Alert severity="success" role="status">{t('changePassword.done')}</Alert>}
                             <FormProblemAlert />
                             {requireCurrentPassword && (

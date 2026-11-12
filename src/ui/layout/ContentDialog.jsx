@@ -103,16 +103,17 @@ function SlideUp(props) {
  * @param {string} props.title texto ya traducido
  * @param {import('react').ReactNode} props.children
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function ContentDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaContentDialog.defaultProps) y encima lo que llega aquí
-    const {open, onClose, title, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {open, onClose, title, children, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const titleId = useId();
 
     return (
-        <Dialog open={open} onClose={onClose} aria-labelledby={titleId} fullScreen
+        <Dialog sx={sx} open={open} onClose={onClose} aria-labelledby={titleId} fullScreen
                 slots={{transition: SlideUp}} slotProps={{paper: {sx: sheetSxOf}}}>
             <DialogHeader ownSx={{
                 display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, minHeight: 60, pl: {xs: 2.5, md: 4}, pr: {xs: 1.5, md: 2}, py: 1,

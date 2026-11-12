@@ -30,16 +30,17 @@ const EmptyIcon = piecePart(THEME_NAME, 'Icon', Box);
  * @param {string} [props.label] ya traducido
  * @param {() => void} [props.onClearFilters]
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function EmptyStateContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEmptyState.defaultProps) y encima lo que llega aquí
-    const {filtered = false, label, onClearFilters, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {filtered = false, label, onClearFilters, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const Icon = filtered ? FilterListOffIcon : InboxOutlinedIcon;
 
     return (
-        <EmptyRoot spacing={1} ownSx={{height: '100%', px: 3, textAlign: 'center', alignItems: 'center', justifyContent: 'center'}}>
+        <EmptyRoot sx={sx} spacing={1} ownSx={{height: '100%', px: 3, textAlign: 'center', alignItems: 'center', justifyContent: 'center'}}>
             <EmptyIcon ownSx={{color: 'text.disabled', display: 'flex'}}>
                 <Icon fontSize="large" />
             </EmptyIcon>

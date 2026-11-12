@@ -48,10 +48,11 @@ export function variantHasInstructions(variant) {
  * @param {boolean} props.open
  * @param {() => void} props.onClose
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function InstallInstructionsDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallInstructions.defaultProps) y encima lo que llega aquí
-    const {variant, open, onClose, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {variant, open, onClose, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const steps = STEPS_BY_VARIANT[variant];
@@ -60,7 +61,7 @@ function InstallInstructionsDialogContent(props) {
     }
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+        <Dialog sx={sx} open={open} onClose={onClose} maxWidth="xs" fullWidth>
             <DialogTitle>{t(`install.${variant}.title`)}</DialogTitle>
             <DialogContent>
                 {/* pasos numerados con palabras, sin dibujar los íconos del sistema: cambian entre versiones */}

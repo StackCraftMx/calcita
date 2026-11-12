@@ -36,10 +36,11 @@ export const LANGUAGES = Object.freeze(DEFAULT_LANGUAGES.map((entry) => entry.co
  * @param {boolean} [props.inverted] texto blanco para fondos oscuros
  * @param {(language: string) => void} [props.onChange] además de avisar a ToolkitProvider, cada que se elige un idioma
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {language: {switchToNamed, choose}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function LanguageToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaLanguageToggle.defaultProps) y encima lo que llega aquí
-    const {inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {inverted = false, onChange, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t, language, changeLanguage} = useToolkitTranslation('common', texts);
     const {languages = DEFAULT_LANGUAGES} = useToolkitSettings();
@@ -59,7 +60,7 @@ function LanguageToggleContent(props) {
         // el aviso de siempre para español e inglés; para otro idioma, con su nombre
         const ariaLabel = t(`language.switchTo.${next.code}`, {defaultValue: t('language.switchToNamed', {name: next.label})});
         return (
-            <LanguageButton size="small" variant="text" onClick={() => choose(next.code)} lang={next.code} aria-label={ariaLabel} ownSx={buttonSx}>
+            <LanguageButton sx={sx} size="small" variant="text" onClick={() => choose(next.code)} lang={next.code} aria-label={ariaLabel} ownSx={buttonSx}>
                 {next.code.toUpperCase()}
             </LanguageButton>
         );
@@ -68,7 +69,7 @@ function LanguageToggleContent(props) {
     // con tres o más: el de ahora y un menú con todos
     return (
         <>
-            <LanguageButton size="small" variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)} aria-haspopup="menu"
+            <LanguageButton sx={sx} size="small" variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)} aria-haspopup="menu"
                     aria-expanded={Boolean(menuAnchor)} aria-label={t('language.choose', {name: current.label})} ownSx={buttonSx}>
                 {current.code.toUpperCase()}
             </LanguageButton>

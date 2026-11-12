@@ -66,9 +66,10 @@ function firstStepWithErrorOf(steps, errors) {
  *   revisa antes; por omisión none (se avanza con «Siguiente», como siempre)
  * @param {(stepKey: string, index: number) => void} [props.onStepChange] cada vez que cambia el paso abierto
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el acomodo de los pasos (WizardLayout)
  */
 export default function FormWizard({
-    steps, submitLabel, orientation, hideBackOnFirstStep, initialStepKey, stepSelection, onStepChange, texts, ...unknownProps
+    steps, submitLabel, orientation, hideBackOnFirstStep, initialStepKey, stepSelection, onStepChange, texts, sx, ...unknownProps
 }) {
     warnUnknownProps('FormWizard', unknownProps);
     const {validateForm, setFieldTouched, setFieldValue, initialValues, errors, isSubmitting} = useFormikContext();
@@ -118,7 +119,7 @@ export default function FormWizard({
     return (
         // un paso con su motivo para no avanzar (steps[].nextDisabledReason): «Siguiente» apagado y, en el último, también el de
         // enviar; este sí con disabled de verdad, así un Enter en un campo tampoco envía
-        <WizardLayout steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation} hideBackOnFirstStep={hideBackOnFirstStep}
+        <WizardLayout sx={sx} steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation} hideBackOnFirstStep={hideBackOnFirstStep}
                       nextDisabledReason={activeStep.nextDisabledReason} onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)}
                       onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
                       submitButton={<SubmitButton disabled={Boolean(activeStep.nextDisabledReason)}>{submitLabel}</SubmitButton>}

@@ -24,15 +24,16 @@ export const CHART_VIEW = Object.freeze({chart: 'chart', table: 'table'});
 /**
  * @param {{asTable: boolean, onToggle: () => void, texts?: object}} props texts: los textos que cambian, con la forma de
  *     `common` ({charts: {viewAsTable, viewAsChart}})
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function TableToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTableToggle.defaultProps) y encima lo que llega aquí
-    const {asTable, onToggle, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {asTable, onToggle, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
     return (
-        <ToggleRoot ownSx={{display: 'flex', justifyContent: 'flex-end', mb: 1}}>
+        <ToggleRoot sx={sx} ownSx={{display: 'flex', justifyContent: 'flex-end', mb: 1}}>
             <ToggleButton size="small" onClick={onToggle} ownSx={{textTransform: 'none'}}>
                 {asTable ? t('charts.viewAsChart') : t('charts.viewAsTable')}
             </ToggleButton>

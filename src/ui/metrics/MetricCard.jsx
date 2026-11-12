@@ -94,12 +94,13 @@ function TrendChip({trend, texts}) {
  * @param {import('react').ReactNode} [props.children] contenido propio debajo de la nota (una barra de avance, un desglose)
  * @param {() => void} [props.onClick] la tarjeta entera como botón, cuando no lleva a otra pantalla (to)
  * @param {object} [props.texts] los textos que cambian, con la forma de `metricCard`: {trend: {up: 'subió'}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function MetricCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMetricCard.defaultProps) y encima lo que llega aquí
     const {
         label, value, caption, tone = 'info', valueColor, isLoading = false, to, trend, icon, children, onClick, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     // el enlace del router que conectó el proyecto (ToolkitProvider)
@@ -150,7 +151,7 @@ function MetricCardContent(props) {
     const isClickable = Boolean(to || onClick);
 
     return (
-        <CardRoot variant="outlined" ownSx={{
+        <CardRoot sx={sx} variant="outlined" ownSx={{
             borderTop: 3,
             borderTopColor: `${paletteTone}.light`,
             height: '100%',

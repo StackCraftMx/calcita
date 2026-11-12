@@ -78,10 +78,11 @@ const ALTERNATE_TIMELINE = {m: 0, px: 0, py: 0.5};
  * @param {import('react').ReactNode} [props.groups[].items[].details] lo que va abajo del título (chip de resultado, una liga...)
  * @param {(groupKey: string, isExpanded: boolean) => void} [props.onGroupToggle] la persona abrió o plegó un grupo (por ejemplo,
  *     para pedir sus eventos hasta que se abre)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function GroupedTimelineContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGroupedTimeline.defaultProps) y encima lo que llega aquí
-    const {groups, onGroupToggle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {groups, onGroupToggle, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
     const isWide = useMediaQuery(theme.breakpoints.up('md'));
@@ -102,7 +103,7 @@ function GroupedTimelineContent(props) {
     };
 
     return (
-        <Stack spacing={1.5}>
+        <Stack sx={sx} spacing={1.5}>
             {groups.map((timelineGroup) => {
                 const emphasis = timelineGroup.emphasis ?? TIMELINE_EMPHASIS.normal;
                 const isHighlighted = emphasis === TIMELINE_EMPHASIS.highlighted;

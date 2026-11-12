@@ -74,13 +74,14 @@ const WizardNextReason = piecePart(THEME_NAME, 'NextReason', Typography);
  * @param {import('react').ReactNode} props.submitButton el botón de enviar del último paso
  * @param {import('react').ReactNode} [props.problemAlert] el aviso de errores del servidor, arriba de los botones del último paso
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna de los pasos
  */
 function WizardLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
         steps, activeIndex, skippedKeys = NO_SKIPPED_KEYS, isSubmitting = false, nextDisabledReason = null,
         orientation = WIZARD_ORIENTATION.horizontal, hideBackOnFirstStep = false, onBack, onNext, onSkip, onStepSelect, submitButton,
-        problemAlert, texts, ...unknownProps
+        problemAlert, texts, sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -177,7 +178,7 @@ function WizardLayoutContent(props) {
     }
 
     return (
-        <Stack spacing={3}>
+        <Stack sx={sx} spacing={3}>
             {/* en el teléfono los nombres de los pasos no caben: se dice en qué paso va */}
             <WizardStepper activeStep={activeIndex} alternativeLabel nonLinear={isSelectable} ownSx={{display: {xs: 'none', sm: 'flex'}}}>
                 {steps.map((step, index) => (

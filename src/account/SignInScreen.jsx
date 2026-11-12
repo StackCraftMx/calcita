@@ -43,10 +43,11 @@ const SignInAlert = piecePart(THEME_NAME, 'Alert', Alert);
  * @param {boolean} [props.showLanguageToggle] por omisión sí
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el marco (AuthLayout)
  */
 function SignInScreenContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInScreen.defaultProps) y encima lo que llega aquí
-    const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {homePath = '/', forgotPasswordPath, logo, brandName, footer, showLanguageToggle = true, showColorSchemeToggle = true, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {connector, session, refreshSession} = useAccount();
@@ -97,7 +98,7 @@ function SignInScreenContent(props) {
         const showsDemoCode = typeof connector.demoTotpCode === 'function' && secondStep.methods.includes(SECOND_STEP_METHOD.totp);
         return (
             <ComponentTexts namespace="auth" texts={texts}>
-                <AuthLayout logo={logo} brandName={brandName} title={t('security:twoStep.title')}
+                <AuthLayout sx={sx} logo={logo} brandName={brandName} title={t('security:twoStep.title')}
                             showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
                     <SecondStepForm methods={secondStep.methods} canUsePasskeys={passkeysSupported()}
                                     onUsePasskey={async () => {
@@ -117,7 +118,7 @@ function SignInScreenContent(props) {
 
     return (
         <ComponentTexts namespace="auth" texts={texts}>
-            <AuthLayout logo={logo} brandName={brandName} title={t('signIn.title')} description={t('signIn.subtitle')}
+            <AuthLayout sx={sx} logo={logo} brandName={brandName} title={t('signIn.title')} description={t('signIn.subtitle')}
                         showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}
                         footer={typeof footer === 'function' ? footer({signIn: signInFromFooter}) : footer}>
                 {notice && <SignInAlert severity="warning" ownSx={{mb: 2}}>{notice}</SignInAlert>}

@@ -40,10 +40,11 @@ const LOADING_HEIGHT_PIXELS = 220;
  * @param {object} props
  * @param {boolean} [props.showPasswordChange] por omisión sí
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function AccountSecuritySectionContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaAccountSecurity.defaultProps) y encima lo que llega aquí
-    const {showPasswordChange = true, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {showPasswordChange = true, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('account', texts);
     const {connector, session} = useAccount();
@@ -82,7 +83,7 @@ function AccountSecuritySectionContent(props) {
     };
 
     return (
-        <Stack spacing={3}>
+        <Stack sx={sx} spacing={3}>
             {loadError && <Alert severity="error">{loadError}</Alert>}
             {showPasswordChange && (
                 <SectionCard title={t('profile.password.title')}>

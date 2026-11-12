@@ -47,10 +47,11 @@ function RememberMeField({label}) {
  * @param {boolean} [props.showRememberMe] por omisión sí
  * @param {string} [props.initialEmail]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna del formulario
  */
 function SignInFormContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSignInForm.defaultProps) y encima lo que llega aquí
-    const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {onSubmit, forgotPasswordPath, showRememberMe = true, initialEmail = '', texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {Link: RouterLink} = useToolkitNavigation();
@@ -71,7 +72,7 @@ function SignInFormContent(props) {
     return (
         <Formik initialValues={{email: initialEmail, password: '', remember: false}} validationSchema={schema} onSubmit={submit}>
             <Form noValidate>
-                <Stack spacing={2}>
+                <Stack sx={sx} spacing={2}>
                     <FormProblemAlert />
                     <FormTextField name="email" label={t('signIn.email')} type="email" autoComplete="username" autoFocus />
                     <FormTextField name="password" label={t('signIn.password')} type="password" autoComplete="current-password" />

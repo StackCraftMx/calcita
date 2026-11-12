@@ -100,12 +100,13 @@ function helperLineOf(helperText, zoneText) {
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function DateTimeInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText, minDateTime, minimumMinutesFromNow, maxDateTime, disableFuture = false,
         disablePast = false, minutesStep = DEFAULT_MINUTES_STEP, timeZone, showTimeZone = true, timeZoneLabel, disabled = false, required = false, format, inputRef, limitMode, onLimitFix, pickerProps, messages, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'dateTime', error, label, messages, texts});
@@ -132,7 +133,7 @@ function DateTimeInputContent(props) {
 
     return (
         <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
-            <DateTimeInputPicker
+            <DateTimeInputPicker sx={sx}
                 {...pickerProps}
                 timezone={shownTimeZone}
                 // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)

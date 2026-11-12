@@ -121,13 +121,14 @@ function calendarStylesOf(theme) {
  * @param {object} [props.fullCalendarProps] lo demás de FullCalendar (businessHours, hiddenDays, slotMinTime, locale…); lo
  *     que el calendario controla (las citas, la barra, los eventos de arriba) no se reemplaza desde aquí
  * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function EventCalendarContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEventCalendar.defaultProps) y encima lo que llega aquí
     const {
     events, initialView = CALENDAR_VIEW.month, views = Object.values(CALENDAR_VIEW), onEventClick, onDateSelect, onEventChange, height = 'auto', ariaLabel,
     onDatesChange, onViewChange, renderEvent, fullCalendarProps, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
@@ -154,7 +155,7 @@ function EventCalendarContent(props) {
     };
 
     return (
-        <Stack spacing={2} role="region" aria-label={ariaLabel}>
+        <Stack sx={sx} spacing={2} role="region" aria-label={ariaLabel}>
             <CalendarToolbar direction={{xs: 'column', md: 'row'}} spacing={1.5} ownSx={{alignItems: {md: 'center'}, justifyContent: 'space-between'}}>
                 <CalendarNavigation direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                     <Tooltip title={t('previous')}>

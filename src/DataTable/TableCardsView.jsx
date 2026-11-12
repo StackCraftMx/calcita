@@ -64,9 +64,10 @@ function TableViewToggleContent({view, onChange}) {
  * @param {() => void} props.onClearFilters
  * @param {import('react').ReactNode} [props.skeleton] el esqueleto de una tarjeta (por omisión RecordCardSkeleton)
  * @param {string} [props.ariaLabel] el nombre de la lista para el lector de pantalla
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la lista de tarjetas, encima de los del tema
  */
 function TableCardsViewContent({
-    rows, renderCard, rowIdOf, isLoading, page, pageCount, onPageChange, hasActiveFilters, emptyLabel, onClearFilters, skeleton, ariaLabel,
+    rows, renderCard, rowIdOf, isLoading, page, pageCount, onPageChange, hasActiveFilters, emptyLabel, onClearFilters, skeleton, ariaLabel, sx,
 }) {
     const {t} = useToolkitTranslation('table');
     const isFirstLoad = isLoading && rows.length === 0;
@@ -75,7 +76,7 @@ function TableCardsViewContent({
         <>
             {/* al cambiar de página se quedan las tarjetas de antes con una barra arriba: no brinca la pantalla */}
             {isLoading && !isFirstLoad && <LinearProgress sx={{mb: 1, borderRadius: 1}} />}
-            <TableCards role="list" aria-label={ariaLabel ?? t('cards.label')} aria-busy={isLoading}
+            <TableCards sx={sx} role="list" aria-label={ariaLabel ?? t('cards.label')} aria-busy={isLoading}
                         ownSx={{display: 'grid', gap: 1.5, minWidth: 0}}>
                 {isFirstLoad && Array.from({length: MAX_SKELETON_CARDS}, (unused, index) => (
                     <div key={index} role="listitem">{skeleton ?? <RecordCardSkeleton />}</div>

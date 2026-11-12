@@ -65,15 +65,16 @@ function usePdfUrl(src) {
  * @param {import('react').ReactNode} [props.actions] botones suyos junto a «Abrir en otra pestaña» y «Descargar»
  * @param {() => void} [props.onDownload] al descargar (para registrarlo, por ejemplo)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function PdfViewerDialogContent(props) {
-    const {open, onClose, title, src, fileName, actions, onDownload, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {open, onClose, title, src, fileName, actions, onDownload, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const pdfUrl = usePdfUrl(open ? src : null);
 
     return (
-        <ContentDialog open={open} onClose={onClose} title={title} texts={texts}>
+        <ContentDialog sx={sx} open={open} onClose={onClose} title={title} texts={texts}>
             <ViewerActions direction="row" ownSx={{gap: 1, flexWrap: 'wrap', mb: 2}}>
                 <Button size="small" variant="outlined" startIcon={<OpenInNewRoundedIcon />} href={pdfUrl ?? undefined} target="_blank"
                         rel="noopener noreferrer" disabled={!pdfUrl}>

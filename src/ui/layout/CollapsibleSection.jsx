@@ -58,10 +58,11 @@ const HEADER_SX = {
  * @param {(isExpanded: boolean) => void} [props.onExpandedChange] la persona la abrió o la plegó (por ejemplo, para pedir lo de
  *     adentro hasta que se abre)
  * @param {import('react').ReactNode} props.children
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function CollapsibleSectionContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaCollapsibleSection.defaultProps) y encima lo que llega aquí
-    const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {collapsedTitle, expandedTitle, hint = '', defaultExpanded = false, onExpandedChange, children, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const changeExpanded = (nextIsExpanded) => {
@@ -70,7 +71,7 @@ function CollapsibleSectionContent(props) {
     };
 
     return (
-        <CollapsibleRoot ownSx={{minWidth: 0}}>
+        <CollapsibleRoot sx={sx} ownSx={{minWidth: 0}}>
             <CollapsibleAccordion expanded={isExpanded} onChange={(changeEvent, nextIsExpanded) => changeExpanded(nextIsExpanded)}
                        disableGutters elevation={0} square ownSx={{bgcolor: 'transparent', '&::before': {display: 'none'}}}>
                 {/* NOTA: el acordeón ya envuelve este renglón en un encabezado (h3); los textos van como span para no anidar dos */}

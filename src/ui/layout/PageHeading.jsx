@@ -53,10 +53,11 @@ const MIN_BREADCRUMBS = 2;
  * @param {import('react').ReactNode} [props.actions] botones a la derecha (en el teléfono, abajo y a lo ancho)
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function PageHeadingContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeading.defaultProps) y encima lo que llega aquí
-    const {title, description, breadcrumbs, actions, documentTitle, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {title, description, breadcrumbs, actions, documentTitle, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {useLocation} = useToolkitNavigation();
@@ -76,7 +77,7 @@ function PageHeadingContent(props) {
         : breadcrumbs ?? menuBreadcrumbsOf(menuItems, pathname, declaredPath).map((menuItem) => ({label: menuItemLabelOf(menuItem, t), to: menuItem.to}));
 
     return (
-        <HeadingRoot component="header" ownSx={{mb: 3}}>
+        <HeadingRoot sx={sx} component="header" ownSx={{mb: 3}}>
             <DocumentTitle title={documentTitle ?? title} />
             {crumbs.length >= MIN_BREADCRUMBS && <HeadingBreadcrumbs ownSx={{mb: 1}}><PageBreadcrumbs items={crumbs} /></HeadingBreadcrumbs>}
             <HeadingTitleRow direction={isActionsCapsule ? 'row' : {xs: 'column', sm: 'row'}} spacing={{xs: 1.5, sm: 2}}
