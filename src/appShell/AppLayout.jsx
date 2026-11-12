@@ -32,6 +32,9 @@
 //   - Los ajustes de la app (letra, idioma, claro u oscuro y los del proyecto) van DENTRO del menú de la cuenta, no sueltos
 //     en la barra (HeaderTools).
 //   - El menú queda al alcance de las páginas (appMenuContext): PageHeading arma sus migas sola.
+//   - Al entrar a otra pantalla la página empieza arriba y al regresar vuelve a donde iba (useRouteScroll.js; se apaga con
+//     scrollRestoration={false}). Antes el navegador conservaba lo deslizado y el detalle abierto desde la mitad de una
+//     lista empezaba a media altura, con su encabezado fuera de la vista.
 //   - Con el vidrio del tema (createToolkitTheme({glass: true})): el lienzo lleva manchas de color, y en escritorio la
 //     barra y el menú lateral flotan a 8 px de la orilla y entre ellos, con esquinas redondas, para que el contenido pase
 //     por detrás y se vea desenfocado; encogido, el menú es una cápsula. En el teléfono la barra sigue de orilla a orilla
@@ -83,6 +86,7 @@ import SideMenu from '@/appShell/SideMenu.jsx';
 import {usesMobileTabBar} from '@/appShell/tabBarRule.js';
 import TopMenu from '@/appShell/TopMenu.jsx';
 import {useDrawerCollapsed} from '@/appShell/useDrawerCollapsed.js';
+import {useRouteScroll} from '@/appShell/useRouteScroll.js';
 import ComponentTexts from '@/toolkit/ComponentTexts.jsx';
 import NewBuildNotice, {NEW_BUILD_NOTICE_VARIANT} from '@/feedback/NewBuildNotice.jsx';
 import {activeMenuItemOf, menuItemsWithIconsOf} from '@/navigation/appMenu.js';
@@ -222,11 +226,13 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
     accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, declaredPath, children,
+    menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, scrollRestoration, declaredPath, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
     const {pathname} = useLocation();
+    // otra pantalla empieza arriba y al regresar se vuelve a donde se iba (useRouteScroll.js)
+    useRouteScroll(scrollRestoration, pathname);
     const {collapsed, toggle} = useDrawerCollapsed(defaultCollapsed);
     const [isMobileMenuOpen, setIsMobileMenuOpenState] = useState(false);
     // cada cambio del menú también sale afuera (para medir, o para que el proyecto guarde la preferencia en su servidor)
@@ -511,6 +517,10 @@ const AppLayoutFrame = ({
  * @param {(keys: string[]|null) => void} [props.onMobileTabsChange] la persona eligió sus pestañas del teléfono (las llaves
  *     de menuItemKeyOf; null: regresó a las de omisión). Se recuerdan en el navegador; con esto el proyecto las puede guardar
  *     en su servidor
+ * @param {boolean} [props.scrollRestoration] por omisión sí: al entrar a otra pantalla la página empieza arriba, al regresar
+ *     («atrás» o «adelante») vuelve a donde iba, y si solo cambia la consulta (la página o los filtros de una tabla) se queda
+ *     donde está. false: el marco no toca el desplazamiento (lo de antes, para un proyecto que ya lo maneja por su cuenta).
+ *     También desde el tema: components.CalcitaAppLayout.defaultProps
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete (para todo el marco)
  * @param {import('react').ReactNode} props.children el contenido
  */
@@ -520,7 +530,7 @@ const AppLayoutContent = (props) => {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
     isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange,
-    onMobileTabsChange, texts, children,
+    onMobileTabsChange, scrollRestoration = true, texts, children,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -541,7 +551,7 @@ const AppLayoutContent = (props) => {
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
                                     isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
                                     contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} maxMobileTabs={maxMobileTabs} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
-                                    onMobileTabsChange={onMobileTabsChange} declaredPath={declaredPath}>
+                                    onMobileTabsChange={onMobileTabsChange} scrollRestoration={scrollRestoration} declaredPath={declaredPath}>
                         {children}
                     </AppLayoutFrame>
                 </AppMenuContext.Provider>
