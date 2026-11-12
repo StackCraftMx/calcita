@@ -581,9 +581,14 @@ function pixelsOf(radius) {
 
 /**
  * Las esquinas de los campos: las que pidió el proyecto en su tema (createToolkitTheme fields.radius; un número va en px
- * en todos lados), o la variable --calcita-field-radius con las de cada estilo de respaldo.
+ * en todos lados), o la variable --calcita-field-radius con las de cada estilo de respaldo. Todo lo que pinta un campo pasa
+ * por aquí: así fields.radius les llega igual dentro de una FormSection, dentro de una tarjeta y sueltos.
+ *
+ * @param {object} theme
+ * @param {number|string} lookRadius las del estilo que lo pide, si el proyecto no dijo otras (un número va en px)
+ * @returns {string}
  */
-function fieldRadiusOf(theme, lookRadius) {
+export function fieldRadiusOf(theme, lookRadius) {
     const projectRadius = theme.toolkit?.fields?.radius;
     return projectRadius !== undefined && projectRadius !== null ? pixelsOf(projectRadius) : cssTokenOf('fieldRadius', pixelsOf(lookRadius));
 }
@@ -681,7 +686,9 @@ export function canvasFieldStylesOf(theme) {
         backgroundImage: 'none',
         backdropFilter: GLASS_BLUR,
         WebkitBackdropFilter: GLASS_BLUR,
-        borderRadius: cssTokenOf('fieldRadius', `${FIELD_WELL_RADIUS_PIXELS}px`),
+        // OJO: antes leía solo la variable y el campo suelto con vidrio ignoraba fields.radius del proyecto (salía en 12 px
+        // mientras los de una FormSection iban en cápsula)
+        borderRadius: fieldRadiusOf(theme, FIELD_WELL_RADIUS_PIXELS),
         ...lightDarkStylesOf(theme, {
             backgroundColor: CANVAS_FIELD.light.rest,
             boxShadow: `0 0 0 1px ${CANVAS_FIELD.light.edge}`,
