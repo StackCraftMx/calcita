@@ -29,6 +29,24 @@ test('sin repetidos: el primero se queda bien y el que repite dice con cuál cho
     assert.deepEqual(errors, {'contacts[2].email': {key: 'validation:listDuplicate', values: {row: 1}}});
 });
 
+test('sin repetir la combinación de varias columnas: el mismo proveedor con otro comprador sí; los dos iguales, no', async () => {
+    const schema = Yup.object({
+        rules: Yup.array().of(Yup.object({
+            provider_id: Yup.string(),
+            buyer_id: Yup.string().test(uniqueInListRule('rules', ['provider_id', 'buyer_id'])),
+        })),
+    });
+    const errors = await errorsOf(schema, {rules: [
+        {provider_id: '1', buyer_id: '10'},
+        {provider_id: '1', buyer_id: '11'},
+        {provider_id: '2', buyer_id: '10'},
+        {provider_id: '1', buyer_id: '10'},
+        // falta el proveedor: todavía no se puede decir que se repite
+        {provider_id: '', buyer_id: '10'},
+    ]});
+    assert.deepEqual(errors, {'rules[3].buyer_id': {key: 'validation:listDuplicate', values: {row: 1}}});
+});
+
 test('en orden de menor a mayor: dice con quién choca y entre cuáles debe ir', async () => {
     const errors = await errorsOf(tiersSchema(), {tiers: [{min_quantity: '10'}, {min_quantity: '5'}, {min_quantity: '50'}, {min_quantity: '40'}]});
     // el 5 va después del 10: debe ser mayor que 10; el 40 después del 50: mayor que 50 (el de arriba)
