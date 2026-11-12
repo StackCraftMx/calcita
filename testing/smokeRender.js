@@ -3,7 +3,7 @@
 // navegador) y sin i18next (los textos del paquete).
 // Pinta cada componente en el servidor (react-dom/server) y avisa cuál truena. Se corre después de npm run build:
 //   node testing/smokeRender.js
-import {createElement as h} from 'react';
+import {Fragment, cloneElement, createElement as h} from 'react';
 import {renderToString} from 'react-dom/server';
 import {ThemeProvider, createTheme} from '@mui/material/styles';
 import {NuqsTestingAdapter} from 'nuqs/adapters/testing';
@@ -15,7 +15,7 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, RECORD_CARD_FOOTER_ALIGN, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, RECORD_CARD_FOOTER_ALIGN, REPEATING_LAYOUT, RepeatingFields, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -23,6 +23,8 @@ import {
     ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormSchemaProvider, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard, Yup,
 } from '@stackcraftmx/calcita/forms';
 import {Formik as FormikBase} from 'formik';
+import {FormProvider, useForm} from 'react-hook-form';
+import {FormRepeatingFields as HookRepeatingFields, FormTextField as HookTextField} from '@stackcraftmx/calcita/react-hook-form';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
 import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
@@ -73,6 +75,15 @@ const PROJECT_STYLED_THEME = createTheme({
 const PROJECT_DEFAULT_PROPS_THEME = createTheme({components: {CalcitaStatusChip: {defaultProps: {variant: 'chip'}}}});
 
 // cada caso: su nombre, el componente y un texto que debe salir en lo pintado
+// react-hook-form: los renglones como tabla, con su FormProvider (useForm va dentro de un componente)
+const HookTableForm = () => {
+    const form = useForm({defaultValues: {rows: [{name: 'Ana'}]}});
+    return h(FormProvider, form, h(HookRepeatingFields, {
+        name: 'rows', emptyRow: {name: ''}, layout: REPEATING_LAYOUT.table, tableColumns: [{key: 'name', header: 'Nombre del contacto'}],
+        renderRow: ({nameOf}) => h(HookTextField, {name: nameOf('name'), label: 'Nombre'}),
+    }));
+};
+
 const CASES = [
     ['PageHeader', h(PageHeader, {title: 'Pedidos del mes', eyebrow: 'VENTAS', subtitle: 'Todos los pedidos'}), 'Pedidos del mes'],
     ['MetricCard con enlace', h(MetricCard, {label: 'Pedidos', value: '1,200', caption: 'este mes', to: '/pedidos'}), 'href="/pedidos"'],
@@ -222,6 +233,9 @@ const CASES = [
     ['cada parte de una pieza escribe la suya', h(RecordCard, {title: 'Ana López'}), 'CalcitaRecordCard-titles'],
     // una parte cambiada por slots es del proyecto: no recibe la clase (un DateInput de /date-pickers avisaba que no la conoce)
     ['la parte cambiada por slots no recibe la clase de Calcita', h(RecordCardSkeleton, {slots: {root: ({className}) => h('div', null, `clase: ${className ?? 'ninguna'}`)}}), 'clase: ninguna'],
+    // sin sx de la pantalla, la parte cambiada no recibe la llave vacía (una pieza de la casa puesta ahí la avisaría); con sx, sí
+    ['la parte cambiada no recibe un sx vacío', h(SectionCard, {title: 'Resumen', slots: {root: ({children, ...partProps}) => h('section', null, `sx: ${'sx' in partProps ? 'llegó' : 'no llegó'}`, children)}}, 'contenido'), 'sx: no llegó'],
+    ['la parte cambiada recibe el sx de la pantalla', h(SectionCard, {title: 'Resumen', sx: {mt: 2}, slots: {root: ({children, sx}) => h('section', null, `sx: ${sx ? 'llegó' : 'no llegó'}`, children)}}, 'contenido'), 'sx: llegó'],
     ['RecordCard con el pie a la derecha', h(RecordCard, {title: 'Ana López', footer: 'Entrega mañana', details: 'Historial',
         footerAlign: RECORD_CARD_FOOTER_ALIGN.end}), 'justify-content:flex-end'],
     // el cajón de búsqueda abierto (va en un portal que no se pinta en el servidor: que no truene con todos sus tipos)
@@ -416,6 +430,14 @@ const CASES = [
     ['FormSection con labelWidth 0: la etiqueta solo para el lector', h(FormSection, {labelWidth: 0},
         h(TextInput, {label: 'Fecha de pago', value: '', onChange: () => {}})), 'clip:rect(0 0 0 0)'],
     ['SectionCard con el título afuera', h(SectionCard, {title: 'Quién lo recibe', titlePlacement: SECTION_TITLE_PLACEMENT.outside}, 'contenido'), 'CalcitaSectionCard-card'],
+    ['FormRepeatingFields de react-hook-form como tabla', h(HookTableForm), 'Nombre del contacto'],
+    ['RepeatingFields como tabla: un campo por columna', h(RepeatingFields, {
+        layout: REPEATING_LAYOUT.table, tableColumns: [{key: 'name', header: 'Nombre'}, {key: 'amount', header: 'Monto', width: 120}],
+        rowKeys: ['a'], onAdd: () => {}, onRemove: () => {}, onClear: () => {},
+        renderRow: () => h(Fragment, null, h(TextInput, {label: 'Nombre', value: 'Ana', onChange: () => {}}), h(NumberInput, {label: 'Monto', value: '10', onChange: () => {}})),
+    }), 'CalcitaRepeatingFields-table'],
+    ['NumberInput de solo lectura con su placeholder y su sx', h(NumberInput, {label: 'Disponible', value: '', onChange: () => {}, readOnly: true, placeholder: '0.00', sx: {maxWidth: 333}}),
+        'max-width:333px'],
     ['Toaster en otra esquina y con lo de sonner', h(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000}), 'aria-live'],
 ];
 
@@ -553,6 +575,47 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         failures += 1;
         console.log(`FALLA  la tarjeta de adentro tomó los slots de la de afuera (${ownTitlesCount} veces)`);
     }
+}
+
+// cada pieza que pinta algo recibe sx (los estilos de la pantalla, como en MUI) y lo pinta: cada caso de arriba otra vez, con
+// un sx que solo esta prueba usa. Sin aviso de «no conoce la opción» y con el estilo en el HTML. Antes 86 no lo recibían (casi
+// todas lo avisaban y lo tiraban): la pantalla terminaba pisando clases internas o envolviendo la pieza en una caja
+{
+    const SX_MARK = 'outline-offset:7.31px';
+    // las que no pintan una caja propia: proveedores, permisos, texto suelto, la tabla del servidor (sin caja alrededor: su
+    // cuadrícula tiene gridSx) y los ajustes de apariencia (son secciones sueltas dentro del menú)
+    const WITHOUT_SX = new Set(['ToolkitProvider', 'ComponentTexts', 'Can', 'RequireAccess', 'AccountProvider', 'FormSchemaProvider', 'Formik',
+        'DictionaryText', 'DocumentTitle', 'MarkedText', 'StaleBuildBoundary', 'GlassLensFilter', 'AppearanceSettings', 'ServerTable', 'AuditTrailTable',
+        // el Toaster es el de sonner (se cambia con style y className) y los otros dos son de esta prueba o de nuqs
+        'Toaster', 'NuqsTestingAdapter', 'HookTableForm']);
+    const checkedPieces = new Set();
+    const problems = [];
+    for (const [, element, , caseTheme = defaultTheme] of CASES) {
+        const pieceName = typeof element?.type === 'function' ? (element.type.displayName ?? element.type.name) : null;
+        if (!pieceName || WITHOUT_SX.has(pieceName) || element.props.sx !== undefined || checkedPieces.has(pieceName)) {
+            continue;
+        }
+        checkedPieces.add(pieceName);
+        const warningsBefore = calcitaWarnings.length;
+        let html = '';
+        try {
+            html = renderToString(h(ThemeProvider, {theme: caseTheme}, h(ToolkitProvider, {appName: 'Tienda', texts: PROJECT_TEXTS, timeZone: 'America/Mexico_City'},
+                cloneElement(element, {sx: {outlineOffset: '7.31px'}}))));
+        } catch (error) {
+            problems.push(`${pieceName} (truena: ${error.message.split('\n')[0]})`);
+            continue;
+        }
+        if (calcitaWarnings.length > warningsBefore) {
+            problems.push(`${pieceName} (${calcitaWarnings.slice(warningsBefore).join(' | ')})`);
+        // un diálogo cerrado (o abierto: su portal no se pinta en el servidor) no deja HTML; ahí basta con que no avise
+        } else if (html !== '' && !html.includes(SX_MARK)) {
+            problems.push(`${pieceName} (no pinta el sx)`);
+        }
+    }
+    if (problems.length) {
+        failures += 1;
+    }
+    console.log(`${problems.length ? 'FALLA ' : 'OK    '} sx en las ${checkedPieces.size} piezas de los casos${problems.length ? ` · ${problems.join(', ')}` : ''}`);
 }
 
 // una opción que la pieza no conoce se avisa también desde dist/ (el build deja process.env.NODE_ENV para el empaquetador de
