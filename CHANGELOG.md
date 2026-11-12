@@ -4,6 +4,34 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.68.0] - 2026-11-11
+
+### Agregado
+
+- `AppLayout` se hace cargo del desplazamiento al cambiar de pantalla (`scrollRestoration`, prendido por omisión): a otra
+  pantalla, la página empieza arriba; con «atrás» o «adelante» vuelve a donde iba, y espera a que la lista termine de
+  llegar del servidor (hasta 3 segundos, o hasta que la persona deslice). Si solo cambia la consulta de la dirección (la
+  página o los filtros de una tabla), se queda donde está. Al recargar también vuelve a donde iba. Sirve con
+  react-router, Next y la navegación del navegador, sin el `ScrollRestoration` de react-router.
+  `scrollRestoration={false}` lo apaga (para un proyecto que ya lo maneja por su cuenta); también desde el tema.
+- `SectionCard` con el título afuera de la tarjeta: `titlePlacement={SECTION_TITLE_PLACEMENT.outside}` lo pone encima,
+  con el estilo del título de una `FormSection` y la acción a su derecha. Por omisión adentro, como antes. Para toda la
+  app: `components.CalcitaSectionCard.defaultProps.titlePlacement`. Con el título afuera, la tarjeta es la parte `card`
+  del tema y `root` es lo que envuelve al título y a la tarjeta.
+- `FormSection` sin tarjeta: `variant={FORM_SECTION_VARIANT.bare}` deja los renglones y la forma de los campos, sin el
+  lienzo, sin las líneas y sin el aire del renglón (relleno y alto mínimo). Para campos dentro de las celdas de una
+  tabla: una sola sección alrededor de la tabla y cualquier campo de Calcita adentro toma la forma de la casa.
+
+### Arreglado
+
+- `FormSection` con `labelWidth={0}`: quedaban 16 px de hueco a la izquierda del campo y la etiqueta ocupaba lo ancho de
+  su palabra más larga (por eso se dejaba vacía y el campo se quedaba sin nombre). Ahora el campo se lleva el renglón
+  entero y la etiqueta no se ve, pero el lector de pantalla la sigue leyendo.
+- Las esquinas de los campos del tema (`createToolkitTheme({fields: {radius}})`) les llegan a todos los campos sueltos:
+  con vidrio, el campo sobre el fondo las ignoraba (salía en 12 px) y, sin vidrio, ningún campo suelto las leía. Ahora
+  `fields: {radius: 999}` pone la cápsula de los renglones de `FormSection` en todos los campos de la app, en los tres
+  estilos. El buscador con vidrio sigue siendo su cápsula. Sin `fields.radius`, nada cambia.
+
 ## [0.67.0] - 2026-11-11
 
 ### Agregado
