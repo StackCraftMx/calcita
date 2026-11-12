@@ -10,6 +10,8 @@ export {default as FormMaskedField} from '@/forms/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/forms/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/forms/FormProblemAlert.jsx';
 export {default as FormRepeatingFields} from '@/forms/FormRepeatingFields.jsx';
+export {default as EditableRows} from '@/forms/EditableRows.jsx';
+export {useEditableServerRows} from '@/forms/useEditableServerRows.jsx';
 export {default as FormTransferListField} from '@/forms/FormTransferListField.jsx';
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';
 export {percentRule, sameAsFieldRule} from '@/forms/fieldRules.js';

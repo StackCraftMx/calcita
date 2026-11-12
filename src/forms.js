@@ -10,10 +10,10 @@ export {FieldArray, Form, useField, useFormikContext} from 'formik';
 export {default as Formik} from '@/forms/CalcitaFormik.jsx';
 export {FormSchemaProvider, useFormSchema} from '@/forms/FormSchemaProvider.jsx';
 export {
-    ChangePasswordForm, ForgotPasswordForm, FormAttachmentsField, FormCatalogField, FormCheckboxGroupField, FormColorField, FormFileField, FormFileUploadField, FormImageField,
+    ChangePasswordForm, EditableRows, ForgotPasswordForm, FormAttachmentsField, FormCatalogField, FormCheckboxGroupField, FormColorField, FormFileField, FormFileUploadField, FormImageField,
     FormMaskedField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormServerProblem, FormTransferListField,
     FormTextField, FormWizard, RECOVERY_CODE_PATTERN, SECOND_STEP_METHOD, SecondStepForm, SignInForm, SubmitButton, TOTP_CODE_PATTERN,
     TwoStepVerificationCard, Yup, applyServerProblem, buildYupLocale, formLevelMessageOf, isRequiredInSchema, normalizeRecoveryCode, normalizeTotpCode,
     listTotalAtMostRule, listTotalOf, orderedInListRule, percentRule, sameAsFieldRule, splitRowFieldErrors, splitServerFieldErrors, translateValidationMessage,
-    uniqueInListRule, useFormikField,
+    uniqueInListRule, useEditableServerRows, useFormikField,
 } from '@/forms/index.js';
