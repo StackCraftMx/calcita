@@ -37,7 +37,7 @@ import FieldFrame from '@/inputs/FieldFrame.jsx';
 import NumberInput from '@/inputs/NumberInput.jsx';
 import SelectInput from '@/inputs/SelectInput.jsx';
 import TextInput from '@/inputs/TextInput.jsx';
-import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots, sxListOf} from '@/theme/themePieces.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
 import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
@@ -201,12 +201,13 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
  *     arriba del otro (también en el teléfono, donde ocupa todo el ancho). Sin la opción, lado a lado como siempre
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos (una nota, un enlace)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del cajón, como el sx del Drawer de MUI
  */
 function FilterDrawerContent(props) {
     const {
         open, onClose, fields, values, onApply, anchor = FILTER_DRAWER_ANCHOR.right, width = DEFAULT_WIDTH, title, applyLabel,
         closeOnApply = true, stackPairsBelow, children, texts, closePlacement = FILTER_DRAWER_CLOSE_PLACEMENT.start,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -246,7 +247,7 @@ function FilterDrawerContent(props) {
             anchor={anchor}
             open={open}
             onClose={onClose}
-            sx={{zIndex: (theme) => theme.zIndex.modal}}
+            sx={[{zIndex: (theme) => theme.zIndex.modal}, ...sxListOf(sx)]}
             slotProps={{paper: {'aria-labelledby': titleId, className: `${THEME_NAME}-paper`, sx: {width: {xs: '100%', sm: width}, maxWidth: '100%'}}}}
         >
             <Box component="form" noValidate

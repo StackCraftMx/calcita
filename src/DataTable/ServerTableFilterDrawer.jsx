@@ -45,9 +45,10 @@ const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
  *     closePlacement
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos del cajón
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function ServerTableFilterDrawerContent(props) {
-    const {fields, anchor, width, title, buttonLabel, onApply, stackPairsBelow, drawerProps, children, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {fields, anchor, width, title, buttonLabel, onApply, stackPairsBelow, drawerProps, children, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {filters, setFilters} = useTableFilter();
@@ -56,7 +57,7 @@ function ServerTableFilterDrawerContent(props) {
 
     return (
         <>
-            <ServerTableFilterDrawerButton size="small" variant={activeCount > 0 ? 'contained' : 'outlined'} startIcon={<TuneRoundedIcon />}
+            <ServerTableFilterDrawerButton sx={sx} size="small" variant={activeCount > 0 ? 'contained' : 'outlined'} startIcon={<TuneRoundedIcon />}
                     aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
                 {activeCount > 0 ? t('filterDrawer.openWithCount', {count: activeCount}) : (buttonLabel ?? t('filterDrawer.open'))}
             </ServerTableFilterDrawerButton>

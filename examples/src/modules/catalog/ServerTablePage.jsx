@@ -13,6 +13,8 @@ import ReadyColumnsDemo from '@/modules/catalog/demos/table/ReadyColumnsDemo.tsx
 import TableDensityDemo from '@/modules/catalog/demos/table/TableDensityDemo.tsx';
 import OrdersSelectionDemo from '@/modules/catalog/demos/table/OrdersSelectionDemo.tsx';
 import OrdersTableDemo from '@/modules/catalog/demos/table/OrdersTableDemo.tsx';
+import EditableServerTableDemo from '@/modules/catalog/demos/table/EditableServerTableDemo.tsx';
+import EditableServerTableHookDemo from '@/modules/catalog/demos/table/EditableServerTableHookDemo.tsx';
 
 const loadDemo = () => import('@/modules/catalog/demos/table/OrdersTableDemo.tsx?demo-source');
 const loadSelection = () => import('@/modules/catalog/demos/table/OrdersSelectionDemo.tsx?demo-source');
@@ -20,6 +22,8 @@ const loadApi = () => import('@/modules/catalog/demos/table/OrdersTableApi.ts?de
 const loadFilterDrawer = () => import('@/modules/catalog/demos/table/FilterDrawerDemo.tsx?demo-source');
 const loadReadyColumns = () => import('@/modules/catalog/demos/table/ReadyColumnsDemo.tsx?demo-source');
 const loadDensity = () => import('@/modules/catalog/demos/table/TableDensityDemo.tsx?demo-source');
+const loadEditable = () => import('@/modules/catalog/demos/table/EditableServerTableDemo.tsx?demo-source');
+const loadEditableHook = () => import('@/modules/catalog/demos/table/EditableServerTableHookDemo.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (serverTable.<sección>.extend.<id>)
@@ -110,6 +114,25 @@ const DENSITY_EXTENSIONS = [
     {id: 'theme', option: 'theme.components.CalcitaServerTable', example: "components: {CalcitaServerTable: {defaultProps: {density: 'standard'}}}  // todas las tablas de la app"},
 ];
 
+const EDITABLE_EXTENSIONS = [
+    {id: 'hook', option: 'useEditableServerRows({rowSchema, onSaveRow})', example: '<ServerTable {...editing.tableProps} … />  // rowWrapper, getRowHeight y, con confirm, beforeQueryChange'},
+    {id: 'fieldColumn', option: 'editing.fieldColumn({field, label, renderField})', example: "renderField: ({nameOf, row, form}) => <FormNumberField name={nameOf('amount')} label=\"Presupuesto\" />"},
+    {id: 'actions', option: 'editing.actionsColumn() · rowLabelOf', example: 'rowLabelOf: (rule) => `Regla ${rule.folio}`  // «Guardar «Regla R-007»»'},
+    {id: 'unsaved', option: 'unsavedRows · UNSAVED_ROWS', example: 'unsavedRows: UNSAVED_ROWS.confirm  // por omisión, keep: se recuerda'},
+    {id: 'bar', option: 'editing.unsavedBar · saveAll · discardAll · pendingCount', example: '{editing.unsavedBar}  // «3 renglones con cambios sin guardar» · Guardar todos · Descartar'},
+    {id: 'bulk', option: 'onSaveRows(changes)', example: 'onSaveRows: (changes) => saveRules(changes.map(({rowId, values}) => ({id: rowId, ...values})))  // una sola llamada'},
+    {id: 'server', option: 'applyServerProblem(error, {...helpers, values})', example: 'catch (error) { applyServerProblem(error, {...helpers, values}); throw error; }'},
+    {id: 'table', option: 'ServerTable rowWrapper · beforeQueryChange · gridProps.slots', example: 'beforeQueryChange={(applyChange) => (window.confirm(\'¿Seguro?\') ? applyChange() : null)}'},
+    {id: 'hookForm', option: "useEditableServerRows de '@stackcraftmx/calcita/react-hook-form'", example: "const editing = useEditableServerRows({rowSchema, onSaveRow: (values, {form}) => …});  // form.setValue en renderField"},
+];
+
+const EDITABLE_HOOK_EXTENSIONS = [
+    {id: 'entry', option: "useEditableServerRows de '@stackcraftmx/calcita/react-hook-form'", example: "import {FormNumberField, useEditableServerRows} from '@stackcraftmx/calcita/react-hook-form';"},
+    {id: 'save', option: 'onSaveRow(values, {form, row, isVisible})', example: 'catch (error) { applyServerProblem(error, form); throw error; }'},
+    {id: 'dependent', option: 'renderField({form}) · form.setValue', example: "form.setValue(nameOf('channel'), '', {shouldDirty: true})"},
+    {id: 'options', option: 'formOptions', example: "formOptions: {mode: 'onBlur'}  // lo demás de useForm de cada renglón"},
+];
+
 export const ServerTablePage = () => {
     const {t} = useToolkitTranslation('catalog');
     const rowsOf = (section, extensions) => extensionRowsOf(t, `serverTable.${section}`, extensions);
@@ -129,6 +152,10 @@ export const ServerTablePage = () => {
                          extensions={rowsOf('density', DENSITY_EXTENSIONS)} Demo={TableDensityDemo} loadSource={loadDensity} />
             <CodeSection title={t('serverTable.api.title')} description={t('serverTable.api.description')}
                          extensions={rowsOf('api', API_EXTENSIONS)} loadSource={loadApi} />
+            <DemoSection title={t('serverTable.editable.title')} description={t('serverTable.editable.description')}
+                         extensions={rowsOf('editable', EDITABLE_EXTENSIONS)} Demo={EditableServerTableDemo} loadSource={loadEditable} />
+            <DemoSection title={t('serverTable.editableHookForm.title')} description={t('serverTable.editableHookForm.description')}
+                         extensions={rowsOf('editableHookForm', EDITABLE_HOOK_EXTENSIONS)} Demo={EditableServerTableHookDemo} loadSource={loadEditableHook} />
         </Stack>
     );
 };

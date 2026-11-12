@@ -38,9 +38,10 @@ const MONOSPACE_FONT = 'ui-monospace, SFMono-Regular, Menlo, monospace';
  * @param {() => void} [props.onCopied]
  * @param {(isRevealed: boolean) => void} [props.onRevealChange] se destapó o se tapó (para registrar quién vio el secreto)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function SecretFieldContent(props) {
-    const {value, label, helperText = ' ', onCopied, onRevealChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {value, label, helperText = ' ', onCopied, onRevealChange, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const generatedId = useId();
@@ -67,7 +68,7 @@ function SecretFieldContent(props) {
 
     return (
         <FieldFrame inputId={inputId} label={label}>
-            <SecretFieldField
+            <SecretFieldField sx={sx}
                 id={inputId}
                 fullWidth
                 size="small"

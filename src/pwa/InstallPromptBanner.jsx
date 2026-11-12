@@ -44,10 +44,11 @@ const TAB_BAR_GAP_PIXELS = 8;
  * @param {() => void} [props.onShowSteps] abrió los pasos para instalar (iPhone, iPad, Firefox de Android)
  * @param {() => void} [props.onDismiss] dijo «Ahora no» (o cerró los pasos): no se le vuelve a ofrecer en este navegador
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el aviso que flota (parte root), encima de los del tema
  */
 function InstallPromptBannerContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaInstallPromptBanner.defaultProps) y encima lo que llega aquí
-    const {message, onInstallChoice, onShowSteps, onDismiss, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {message, onInstallChoice, onShowSteps, onDismiss, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {variant, dismissed, promptInstall, dismiss} = useInstallPrompt();
@@ -82,7 +83,7 @@ function InstallPromptBannerContent(props) {
     return (
         <ComponentTexts namespace="common" texts={texts}>
             <>
-                <PromptRoot open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                <PromptRoot sx={sx} open anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
                           ownSx={(theme) => (usesMobileTabBar(theme)
                               ? aboveMobileTabBarOf(TAB_BAR_GAP_PIXELS)
                               : {mb: 'env(safe-area-inset-bottom)'})}>

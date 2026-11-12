@@ -37,7 +37,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
-import {DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GRID_CHECKBOX_SELECTION_FIELD, GridPagination} from '@mui/x-data-grid';
+import {DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GRID_CHECKBOX_SELECTION_FIELD, GridPagination, GridRow} from '@mui/x-data-grid';
 import {enUS as dataGridEnglish, esES as dataGridSpanish} from '@mui/x-data-grid/locales';
 
 import EmptyState from '@/DataTable/EmptyState.jsx';
@@ -95,6 +95,23 @@ const DATA_GRID_TEXT_BY_LANGUAGE = {
  *
  * @returns {string|undefined}
  */
+// lo que cambia la consulta de la tabla (página, filtros, orden, tamaño de página, conjunto); lo demás del estado se lee
+const QUERY_SETTERS = Object.freeze(['setFilter', 'setFilters', 'clearFilter', 'clearAll', 'setSort', 'switchDataset', 'setPage', 'setPageSize']);
+
+/**
+ * El estado de la tabla con cada cambio de la consulta pasando primero por la pantalla (beforeQueryChange).
+ *
+ * @param {object} tableState el de useTableState
+ * @param {(applyChange: () => void) => void} beforeQueryChange
+ * @returns {object} el mismo estado, con sus setters de la consulta envueltos
+ */
+function guardedTableStateOf(tableState, beforeQueryChange) {
+    const guardedSetters = Object.fromEntries(QUERY_SETTERS.map((setterName) => [
+        setterName, (...args) => beforeQueryChange(() => tableState[setterName](...args)),
+    ]));
+    return {...tableState, ...guardedSetters};
+}
+
 function readCspNonce() {
     // pintando en el servidor (Next.js) no hay documento: ahí el nonce lo pone quien arma el HTML
     if (typeof document === 'undefined') {
@@ -368,8 +385,16 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  *     página del servidor
  * @param {(error: unknown) => void} [props.onLoadError] cuando la consulta falla (la tabla ya enseña su aviso con «Reintentar»)
  * @param {object} [props.gridProps] lo demás del DataGrid de MUI, sobre todo sus eventos (onRowClick, onRowDoubleClick,
- *     onCellKeyDown…). OJO: lo que la tabla controla (paginar, ordenar y filtrar en el servidor, el alto, la selección) no se
- *     reemplaza desde aquí: para eso están sus props
+ *     onCellKeyDown…) y sus slots (slots.row: cada renglón con lo suyo, como su propio formulario en useEditableServerRows).
+ *     OJO: lo que la tabla controla (paginar, ordenar y filtrar en el servidor, el alto, la selección, la paginación y los
+ *     avisos de vacío) no se reemplaza desde aquí: para eso están sus props
+ * @param {import('react').ComponentType<{rowId: string|number, row: any, children: import('react').ReactNode}>} [props.rowWrapper]
+ *     lo que envuelve cada renglón de la cuadrícula: su propio formulario, en useEditableServerRows (que lo da en
+ *     tableProps). Va aquí y no en gridProps.slots porque la tabla arma el renglón UNA vez: un componente nuevo en cada
+ *     pintada volvería a montar todos los renglones y se perdería lo que se está escribiendo
+ * @param {(applyChange: () => void) => void} [props.beforeQueryChange] cada cambio de página, filtro, orden o tamaño de
+ *     página pasa primero por aquí: la pantalla llama applyChange() para que suceda o no lo llama para que no (preguntar
+ *     antes de perder lo capturado sin guardar). Sin ella, todo cambia de inmediato
  * @param {(row: any, helpers: {index: number}) => import('react').ReactNode} [props.renderCard] con ella la lista también se ve en
  *     tarjetas (una por renglón, normalmente RecordCard), con la misma búsqueda, filtros, orden y página: un botón cambia de
  *     vista. Con `prefix` la vista va en la dirección (?<prefix>_view=cards, reemplazando el historial)
@@ -404,6 +429,8 @@ function ServerTableContent(props) {
     getRowId,
     prefix,
     refreshToken,
+    beforeQueryChange,
+    rowWrapper,
     footer,
     toolbarExtra,
     header,
@@ -442,7 +469,21 @@ function ServerTableContent(props) {
     const {t, language} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
     const theme = useTheme();
-    const tableState = useTableState({prefix, filterDefaults, filterKinds, defaultPageSize});
+    const plainTableState = useTableState({prefix, filterDefaults, filterKinds, defaultPageSize});
+    // con beforeQueryChange, cada cambio de página, filtro u orden le pregunta primero a la pantalla. Es aquí y no en cada
+    // filtro: todos (el cajón, los chips, la búsqueda, la paginación, el orden) cambian la tabla por estos mismos setters
+    const tableState = beforeQueryChange ? guardedTableStateOf(plainTableState, beforeQueryChange) : plainTableState;
+    // cada renglón envuelto en lo de la pantalla (su formulario). El mismo componente mientras rowWrapper sea el mismo
+    const WrappedRow = useMemo(() => {
+        if (!rowWrapper) {
+            return null;
+        }
+        const RowWrapper = rowWrapper;
+        function ServerTableWrappedRow(rowProps) {
+            return <RowWrapper rowId={rowProps.rowId} row={rowProps.row}><GridRow {...rowProps} /></RowWrapper>;
+        }
+        return ServerTableWrappedRow;
+    }, [rowWrapper]);
     const {filters, sortOrders, page, pageSize} = tableState;
     // tabla o tarjetas: las dos con el mismo estado (búsqueda, filtros, orden, página); las tarjetas solo si hay renderCard
     const tableView = useTableView({prefix, view, defaultView, onViewChange});
@@ -806,6 +847,9 @@ function ServerTableContent(props) {
                         loadingOverlay: {variant: 'linear-progress', noRowsVariant: 'skeleton'},
                     }}
                     slots={{
+                        // los de la pantalla (slots.row para un renglón con su propio formulario); los de abajo son de la tabla
+                        ...gridProps?.slots,
+                        ...(WrappedRow && {row: WrappedRow}),
                         // "ir a la página N" (solo si se pide) pegado a la paginación: ahí lo busca quien ya está leyendo
                         // "51-75 de 1,234". Sin él, la paginación de siempre del DataGrid
                         ...(showGoToPage && {

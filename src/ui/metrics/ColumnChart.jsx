@@ -63,13 +63,14 @@ const SINGLE_SERIES_KEY = 'value';
  * @param {'chart'|'table'} [props.defaultView] cómo se ve al abrir (CHART_VIEW); por omisión dibujada
  * @param {(view: 'chart'|'table') => void} [props.onViewChange] la persona cambió a la tabla o a la gráfica
  * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {charts: {viewAsTable, viewAsChart, legend}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function ColumnChartContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColumnChart.defaultProps) y encima lo que llega aquí
     const {
     data, periodLabel, valueLabel, series, ariaLabel, emptyLabel, height = 220, tone = 'primary', onSelect, formatValue: formatValueProp,
     referenceLine, renderTooltip, texts, defaultView = CHART_VIEW.chart, onViewChange,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -101,7 +102,7 @@ function ColumnChartContent(props) {
         )));
 
     return (
-        <Box>
+        <Box sx={sx}>
             <TableToggle asTable={asTable} onToggle={toggleView} texts={texts} />
             {asTable ? (
                 <ChartTable data={data} series={drawnSeries} periodLabel={periodLabel} formatValue={formatValue} height={height} />

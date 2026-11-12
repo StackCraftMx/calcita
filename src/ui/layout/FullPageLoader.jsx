@@ -18,13 +18,14 @@ const LoaderRoot = piecePart(THEME_NAME, 'Root', Box);
 /**
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
-function FullPageLoaderContent({texts, ...unknownProps} = {}) {
+function FullPageLoaderContent({texts, sx, ...unknownProps} = {}) {
     warnUnknownProps('FullPageLoader', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
     return (
-        <LoaderRoot role="status" aria-live="polite" ownSx={{display: 'grid', placeItems: 'center', minHeight: '100vh', bgcolor: 'background.default'}}>
+        <LoaderRoot sx={sx} role="status" aria-live="polite" ownSx={{display: 'grid', placeItems: 'center', minHeight: '100vh', bgcolor: 'background.default'}}>
             <CircularProgress aria-label={t('status.loading')} />
         </LoaderRoot>
     );

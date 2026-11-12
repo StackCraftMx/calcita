@@ -132,7 +132,12 @@ export function piecePart(name, slot, component = 'div') {
         }
         // el componente de la pantalla no sabe de los estilos ni del acomodo de Calcita: le llega lo demás, y encima lo que
         // la pantalla le dé en slotProps
+        // sx sin valor tampoco: casi todas las piezas le pasan `sx={sx}` a su parte aunque la pantalla no traiga uno, y una
+        // pieza de la casa puesta como parte avisa de cada prop que no conoce, aunque llegue vacía
         const {ownSx: unusedOwnSx, ownerState: unusedOwnerState, ...calcitaProps} = props;
+        if (calcitaProps.sx === undefined) {
+            delete calcitaProps.sx;
+        }
         return createElement(Replacement, mergedSlotProps(isStackPart ? withoutStackLayout(calcitaProps) : calcitaProps, extraProps));
     }
     PiecePart.displayName = `${name}${slot}`;

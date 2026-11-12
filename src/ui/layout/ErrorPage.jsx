@@ -61,12 +61,13 @@ const ICON_PIXELS = 56;
  * @param {import('react').ReactNode} [props.children] algo debajo del texto (el teléfono de soporte, un folio)
  * @param {object} [props.texts] los textos que cambian, con la forma de `errorPage` en los textos del paquete:
  *     {goHome: 'Volver al tablero', notFound: {title: '…'}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function ErrorPageContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaErrorPage.defaultProps) y encima lo que llega aquí
     const {
     kind, title, text, homePath = '/', onRetry, onGoHome, extraActions, actions, icon, children, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('errorPage', texts);
@@ -74,7 +75,7 @@ function ErrorPageContent(props) {
     const look = ERROR_PAGE_LOOK[kind] ?? ERROR_PAGE_LOOK[ERROR_PAGE_KIND.serverError];
 
     return (
-        <ErrorRoot spacing={2} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
+        <ErrorRoot sx={sx} spacing={2} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
             {icon ?? <look.Icon color={look.color} sx={{fontSize: ICON_PIXELS}} />}
             <Typography variant="h4" component="h1">{title ?? t(`${kind}.title`)}</Typography>
             <Typography variant="body1" color="text.secondary">{text ?? t(`${kind}.text`)}</Typography>

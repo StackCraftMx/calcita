@@ -19,15 +19,16 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {boolean} [props.showLanguageToggle]
  * @param {boolean} [props.showColorSchemeToggle]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el marco (AuthLayout)
  */
-export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts, ...unknownProps}) {
+export default function ForgotPasswordScreen({signInPath, logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts, sx, ...unknownProps}) {
     warnUnknownProps('ForgotPasswordScreen', unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     const {connector} = useAccount();
 
     return (
         <ComponentTexts namespace="auth" texts={texts}>
-            <AuthLayout logo={logo} brandName={brandName} title={t('forgotPassword.title')} description={t('forgotPassword.subtitle')}
+            <AuthLayout sx={sx} logo={logo} brandName={brandName} title={t('forgotPassword.title')} description={t('forgotPassword.subtitle')}
                         showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
                 <ForgotPasswordForm onSubmit={connector.requestPasswordReset} signInPath={signInPath} />
             </AuthLayout>

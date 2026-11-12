@@ -35,15 +35,16 @@ const DetailActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {import('react').ReactNode} [props.badges] insignias junto al título (chips de estatus, intento...)
  * @param {import('react').ReactNode} [props.actions] botones a la derecha
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function DetailHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDetailHeader.defaultProps) y encima lo que llega aquí
-    const {title, eyebrow, badges, actions, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {title, eyebrow, badges, actions, documentTitle, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(title, titleRef);
     return (
-        <DetailRoot component="header" ownSx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 2, mb: 2.5}}>
+        <DetailRoot sx={sx} component="header" ownSx={{display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 2, mb: 2.5}}>
             <DocumentTitle title={documentTitle ?? title} />
             <DetailTitleArea ownSx={{minWidth: 0}}>
                 {/* el contexto se lee de un vistazo (en overline se veía

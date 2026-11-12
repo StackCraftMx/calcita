@@ -55,11 +55,12 @@ const IGNORED_CLOSE_REASONS = new Set(['backdropClick', 'escapeKeyDown']);
  * @param {string} [props.acceptLabel] ya traducido; por omisión «Acepto»
  * @param {string} [props.declineLabel] ya traducido; por omisión «No acepto»
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function TermsAcceptanceDialogContent(props) {
     const {
         open, version, onAccept, onDecline, title, children, pdfSrc, requireReading = true, checkboxLabel, acceptLabel, declineLabel, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -106,7 +107,7 @@ function TermsAcceptanceDialogContent(props) {
     };
 
     return (
-        <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={titleId}
+        <Dialog sx={sx} open={open} maxWidth="md" fullWidth aria-labelledby={titleId}
                 onClose={(event, reason) => !IGNORED_CLOSE_REASONS.has(reason) && onDecline()}>
             <DialogTitle id={titleId}>
                 {title ?? t('legal.terms.title')}

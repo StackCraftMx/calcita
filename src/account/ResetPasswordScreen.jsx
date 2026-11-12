@@ -27,10 +27,11 @@ import {warnUnknownProps} from '@/toolkit/unknownProps.js';
  * @param {boolean} [props.showLanguageToggle]
  * @param {boolean} [props.showColorSchemeToggle]
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el marco (AuthLayout)
  */
 export default function ResetPasswordScreen({
     signInPath, forgotPasswordPath, tokenParam = 'token', logo, brandName, showLanguageToggle = true, showColorSchemeToggle = true, texts,
-    ...unknownProps
+    sx, ...unknownProps
 }) {
     warnUnknownProps('ResetPasswordScreen', unknownProps);
     const {t} = useToolkitTranslation('account', texts);
@@ -46,7 +47,7 @@ export default function ResetPasswordScreen({
     };
 
     return (
-        <AuthLayout logo={logo} brandName={brandName} title={t('reset.title')} description={t('reset.subtitle')}
+        <AuthLayout sx={sx} logo={logo} brandName={brandName} title={t('reset.title')} description={t('reset.subtitle')}
                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle}>
             {!token && (
                 <Stack spacing={2}>

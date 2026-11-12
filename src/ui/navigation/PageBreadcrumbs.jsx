@@ -28,10 +28,11 @@ const BreadcrumbsCurrent = piecePart(THEME_NAME, 'Current', Typography);
  * @param {object} props
  * @param {Array<{label: string, to?: string}>} props.items textos ya traducidos
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function PageBreadcrumbsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageBreadcrumbs.defaultProps) y encima lo que llega aquí
-    const {items, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {items, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {Link: RouterLink} = useToolkitNavigation();
@@ -40,7 +41,7 @@ function PageBreadcrumbsContent(props) {
     }
     return (
         <ScrollableRow py={0}>
-            <BreadcrumbsRoot aria-label={t('breadcrumbs')} separator={<NavigateNextIcon fontSize="small" />}
+            <BreadcrumbsRoot sx={sx} aria-label={t('breadcrumbs')} separator={<NavigateNextIcon fontSize="small" />}
                          ownSx={{...textSizeOf(13), color: 'text.secondary', flex: '0 0 auto', '& .MuiBreadcrumbs-ol': {flexWrap: 'nowrap'},
                               '& .MuiBreadcrumbs-li': {flex: '0 0 auto'}}}>
                 {items.map((item, index) => {

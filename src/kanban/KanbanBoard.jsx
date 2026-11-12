@@ -259,12 +259,13 @@ function QuickAdd({columnTitle, onAdd, onClose, t}) {
  * @param {(columnId: string, collapsed: boolean) => void} [props.onColumnCollapse] cada que una columna se encoge o se abre
  * @param {string} props.ariaLabel ya traducido
  * @param {object} [props.texts] los textos que cambian, con la forma de `kanban` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function KanbanBoardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaKanbanBoard.defaultProps) y encima lo que llega aquí
     const {
     columns, cards, onMove, renderCard, onCardClick, onAddCard, cardActions, columnActions, onCardComplete, onColumnCollapse, ariaLabel, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('kanban', texts);
@@ -311,7 +312,7 @@ function KanbanBoardContent(props) {
 
     return (
         <DragDropContext onDragStart={announceStart} onDragUpdate={announceUpdate} onDragEnd={finishMove} dragHandleUsageInstructions={t('instructions')}>
-            <KanbanRoot role="region" aria-label={ariaLabel} ownSx={{
+            <KanbanRoot sx={sx} role="region" aria-label={ariaLabel} ownSx={{
                 display: 'flex', gap: 2, overflowX: 'auto', pb: 1, scrollSnapType: 'x proximity', alignItems: 'flex-start',
             }}>
                 {columns.map((column) => {

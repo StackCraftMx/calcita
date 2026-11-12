@@ -181,10 +181,11 @@ function PageListbox({children: pageOptions, ref, pageCount, pageListRef, pageIn
  * @param {number} props.pageCount
  * @param {(page: number) => void} props.onChange
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function GoToPageContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaGoToPage.defaultProps) y encima lo que llega aquí
-    const {page, pageCount, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {page, pageCount, onChange, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
     const {formatNumber} = useFormatters();
@@ -209,7 +210,7 @@ function GoToPageContent(props) {
     return (
         // centrado como la fila de la paginación de MUI («Filas por página» y su lista): con baseline el número quedaba más
         // abajo que «Página»
-        <GoToRoot direction="row" spacing={0.75} ownSx={(theme) => ({alignItems: 'center', fontSize: theme.typography.pxToRem(PAGINATION_FONT_PIXELS)})}>
+        <GoToRoot sx={sx} direction="row" spacing={0.75} ownSx={(theme) => ({alignItems: 'center', fontSize: theme.typography.pxToRem(PAGINATION_FONT_PIXELS)})}>
             <Typography variant="body2" noWrap>{t('goToPage.page')}</Typography>
             <GoToField
                 size="small"

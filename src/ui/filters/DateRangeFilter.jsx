@@ -55,12 +55,13 @@ const RangeActions = piecePart(THEME_NAME, 'Actions', Stack);
  * @param {(fix: ReturnType<typeof import('@/inputs/fieldLimits.js').limitFixOf> & {end: 'from'|'to'}) => void} [props.onLimitFix]
  *     con fix, cada vez que se corrige sola: qué extremo, qué tope, qué se había tecleado y en qué quedó
  * @param {object} [props.texts] los textos que cambian, con la forma de `table` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el chip que se ve, encima de los del tema
  */
 function DateRangeFilterContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDateRangeFilter.defaultProps) y encima lo que llega aquí
     const {
         from = '', to = '', onChange, label, minDate, maxDate, disablePast = false, disableFuture = false, limitMode, onLimitFix, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('table', texts);
@@ -140,7 +141,7 @@ function DateRangeFilterContent(props) {
 
     return (
         <>
-            <RangeChip icon={<DateRangeOutlinedIcon />} label={summary} clickable onClick={open}
+            <RangeChip sx={sx} icon={<DateRangeOutlinedIcon />} label={summary} clickable onClick={open}
                   variant={isActive ? 'filled' : 'outlined'} color={isActive ? 'primary' : 'default'}
                   onDelete={isActive ? clear : undefined} ownSx={{flex: '0 0 auto', height: 32}} />
             <Popover open={Boolean(anchorElement)} anchorEl={anchorElement} onClose={close} anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>

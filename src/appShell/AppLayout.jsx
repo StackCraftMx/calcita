@@ -226,7 +226,7 @@ const CollapseMenuButton = ({collapsed, onToggle}) => {
 const AppLayoutFrame = ({
     logo, wordmark, brandName, brandCaption, homePath, menuItems, menuPosition, user, profilePath, accountMenuItems, onSignOut, isSigningOut, headerActions,
     accountSettings, menuBadges, sidebarFooter, showFontSizeToggle, showLanguageToggle, showColorSchemeToggle, ribbons, isNavigating, defaultCollapsed, minimizeTabBarOnScroll, contentMaxWidth,
-    menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, scrollRestoration, declaredPath, children,
+    menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange, onMobileTabsChange, scrollRestoration, declaredPath, sx, children,
 }) => {
     const {t} = useToolkitTranslation('layout');
     const {useLocation} = useToolkitNavigation();
@@ -286,7 +286,7 @@ const AppLayoutFrame = ({
 
     return (
         <BarActionsSlotContext.Provider value={barActions}>
-        <LayoutRoot ownSx={[{display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default'}, isGlass && ambientBackgroundOf]}>
+        <LayoutRoot sx={sx} ownSx={[{display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default'}, isGlass && ambientBackgroundOf]}>
             <SkipToContentLink />
             <GlassLensFilter />
 
@@ -523,6 +523,7 @@ const AppLayoutFrame = ({
  *     También desde el tema: components.CalcitaAppLayout.defaultProps
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete (para todo el marco)
  * @param {import('react').ReactNode} props.children el contenido
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del marco, encima de los del tema
  */
 const AppLayoutContent = (props) => {
     // lo que el proyecto puso en su tema (components.CalcitaAppLayout.defaultProps) y encima lo que llega aquí
@@ -530,7 +531,7 @@ const AppLayoutContent = (props) => {
     logo, wordmark, brandName, brandCaption, homePath = '/', menuItems = [], menuPosition = MENU_POSITION.side, user = null, profilePath, accountMenuItems = [], onSignOut,
     isSigningOut = false, headerActions, accountSettings, menuBadges, sidebarFooter, showFontSizeToggle = true, showLanguageToggle = true, showColorSchemeToggle = true, ribbons,
     isNavigating = false, defaultCollapsed = false, minimizeTabBarOnScroll = true, contentMaxWidth = 1400, menuLabelOverflow, maxMobileTabs, onMenuCollapse, onMobileMenuChange,
-    onMobileTabsChange, scrollRestoration = true, texts, children,
+    onMobileTabsChange, scrollRestoration = true, texts, children, sx,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
@@ -551,7 +552,7 @@ const AppLayoutContent = (props) => {
                                     showLanguageToggle={showLanguageToggle} showColorSchemeToggle={showColorSchemeToggle} ribbons={ribbons}
                                     isNavigating={isNavigating} defaultCollapsed={defaultCollapsed} minimizeTabBarOnScroll={minimizeTabBarOnScroll}
                                     contentMaxWidth={contentMaxWidth} menuLabelOverflow={menuLabelOverflow} maxMobileTabs={maxMobileTabs} onMenuCollapse={onMenuCollapse} onMobileMenuChange={onMobileMenuChange}
-                                    onMobileTabsChange={onMobileTabsChange} scrollRestoration={scrollRestoration} declaredPath={declaredPath}>
+                                    onMobileTabsChange={onMobileTabsChange} scrollRestoration={scrollRestoration} declaredPath={declaredPath} sx={sx}>
                         {children}
                     </AppLayoutFrame>
                 </AppMenuContext.Provider>

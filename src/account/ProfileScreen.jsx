@@ -128,12 +128,13 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
  * @param {(saved: {values: Record<string, any>, response: unknown}) => void} [props.onProfileSaved] después de guardar «Sus datos»
  * @param {object} [props.texts] los textos que cambian, con la forma de `account` en los textos del paquete:
  *     {profile: {tabs: {data: 'Mis datos'}}}
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function ProfileScreenContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileScreen.defaultProps) y encima lo que llega aquí
     const {
     showColorScheme = true, extraFields, extraTabs = [], hiddenTabs = [], onTabChange, onProfileSaved, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('account', texts);
@@ -160,7 +161,7 @@ function ProfileScreenContent(props) {
     }
 
     return (
-        <Stack spacing={2}>
+        <Stack sx={sx} spacing={2}>
             <ProfileHeader name={session.user.name} email={session.user.email} subtitle={session.user.subtitle} avatarUrl={session.user.avatarUrl}
                            chips={session.labels ?? []} />
             <Tabs value={activeTab} onChange={(event, tab) => changeTab(tab)} aria-label={t('profile.tabs.label')}

@@ -60,6 +60,7 @@ const DownloadButton = piecePart(THEME_NAME, 'Button', Button);
  * @param {(format: string) => void} [props.onChooseFormat] quien llama se encarga de confirmar y descargar
  * @param {import('react').ElementType} [props.icon] ícono del botón; por defecto el de descarga. Distingue dos descargas en la
  *     misma fila
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en lo que se ve (el botón o la opción del menú «⋯»), encima de los del tema
  *
  * IMPORTANTE: hay que pasar `confirmation` u `onChooseFormat`. Sin ninguno de los dos el menú no descarga nada (regla de
  * tablas: toda descarga pasa por confirmación).
@@ -73,7 +74,7 @@ function DownloadMenuContent(props) {
     const {
     formats, download, label, downloadLabel, disabled = false, confirmation, onDownloaded, onFailed, onCanceled, variant = 'button', ariaLabel,
     onChooseFormat, icon: ButtonIcon = FileDownloadOutlinedIcon,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common');
@@ -131,7 +132,7 @@ function DownloadMenuContent(props) {
     return (
         <>
             {placement === BAR_ACTIONS_PLACEMENT.menu && (
-                <MenuItem disabled={disabled} aria-haspopup="menu" onClick={openFromMoreMenu}>
+                <MenuItem sx={sx} disabled={disabled} aria-haspopup="menu" onClick={openFromMoreMenu}>
                     <ListItemIcon><ButtonIcon /></ListItemIcon>
                     <ListItemText>{buttonLabel}</ListItemText>
                 </MenuItem>
@@ -140,7 +141,7 @@ function DownloadMenuContent(props) {
                 // en la cápsula, del tamaño y color de las demás acciones (BarActionButton)
                 <Tooltip title={buttonLabel} describeChild>
                     <span>
-                        <IconButton color="primary" aria-label={buttonLabel} aria-haspopup="menu" aria-expanded={isFormatsOpen}
+                        <IconButton sx={sx} color="primary" aria-label={buttonLabel} aria-haspopup="menu" aria-expanded={isFormatsOpen}
                                     disabled={disabled} onClick={openMenu}>
                             <ButtonIcon />
                         </IconButton>
@@ -153,14 +154,14 @@ function DownloadMenuContent(props) {
                 <Tooltip title={ariaLabel ?? buttonLabel} describeChild>
                     {/* el span deja que el tooltip funcione con el botón inhabilitado */}
                     <span>
-                        <IconButton size="small" aria-label={ariaLabel ?? buttonLabel} aria-haspopup="menu"
+                        <IconButton sx={sx} size="small" aria-label={ariaLabel ?? buttonLabel} aria-haspopup="menu"
                                     disabled={disabled} onClick={openMenu}>
                             <ButtonIcon fontSize="small" />
                         </IconButton>
                     </span>
                 </Tooltip>
             ) : (
-                <DownloadButton variant="outlined" startIcon={<ButtonIcon />} endIcon={<ArrowDropDownIcon />}
+                <DownloadButton sx={sx} variant="outlined" startIcon={<ButtonIcon />} endIcon={<ArrowDropDownIcon />}
                         ownSx={{flexShrink: 0}} disabled={disabled} aria-haspopup="menu" onClick={openMenu}>
                     {buttonLabel}
                 </DownloadButton>

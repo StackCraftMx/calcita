@@ -28,15 +28,16 @@ const DefinitionValue = piecePart(THEME_NAME, 'Value', Typography);
  *     llave
  * @param {'columns'|'stacked'} [props.layout]
  * @param {number} [props.labelWidth] ancho en px de la columna del dato (solo columns)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function DefinitionListContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaDefinitionList.defaultProps) y encima lo que llega aquí
-    const {entries, layout = 'columns', labelWidth = 150, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {entries, layout = 'columns', labelWidth = 150, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const isStacked = layout === 'stacked';
 
     return (
-        <DefinitionRoot component="dl" ownSx={{
+        <DefinitionRoot sx={sx} component="dl" ownSx={{
             m: 0, display: 'grid',
             gridTemplateColumns: isStacked ? 'minmax(0, 1fr)' : `${labelWidth}px minmax(0, 1fr)`,
             columnGap: 2, rowGap: isStacked ? 0.25 : 1,

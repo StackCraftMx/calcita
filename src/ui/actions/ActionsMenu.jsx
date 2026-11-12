@@ -79,10 +79,11 @@ function levelOf(actions, path) {
  * @param {import('react').ReactNode} [props.icon] otro ícono para el botón (por omisión «⋯»)
  * @param {'small'|'medium'} [props.size]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function ActionsMenuContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActionsMenu.defaultProps) y encima lo que llega aquí
-    const {label, actions, icon, size = 'small', texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {label, actions, icon, size = 'small', texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     // las pantallas de la app (to) van con el enlace de la navegación del proyecto: así el clic normal no recarga la app
@@ -112,7 +113,7 @@ function ActionsMenuContent(props) {
     return (
         <>
             <Tooltip title={label}>
-                <ActionsButton size={size} aria-label={label} aria-haspopup="menu"
+                <ActionsButton sx={sx} size={size} aria-label={label} aria-haspopup="menu"
                                onClick={(event) => {
                                    event.stopPropagation();
                                    setAnchor(event.currentTarget);

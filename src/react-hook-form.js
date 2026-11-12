@@ -21,6 +21,8 @@ export {default as FormMaskedField} from '@/hookForm/FormMaskedField.jsx';
 export {default as FormNumberField} from '@/hookForm/FormNumberField.jsx';
 export {default as FormProblemAlert} from '@/hookForm/FormProblemAlert.jsx';
 export {default as FormRepeatingFields} from '@/hookForm/FormRepeatingFields.jsx';
+export {default as EditableRows} from '@/hookForm/EditableRows.jsx';
+export {useEditableServerRows} from '@/hookForm/useEditableServerRows.jsx';
 export {default as FormTransferListField} from '@/hookForm/FormTransferListField.jsx';
 // las reglas de listas son las mismas de /forms (no dependen de formik): sirven con yupResolver
 export {listTotalAtMostRule, listTotalOf, orderedInListRule, uniqueInListRule} from '@/forms/listRules.js';

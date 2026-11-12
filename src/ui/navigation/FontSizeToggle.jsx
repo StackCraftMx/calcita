@@ -27,10 +27,11 @@ const FontSizeButton = piecePart(THEME_NAME, 'Button', IconButton);
  * @param {'small'|'medium'} [props.size]
  * @param {(level: string) => void} [props.onChange] la persona eligió otro tamaño (FONT_SIZE_LEVELS; para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `layout` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function FontSizeToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFontSizeToggle.defaultProps) y encima lo que llega aquí
-    const {size = 'small', onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {size = 'small', onChange, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('layout', texts);
     const {level, setLevel, isMounted, levels} = useFontSize();
@@ -38,7 +39,7 @@ function FontSizeToggleContent(props) {
 
     // antes de montar no se sabe el nivel guardado: se reserva el lugar para que la barra no brinque
     if (!isMounted) {
-        return <FontSizeButton size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
+        return <FontSizeButton sx={sx} size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
     }
 
     const chooseLevel = (levelKey) => {
@@ -50,7 +51,7 @@ function FontSizeToggleContent(props) {
     return (
         <>
             <Tooltip title={t('fontSize.label')}>
-                <IconButton size={size} aria-label={t('fontSize.label')} aria-haspopup="menu" onClick={(event) => setAnchorElement(event.currentTarget)}>
+                <IconButton sx={sx} size={size} aria-label={t('fontSize.label')} aria-haspopup="menu" onClick={(event) => setAnchorElement(event.currentTarget)}>
                     <FormatSizeIcon fontSize="small" />
                 </IconButton>
             </Tooltip>

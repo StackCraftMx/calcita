@@ -173,7 +173,24 @@ export default Object.freeze({
             "confirmTitle": "Remove «{{row}}»?",
             "confirmText": "It was already saved: it is really removed when the form is saved.",
             "blockedTitle": "It cannot be removed",
-            "understood": "Got it"
+            "understood": "Got it",
+            "rowHeader": "Row",
+            "actionsHeader": "Actions",
+            "confirmTextNow": "It is removed right away.",
+            "saveRow": "Save «{{row}}»",
+            "discardRow": "Undo the changes to «{{row}}»"
+        },
+        "editableTable": {
+            "pending_one": "{{count}} row with unsaved changes.",
+            "pending_other": "{{count}} rows with unsaved changes.",
+            "saveAll": "Save all",
+            "discardAll": "Discard",
+            "notSaved_one": "{{count}} row was not saved: check its errors.",
+            "notSaved_other": "{{count}} rows were not saved: check their errors.",
+            "confirmTitle": "Discard the unsaved changes?",
+            "confirmText_one": "There is {{count}} row with unsaved changes; if you continue, they are lost.",
+            "confirmText_other": "There are {{count}} rows with unsaved changes; if you continue, they are lost.",
+            "discardAndContinue": "Discard and continue"
         },
         "transfer": {
             "available": "Available",

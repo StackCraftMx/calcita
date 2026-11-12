@@ -77,10 +77,11 @@ function DetailRow({Icon, label, children}) {
  * @param {import('react').ReactNode} [props.actions] botones de la pantalla (editar, borrar, responder…)
  * @param {string} [props.titleId] el id del título: la ventana que lo contiene se nombra con él (aria-labelledby)
  * @param {object} [props.texts] los textos que cambian, con la forma de `calendar` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function EventDetailsContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaEventDetails.defaultProps) y encima lo que llega aquí
-    const {event, actions, titleId, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {event, actions, titleId, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('calendar', texts);
     const {formatDate, formatTime} = useFormatters();
@@ -93,7 +94,7 @@ function EventDetailsContent(props) {
     const canJoin = isOpenableMeetingUrl(event.meetingUrl);
 
     return (
-        <Stack spacing={2}>
+        <Stack sx={sx} spacing={2}>
             <EventTitleRow direction="row" spacing={1.5} ownSx={{alignItems: 'center'}}>
                 <EventToneDot aria-hidden="true" ownSx={{width: 12, height: 12, borderRadius: '4px', flexShrink: 0, bgcolor: `${event.tone ?? 'primary'}.main`}} />
                 <Typography id={titleId} variant="h6" component="h2">{event.title}</Typography>

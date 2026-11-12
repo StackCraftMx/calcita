@@ -31,15 +31,16 @@ const WaitingText = piecePart(THEME_NAME, 'Text', DialogContentText);
  * @param {string} [props.title] ya traducido; por omisión common:waiting.title
  * @param {string} [props.text] ya traducido; por omisión common:waiting.text
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function ModalWaitingContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaModalWaiting.defaultProps) y encima lo que llega aquí
-    const {open, title, text, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {open, title, text, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
 
     return (
-        <WaitingRoot open={open} disableEscapeKeyDown aria-busy="true" ownSx={{zIndex: (theme) => theme.zIndex.tooltip + 10}}>
+        <WaitingRoot sx={sx} open={open} disableEscapeKeyDown aria-busy="true" ownSx={{zIndex: (theme) => theme.zIndex.tooltip + 10}}>
             <WaitingTitle ownSx={{textAlign: 'center'}}>{title ?? t('waiting.title')}</WaitingTitle>
             <DialogContent>
                 <WaitingBody spacing={2} ownSx={{alignItems: 'center'}}>

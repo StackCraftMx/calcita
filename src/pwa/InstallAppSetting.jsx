@@ -29,8 +29,9 @@ const InstallRoot = piecePart(THEME_NAME, 'Root', Box);
 /**
  * @param {object} [props]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
-function InstallAppSettingContent({texts, ...unknownProps} = {}) {
+function InstallAppSettingContent({texts, sx, ...unknownProps} = {}) {
     warnUnknownProps('InstallAppSetting', unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {variant, promptInstall} = useInstallPrompt();
@@ -50,7 +51,7 @@ function InstallAppSettingContent({texts, ...unknownProps} = {}) {
 
     return (
         <ComponentTexts namespace="common" texts={texts}>
-            <InstallRoot ownSx={{px: 1, py: 0.5}}>
+            <InstallRoot sx={sx} ownSx={{px: 1, py: 0.5}}>
                 <Button fullWidth variant="outlined" startIcon={<InstallMobileRoundedIcon />} onClick={handleClick}>
                     {t('install.menuLabel')}
                 </Button>

@@ -45,13 +45,14 @@ const ConfirmActions = piecePart(THEME_NAME, 'Actions', DialogActions);
  * @param {() => void} props.onClose
  * @param {import('react').ReactNode} [props.children]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function ConfirmDialogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaConfirmDialog.defaultProps) y encima lo que llega aquí
     const {
     open, title, description, confirmLabel, cancelLabel, tone = 'primary',
     isPending = false, isConfirmDisabled = false, errorMessage = null, onConfirm, onClose, children, texts,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -67,7 +68,7 @@ function ConfirmDialogContent(props) {
     };
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth
+        <Dialog sx={sx} open={open} onClose={handleClose} maxWidth="xs" fullWidth
                 aria-labelledby={`${dialogId}-title`} aria-describedby={`${dialogId}-description`}>
             <DialogTitle id={`${dialogId}-title`}>{title}</DialogTitle>
             <DialogContent>

@@ -72,10 +72,11 @@ function isOutOfAttempts(error) {
  * @param {import('react').ReactNode} [props.footer] abajo del botón, dentro del formulario: puede llenar el código con
  *     useFormikContext (p. ej. el atajo de los ejemplos)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna del formulario
  */
 function SecondStepFormContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSecondStepForm.defaultProps) y encima lo que llega aquí
-    const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {methods, canUsePasskeys = false, onUsePasskey, onSubmitCode, onCancel, footer, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const hasApp = methods.includes(SECOND_STEP_METHOD.totp);
@@ -129,7 +130,7 @@ function SecondStepFormContent(props) {
     };
 
     return (
-        <Stack spacing={2.5}>
+        <Stack sx={sx} spacing={2.5}>
             <Typography variant="body2" color="text.secondary">{t('secondStep.intro')}</Typography>
 
             {hasPasskey && (

@@ -124,13 +124,14 @@ function DefaultPopupContent({marker}) {
  * @param {(position: [number, number]) => void} [props.onMapClick] al picar el mapa fuera de un marcador
  * @param {import('react').ReactNode} [props.children] capas propias de react-leaflet (Circle, Polygon, GeoJSON…)
  * @param {object} [props.mapProps] lo demás de MapContainer de react-leaflet (scrollWheelZoom, minZoom…)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function MapViewContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaMapView.defaultProps) y encima lo que llega aquí
     const {
     markers, selectedId = null, onSelect, ariaLabel, height = DEFAULT_HEIGHT_PIXELS, tileLayer = OPEN_STREET_MAP_TILES, renderPopup, onMapClick,
     children, mapProps,
-    ...unknownProps
+    sx, ...unknownProps
 } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const theme = useTheme();
@@ -148,7 +149,7 @@ function MapViewContent(props) {
     };
 
     return (
-        <MapRoot role="region" aria-label={ariaLabel} ownSx={(currentTheme) => ({
+        <MapRoot sx={sx} role="region" aria-label={ariaLabel} ownSx={(currentTheme) => ({
             height, borderRadius: 3, overflow: 'hidden', position: 'relative', zIndex: 0,
             '& .leaflet-container': {height: '100%', width: '100%', fontFamily: 'inherit', bgcolor: 'action.hover'},
             '& .leaflet-bar': {border: 0, borderRadius: '10px', overflow: 'hidden', boxShadow: currentTheme.shadows[2]},

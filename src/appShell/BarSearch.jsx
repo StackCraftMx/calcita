@@ -19,7 +19,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import BarActions from '@/appShell/BarActions.jsx';
 import {BAR_CAPSULE_HEIGHT_PIXELS} from '@/appShell/BarCapsule.jsx';
 import {PHONE_MEDIA_QUERY} from '@/appShell/shellSizes.js';
-import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
+import {piecePart, usePieceProps, withPieceSlots, sxListOf} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
 // el nombre de la pieza en el tema y sus partes (theme.components.CalcitaBarSearch)
@@ -44,10 +44,11 @@ const SEARCH_IN_BAR_WIDTH_PIXELS = 380;
  * @param {() => void} [props.onFocus]
  * @param {() => void} [props.onBlur]
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef] la caja, para enfocarla desde afuera (un atajo «/»)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el lugar de la búsqueda, encima de los de Calcita
  */
 function BarSearchContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaBarSearch.defaultProps) y encima lo que llega aquí
-    const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {value, onChange, placeholder, inBar = true, collapsible = true, order = 0, onFocus, onBlur, inputRef, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const [isFocused, setIsFocused] = useState(false);
     // en la barra, chica cuando no se usa: ni tiene el foco ni tiene texto
@@ -97,7 +98,7 @@ function BarSearchContent(props) {
     // 12 px y no en cápsula; medido en Chrome). La lupa no atrapa el clic: lo deja pasar a la caja, que es la que se enfoca
     return (
         <BarActions label={placeholder} bare order={order}
-                    sx={(theme) => ({
+                    sx={[(theme) => ({
                         // en el teléfono flota arriba junto a las demás cápsulas. Su lugar SIEMPRE ocupa lo libre del renglón y
                         // la caja va pegada a la derecha: así se abre de derecha a izquierda y regresa igual (el ancho pasa de 48 px
                         // a 100 % con transición). OJO: antes el lugar brincaba de golpe (flex-grow no se anima) y la caja crecía
@@ -118,7 +119,7 @@ function BarSearchContent(props) {
                         },
                         '& .MuiInputAdornment-root': {pointerEvents: 'none'},
                         '& input::placeholder': {opacity: isCompact ? 0 : undefined},
-                    })}>
+                    }), ...sxListOf(sx)]}>
             {searchBox}
         </BarActions>
     );

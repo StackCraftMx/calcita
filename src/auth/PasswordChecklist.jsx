@@ -36,14 +36,15 @@ const SCREEN_READER_ONLY_SX = {
  * @param {object} [props.policy] las reglas; por omisión DEFAULT_PASSWORD_POLICY
  * @param {string} [props.id]
  * @param {object} [props.texts] los textos que cambian, con la forma de `auth` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la caja de afuera de la pieza
  */
 function PasswordChecklistContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPasswordChecklist.defaultProps) y encima lo que llega aquí
-    const {password, policy = DEFAULT_PASSWORD_POLICY, id, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {password, policy = DEFAULT_PASSWORD_POLICY, id, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('auth', texts);
     return (
-        <Box id={id}>
+        <Box sx={sx} id={id}>
             <ChecklistTitle variant="caption" color="text.secondary" component="p" ownSx={{mb: 0.5}}>{t('passwordRules.title')}</ChecklistTitle>
             <ChecklistList component="ul" ownSx={{listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 0.5}}>
                 {passwordChecksOf(password, policy).map((check) => (

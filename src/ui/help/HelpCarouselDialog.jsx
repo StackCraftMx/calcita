@@ -58,11 +58,12 @@ const HelpActions = piecePart(THEME_NAME, 'Actions', DialogActions);
  * @param {(index: number) => void} [props.onStepChange]
  * @param {number} [props.initialStep]
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del diálogo, como el sx del Dialog de MUI
  */
 function HelpCarouselDialogContent(props) {
     const {
         open, onClose, steps, title, showDontShowAgain = true, onStepChange, initialStep = 0, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
@@ -96,7 +97,7 @@ function HelpCarouselDialogContent(props) {
         return null;
     }
     return (
-        <Dialog
+        <Dialog sx={sx}
             open={open}
             onClose={() => close(HELP_CLOSE_REASON.closed)}
             maxWidth="sm"

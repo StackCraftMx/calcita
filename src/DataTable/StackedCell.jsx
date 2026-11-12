@@ -66,15 +66,16 @@ function visibleEntriesOf(entries) {
  *
  * @param {object} props
  * @param {StackedEntry[]} props.entries los datos en orden: el primero es el principal (negritas)
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  * @returns {import('react').JSX.Element}
  */
 function StackedCellContent(props) {
-    const {entries, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {entries, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps('StackedCell', unknownProps);
     const {t} = useToolkitTranslation('table');
 
     return (
-        <StackedRoot ownSx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 0.25, minWidth: 0, py: 0.75}}>
+        <StackedRoot sx={sx} ownSx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 0.25, minWidth: 0, py: 0.75}}>
             {visibleEntriesOf(entries ?? []).map((entry, index) => {
                 const isPrimary = index === 0;
                 const Value = isPrimary ? StackedPrimary : StackedSecondary;

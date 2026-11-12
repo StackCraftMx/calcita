@@ -67,14 +67,15 @@ const cardSurfaceOf = (theme) => (isGlassTheme(theme)
  * @param {import('react').ReactNode} [props.footer] debajo de la tarjeta (los botones de prueba, el aviso de privacidad…)
  * @param {boolean} [props.showLanguageToggle] por omisión sí
  * @param {boolean} [props.showColorSchemeToggle] por omisión sí
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 const AuthLayoutContent = (props) => {
     // lo que el proyecto puso en su tema (components.CalcitaAuthLayout.defaultProps) y encima lo que llega aquí
-    const {logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {logo, brandName, title, description, children, footer, showLanguageToggle = true, showColorSchemeToggle = true, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {appName} = useToolkitSettings();
     return (
-        <AuthRoot ownSx={[{minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default'},
+        <AuthRoot sx={sx} ownSx={[{minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default'},
             (theme) => (isGlassTheme(theme) ? ambientBackgroundOf(theme) : {})]}>
             <DocumentTitle title={title} />
             <GlassLensFilter />

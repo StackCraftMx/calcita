@@ -255,10 +255,11 @@ function SettingRow({Icon, title, caption, captionColor = 'text.secondary', acti
  * @param {import('react').ReactNode} [props.passkeyNotice] un aviso en el diálogo de crear la llave, antes de que el
  *     navegador la guarde (p. ej. el de la demostración: la llave queda de verdad en el llavero de la persona)
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la tarjeta (SectionCard)
  */
 function TwoStepVerificationCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaTwoStepVerification.defaultProps) y encima lo que llega aquí
-    const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {security, onSecurityChange, actions, canUsePasskeys = false, account, passkeyNotice, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
@@ -295,7 +296,7 @@ function TwoStepVerificationCardContent(props) {
 
     return (
         <ComponentTexts namespace="security" texts={texts}>
-            <SectionCard title={t('twoStep.title')}>
+            <SectionCard sx={sx} title={t('twoStep.title')}>
                 <Stack spacing={2}>
                     <Typography variant="body2" color="text.secondary">{t('twoStep.description')}</Typography>
                     <Box>

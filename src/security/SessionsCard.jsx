@@ -83,10 +83,11 @@ function SessionRow({session}) {
  * @param {() => Promise<number>} props.onCloseOthers cierra las demás; regresa cuántas cerró
  * @param {() => void} [props.onClosed] p. ej. volver a pedir la lista
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la tarjeta (SectionCard)
  */
 function SessionsCardContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaSessionsCard.defaultProps) y encima lo que llega aquí
-    const {sessions, error = null, onCloseOthers, onClosed, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {sessions, error = null, onCloseOthers, onClosed, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const othersCount = (sessions ?? []).filter((session) => !session.isCurrent).length;
@@ -100,7 +101,7 @@ function SessionsCardContent(props) {
 
     return (
         <ComponentTexts namespace="security" texts={texts}>
-            <SectionCard title={t('sessions.title')}>
+            <SectionCard sx={sx} title={t('sessions.title')}>
                 <Stack spacing={2}>
                     <Typography variant="body2" color="text.secondary">{t('sessions.description')}</Typography>
                     {error && <Alert severity="error">{error}</Alert>}

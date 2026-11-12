@@ -31,15 +31,16 @@ const HeaderAction = piecePart(THEME_NAME, 'Action', Box);
  * @param {import('react').ReactNode} [props.subtitle]
  * @param {import('react').ReactNode} [props.action] normalmente un <Button variant="contained" shape="pill">
  * @param {string} [props.documentTitle] título de la pestaña si difiere del visible
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function PageHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPageHeader.defaultProps) y encima lo que llega aquí
-    const {title, eyebrow, subtitle, action, documentTitle, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {title, eyebrow, subtitle, action, documentTitle, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(title, titleRef);
     return (
-        <HeaderRoot component="header" spacing={1.25} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 3, md: 4}}}>
+        <HeaderRoot sx={sx} component="header" spacing={1.25} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 3, md: 4}}}>
             <DocumentTitle title={documentTitle ?? title} />
             {/* text.secondary y no text.disabled: el eyebrow se lee, WCAG no lo exime (disabled daba 2.57:1 sobre el lienzo) */}
             {eyebrow && (

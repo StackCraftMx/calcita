@@ -69,15 +69,16 @@ function PeriodSelect({id, label, value, options, onChange}) {
  * @param {string} props.fromLabel ya traducido
  * @param {string} props.toLabel ya traducido
  * @param {(range: {from: string, to: string}) => void} props.onChange
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function PeriodRangeSelectorContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaPeriodRangeSelector.defaultProps) y encima lo que llega aquí
-    const {id, options, from, to, fromLabel, toLabel, onChange, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {id, options, from, to, fromLabel, toLabel, onChange, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const endOptions = rangeEndOptionsOf(options, from);
 
     return (
-        <PeriodRoot direction="row" spacing={1.5} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
+        <PeriodRoot sx={sx} direction="row" spacing={1.5} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
             <PeriodSelect id={`${id}-from`} label={fromLabel} value={from} options={options}
                           onChange={(nextFrom) => onChange({from: nextFrom, to: rangeEndAfterStartChange(options, nextFrom, to)})} />
             <PeriodSelect id={`${id}-to`} label={toLabel} value={to} options={endOptions}

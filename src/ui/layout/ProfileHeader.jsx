@@ -64,16 +64,17 @@ const coverOf = (theme) => {
  * @param {string} [props.avatarUrl] su foto; sin ella, sus iniciales
  * @param {string[]} [props.chips] sus perfiles o etiquetas, ya traducidos
  * @param {import('react').ReactNode} [props.actions] los botones de la derecha
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla, encima de los del tema (en su parte root)
  */
 function ProfileHeaderContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaProfileHeader.defaultProps) y encima lo que llega aquí
-    const {name, email, subtitle, avatarUrl, chips = [], actions, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {name, email, subtitle, avatarUrl, chips = [], actions, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const titleRef = useRef(null);
     useRegisterPageTitle(name, titleRef);
 
     return (
-        <ProfileRoot variant="outlined" ownSx={{overflow: 'hidden', mb: 3}}>
+        <ProfileRoot sx={sx} variant="outlined" ownSx={{overflow: 'hidden', mb: 3}}>
             <DocumentTitle title={name} />
             <ProfileCover ownSx={coverOf} />
             <ProfileBody direction={{xs: 'column', sm: 'row'}} spacing={2} ownSx={{px: {xs: 2, md: 3}, pb: 2.5, alignItems: {sm: 'flex-end'}}}>

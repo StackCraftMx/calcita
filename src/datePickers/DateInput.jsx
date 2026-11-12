@@ -72,12 +72,13 @@ function pickerValueOf(calendarDate) {
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function DateInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minDate, maxDate, disableFuture = false, disablePast = false,
         openTo = 'day', disabled = false, required = false, format, inputRef, limitMode, onLimitFix, pickerProps, messages, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {language, inputId, formats, validationTextOf} = usePickerField({name, kind: 'date', error, label, messages, texts});
@@ -100,7 +101,7 @@ function DateInputContent(props) {
 
     return (
         <PickerFrame inputId={inputId} label={label} required={required} language={language}>
-            <DateInputPicker
+            <DateInputPicker sx={sx}
                 {...pickerProps}
                 // el formato de la pantalla gana al de la casa (antes el de la casa iba después y lo pisaba sin avisar)
                 format={format ?? pickerProps?.format ?? formats.date}

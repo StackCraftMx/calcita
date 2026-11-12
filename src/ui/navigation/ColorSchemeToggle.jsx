@@ -35,10 +35,11 @@ const SchemeButton = piecePart(THEME_NAME, 'Button', IconButton);
  * @param {boolean} [props.inverted] ícono blanco para fondos oscuros
  * @param {(mode: 'light'|'dark'|'system') => void} [props.onChange] la persona cambió el modo (para guardarlo en su servidor)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function ColorSchemeToggleContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaColorSchemeToggle.defaultProps) y encima lo que llega aquí
-    const {size = 'small', inverted = false, onChange, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {size = 'small', inverted = false, onChange, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {mode, systemMode, setMode} = useColorScheme();
@@ -49,7 +50,7 @@ function ColorSchemeToggleContent(props) {
         setIsMounted(true);
     }, []);
     if (!isMounted || !mode) {
-        return <SchemeButton size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
+        return <SchemeButton sx={sx} size={size} disabled aria-hidden="true" ownSx={{width: 34, height: 34}} />;
     }
 
     const nextMode = nextColorModeOf(mode, systemMode);

@@ -1,6 +1,9 @@
 // Las reglas de yup para una lista de renglones (FormRepeatingFields), con sus mensajes en el idioma activo:
 //
 //   uniqueInListRule('tiers', 'min_quantity')            sin repetidos en esa columna («Ya está en el renglón 2»)
+//   uniqueInListRule('rules', ['provider_id', 'buyer_id'])
+//                                                        sin repetir la COMBINACIÓN de varias columnas: el mismo
+//                                                        proveedor con otro comprador sí se vale; los dos iguales, no
 //   orderedInListRule('tiers', 'min_quantity')           de menor a mayor («Debe ir entre 10 (renglón 1) y 50 (renglón 3)»)
 //   listTotalAtMostRule('amount', (values) => values.credit_limit, {currency: 'MXN'})
 //                                                        lo que suman entre todos no pasa de un tope (con Money, sin floats)
@@ -46,22 +49,40 @@ function numberOf(value) {
     return Number.isFinite(number) ? number : null;
 }
 
+/** Vacío: un campo sin llenar no cuenta como repetido. */
+function isBlank(value) {
+    return value === '' || value === null || value === undefined;
+}
+
 /**
- * Sin repetidos en una columna: el renglón que repite dice con cuál choca.
+ * Sin repetidos en una columna, o en la combinación de varias: el renglón que repite dice con cuál choca.
+ *
+ * Con varias columnas la regla va en una de ellas (la que debe enseñar el error; normalmente la última que se llena) y
+ * compara el renglón completo: mientras falte alguna de las columnas, no hay repetido todavía.
  *
  * @param {string} listName la lista en el formulario ('tiers')
- * @param {string} field la columna ('min_quantity')
+ * @param {string|string[]} field la columna ('min_quantity') o las columnas que juntas no se repiten
+ *     (['provider_id', 'payment_method', 'buyer_id'])
  * @returns {import('yup').TestConfig<any, any>} para .test() de yup
  */
 export function uniqueInListRule(listName, field) {
+    const fields = Array.isArray(field) ? field : [field];
+    // el renglón como un solo texto: el valor de cada columna, separados por un carácter que nadie escribe
+    const combinationOf = (row) => fields.map((name) => String(row?.[name] ?? '')).join('\u0000');
     return {
         name: 'uniqueInList',
         message: {key: 'validation:listDuplicate'},
         test: (value, context) => {
-            if (value === '' || value === null || value === undefined) {
+            if (isBlank(value)) {
                 return true;
             }
-            const firstIndex = rowsOf(context, listName).findIndex((row) => String(row?.[field] ?? '') === String(value));
+            // la combinación de este renglón: con una sola columna, el valor que se revisa
+            const ownRow = Array.isArray(field) ? context.parent : {[field]: value};
+            if (fields.some((name) => isBlank(ownRow?.[name]))) {
+                return true;
+            }
+            const ownCombination = combinationOf(ownRow);
+            const firstIndex = rowsOf(context, listName).findIndex((row) => combinationOf(row) === ownCombination);
             if (firstIndex === -1 || firstIndex >= context.options.index) {
                 return true;
             }

@@ -56,12 +56,13 @@ const TimeInputPicker = piecePart(THEME_NAME, 'Picker', TimePicker);
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Elija la fecha', min: 'Desde mañana'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
  */
 function TimeInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', minTime, maxTime, minutesStep = DEFAULT_MINUTES_STEP, disabled = false, required = false, format, inputRef,
         limitMode, onLimitFix, pickerProps, messages, texts,
-        ...unknownProps
+        sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const field = usePickerField({name, kind: 'time', error, label, messages, texts});
@@ -84,7 +85,7 @@ function TimeInputContent(props) {
 
     return (
         <PickerFrame inputId={field.inputId} label={label} required={required} language={field.language}>
-            <TimeInputPicker
+            <TimeInputPicker sx={sx}
                 {...pickerProps}
                 // el formato y el reloj de la pantalla ganan a los de la casa (antes iban después y los pisaban sin avisar)
                 format={format ?? pickerProps?.format ?? field.formats.time}

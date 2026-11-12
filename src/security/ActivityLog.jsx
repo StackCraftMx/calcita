@@ -77,16 +77,17 @@ const LOADING_HEIGHT_PIXELS = 160;
  *     del más nuevo al más viejo; null mientras llegan
  * @param {string|null} [props.error] ya traducido si no se pudieron traer
  * @param {object} [props.texts] los textos que cambian, con la forma de `security` en los textos del paquete
+ * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la tarjeta (SectionCard)
  */
 function ActivityLogContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaActivityLog.defaultProps) y encima lo que llega aquí
-    const {events, error = null, texts, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {events, error = null, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('security', texts);
     const {formatDateTime} = useFormatters();
 
     return (
-        <SectionCard title={t('activity.title')}>
+        <SectionCard sx={sx} title={t('activity.title')}>
             <Stack spacing={2}>
                 <Typography variant="body2" color="text.secondary">{t('activity.description')}</Typography>
                 {error && <Alert severity="error">{error}</Alert>}
