@@ -446,6 +446,11 @@ diálogos (`zIndex.modal`), así que una confirmación abierta desde el cajón s
 Todas las piezas de Calcita se cambian desde el tema del proyecto igual que las de MUI: con su nombre en `components`,
 `styleOverrides` para cada parte y `defaultProps`. El orden, de abajo hacia arriba: el estilo de Calcita, encima el del
 tema del proyecto y al final el `sx` que pase la pantalla. Los números se leen como en MUI (`borderRadius: 4` son 4 px).
+Toda pieza que pinta una caja recibe `sx` directo, con las tres formas de MUI (objeto, función del tema o lista): va en su
+parte `root`, en un campo va en el campo (como en `TextField`) y en un diálogo en su raíz (como en `Dialog`). Las que no lo
+reciben no pintan una caja propia: los proveedores, los permisos (`Can`, `RequireAccess`), el texto suelto (`MarkedText`,
+`DictionaryText`), los ajustes de apariencia (secciones sueltas dentro del menú) y `ServerTable`, cuya cuadrícula tiene
+`gridSx`.
 Sirve con `createToolkitTheme` y con cualquier tema de MUI (el que ya tenía un sistema, tal cual): así un sistema puede
 dejar Calcita con su propia cara, parte por parte.
 
