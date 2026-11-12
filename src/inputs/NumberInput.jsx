@@ -56,6 +56,15 @@ const SEPARATORS_ROOM = 6;
  * @param {boolean} [props.disabled]
  * @param {boolean} [props.required] obligatorio: el asterisco en la etiqueta y, como en MUI, required en el campo
  * @param {import('react').Ref<HTMLInputElement>} [props.inputRef]
+ * @param {object} [props.sx] los estilos del campo en esta pantalla, encima de los del tema (como en TextInput)
+ * @param {string} [props.placeholder] ya traducido; el ejemplo de qué escribir (se va al escribir)
+ * @param {boolean} [props.autoFocus] el cursor entra solo al pintarse
+ * @param {string} [props.id] el id del campo; por omisión uno propio (la etiqueta lo usa)
+ * @param {boolean} [props.readOnly] se lee y se enfoca, pero no se escribe: un dato calculado en un formulario (a diferencia
+ *     de disabled, no se ve apagado y el lector de pantalla lo sigue leyendo)
+ * @param {(event: import('react').FocusEvent<HTMLInputElement>) => void} [props.onFocus] al entrar al campo, después del suyo
+ * @param {(event: import('react').KeyboardEvent<HTMLInputElement>) => void} [props.onKeyDown] cada tecla (Enter para guardar
+ *     un renglón, por ejemplo). Lo demás de TextField de MUI va en slotProps.field
  * @param {Record<string, string|object>} [props.messages] el texto del error de este campo, por regla de validación
  *     ({required: 'Escriba el RFC', matches: 'El RFC lleva 12 o 13 caracteres'}): gana al de Calcita y al de los textos
  * @param {object} [props.texts] se acepta como en los demás campos; este no tiene textos propios (su error usa `messages`)
@@ -63,14 +72,15 @@ const SEPARATORS_ROOM = 6;
 function NumberInputContent(props) {
     const {
         name, label, value, onChange, onBlur, error, helperText = ' ', decimals = 2, allowNegative = false, prefix, suffix, maxDigits = 17,
-        min, max, limitMode, onLimitFix, disabled = false, required = false, inputRef, messages, texts: unusedTexts,
+        min, max, limitMode, onLimitFix, disabled = false, required = false, inputRef, sx, placeholder, autoFocus, id, readOnly = false, onFocus,
+        onKeyDown, messages, texts: unusedTexts,
         ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     // el texto del error: el de la pantalla (messages), el del proyecto para este campo o el de Calcita
     const validationTextOf = useValidationText({name, label, messages});
     const generatedId = useId();
-    const inputId = `${name ?? 'number'}-${generatedId}`;
+    const inputId = id ?? `${name ?? 'number'}-${generatedId}`;
     const [isTyping, setIsTyping] = useState(false);
     const valueText = value === null || value === undefined ? '' : String(value);
     // el error del formulario o el del tope (también revisa los topes: uno mal escrito truena aquí con su mensaje)
@@ -92,6 +102,10 @@ function NumberInputContent(props) {
                 required={required}
                 size="small"
                 fullWidth
+                sx={sx}
+                placeholder={placeholder}
+                autoFocus={autoFocus}
+                onKeyDown={onKeyDown}
                 error={Boolean(errorText)}
                 helperText={errorText ?? limit.noticeText ?? helperText}
                 onFocus={(event) => {
@@ -108,6 +122,7 @@ function NumberInputContent(props) {
                             }
                         });
                     }
+                    onFocus?.(event);
                 }}
                 onChange={(event) => onChange(cleanNumberText(event.target.value, decimals, allowNegative))}
                 onBlur={() => {
@@ -131,7 +146,7 @@ function NumberInputContent(props) {
                     onBlur?.();
                 }}
                 slotProps={{
-                    htmlInput: {inputMode: 'decimal', maxLength: maxDigits + SEPARATORS_ROOM, style: {textAlign: 'right'}},
+                    htmlInput: {inputMode: 'decimal', maxLength: maxDigits + SEPARATORS_ROOM, readOnly, style: {textAlign: 'right'}},
                     input: {
                         startAdornment: prefix ? <InputAdornment position="start">{prefix}</InputAdornment> : undefined,
                         endAdornment: suffix ? <InputAdornment position="end">{suffix}</InputAdornment> : undefined,
