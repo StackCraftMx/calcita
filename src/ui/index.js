@@ -23,7 +23,7 @@ export {default as PageHeader} from '@/ui/layout/PageHeader.jsx';
 export {default as PageHeading} from '@/ui/layout/PageHeading.jsx';
 export {default as ProfileHeader} from '@/ui/layout/ProfileHeader.jsx';
 export {default as ScrollableRow, scrollableRow} from '@/ui/layout/ScrollableRow.jsx';
-export {default as SectionCard} from '@/ui/layout/SectionCard.jsx';
+export {SECTION_TITLE_PLACEMENT, default as SectionCard} from '@/ui/layout/SectionCard.jsx';
 
 // ─── navigation ──────────────────────────────────────────────────────────────
 export {default as BackButton} from '@/ui/navigation/BackButton.jsx';
