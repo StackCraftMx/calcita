@@ -4,6 +4,43 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.69.0] - 2026-11-11
+
+### Agregado
+
+- Formularios en tabla, en formik y en react-hook-form, en tres formas que escoge quien programa:
+  - **Toda la tabla, un formulario:** `FormRepeatingFields` con `layout={REPEATING_LAYOUT.table}` y `tableColumns` (su
+    encabezado, lo menos que mide cada columna y cómo se alinea). Son los renglones que se repiten de siempre (agregar,
+    quitar, mínimo y máximo, confirmar al quitar, los errores del servidor en su renglón) pintados como tabla: cada campo
+    de `renderRow` va en su columna, en orden, así que se pasa de tarjetas a tabla con una prop. Los campos van con la
+    forma de la casa y la etiqueta solo para el lector; el número del renglón con error va en rojo. En el teléfono,
+    `phoneLayout` (`REPEATING_PHONE_LAYOUT`): tarjetas (por omisión) o la tabla que se desliza de lado.
+  - **Cada renglón su formulario:** `EditableRows` (en `/forms` y en `/react-hook-form`): los renglones del servidor, cada
+    uno con su ✓ y su «Deshacer», `rowSchema` para las reglas de un renglón, `validateRow` para las de entre renglones,
+    `onSaveRow` con lo del formulario de ese renglón para los errores del servidor. Con `emptyRow` se agregan renglones;
+    con `onRemoveRow`, quitar uno guardado lo borra en ese momento (y pide confirmar). Mismas columnas y vista que la
+    anterior.
+  - **La tabla del servidor con campos:** `useEditableServerRows` (en `/forms` y en `/react-hook-form`) le da a
+    `ServerTable` renglones que son su propio formulario (`tableProps`), columnas con campo (`fieldColumn`) y su ✓
+    (`actionsColumn`). Lo capturado sin guardar al cambiar de página, de filtro o de orden se recuerda
+    (`UNSAVED_ROWS.keep`, por omisión: la barra `unsavedBar` dice cuántos renglones tienen cambios, con «Guardar todos»
+    y «Descartar») o se pregunta antes (`UNSAVED_ROWS.confirm`). `onSaveRows` guarda todos en una sola llamada.
+- `uniqueInListRule` acepta varias columnas: la combinación no se repite (`['provider_id', 'buyer_id']`); la misma
+  sucursal con otro canal sí se vale.
+- `ServerTable`: `rowWrapper` (envolver cada renglón, armado una sola vez), `beforeQueryChange` (cada cambio de página,
+  filtro u orden pregunta primero a la pantalla) y los `slots` de `gridProps`, que antes la tabla pisaba sin avisar.
+- `NumberInput`: `sx`, `placeholder`, `autoFocus`, `id`, `readOnly` (se lee y se enfoca, pero no se escribe: un dato
+  calculado), `onFocus` y `onKeyDown`.
+- `RepeatingFields`: «Agregar» y «Quitar» opcionales (`onAdd`, `onRemove`, `canRemoveOf`), `removeIsImmediate` y
+  `rowWrapperOf` (cada renglón dentro de lo de la pantalla, como su propio formulario).
+- `UnsavedRowsBar` y `createRowDraftsStore` sueltos, para una barra propia.
+- `sx` directo en 86 piezas que no lo recibían (casi todas avisaban «no conoce la opción» y lo tiraban): marcos, encabezados,
+  tarjetas, diálogos, filtros, campos, gráficas, formularios de la cuenta, el kanban y el calendario, entre otras. Va en
+  la parte `root` de cada pieza; en un campo, en el campo (como `TextInput`); en un diálogo, en su raíz (como el `Dialog`
+  de MUI). Si la pieza ya traía su propio estilo, se suman: primero el de Calcita y después el de la pantalla.
+  `StatusChip` también lo pinta en su forma de punto (antes solo en la de chip). Una parte cambiada por `slots` recibe el
+  `sx` solo si la pantalla lo da.
+
 ## [0.68.0] - 2026-11-11
 
 ### Agregado
