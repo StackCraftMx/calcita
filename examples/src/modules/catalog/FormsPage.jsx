@@ -23,6 +23,9 @@ import RequiredFromSchema from '@/modules/catalog/demos/forms/RequiredFromSchema
 import PhoneLabels from '@/modules/catalog/demos/forms/PhoneLabels.tsx';
 import DocumentsWizard from '@/modules/catalog/demos/forms/DocumentsWizard.tsx';
 import CellField from '@/modules/catalog/demos/forms/CellField.tsx';
+import TableForm from '@/modules/catalog/demos/forms/TableForm.tsx';
+import RowByRowForm from '@/modules/catalog/demos/forms/RowByRowForm.tsx';
+import RowByRowHookForm from '@/modules/catalog/demos/forms/RowByRowHookForm.tsx';
 import FieldLimits from '@/modules/catalog/demos/forms/FieldLimits.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
@@ -41,6 +44,9 @@ const loadPhoneLabels = () => import('@/modules/catalog/demos/forms/PhoneLabels.
 const loadDocumentsWizard = () => import('@/modules/catalog/demos/forms/DocumentsWizard.tsx?demo-source');
 const loadFieldLimits = () => import('@/modules/catalog/demos/forms/FieldLimits.tsx?demo-source');
 const loadCellField = () => import('@/modules/catalog/demos/forms/CellField.tsx?demo-source');
+const loadTableForm = () => import('@/modules/catalog/demos/forms/TableForm.tsx?demo-source');
+const loadRowByRowForm = () => import('@/modules/catalog/demos/forms/RowByRowForm.tsx?demo-source');
+const loadRowByRowHookForm = () => import('@/modules/catalog/demos/forms/RowByRowHookForm.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -177,6 +183,35 @@ const CELL_FIELD_EXTENSIONS = [
     {id: 'theme', option: 'CalcitaFormSection defaultProps', example: "components: {CalcitaFormSection: {defaultProps: {variant: 'bare'}}}  // casi nunca: es para una celda"},
 ];
 
+const TABLE_FORM_EXTENSIONS = [
+    {id: 'layout', option: 'layout · REPEATING_LAYOUT · tableColumns', example: "layout={REPEATING_LAYOUT.table} tableColumns={[{key: 'branch', header: 'Sucursal', width: 150}, …]}"},
+    {id: 'order', option: 'renderRow (en orden)', example: 'renderRow={({nameOf}) => (<><FormSelectField name={nameOf(\'branch_id\')} … /><FormNumberField … /></>)}'},
+    {id: 'phone', option: 'phoneLayout · REPEATING_PHONE_LAYOUT', example: 'phoneLayout={REPEATING_PHONE_LAYOUT.scroll}  // por omisión, tarjetas'},
+    {id: 'unique', option: 'uniqueInListRule(lista, [columnas])', example: "Yup.string().test(uniqueInListRule('rules', ['branch_id', 'channel']))"},
+    {id: 'dependent', option: 'onChange · setFieldValue', example: "onChange={(branchId) => setFieldValue(nameOf('channel'), '')}"},
+    {id: 'saved', option: 'disabled · confirmRemove', example: 'confirmRemove={(rule) => Boolean(rule.id)}  // y disabled={Boolean(row.id)} en lo que no cambia'},
+    {id: 'computed', option: 'NumberInput readOnly · un texto', example: '<NumberInput label="Disponible" value={available} readOnly onChange={() => {}} />'},
+    {id: 'hookForm', option: "FormRepeatingFields de '@stackcraftmx/calcita/react-hook-form'", example: '<FormRepeatingFields name="rules" layout={REPEATING_LAYOUT.table} tableColumns={…} … />  // igual'},
+    {id: 'theme', option: 'CalcitaRepeatingFields table · headerCell · cell · numberCell', example: "components: {CalcitaRepeatingFields: {styleOverrides: {headerCell: {fontWeight: 700}}}}"},
+];
+
+const ROW_BY_ROW_EXTENSIONS = [
+    {id: 'piece', option: 'EditableRows · rows · rowKeyOf · onSaveRow', example: 'onSaveRow={(values, {isNew}) => (isNew ? createRule(values) : updateRule(values))}'},
+    {id: 'schema', option: 'rowSchema · validateRow', example: "validateRow={(rule, {otherRows}) => (otherRows.some(…) ? {channel: 'Ya está'} : {})}"},
+    {id: 'renderRow', option: 'renderRow({row, savedRow, isNew, nameOf, form})', example: "form.setFieldValue(nameOf('channel'), '')  // el formulario de ESE renglón"},
+    {id: 'server', option: 'applyServerProblem(error, {...helpers, values})', example: 'catch (error) { applyServerProblem(error, {...helpers, values}); throw error; }'},
+    {id: 'addRemove', option: 'emptyRow · onRemoveRow · confirmRemove', example: 'emptyRow={EMPTY_RULE} onRemoveRow={(rule) => removeRule(rule.id)}  // sin ellos, solo se edita'},
+    {id: 'sameView', option: 'layout · tableColumns · phoneLayout', example: 'layout={REPEATING_LAYOUT.table} tableColumns={COLUMNS}  // lo mismo que FormRepeatingFields'},
+    {id: 'hookForm', option: "EditableRows de '@stackcraftmx/calcita/react-hook-form' · formOptions", example: "rowSchema={ruleSchema} formOptions={{mode: 'onBlur'}}  // onSaveRow recibe {form}; renderRow, form.setValue"},
+];
+
+const ROW_BY_ROW_HOOK_EXTENSIONS = [
+    {id: 'entry', option: "EditableRows de '@stackcraftmx/calcita/react-hook-form'", example: "import {EditableRows, FormSelectField} from '@stackcraftmx/calcita/react-hook-form';"},
+    {id: 'save', option: 'onSaveRow(values, {form, isNew})', example: 'catch (error) { applyServerProblem(error, form); throw error; }'},
+    {id: 'dependent', option: 'renderRow({form}) · form.setValue', example: "form.setValue(nameOf('channel'), '')"},
+    {id: 'options', option: 'formOptions', example: "formOptions={{mode: 'onBlur'}}  // lo demás de useForm de cada renglón"},
+];
+
 const OWN_MESSAGES_EXTENSIONS = [
     {id: 'messages', option: 'messages (en el campo)', example: "<FormTextField name=\"rfc\" label=\"RFC\" messages={{rfc: 'Revise el RFC', required: 'Escriba el RFC'}} />"},
     {id: 'fieldTexts', option: 'validation.fields.<campo>.<regla>', example: "texts={{es: {validation: {fields: {postal_code: {postalCode: 'Lleva 5 dígitos'}}}}}}"},
@@ -225,6 +260,12 @@ export const FormsPage = () => {
                          extensions={rowsOf('limits', LIMITS_EXTENSIONS)} Demo={FieldLimits} loadSource={loadFieldLimits} />
             <DemoSection title={t('forms.cellField.title')} description={t('forms.cellField.description')}
                          extensions={rowsOf('cellField', CELL_FIELD_EXTENSIONS)} Demo={CellField} loadSource={loadCellField} />
+            <DemoSection title={t('forms.tableForm.title')} description={t('forms.tableForm.description')}
+                         extensions={rowsOf('tableForm', TABLE_FORM_EXTENSIONS)} Demo={TableForm} loadSource={loadTableForm} />
+            <DemoSection title={t('forms.rowByRow.title')} description={t('forms.rowByRow.description')}
+                         extensions={rowsOf('rowByRow', ROW_BY_ROW_EXTENSIONS)} Demo={RowByRowForm} loadSource={loadRowByRowForm} />
+            <DemoSection title={t('forms.rowByRowHookForm.title')} description={t('forms.rowByRowHookForm.description')}
+                         extensions={rowsOf('rowByRowHookForm', ROW_BY_ROW_HOOK_EXTENSIONS)} Demo={RowByRowHookForm} loadSource={loadRowByRowHookForm} />
         </Stack>
     );
 };
