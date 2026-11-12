@@ -22,6 +22,7 @@ import EditingWizard from '@/modules/catalog/demos/forms/EditingWizard.tsx';
 import RequiredFromSchema from '@/modules/catalog/demos/forms/RequiredFromSchema.tsx';
 import PhoneLabels from '@/modules/catalog/demos/forms/PhoneLabels.tsx';
 import DocumentsWizard from '@/modules/catalog/demos/forms/DocumentsWizard.tsx';
+import CellField from '@/modules/catalog/demos/forms/CellField.tsx';
 import FieldLimits from '@/modules/catalog/demos/forms/FieldLimits.tsx';
 
 const loadFormik = () => import('@/modules/catalog/demos/forms/NewCustomerForm.tsx?demo-source');
@@ -39,6 +40,7 @@ const loadRequiredFromSchema = () => import('@/modules/catalog/demos/forms/Requi
 const loadPhoneLabels = () => import('@/modules/catalog/demos/forms/PhoneLabels.tsx?demo-source');
 const loadDocumentsWizard = () => import('@/modules/catalog/demos/forms/DocumentsWizard.tsx?demo-source');
 const loadFieldLimits = () => import('@/modules/catalog/demos/forms/FieldLimits.tsx?demo-source');
+const loadCellField = () => import('@/modules/catalog/demos/forms/CellField.tsx?demo-source');
 
 // «Cómo se extiende» de cada sección: la opción y su ejemplo son código (no se traducen); qué hace, en catalogTexts
 // (forms.<sección>.extend.<id>)
@@ -167,6 +169,14 @@ const LIMITS_EXTENSIONS = [
     {id: 'pure', option: 'numberLimitProblemOf · fixedNumberText · textLimitProblemOf · listLimitProblemOf', example: "numberLimitProblemOf('1500', {max: 1000})  // {key: 'validation:numberMax', values: {max: '1,000'}}"},
 ];
 
+const CELL_FIELD_EXTENSIONS = [
+    {id: 'bare', option: 'FormSection variant · FORM_SECTION_VARIANT', example: '<FormSection variant={FORM_SECTION_VARIANT.bare} labelWidth={0}><Table>…</Table></FormSection>  // una para toda la tabla'},
+    {id: 'anyField', option: 'TextInput · NumberInput · SelectInput · CatalogInput · DateInput · FormRow', example: '<NumberInput label="Abono de F-1042" prefix="$" max={amount} … />  // y sus versiones de formik y react-hook-form'},
+    {id: 'noLabelColumn', option: 'labelWidth={0}', example: '<DateInput label="Fecha de pago de F-1042" … />  // no se ve, el lector la lee'},
+    {id: 'looseField', option: 'createToolkitTheme({fields: {radius}})', example: 'createToolkitTheme({fields: {radius: 999}})  // la cápsula también en un campo suelto'},
+    {id: 'theme', option: 'CalcitaFormSection defaultProps', example: "components: {CalcitaFormSection: {defaultProps: {variant: 'bare'}}}  // casi nunca: es para una celda"},
+];
+
 const OWN_MESSAGES_EXTENSIONS = [
     {id: 'messages', option: 'messages (en el campo)', example: "<FormTextField name=\"rfc\" label=\"RFC\" messages={{rfc: 'Revise el RFC', required: 'Escriba el RFC'}} />"},
     {id: 'fieldTexts', option: 'validation.fields.<campo>.<regla>', example: "texts={{es: {validation: {fields: {postal_code: {postalCode: 'Lleva 5 dígitos'}}}}}}"},
@@ -213,6 +223,8 @@ export const FormsPage = () => {
                          extensions={rowsOf('documentsStep', DOCUMENTS_STEP_EXTENSIONS)} Demo={DocumentsWizard} loadSource={loadDocumentsWizard} />
             <DemoSection title={t('forms.limits.title')} description={t('forms.limits.description')}
                          extensions={rowsOf('limits', LIMITS_EXTENSIONS)} Demo={FieldLimits} loadSource={loadFieldLimits} />
+            <DemoSection title={t('forms.cellField.title')} description={t('forms.cellField.description')}
+                         extensions={rowsOf('cellField', CELL_FIELD_EXTENSIONS)} Demo={CellField} loadSource={loadCellField} />
         </Stack>
     );
 };

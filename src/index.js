@@ -119,7 +119,7 @@ export {
     LanguageToggle, MetricCard, PageBreadcrumbs, PageHeader, PageHeading, ProfileHeader, ROUTE_TABS_MODE, RECORD_CARD_FOOTER_ALIGN, RecordCard, RecordCardSkeleton, RouteTabs,
     DashboardSkeleton, DefinitionListSkeleton, DetailHeaderSkeleton, SkeletonOverlay, TableSkeleton,
     TREND_DIRECTION,
-    PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
+    PeriodRangeSelector, QuickFilters, SCROLL_MARGIN_BELOW_APP_BAR, SECTION_TITLE_PLACEMENT, SEGMENTED_CONTROL_SX, ScrollableRow, SecretField, SectionCard, SegmentedControl,
     StatusChip, TableToggle, Tag, scrollableRow, tableRowTextOf, useActiveRouteTab, useAppBarHeightPublisher, useHelpCarousel,
 } from '@/ui/index.js';
 
@@ -130,7 +130,7 @@ export {default as ColorInput} from '@/inputs/ColorInput.jsx';
 export {default as FieldFrame} from '@/inputs/FieldFrame.jsx';
 export {default as MaskedInput} from '@/inputs/MaskedInput.jsx';
 export {INPUT_MASK, isMaskComplete, maskPatternOf, maskedTextOf, rawValueOf} from '@/inputs/inputMasks.js';
-export {FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_ROW_CLASS, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
+export {FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_ROW_CLASS, FORM_SECTION_VARIANT, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
 export {default as CheckboxGroupInput} from '@/inputs/CheckboxGroupInput.jsx';
 export {default as NumberInput} from '@/inputs/NumberInput.jsx';
 export {default as TransferListInput} from '@/inputs/TransferListInput.jsx';

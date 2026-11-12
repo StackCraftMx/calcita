@@ -35,13 +35,20 @@
 // ocupa; con un ancho ('320px', '50%' o un número en px) la columna mide eso. Las demás secciones de la pantalla no cambian.
 // En el teléfono lo que sobra es poco: con auto, mejor junto con labelPlacement topOnPhone (el nombre arriba, el campo abajo).
 //
+// Sin tarjeta (variant={FORM_SECTION_VARIANT.bare}): los mismos renglones y la misma forma de los campos, sin el lienzo, sin
+// la línea entre renglones y sin el aire del renglón (relleno y alto mínimo). Para un campo dentro de algo que ya trae su
+// marco y su aire, como la celda de una tabla: ahí la tarjeta dibujaba una caja dentro de otra y corría el campo. Con
+// labelWidth={0} el campo se lleva el renglón entero, sin hueco a la izquierda (antes quedaban los 16 px de separación), y
+// la etiqueta no se ve pero el lector de pantalla la sigue leyendo: el nombre de la columna ya lo dice en pantalla.
+//
 // Un renglón con `required` lleva un asterisco en la etiqueta (requiredMark.js: en el estilo, así la etiqueta sigue diciendo lo
 // mismo y el lector de pantalla no lo lee; el campo ya dice que es obligatorio).
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaFormSection (sus partes root, title, card y
-// footer) y components.CalcitaFormRow (root, label y control; el asterisco es '&[data-required]::after' de label), con
-// styleOverrides y defaultProps. Los colores de los campos,
-// más fácil con createToolkitTheme({fields}).
+// footer; sin tarjeta no hay card) y components.CalcitaFormRow (root, label y control; el asterisco es
+// '&[data-required]::after' de label), con styleOverrides y defaultProps. Los colores y las esquinas de los campos, más
+// fácil con createToolkitTheme({fields}): fields.radius pone las mismas esquinas a todos los campos de la app, dentro y
+// fuera de una sección (999 = la cápsula de los renglones también en un campo suelto).
 //
 // Genérico del paquete: function (regla de la casa).
 import {useId, useMemo} from 'react';
@@ -68,6 +75,12 @@ export const FORM_LABEL_PLACEMENT = Object.freeze({side: 'side', topOnPhone: 'to
  */
 export const FORM_LABEL_WIDTH = Object.freeze({auto: 'auto'});
 
+/**
+ * Cómo se pinta la sección: con su tarjeta (card, lo de siempre) o sin ella (bare: los renglones sin lienzo, sin líneas y sin
+ * su aire, para un campo dentro de la celda de una tabla).
+ */
+export const FORM_SECTION_VARIANT = Object.freeze({card: 'card', bare: 'bare'});
+
 /** La clase de cada renglón: la sección le dibuja su línea de arriba, esté donde esté adentro de la tarjeta. */
 export const FORM_ROW_CLASS = 'calcita-form-row';
 
@@ -79,6 +92,10 @@ const LABEL_COLUMN = Object.freeze({share: '38%', maxPixels: 200});
 const AUTO_CONTROL_MAX_SHARE = '50%';
 // lo que la etiqueta baja para quedar en la misma línea que el texto del campo (el campo mide 40 px y su letra 24 px)
 const LABEL_TOP_PIXELS = 8;
+// con labelWidth 0 la etiqueta no se ve pero el lector de pantalla la sigue leyendo: el campo conserva su nombre
+const VISUALLY_HIDDEN_SX = Object.freeze({
+    position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0,
+});
 // el aro al escribir y con error (por ciento del color) y su grosor
 const RING = Object.freeze({focusPercent: 45, errorPercent: 60, pixels: 2});
 
@@ -124,14 +141,17 @@ const isPartProp = (propName) => propName !== 'ownerState';
 const FormRowRoot = styled(Box, {name: ROW_THEME_NAME, slot: 'Root', shouldForwardProp: isPartProp})(({theme, ownerState}) => {
     const palette = (theme.vars ?? theme).palette;
     const isTopOnPhone = ownerState?.labelPlacement === FORM_LABEL_PLACEMENT.topOnPhone;
+    const isBare = ownerState?.variant === FORM_SECTION_VARIANT.bare;
     return theme.unstable_sx({
         position: 'relative',
         display: 'flex',
         alignItems: 'flex-start',
-        gap: 2,
-        minHeight: ROW_MIN_HEIGHT_PIXELS,
-        px: 2,
-        py: `${ROW_PADDING_BLOCK_PIXELS}px`,
+        // sin columna de etiqueta (labelWidth 0) no hay nada que separar: el campo empieza en la orilla del renglón
+        gap: ownerState?.labelWidth === 0 ? 0 : 2,
+        // sin tarjeta, el aire lo pone lo que la envuelve (la celda): el renglón mide lo que mide el campo
+        minHeight: isBare ? 'auto' : ROW_MIN_HEIGHT_PIXELS,
+        px: isBare ? 0 : 2,
+        py: isBare ? 0 : `${ROW_PADDING_BLOCK_PIXELS}px`,
         '&:focus-within > label': accentTextStylesOf(theme),
         '&:has(.Mui-error) > label': {color: palette.error.main},
         // los tonos de los campos (los del proyecto con createToolkitTheme fields, o los de Apple) para sus campos
@@ -168,6 +188,9 @@ const FormRowLabel = styled(Typography, {name: ROW_THEME_NAME, slot: 'Label', sh
     }),
     // el asterisco de lo obligatorio: aquí, debajo de lo que el proyecto ponga en su tema
     ...(ownerState?.requiredMark && requiredMarkSxOf(ownerState.requiredMark)),
+    // sin columna (labelWidth 0): fuera de la vista y sin ocupar lugar. OJO: con flex 0 la etiqueta igual medía lo de su
+    // palabra más larga y empujaba el campo; por eso se dejaba vacía y el campo se quedaba sin nombre para el lector
+    ...(ownerState?.labelWidth === 0 && VISUALLY_HIDDEN_SX),
 }));
 
 
@@ -187,7 +210,10 @@ const FormRowControl = styled(Box, {name: ROW_THEME_NAME, slot: 'Control', shoul
 
 const FormSectionRoot = styled(Box, {name: SECTION_THEME_NAME, slot: 'Root'})({});
 
-const FormSectionTitle = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Title'})(({theme}) => theme.unstable_sx({px: 2, mb: 0.75, fontWeight: 600}));
+// el título y la explicación empiezan donde empieza el texto de los renglones (sin tarjeta, en la orilla)
+const insetOf = (ownerState) => (ownerState?.variant === FORM_SECTION_VARIANT.bare ? 0 : 2);
+
+const FormSectionTitle = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Title', shouldForwardProp: isPartProp})(({theme, ownerState}) => theme.unstable_sx({px: insetOf(ownerState), mb: 0.75, fontWeight: 600}));
 
 // la tarjeta: la línea de arriba de cada renglón, desde donde empieza el texto (la del primero la recorta la tarjeta)
 const FormSectionCard = styled(Paper, {name: SECTION_THEME_NAME, slot: 'Card'})(({theme}) => ({
@@ -199,7 +225,7 @@ const FormSectionCard = styled(Paper, {name: SECTION_THEME_NAME, slot: 'Card'})(
     },
 }));
 
-const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Footer'})(({theme}) => theme.unstable_sx({px: 2, mt: 0.75}));
+const FormSectionFooter = styled(Typography, {name: SECTION_THEME_NAME, slot: 'Footer', shouldForwardProp: isPartProp})(({theme, ownerState}) => theme.unstable_sx({px: insetOf(ownerState), mt: 0.75}));
 
 /**
  * Un renglón del formulario agrupado: la etiqueta a la izquierda y lo que sea a la derecha (un campo, un interruptor, un
@@ -222,6 +248,7 @@ export function FormRow(props) {
     const ownerState = {
         labelPlacement: sectionLayout ? sectionLayout.labelPlacement : FORM_LABEL_PLACEMENT.side,
         labelWidth: sectionLayout ? sectionLayout.labelWidth : undefined,
+        variant: sectionLayout ? sectionLayout.variant : FORM_SECTION_VARIANT.card,
         requiredMark: required ? t('form.requiredMark') : null,
     };
     return (
@@ -246,6 +273,9 @@ export function FormRow(props) {
  * @param {'auto'|string|number} [props.labelWidth] lo ancho de la columna de las etiquetas: FORM_LABEL_WIDTH.auto (la etiqueta
  *     se lleva lo que sobre y el campo lo que ocupa), un ancho de CSS ('320px', '50%') o un número en px; por omisión el 38 %
  *     del renglón hasta 200 px, como siempre
+ * @param {'card'|'bare'} [props.variant] uno de FORM_SECTION_VARIANT: con su tarjeta (card, por omisión) o sin ella (bare: sin
+ *     lienzo, sin líneas y sin el aire del renglón, para un campo dentro de una celda). También desde el tema:
+ *     components.CalcitaFormSection.defaultProps
  * @param {import('@mui/material/styles').SxProps<import('@mui/material/styles').Theme>} [props.sx] los estilos de la sección
  *     en esta pantalla, encima de los del tema (como en las demás piezas)
  * @param {import('react').ReactNode} props.children los campos, directo o dentro de un Grid, un Stack o un componente propio
@@ -253,25 +283,34 @@ export function FormRow(props) {
 export default function FormSection(props) {
     // lo que el proyecto puso en su tema (components.CalcitaFormSection.defaultProps) y encima lo que llega aquí
     const {
-        title, footer, labelPlacement = FORM_LABEL_PLACEMENT.side, labelWidth, sx, children, ...unknownProps
+        title, footer, labelPlacement = FORM_LABEL_PLACEMENT.side, labelWidth, variant = FORM_SECTION_VARIANT.card, sx, children, ...unknownProps
     } = useThemeProps({props, name: SECTION_THEME_NAME});
     warnUnknownProps(SECTION_THEME_NAME, unknownProps);
+    if (!Object.values(FORM_SECTION_VARIANT).includes(variant)) {
+        throw new Error(`FormSection: variant «${variant}» no existe; use uno de FORM_SECTION_VARIANT (${Object.values(FORM_SECTION_VARIANT).join(', ')}).`);
+    }
     const titleId = useId();
-    const layout = useMemo(() => ({labelPlacement, labelWidth}), [labelPlacement, labelWidth]);
+    const layout = useMemo(() => ({labelPlacement, labelWidth, variant}), [labelPlacement, labelWidth, variant]);
+    const ownerState = {variant};
     return (
         <FormSectionContext value={layout}>
             <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined} sx={sx}>
                 {title && (
-                    <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary">
+                    <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary" ownerState={ownerState}>
                         {title}
                     </FormSectionTitle>
                 )}
-                <FormSectionCard variant="outlined">
-                    {/* un píxel arriba: la línea de los renglones de hasta arriba queda fuera de la tarjeta (overflow hidden) */}
-                    <Box sx={{mt: '-1px'}}>{children}</Box>
-                </FormSectionCard>
+                {variant === FORM_SECTION_VARIANT.bare ? (
+                    // sin tarjeta: los renglones tal cual; la línea entre ellos la dibuja la tarjeta, así que tampoco sale
+                    children
+                ) : (
+                    <FormSectionCard variant="outlined">
+                        {/* un píxel arriba: la línea de los renglones de hasta arriba queda fuera de la tarjeta (overflow hidden) */}
+                        <Box sx={{mt: '-1px'}}>{children}</Box>
+                    </FormSectionCard>
+                )}
                 {footer && (
-                    <FormSectionFooter variant="caption" component="p" color="text.secondary">{footer}</FormSectionFooter>
+                    <FormSectionFooter variant="caption" component="p" color="text.secondary" ownerState={ownerState}>{footer}</FormSectionFooter>
                 )}
             </FormSectionRoot>
         </FormSectionContext>

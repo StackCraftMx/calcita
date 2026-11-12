@@ -13,6 +13,7 @@ import {MuiChip} from '@/theme/components/MuiChip.js';
 import {MuiDataGrid} from '@/theme/components/MuiDataGrid.js';
 import {MuiDialog} from '@/theme/components/MuiDialog.js';
 import {MuiDrawer} from '@/theme/components/MuiDrawer.js';
+import {MuiFieldCorners} from '@/theme/components/MuiFieldCorners.js';
 import {MuiMenuItem} from '@/theme/components/MuiMenuItem.js';
 import {MuiTypography} from '@/theme/components/MuiTypography.js';
 
@@ -29,6 +30,7 @@ export function toolkitComponents() {
         ...MuiDataGrid(),
         ...MuiDialog(),
         ...MuiDrawer(),
+        ...MuiFieldCorners(),
         ...MuiMenuItem(),
         ...MuiTypography(),
     };

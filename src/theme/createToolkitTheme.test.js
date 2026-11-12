@@ -438,6 +438,27 @@ test('los campos de un renglón de FormSection son cápsulas de fábrica, y la v
     assert.equal(fieldWellFromVariablesOf(createToolkitTheme({fields: {radius: '0.5rem'}})).borderRadius, '0.5rem');
 });
 
+test('fields.radius les llega a los campos sueltos en los tres estilos, igual que a los renglones de una FormSection', () => {
+    const rootsOf = (theme) => {
+        const rootOf = (name, ownerState = {}) => theme.components[name].styleOverrides.root({theme, ownerState});
+        return {text: rootOf('MuiOutlinedInput'), date: rootOf('MuiPickersOutlinedInput'), search: rootOf('MuiOutlinedInput', {type: 'search'})};
+    };
+    const glass = rootsOf(createToolkitTheme({glass: true, fields: {radius: 999}}));
+    const solid = rootsOf(createToolkitTheme({fields: {radius: 999}}));
+    const minimal = rootsOf(createToolkitTheme({look: THEME_LOOK.minimal, fields: {radius: 999}}));
+    [glass, solid, minimal].forEach((roots) => {
+        assert.equal(roots.text.borderRadius, '999px');
+        assert.equal(roots.date.borderRadius, '999px');
+    });
+    // con vidrio, el campo suelto sobre el lienzo también (antes leía solo la variable y salía en 12 px)
+    assert.equal(glass.text.borderRadius, fieldWellFromVariablesOf(createToolkitTheme({glass: true, fields: {radius: 999}})).borderRadius);
+    // el buscador con vidrio sigue siendo su cápsula
+    assert.notEqual(glass.search.borderRadius, '999px');
+    // sin fields.radius, nada cambia: el sólido se queda con las esquinas de MUI y el vidrio con su variable de 12 px
+    assert.equal(rootsOf(createToolkitTheme()).text.borderRadius, undefined);
+    assert.equal(rootsOf(createToolkitTheme({glass: true})).text.borderRadius, 'var(--calcita-field-radius, 12px)');
+});
+
 test('el minimalista pinta las fechas y horas de MUI X como los demás campos: mismo relleno, sin raya', () => {
     const theme = createToolkitTheme({look: THEME_LOOK.minimal});
     const pickerField = theme.components.MuiPickersOutlinedInput.styleOverrides.root({theme, ownerState: {}});

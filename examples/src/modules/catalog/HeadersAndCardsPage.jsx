@@ -39,6 +39,7 @@ const CARDS_EXTENSIONS = [
     {id: 'metricLink', option: 'to', example: 'to="/orders?status=pending"'},
     {id: 'metricLoading', option: 'isLoading', example: 'isLoading={!summary}'},
     {id: 'section', option: '<SectionCard title action>', example: '<SectionCard title="Datos del pedido" action={<Button>Editar</Button>}>'},
+    {id: 'sectionTitleOutside', option: 'titlePlacement', example: 'titlePlacement={SECTION_TITLE_PLACEMENT.outside}  // toda la app: components.CalcitaSectionCard.defaultProps'},
     {id: 'definitions', option: '<DefinitionList entries layout labelWidth>', example: "<DefinitionList layout=\"stacked\" entries={[{label: 'Cliente', value: name}]} />"},
     {id: 'collapsible', option: '<CollapsibleSection collapsedTitle expandedTitle hint defaultExpanded>', example: '<CollapsibleSection collapsedTitle="Ver el detalle" expandedTitle="Ocultar el detalle">'},
 ];

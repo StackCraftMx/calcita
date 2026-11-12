@@ -1,11 +1,14 @@
 // Las tarjetas y secciones de la casa: SectionCard (un bloque con su título y una acción), DefinitionList (dato: valor,
 // en columnas o apilado), CollapsibleSection (lo largo, plegado) y MetricCard (un número con su tendencia, que lleva a su
-// lista). Con el vidrio del tema, el contenido va en material, no en vidrio (guía de Apple).
+// lista). Con el vidrio del tema, el contenido va en material, no en vidrio (guía de Apple). La segunda sección lleva el
+// título afuera (titlePlacement): encima de la tarjeta, como el de una FormSection.
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import {CollapsibleSection, DefinitionList, MetricCard, SectionCard, TREND_DIRECTION, formatNumber} from '@stackcraftmx/calcita';
+import {
+    CollapsibleSection, DefinitionList, MetricCard, SECTION_TITLE_PLACEMENT, SectionCard, TREND_DIRECTION, formatNumber,
+} from '@stackcraftmx/calcita';
 
 const CardsAndSections = () => (
     <Stack spacing={2}>
@@ -26,6 +29,13 @@ const CardsAndSections = () => (
                 {label: 'Cliente', value: 'Luis Herrera'},
                 {label: 'Entrega', value: 'Lunes 20 de octubre, antes de las 10'},
                 {label: 'Forma de pago', value: 'Transferencia'},
+            ]} />
+        </SectionCard>
+        {/* para toda la app, en el tema: components.CalcitaSectionCard.defaultProps.titlePlacement */}
+        <SectionCard title="Quién lo recibe" titlePlacement={SECTION_TITLE_PLACEMENT.outside} action={<Button size="small">Cambiar</Button>}>
+            <DefinitionList entries={[
+                {label: 'Nombre', value: 'Marta Ruiz'},
+                {label: 'Teléfono', value: '81 1234 5678'},
             ]} />
         </SectionCard>
         <CollapsibleSection collapsedTitle="Ver el detalle de la validación" expandedTitle="Ocultar el detalle de la validación"

@@ -6,12 +6,14 @@
 //   - por dónde se le avisa la cobranza (grupo de casillas) y las sucursales donde puede comprar (lista de transferencia):
 //     el servidor revisa que cada sucursal del reparto esté entre ellas.
 // El servidor vuelve a revisar todo y lo que solo él sabe (un correo de otro cliente) llega al renglón que toca.
+// Las tarjetas llevan el título afuera (titlePlacement), como la FormSection de arriba: en una misma pantalla se leen como
+// hermanas y el nombre de cada sección no pesa menos que lo de adentro.
 //
 // Lo renderiza la app: arrow (regla de la casa).
 import {useEffect, useMemo, useState} from 'react';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import {FormSection, PageHeading, SectionCard, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
+import {FormSection, PageHeading, SECTION_TITLE_PLACEMENT, SectionCard, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {
     Form, Formik, FormCheckboxGroupField, FormNumberField, FormProblemAlert, FormRepeatingFields, FormSelectField, FormTextField,
     FormTransferListField, SubmitButton, applyServerProblem, listTotalOf,
@@ -93,13 +95,13 @@ export const CustomerTermsPage = () => {
                                     <FormCheckboxGroupField name="notify_channels" label={t('terms.channels.title')} options={channelOptions} selectAll />
                                 </FormSection>
 
-                                <SectionCard title={t('terms.allowed.title')}>
+                                <SectionCard title={t('terms.allowed.title')} titlePlacement={SECTION_TITLE_PLACEMENT.outside}>
                                     <FormTransferListField name="allowed_branch_ids" options={branchOptions}
                                                            availableTitle={t('terms.allowed.available')} chosenTitle={t('terms.allowed.chosen')}
                                                            helperText={t('terms.allowed.help')} />
                                 </SectionCard>
 
-                                <SectionCard title={t('terms.split.title')}>
+                                <SectionCard title={t('terms.split.title')} titlePlacement={SECTION_TITLE_PLACEMENT.outside}>
                                     <FormRepeatingFields
                                         name="branch_split"
                                         emptyRow={EMPTY_ROWS.branchSplit}
@@ -119,7 +121,7 @@ export const CustomerTermsPage = () => {
                                     />
                                 </SectionCard>
 
-                                <SectionCard title={t('terms.discounts.title')}>
+                                <SectionCard title={t('terms.discounts.title')} titlePlacement={SECTION_TITLE_PLACEMENT.outside}>
                                     <FormRepeatingFields
                                         name="volume_discounts"
                                         emptyRow={EMPTY_ROWS.volumeDiscount}
@@ -138,7 +140,7 @@ export const CustomerTermsPage = () => {
                                     />
                                 </SectionCard>
 
-                                <SectionCard title={t('terms.contacts.title')}>
+                                <SectionCard title={t('terms.contacts.title')} titlePlacement={SECTION_TITLE_PLACEMENT.outside}>
                                     <FormRepeatingFields
                                         name="contacts"
                                         emptyRow={EMPTY_ROWS.contact}

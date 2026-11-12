@@ -15,7 +15,7 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, RECORD_CARD_FOOTER_ALIGN, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, RECORD_CARD_FOOTER_ALIGN, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
@@ -107,6 +107,7 @@ const CASES = [
     ['RequireAccess sin permiso', h(RequireAccess, {access: {ability: 'users.admin'}}, 'pantalla secreta'), 'No tiene permiso para ver esta pantalla'],
     ['AppLayout lateral con secciones y submenú', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, user: {name: 'Ana López'}}, 'contenido'), 'Operación'],
     ['AppLayout con el menú arriba', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, menuPosition: MENU_POSITION.top}, 'contenido'), 'Catálogos'],
+    ['AppLayout sin manejar el desplazamiento', h(AppLayout, {brandName: 'Mi app', menuItems: MENU_ITEMS, scrollRestoration: false}, 'contenido'), 'Operación'],
     ['PageHeading con migas y botones', h(AppLayout, {menuItems: MENU_ITEMS}, h(PageHeading, {
         title: 'Productos', description: 'Todo el catálogo', breadcrumbs: [{label: 'Inicio', to: '/'}, {label: 'Catálogos'}, {label: 'Productos'}], actions: 'Nuevo',
     })), 'Todo el catálogo'],
@@ -412,6 +413,9 @@ const CASES = [
         h(TextInput, {label: 'Identificación oficial vigente del representante legal', value: '', onChange: () => {}})), 'flex:1 1 auto'],
     ['FormSection con su sx', h(FormSection, {title: 'Expediente', sx: {maxWidth: 777}},
         h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'max-width:777px'],
+    ['FormSection con labelWidth 0: la etiqueta solo para el lector', h(FormSection, {labelWidth: 0},
+        h(TextInput, {label: 'Fecha de pago', value: '', onChange: () => {}})), 'clip:rect(0 0 0 0)'],
+    ['SectionCard con el título afuera', h(SectionCard, {title: 'Quién lo recibe', titlePlacement: SECTION_TITLE_PLACEMENT.outside}, 'contenido'), 'CalcitaSectionCard-card'],
     ['Toaster en otra esquina y con lo de sonner', h(Toaster, {position: TOASTER_POSITION.bottomCenter, duration: 6000}), 'aria-live'],
 ];
 
@@ -473,6 +477,9 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         ['el Formik de formik solo, sin FormSchemaProvider: sin asterisco', asterisksOf(htmlOf(baseFormikForm(false))) === 0],
         ['el Formik de formik con FormSchemaProvider: con asterisco', asterisksOf(htmlOf(baseFormikForm(true))) === 1],
         ['FormSection de siempre sin la etiqueta apilada', !htmlOf(h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}}))).includes('align-items:stretch')],
+        ['FormSection de siempre con su tarjeta', htmlOf(h(FormSection, {title: 'Contacto'}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}}))).includes('MuiPaper-root')],
+        ['FormSection sin tarjeta: sin lienzo', !htmlOf(h(FormSection, {variant: FORM_SECTION_VARIANT.bare}, h(TextInput, {label: 'Nombre', value: '', onChange: () => {}}))).includes('MuiPaper-root')],
+        ['SectionCard de siempre: sin parte card, el título adentro', !htmlOf(h(SectionCard, {title: 'Resumen'}, 'contenido')).includes('CalcitaSectionCard-card')],
         ['WizardLayout de siempre con «Anterior» apagado', htmlOf(wizardOf({})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep sin «Anterior»', !htmlOf(wizardOf({hideBackOnFirstStep: true})).includes('Anterior')],
         ['WizardLayout con hideBackOnFirstStep: «Anterior» de vuelta en el segundo paso', htmlOf(wizardOf({hideBackOnFirstStep: true, activeIndex: 1})).includes('Anterior')],

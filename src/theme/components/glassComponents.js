@@ -24,14 +24,13 @@
 // Funciones puras, sin React: function (regla de la casa).
 import {
     GLASS_INSET_PIXELS, GLASS_LENS_FLAG_SELECTOR, GLASS_OUTLINED_BUTTON, GLASS_SELECTED_TAB, GLASS_SURFACE, MENU_RADIUS, PANEL_RADIUS, accentTextStylesOf,
-    glassDropOf, glassOpacityOf, canvasFieldStylesOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, hasGlassSurface,
+    glassDropOf, glassOpacityOf, canvasFieldStylesOf, fieldRadiusOf, fieldWellStylesOf, glassStylesOf, glassSurfaceOf, hasGlassSurface,
     surfaceStylesOf, whiteLabelFillOf, insideContentSelectorOf, materialStylesOf, solidFallbackOf,
 } from '@/theme/glassSurface.js';
 import {mergeStyles} from '@/theme/mergeComponents.js';
 import {lightDarkStylesOf} from '@/theme/lightDarkStyles.js';
 import {textSizeOf} from '@/theme/appleTracking.js';
 import {paletteOf} from '@/theme/components/paletteOf.js';
-import {cssTokenOf} from '@/theme/cssTokens.js';
 
 // los renglones de un menú quedan a 4 px del borde, con la esquina del menú menos ese margen
 const MENU_ROW_INSET_PIXELS = 4;
@@ -92,8 +91,6 @@ const PROMINENT_GLASS_OPACITY = 1;
 // los campos: la esquina dentro de una tarjeta, el gris del relleno (por ciento del color del texto) y qué tan fuerte es el
 // aro al escribir
 const FIELD_RADIUS_PIXELS = 12;
-// las esquinas como variables CSS que el proyecto cambia de un jalón (cssTokens.js), con el valor de siempre de respaldo
-const FIELD_RADIUS = cssTokenOf('fieldRadius', `${FIELD_RADIUS_PIXELS}px`);
 // los renglones de un menú van a MENU_ROW_INSET_PIXELS de su orilla: su esquina es la del menú menos eso (nunca menos de 0)
 const MENU_ROW_RADIUS = `max(0px, calc(${MENU_RADIUS} - ${MENU_ROW_INSET_PIXELS}px))`;
 const FIELD_RING_PERCENT = 40;
@@ -810,7 +807,8 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({ownerState, theme}) => ({
                     ...canvasFieldStylesOf(theme),
-                    borderRadius: ownerState.type === 'search' ? PILL_RADIUS : FIELD_RADIUS,
+                    // las de fields.radius del proyecto, o la variable CSS con 12 px de respaldo (fieldRadiusOf)
+                    borderRadius: ownerState.type === 'search' ? PILL_RADIUS : fieldRadiusOf(theme, FIELD_RADIUS_PIXELS),
                     '& .MuiOutlinedInput-notchedOutline': {borderColor: 'transparent'},
                     '&:hover .MuiOutlinedInput-notchedOutline, &.Mui-focused .MuiOutlinedInput-notchedOutline, &.Mui-error .MuiOutlinedInput-notchedOutline': {
                         borderColor: 'transparent',
@@ -842,7 +840,7 @@ export function glassComponents({surfaces = false} = {}) {
             styleOverrides: {
                 root: ({theme}) => ({
                     ...canvasFieldStylesOf(theme),
-                    borderRadius: FIELD_RADIUS,
+                    borderRadius: fieldRadiusOf(theme, FIELD_RADIUS_PIXELS),
                     '& .MuiPickersOutlinedInput-notchedOutline': {borderColor: 'transparent'},
                     '&:hover .MuiPickersOutlinedInput-notchedOutline, &.Mui-focused .MuiPickersOutlinedInput-notchedOutline, &.Mui-error .MuiPickersOutlinedInput-notchedOutline': {
                         borderColor: 'transparent',
