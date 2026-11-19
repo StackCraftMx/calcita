@@ -177,6 +177,7 @@ const LIMITS_EXTENSIONS = [
 
 const CELL_FIELD_EXTENSIONS = [
     {id: 'bare', option: 'FormSection variant · FORM_SECTION_VARIANT', example: '<FormSection variant={FORM_SECTION_VARIANT.bare} labelWidth={0}><Table>…</Table></FormSection>  // una para toda la tabla'},
+    {id: 'cellLayout', option: 'TABLE_CELL_FIELD_LAYOUT', example: '<FormSection {...TABLE_CELL_FIELD_LAYOUT}>…</FormSection>  // la receta de las tablas: sin tarjeta y la etiqueta solo para el lector'},
     {id: 'anyField', option: 'TextInput · NumberInput · SelectInput · CatalogInput · DateInput · FormRow', example: '<NumberInput label="Abono de F-1042" prefix="$" max={amount} … />  // y sus versiones de formik y react-hook-form'},
     {id: 'noLabelColumn', option: 'labelWidth={0}', example: '<DateInput label="Fecha de pago de F-1042" … />  // no se ve, el lector la lee'},
     {id: 'looseField', option: 'createToolkitTheme({fields: {radius}})', example: 'createToolkitTheme({fields: {radius: 999}})  // la cápsula también en un campo suelto'},

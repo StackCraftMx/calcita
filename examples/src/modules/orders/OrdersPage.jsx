@@ -27,7 +27,8 @@ import {
     formatNumber, labelOf, lookup, toastProblem, toastSuccess, useCan, useConfirmAction, usePageName, useRememberListUrl, useToolkitTranslation,
 } from '@stackcraftmx/calcita';
 import {
-    FILTER_KINDS, SELECTION_PHONE_LAYOUT, ServerTable, ServerTableFilterDrawer, buildChipConfig, detailColumn, facetColumn, textColumn,
+    FILTER_KINDS, SELECTION_PHONE_LAYOUT, ServerTable, ServerTableFilterDrawer, TABLE_CARDS_PAGINATION, buildChipConfig, detailColumn, facetColumn,
+    textColumn,
 } from '@stackcraftmx/calcita/table';
 import {DateInput} from '@stackcraftmx/calcita/date-pickers';
 import {Money} from '@stackcraftmx/calcita/money';
@@ -68,6 +69,8 @@ const DRAWER_PROPS = Object.freeze({slots: {dateInput: DateInput}});
 // el tope (el teléfono, donde ocupa todo el ancho), cada par «desde» y «hasta» va uno arriba del otro
 const DRAWER_WIDTH_PIXELS = 460;
 const DRAWER_STACK_PAIRS_BELOW_PIXELS = 420;
+// buscar un cliente con una o dos letras trae casi todos los pedidos: el cajón pide al menos tres
+const MIN_CUSTOMER_LETTERS = 3;
 // los chips de estado salen siempre en este orden, aunque alguno tenga cero pedidos
 const STATUS_CHIP_ORDER = Object.keys(ORDER_STATUS);
 // un pedido cancelado ya no se elige: no hay nada más que hacerle
@@ -181,6 +184,11 @@ export const OrdersPage = () => {
             ),
         },
     ];
+    // lo que el cajón exige además de sus rangos: el aviso sale debajo del campo y «Buscar» no busca hasta que se corrija
+    const validateDrawer = (values) => {
+        const customer = String(values.customer_name ?? '').trim();
+        return customer && customer.length < MIN_CUSTOMER_LETTERS ? {customer_name: t('drawer.customerTooShort', {count: MIN_CUSTOMER_LETTERS})} : {};
+    };
     // los chips de lo que solo pone el cajón (los demás ya tienen el suyo abajo)
     const drawerChips = filterDrawerChipsOf(drawerFields.filter((field) => ['quantity', 'total', 'purchase_hours'].includes(field.name)), {t: commonT});
 
@@ -228,7 +236,7 @@ export const OrdersPage = () => {
                 chipConfig={chipConfig}
                 quickFilters={quickFilters}
                 // el botón «Filtros» con su cajón de búsqueda; sale de la derecha (anchor lo cambia)
-                toolbarExtra={<ServerTableFilterDrawer fields={drawerFields} width={DRAWER_WIDTH_PIXELS}
+                toolbarExtra={<ServerTableFilterDrawer fields={drawerFields} width={DRAWER_WIDTH_PIXELS} validate={validateDrawer}
                                                        drawerProps={DRAWER_PROPS} stackPairsBelow={DRAWER_STACK_PAIRS_BELOW_PIXELS} />}
                 searchPlaceholder={t('search.placeholder')}
                 // la búsqueda arriba, en la barra de la app (en el teléfono se queda aquí)
@@ -248,6 +256,8 @@ export const OrdersPage = () => {
                 // la otra vista: cada pedido en su tarjeta, con la misma búsqueda, filtros y páginas (el botón de la derecha
                 // cambia; la vista va en la dirección, ?orders_view=cards)
                 renderCard={(order) => <OrderCard order={order} />}
+                // debajo de las tarjetas, el mismo pie de la tabla (con «Ir a la página»): la lista se recorre igual en las dos vistas
+                cardsPagination={TABLE_CARDS_PAGINATION.table}
                 texts={tableTexts}
             />
             <ConfirmDialog

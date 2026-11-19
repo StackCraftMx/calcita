@@ -4,10 +4,11 @@
 //     encabezado nombra al grupo (Fechas: alta y último cambio). Los renglones toman su alto solos;
 //   - statusColumn: el estatus desde su diccionario, con el ancho de su etiqueta más larga (medido, en el idioma de la pantalla);
 //   - actionsColumn: el «⋯» de cada renglón en su columna, fija al deslizar junto con la empresa (fixedColumn);
-//   - renderCard: la misma lista en tarjetas, con la misma búsqueda, filtros y páginas (el botón de la derecha cambia de vista).
+//   - renderCard: la misma lista en tarjetas, con la misma búsqueda, filtros y páginas (el botón de la derecha cambia de vista);
+//   - cardsPagination: debajo de las tarjetas, el mismo pie de la tabla («Filas por página», «1–5 de 12»), no las burbujas.
 import {useMemo} from 'react';
 import {RecordCard, StatusChip, dictionaryEntryOf, formatDate, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
-import {ACTIONS_COLUMN_FIELD, ServerTable, actionsColumn, stackedColumn, statusColumn} from '@stackcraftmx/calcita/table';
+import {ACTIONS_COLUMN_FIELD, ServerTable, TABLE_CARDS_PAGINATION, actionsColumn, stackedColumn, statusColumn} from '@stackcraftmx/calcita/table';
 
 // 1. El estatus como llega del API → su texto (dictionaries:registrationStatus.<valor>) y su color
 const REGISTRATION_STATUS = {
@@ -94,6 +95,8 @@ const ReadyColumnsDemo = () => {
             pageSizeOptions={[5, 10, 25]}
             // 4. Fijas al deslizar de lado: el «⋯» (ancho fijo) y la empresa (la última puede ser flexible)
             fixedColumn={[ACTIONS_COLUMN_FIELD, 'business_name']}
+            // 6. Debajo de las tarjetas, el pie de la tabla: cambiar de vista no cambia la forma de moverse por la lista
+            cardsPagination={TABLE_CARDS_PAGINATION.table}
             // 5. La misma lista en tarjetas
             renderCard={(client: ClientRow) => (
                 <RecordCard eyebrow={client.rfc} title={client.business_name} avatar={client.business_name}
