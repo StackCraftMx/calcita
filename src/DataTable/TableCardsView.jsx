@@ -1,6 +1,7 @@
 // La otra vista de ServerTable: los mismos renglones (la misma búsqueda, filtros, orden y página) en tarjetas, una por
 // renglón, con lo que pinte la pantalla (renderCard; normalmente RecordCard). Mientras llega la primera página, esqueletos
 // con la forma de la tarjeta; al cambiar de página se quedan las de antes con una barra arriba (no brinca la pantalla).
+// Abajo, las páginas en burbujas (con dos o más páginas) o, con cardsPagination 'table' en ServerTable, el pie de la tabla.
 //
 // Se cambia desde el tema del proyecto, como la tabla: components.CalcitaServerTable con styleOverrides de sus partes
 // cards (la lista: una columna por omisión; con display grid se hacen columnas), cardsPagination y viewToggle.
@@ -64,10 +65,13 @@ function TableViewToggleContent({view, onChange}) {
  * @param {() => void} props.onClearFilters
  * @param {import('react').ReactNode} [props.skeleton] el esqueleto de una tarjeta (por omisión RecordCardSkeleton)
  * @param {string} [props.ariaLabel] el nombre de la lista para el lector de pantalla
+ * @param {import('react').ReactNode} [props.paginationFooter] lo que va abajo en lugar de las páginas en burbujas, siempre a la
+ *     vista (ServerTable le pasa el pie de la tabla con cardsPagination 'table'); sin él, las burbujas con dos o más páginas
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la lista de tarjetas, encima de los del tema
  */
 function TableCardsViewContent({
-    rows, renderCard, rowIdOf, isLoading, page, pageCount, onPageChange, hasActiveFilters, emptyLabel, onClearFilters, skeleton, ariaLabel, sx,
+    rows, renderCard, rowIdOf, isLoading, page, pageCount, onPageChange, hasActiveFilters, emptyLabel, onClearFilters, skeleton, ariaLabel,
+    paginationFooter, sx,
 }) {
     const {t} = useToolkitTranslation('table');
     const isFirstLoad = isLoading && rows.length === 0;
@@ -86,7 +90,11 @@ function TableCardsViewContent({
             {!isLoading && rows.length === 0 && (
                 <EmptyState filtered={hasActiveFilters} label={emptyLabel} onClearFilters={onClearFilters} />
             )}
-            {pageCount > 1 && (
+            {paginationFooter && (
+                // el pie de la tabla, a la derecha como en la tabla
+                <TableCardsPagination direction="row" ownSx={{justifyContent: 'flex-end', mt: 1}}>{paginationFooter}</TableCardsPagination>
+            )}
+            {!paginationFooter && pageCount > 1 && (
                 <TableCardsPagination direction="row" ownSx={{justifyContent: 'center', mt: 2}}>
                     <Pagination count={pageCount} page={page + 1} onChange={(event, nextPage) => onPageChange(nextPage - 1)}
                                 getItemAriaLabel={(type, itemPage) => t(`cards.pagination.${type}`, {page: itemPage})} />

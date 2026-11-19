@@ -33,6 +33,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import MaterialTablePagination, {tablePaginationClasses} from '@mui/material/TablePagination';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
@@ -161,6 +162,20 @@ const warnedFixedColumns = new Set();
 // las densidades mal escritas de las que ya se avisó (una vez por nombre en toda la app)
 const warnedDensities = new Set();
 const STRIPED_ROW_CLASS = 'server-table-row--striped';
+
+/**
+ * El pie de la vista de tarjetas (cardsPagination). `pages`: las páginas en burbujas, centradas, solo con dos o más páginas
+ * (lo de siempre). `table`: el MISMO pie de la tabla («Filas por página», «1–25 de 35» y, con showGoToPage, «Ir a la
+ * página»), siempre a la vista como el de la tabla: cambiar de vista ya no cambia la forma de moverse por la lista. Para toda
+ * la app, en el tema: components.CalcitaServerTable.defaultProps.cardsPagination.
+ */
+export const TABLE_CARDS_PAGINATION = Object.freeze({pages: 'pages', table: 'table'});
+// el paginador de las tarjetas con el pie de la tabla se ve como el del DataGrid: en el teléfono sin «Filas por página» ni
+// su lista (el DataGrid las esconde igual por debajo de sm; sin esto no cabían junto a «1–25 de 35» y las flechas)
+const PHONE_LIKE_GRID_PAGINATION_SX = Object.freeze({
+    [`& .${tablePaginationClasses.selectLabel}`]: {display: {xs: 'none', sm: 'block'}},
+    [`& .${tablePaginationClasses.input}`]: {display: {xs: 'none', sm: 'inline-flex'}},
+});
 // dónde van los elegidos en el teléfono: la regla vive en SelectionActions; la tabla la vuelve a exportar por comodidad
 export {SELECTION_PHONE_LAYOUT};
 
@@ -403,6 +418,8 @@ function QuickFilterRow({quickFilter, facets, total, filters, isMultiple, setFil
  * @param {(view: 'table'|'cards') => void} [props.onViewChange] avisa cuando se cambia de vista
  * @param {boolean} [props.showViewToggle] el botón de tabla o tarjetas (por omisión, si hay renderCard)
  * @param {import('react').ReactNode} [props.cardSkeleton] el esqueleto de una tarjeta mientras llega la primera página
+ * @param {'pages'|'table'} [props.cardsPagination] el pie de las tarjetas (TABLE_CARDS_PAGINATION): las páginas en burbujas
+ *     (por omisión, lo de siempre) o el mismo pie de la tabla, con sus textos, «Filas por página» y showGoToPage
  * @param {object} [props.texts] los textos de la tabla que cambian, con la forma de `table` en los textos del paquete
  *     (src/locales/es.js), ya en el idioma de la pantalla: {selection: {clear: 'Deseleccionar'}, empty: {filtered: '…'}}.
  *     También les llegan a sus filtros de columna, sus chips y su barra de elegidos
@@ -462,6 +479,7 @@ function ServerTableContent(props) {
     onViewChange,
     showViewToggle,
     cardSkeleton,
+    cardsPagination = TABLE_CARDS_PAGINATION.pages,
     texts,
     ...unknownProps
 } = usePieceProps(props, THEME_NAME);
@@ -695,6 +713,37 @@ function ServerTableContent(props) {
     const gridHeight = maxGridHeight ? Math.min(contentHeight, maxGridHeight) : contentHeight;
 
     const gridText = DATA_GRID_TEXT_BY_LANGUAGE[language] ?? DATA_GRID_TEXT_BY_LANGUAGE.es;
+    const pageCount = Math.ceil(total / pageSize) || 1;
+    // «Ir a la página N» (solo si se pide) pegado al paginador: ahí lo busca quien ya está leyendo "51-75 de 1,234". El mismo
+    // en la tabla y en las tarjetas con el pie de la tabla
+    const withGoToPage = (pagination) => (showGoToPage ? (
+        // si no caben juntos, «Página N de M» se baja a su propia línea (arriba) y la paginación se queda entera: sin esto la
+        // paginación de MUI se encogía, cortaba «Filas por página» y salía una barra para deslizarla de lado (lo reportaron
+        // en el teléfono, con totales de cuatro cifras)
+        <TablePagination direction="row" ownSx={{
+            alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0,
+            '& .MuiTablePagination-root': {flexShrink: 0},
+            // el margen derecho de la paginación: en su propia línea no queda pegado a la orilla
+            '& > .CalcitaGoToPage-root': {pr: 2},
+        }}>
+            <GoToPage page={page} pageCount={pageCount} onChange={tableState.setPage} />
+            {pagination}
+        </TablePagination>
+    ) : pagination);
+    // el pie de la tabla debajo de las tarjetas (cardsPagination table): el paginador de MUI que usa el DataGrid, con sus
+    // mismos textos y opciones. Fuera del DataGrid nadie se los pone: sin pasarlos salía «Rows per page» en inglés junto a
+    // una tabla que dice «Filas por página». Se esconde igual que el de la tabla (hideFooterWhenAllRowsFit)
+    const cardsTableFooter = cardsPagination === TABLE_CARDS_PAGINATION.table && !isFooterHidden ? withGoToPage(
+        <MaterialTablePagination component="div" count={total} page={Math.min(page, pageCount - 1)} rowsPerPage={pageSize}
+                                 // un tamaño de página que no está en la lista esconde la lista, como el DataGrid
+                                 rowsPerPageOptions={pageSizeOptions.includes(pageSize) ? pageSizeOptions : []}
+                                 onPageChange={(event, nextPage) => tableState.setPage(nextPage)}
+                                 onRowsPerPageChange={(event) => tableState.setPageSize(Number(event.target.value))}
+                                 labelRowsPerPage={gridText.paginationRowsPerPage}
+                                 labelDisplayedRows={(shown) => gridText.paginationDisplayedRows({...shown, estimated: undefined})}
+                                 getItemAriaLabel={gridText.paginationItemAriaLabel}
+                                 sx={PHONE_LIKE_GRID_PAGINATION_SX} />,
+    ) : undefined;
     const formattedTotal = formatNumber(total);
     const countText = countLabel ? countLabel(total) : t('count.records', {count: total, total: formattedTotal});
 
@@ -786,9 +835,9 @@ function ServerTableContent(props) {
 
             {showsCards && (
                 <TableCardsView rows={visibleRows} renderCard={renderCard} rowIdOf={(row) => (getRowId ? getRowId(row) : row.id)}
-                                isLoading={isLoading} page={page} pageCount={Math.ceil(total / pageSize) || 1} onPageChange={tableState.setPage}
+                                isLoading={isLoading} page={page} pageCount={pageCount} onPageChange={tableState.setPage}
                                 hasActiveFilters={hasActiveFilters} emptyLabel={emptyLabel} onClearFilters={tableState.clearAll}
-                                skeleton={cardSkeleton} ariaLabel={ariaLabel} />
+                                skeleton={cardSkeleton} ariaLabel={ariaLabel} paginationFooter={cardsTableFooter} />
             )}
 
             {/* minWidth 0: dentro de un flex o grid el DataGrid no empuja la página; en el teléfono la tabla se desliza
@@ -850,24 +899,9 @@ function ServerTableContent(props) {
                         // los de la pantalla (slots.row para un renglón con su propio formulario); los de abajo son de la tabla
                         ...gridProps?.slots,
                         ...(WrappedRow && {row: WrappedRow}),
-                        // "ir a la página N" (solo si se pide) pegado a la paginación: ahí lo busca quien ya está leyendo
-                        // "51-75 de 1,234". Sin él, la paginación de siempre del DataGrid
-                        ...(showGoToPage && {
-                            pagination: () => (
-                                // si no caben juntos, «Página N de M» se baja a su propia línea (arriba) y la paginación se queda
-                                // entera: sin esto la paginación de MUI se encogía, cortaba «Filas por página» y salía una barra
-                                // para deslizarla de lado (lo reportaron en el teléfono, con totales de cuatro cifras)
-                                <TablePagination direction="row" ownSx={{
-                                    alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end', minWidth: 0,
-                                    '& .MuiTablePagination-root': {flexShrink: 0},
-                                    // el margen derecho de la paginación: en su propia línea no queda pegado a la orilla
-                                    '& > .CalcitaGoToPage-root': {pr: 2},
-                                }}>
-                                    <GoToPage page={page} pageCount={Math.ceil(total / pageSize) || 1} onChange={tableState.setPage} />
-                                    <GridPagination />
-                                </TablePagination>
-                            ),
-                        }),
+                        // "ir a la página N" (solo si se pide) pegado a la paginación (withGoToPage). Sin él, la paginación de
+                        // siempre del DataGrid
+                        ...(showGoToPage && {pagination: () => withGoToPage(<GridPagination />)}),
                         noResultsOverlay: () => <EmptyState filtered label={emptyLabel} onClearFilters={tableState.clearAll} />,
                         noRowsOverlay: () => <EmptyState filtered={hasActiveFilters} label={emptyLabel} onClearFilters={tableState.clearAll} />,
                     }}
