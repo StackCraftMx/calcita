@@ -84,6 +84,10 @@ export const FORM_SECTION_VARIANT = Object.freeze({card: 'card', bare: 'bare'});
 /**
  * Cómo van los campos dentro de la celda de una tabla: como en una FormSection sin tarjeta y sin columna de etiqueta (la
  * forma de la casa, la etiqueta solo para el lector). Lo usan la tabla de renglones (RepeatingFields) y la del servidor.
+ * Una pantalla lo pone en su propia sección para lo mismo fuera de esas tablas (dos controles en un renglón, cada uno con su
+ * nombre solo para el lector de pantalla):
+ *
+ *   <FormSection {...TABLE_CELL_FIELD_LAYOUT}>…</FormSection>
  */
 export const TABLE_CELL_FIELD_LAYOUT = Object.freeze({labelPlacement: FORM_LABEL_PLACEMENT.side, labelWidth: 0, variant: FORM_SECTION_VARIANT.bare});
 
