@@ -5,6 +5,10 @@
 // «Limpiar» vacía los campos del cajón; «Buscar» manda todos juntos (onApply) y cierra. Un rango al revés («hasta» menor que
 // «desde») o una fecha fuera de sus topes se dice en su campo y no deja buscar; nada se borra solo.
 //
+// Lo que la pantalla diga que está mal (schema de yup y/o validate: un filtro obligatorio, una pareja valor y operador) se
+// dice debajo de su campo como en los formularios: al cambiar ese campo o al picar «Buscar», que entonces los enseña todos y
+// no busca. Así un obligatorio no sale en rojo nomás de abrir el cajón o de «Limpiar».
+//
 // Los campos se declaran (filterDrawerFields.js dice cómo viaja cada uno); con kind 'custom' va uno propio (render), o un
 // rango propio con sus dos llaves (keys). Para conectarlo a ServerTable con su botón y sus chips: ServerTableFilterDrawer de
 // /table.
@@ -22,7 +26,7 @@
 // styleOverrides de sus partes: paper, header, body, footer y dateInput.
 //
 // Genérico del paquete: function (regla de la casa).
-import {useEffect, useId, useState} from 'react';
+import {useEffect, useId, useMemo, useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
@@ -37,6 +41,7 @@ import FieldFrame from '@/inputs/FieldFrame.jsx';
 import NumberInput from '@/inputs/NumberInput.jsx';
 import SelectInput from '@/inputs/SelectInput.jsx';
 import TextInput from '@/inputs/TextInput.jsx';
+import {translateValidationMessage} from '@/forms/validationMessages.js';
 import {piecePart, usePieceProps, withPieceSlots, sxListOf} from '@/theme/themePieces.js';
 import {useToolkitSettings} from '@/toolkit/toolkitContext.js';
 import {useFormatters} from '@/toolkit/useFormatters.js';
@@ -44,7 +49,7 @@ import {useToolkitTranslation} from '@/toolkit/useToolkitTranslation.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 import {
     COMPARISON_OPERATOR, FILTER_FIELD_KIND, comparisonOf, comparisonTextOf, dateRangeBoundsOf, drawerProblemsOf, drawerValuesOf,
-    emptyDrawerValuesOf, filterKeysOf,
+    emptyDrawerValuesOf, filterKeysOf, screenProblemsOf,
 } from '@/ui/filters/filterDrawerFields.js';
 import {todayInZone} from '@/ui/metrics/heatmapScale.js';
 
@@ -115,28 +120,35 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
     const [key] = filterKeysOf(field);
     switch (field.kind) {
         case FILTER_FIELD_KIND.text:
-            return <TextInput label={field.label} value={values[key]} onChange={(text) => setValue(key, text)} placeholder={field.placeholder} />;
+            return <TextInput label={field.label} value={values[key]} onChange={(text) => setValue(key, text)} placeholder={field.placeholder} error={errorOf(key)} />;
         case FILTER_FIELD_KIND.select:
             return (
                 <SelectInput label={field.label} value={values[key] || ANY_OPTION} onChange={(chosen) => setValue(key, chosen === ANY_OPTION ? '' : chosen)}
-                             options={[{value: ANY_OPTION, label: t('filterDrawer.any')}, ...field.options]} />
+                             options={[{value: ANY_OPTION, label: t('filterDrawer.any')}, ...field.options]} error={errorOf(key)} />
             );
         case FILTER_FIELD_KIND.multiSelect:
-            return <SelectInput label={field.label} value={values[key]} onChange={(chosen) => setValue(key, chosen)} options={field.options} multiple selectAll checkboxes />;
+            return (
+                <SelectInput label={field.label} value={values[key]} onChange={(chosen) => setValue(key, chosen)} options={field.options} multiple selectAll checkboxes
+                             error={errorOf(key)} />
+            );
         case FILTER_FIELD_KIND.catalog:
             return (
                 <CatalogInput label={field.label} value={values[key]} onChange={(chosen) => setValue(key, chosen)} options={field.options}
                               multiple={field.multiple} selectAll={field.multiple} checkboxes={field.multiple} formatLabel={field.formatLabel}
-                              placeholder={field.placeholder} />
+                              placeholder={field.placeholder} error={errorOf(key)} />
             );
         case FILTER_FIELD_KIND.checkboxes:
-            return <CheckboxGroupInput label={field.label} value={values[key]} onChange={(chosen) => setValue(key, chosen)} options={field.options} selectAll={field.selectAll} />;
+            return (
+                <CheckboxGroupInput label={field.label} value={values[key]} onChange={(chosen) => setValue(key, chosen)} options={field.options} selectAll={field.selectAll}
+                                    error={errorOf(key)} />
+            );
         case FILTER_FIELD_KIND.numberRange: {
             const [fromKey, toKey] = filterKeysOf(field);
             const numberProps = {decimals: field.decimals ?? 0, prefix: field.prefix, suffix: field.suffix, helperText: ''};
             return (
                 <PairedField label={field.label} inputId={`${fieldId}-from`} stackPairsBelow={stackPairsBelow}>
-                    <NumberInput label={t('filterDrawer.from')} value={values[fromKey]} onChange={(number) => setValue(fromKey, number)} {...numberProps} />
+                    <NumberInput label={t('filterDrawer.from')} value={values[fromKey]} onChange={(number) => setValue(fromKey, number)} {...numberProps}
+                                 error={errorOf(fromKey)} />
                     <NumberInput label={t('filterDrawer.to')} value={values[toKey]} onChange={(number) => setValue(toKey, number)} {...numberProps}
                                  error={errorOf(toKey)} />
                 </PairedField>
@@ -166,7 +178,7 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
                                  options={operators.map((option) => ({value: option, label: t(`filterDrawer.operators.${option}`)}))}
                                  onChange={(chosen) => setValue(key, comparisonTextOf(chosen, parts?.value ?? ''))} />
                     <NumberInput label={t('filterDrawer.value')} value={parts?.value ?? ''} decimals={field.decimals ?? 2} prefix={field.prefix} suffix={field.suffix}
-                                 helperText="" onChange={(number) => setValue(key, comparisonTextOf(operator, number))} />
+                                 helperText="" onChange={(number) => setValue(key, comparisonTextOf(operator, number))} error={errorOf(key)} />
                 </PairedField>
             );
         }
@@ -201,24 +213,40 @@ function DrawerField({field, values, setValue, errorOf, today, stackPairsBelow, 
  *     arriba del otro (también en el teléfono, donde ocupa todo el ancho). Sin la opción, lado a lado como siempre
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos (una nota, un enlace)
  * @param {object} [props.texts] los textos que cambian, con la forma de `common` en los textos del paquete
+ * @param {(values: Record<string, unknown>) => Record<string, unknown>|undefined} [props.validate] lo que está mal en el
+ *     borrador según la pantalla: {llave: mensaje} (un texto ya traducido o {key, values}); sin mensaje, la llave está bien.
+ *     Las llaves son las de los filtros ({name}, {name}_min, {name}_from…)
+ * @param {{validateSync: (values: object, options: object) => unknown}} [props.schema] un esquema de yup con las mismas llaves
+ *     (Yup.object({currency: Yup.string().required()})); sin reglas asíncronas. Con validate también, se juntan y en la
+ *     misma llave gana validate
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la raíz del cajón, como el sx del Drawer de MUI
  */
 function FilterDrawerContent(props) {
     const {
         open, onClose, fields, values, onApply, anchor = FILTER_DRAWER_ANCHOR.right, width = DEFAULT_WIDTH, title, applyLabel,
         closeOnApply = true, stackPairsBelow, children, texts, closePlacement = FILTER_DRAWER_CLOSE_PLACEMENT.start,
-        sx, ...unknownProps
+        validate, schema, sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
-    const {timeZone} = useToolkitSettings();
+    const {timeZone, readValidationMessage} = useToolkitSettings();
+    const {t: validationT} = useToolkitTranslation(['validation']);
     const {formatDate} = useFormatters();
     const titleId = useId();
     const [draft, setDraft] = useState(() => drawerValuesOf(fields, values));
+    // los avisos de la pantalla salen como en un formulario: de las llaves que ya se cambiaron, o de todas después de picar
+    // «Buscar» (triedToApply)
+    const [changedKeys, setChangedKeys] = useState(() => new Set());
+    const [triedToApply, setTriedToApply] = useState(false);
+    const startOver = (nextDraft) => {
+        setDraft(nextDraft);
+        setChangedKeys(new Set());
+        setTriedToApply(false);
+    };
     // cada vez que se abre, el borrador empieza de lo que hay puesto (lo de la vez pasada sin buscar no se queda)
     useEffect(() => {
         if (open) {
-            setDraft(drawerValuesOf(fields, values));
+            startOver(drawerValuesOf(fields, values));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
@@ -226,9 +254,28 @@ function FilterDrawerContent(props) {
     const today = todayInZone(timeZone);
     const problems = drawerProblemsOf(fields, draft, {today});
     const hasProblems = Object.keys(problems).length > 0;
-    // lo que está mal en una llave, ya dicho (con la fecha del tope que se pasó)
-    const errorOf = (key) => (problems[key] ? t(`filterDrawer.${problems[key].problem}`, {date: formatDate(problems[key].date)}) : undefined);
-    const setValue = (key, value) => setDraft((current) => ({...current, [key]: value}));
+    const screenProblems = useMemo(() => screenProblemsOf(draft, {validate, schema}), [draft, validate, schema]);
+    const hasScreenProblems = Object.keys(screenProblems).length > 0;
+    // el nombre del campo de cada llave: el aviso lo dice como el de un formulario ({{label}} en los textos del proyecto)
+    const labelOfKey = (key) => {
+        const label = fields.find((field) => filterKeysOf(field).includes(key))?.label;
+        return typeof label === 'string' ? label : undefined;
+    };
+    // lo que está mal en una llave, ya dicho: primero lo del cajón (un rango al revés, con la fecha del tope que se pasó);
+    // si no, lo de la pantalla cuando ya toca enseñarlo
+    const errorOf = (key) => {
+        if (problems[key]) {
+            return t(`filterDrawer.${problems[key].problem}`, {date: formatDate(problems[key].date)});
+        }
+        if (screenProblems[key] === undefined || (!triedToApply && !changedKeys.has(key))) {
+            return undefined;
+        }
+        return translateValidationMessage(validationT, screenProblems[key], {label: labelOfKey(key), readMessage: readValidationMessage, fieldName: key});
+    };
+    const setValue = (key, value) => {
+        setDraft((current) => ({...current, [key]: value}));
+        setChangedKeys((current) => (current.has(key) ? current : new Set(current).add(key)));
+    };
     const isCloseAtEnd = closePlacement === FILTER_DRAWER_CLOSE_PLACEMENT.end;
     const closeButton = (
         <IconButton aria-label={t('filterDrawer.close')} onClick={onClose} edge={isCloseAtEnd ? 'end' : 'start'}><CloseRoundedIcon /></IconButton>
@@ -254,9 +301,15 @@ function FilterDrawerContent(props) {
                  sx={{display: 'flex', flexDirection: 'column', height: '100%', ...(stackPairsBelow && {containerType: 'inline-size', containerName: DRAWER_CONTAINER_NAME})}}
                  onSubmit={(event) => {
                      event.preventDefault();
-                     if (!hasProblems) {
-                         apply();
+                     if (hasProblems) {
+                         return;
                      }
+                     // con avisos de la pantalla no busca: los enseña todos, cada uno en su campo
+                     if (hasScreenProblems) {
+                         setTriedToApply(true);
+                         return;
+                     }
+                     apply();
                  }}>
                 <FilterDrawerHeader direction="row" ownSx={{alignItems: 'center', gap: 1, px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider'}}>
                     {/* la × va antes o después del título en el HTML (no solo a la vista): el lector de pantalla y el tabulador la
@@ -273,7 +326,7 @@ function FilterDrawerContent(props) {
                     {children}
                 </FilterDrawerBody>
                 <FilterDrawerFooter direction="row" ownSx={{gap: 1, justifyContent: 'flex-end', px: 2.5, py: 1.5, borderTop: 1, borderColor: 'divider'}}>
-                    <Button onClick={() => setDraft(emptyDrawerValuesOf(fields))}>{t('filterDrawer.clear')}</Button>
+                    <Button onClick={() => startOver(emptyDrawerValuesOf(fields))}>{t('filterDrawer.clear')}</Button>
                     <Button type="submit" variant="contained" disabled={hasProblems}>{applyLabel ?? t('filterDrawer.apply')}</Button>
                 </FilterDrawerFooter>
             </Box>

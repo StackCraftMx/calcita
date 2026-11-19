@@ -20,6 +20,9 @@
 // calendario no deja escoger fuera, cada extremo acota al otro y lo que se teclee fuera se dice en su campo y no deja buscar
 // (drawerProblemsOf). Nada se borra solo.
 //
+// Lo demás que deba estar bien (un filtro obligatorio, dos que se exigen uno al otro) lo dice la pantalla con su esquema de
+// yup o su función validate (screenProblemsOf): el aviso va debajo de cada campo y no deja buscar.
+//
 // Los textos llegan ya traducidos (label, options[].label); los de la casa salen de `t` (common.filterDrawer).
 //
 // Puro (sin React): se prueba con node (filterDrawerFields.test.js).
@@ -278,6 +281,50 @@ export function drawerProblemsOf(fields, values, {today} = {}) {
             } else if (maxDate && String(date) > maxDate) {
                 problems[key] = {problem: FILTER_FIELD_PROBLEM.afterMaxDate, date: maxDate};
             }
+        }
+    }
+    return problems;
+}
+
+/**
+ * Lo que la PANTALLA dice que está mal en el borrador del cajón, por llave (un filtro obligatorio, una pareja que se exige):
+ * su esquema de yup (`schema`) y su función (`validate`), los dos juntos; en la misma llave gana validate. El mensaje queda
+ * como llega (un texto ya traducido o el {key, values} de buildYupLocale): el cajón lo dice con el nombre del campo.
+ *
+ *   validate: (values) => (values.buyer ? {} : {buyer: 'Escoja el comprador'})
+ *   schema: Yup.object({currency: Yup.string().required()})
+ *
+ * Las llaves son las de los filtros (las de filterKeysOf: {name}, {name}_min, {name}_from…). El esquema se revisa con
+ * validateSync: sin reglas asíncronas (un .test que va al servidor), que yup no deja revisar así y truena.
+ *
+ * @param {Record<string, unknown>} values el borrador del cajón
+ * @param {object} [screen]
+ * @param {(values: Record<string, unknown>) => Record<string, unknown>|undefined} [screen.validate] {llave: mensaje}; sin
+ *     mensaje (undefined, '' o null) la llave está bien
+ * @param {{validateSync: (values: object, options: object) => unknown}} [screen.schema] un esquema de yup (object)
+ * @returns {Record<string, unknown>} el primer mensaje de cada llave con algo mal
+ */
+export function screenProblemsOf(values, {validate, schema} = {}) {
+    const problems = {};
+    if (schema) {
+        try {
+            schema.validateSync(values, {abortEarly: false});
+        } catch (error) {
+            // solo lo que yup encontró en los valores (ValidationError trae inner); un esquema mal armado truena aquí y no se
+            // esconde como si fuera un aviso
+            if (!Array.isArray(error?.inner)) {
+                throw error;
+            }
+            for (const found of error.inner.length > 0 ? error.inner : [error]) {
+                if (found.path && problems[found.path] === undefined) {
+                    problems[found.path] = found.message;
+                }
+            }
+        }
+    }
+    for (const [key, message] of Object.entries(validate?.(values) ?? {})) {
+        if (message !== undefined && message !== null && message !== '' && message !== false) {
+            problems[key] = message;
         }
     }
     return problems;
