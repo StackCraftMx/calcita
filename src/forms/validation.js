@@ -86,6 +86,18 @@ export const YUP_LOCALE = Object.freeze({
 
 /**
  * Instala el locale de llaves en yup. Se llama una vez en la entrada de la aplicación, antes del primer esquema.
+ *
+ * OJO, trampa pagada (yup 1.7.1), dos campos que se exigen uno al otro (si viene el monto, el operador; y al revés): cada
+ * `.when` apunta al otro y yup truena al ARMAR el esquema con «Cyclic dependency». La lista de parejas que lo evita va en
+ * `.shape()`, NO en `Yup.object()`: el segundo argumento de `Yup.object(campos, parejas)` se ignora y sigue tronando.
+ *
+ *   Yup.object().shape({
+ *       amount: Yup.string().when('operator', {is: Boolean, then: (rule) => rule.required()}),
+ *       operator: Yup.string().when('amount', {is: Boolean, then: (rule) => rule.required()}),
+ *   }, [['amount', 'operator']]);
+ *
+ * La otra salida: armar el esquema con los valores a la mano (una función que recibe values y pone .required() en uno
+ * según venga o no el otro), sin `.when`.
  */
 export function buildYupLocale() {
     Yup.setLocale(YUP_LOCALE);
