@@ -130,7 +130,9 @@ export {default as ColorInput} from '@/inputs/ColorInput.jsx';
 export {default as FieldFrame} from '@/inputs/FieldFrame.jsx';
 export {default as MaskedInput} from '@/inputs/MaskedInput.jsx';
 export {INPUT_MASK, isMaskComplete, maskPatternOf, maskedTextOf, rawValueOf} from '@/inputs/inputMasks.js';
-export {FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_ROW_CLASS, FORM_SECTION_VARIANT, FormRow, default as FormSection} from '@/inputs/FormSection.jsx';
+export {
+    FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_ROW_CLASS, FORM_SECTION_VARIANT, FormRow, TABLE_CELL_FIELD_LAYOUT, default as FormSection,
+} from '@/inputs/FormSection.jsx';
 export {default as CheckboxGroupInput} from '@/inputs/CheckboxGroupInput.jsx';
 export {default as NumberInput} from '@/inputs/NumberInput.jsx';
 export {default as TransferListInput} from '@/inputs/TransferListInput.jsx';

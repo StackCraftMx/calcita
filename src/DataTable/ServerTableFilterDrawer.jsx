@@ -41,6 +41,10 @@ const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
  * @param {string} [props.buttonLabel] ya traducido; por omisión «Filtros» (con los puestos, «Filtros (3)»)
  * @param {(values: Record<string, unknown>) => void} [props.onApply] aviso de lo que se buscó (la tabla ya se filtró)
  * @param {number} [props.stackPairsBelow] en px: si el cajón mide menos, cada par («desde» y «hasta») va uno arriba del otro
+ * @param {(values: Record<string, unknown>) => Record<string, unknown>|undefined} [props.validate] lo que está mal según la
+ *     pantalla, {llave: mensaje}: su aviso debajo del campo y no deja buscar (el validate de FilterDrawer)
+ * @param {{validateSync: (values: object, options: object) => unknown}} [props.schema] lo mismo con un esquema de yup (el
+ *     schema de FilterDrawer)
  * @param {object} [props.drawerProps] lo demás de FilterDrawer: slots (dateInput, body…), slotProps, applyLabel, closeOnApply,
  *     closePlacement
  * @param {import('react').ReactNode} [props.children] algo más abajo de los campos del cajón
@@ -48,7 +52,9 @@ const ServerTableFilterDrawerButton = piecePart(THEME_NAME, 'Button', Button);
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el botón que se ve, encima de los del tema
  */
 function ServerTableFilterDrawerContent(props) {
-    const {fields, anchor, width, title, buttonLabel, onApply, stackPairsBelow, drawerProps, children, texts, sx, ...unknownProps} = usePieceProps(props, THEME_NAME);
+    const {
+        fields, anchor, width, title, buttonLabel, onApply, stackPairsBelow, validate, schema, drawerProps, children, texts, sx, ...unknownProps
+    } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
     const {filters, setFilters} = useTableFilter();
@@ -63,6 +69,7 @@ function ServerTableFilterDrawerContent(props) {
             </ServerTableFilterDrawerButton>
             <FilterDrawer {...drawerProps} open={isOpen} onClose={() => setIsOpen(false)} fields={fields} values={filters} anchor={anchor} width={width}
                           title={title} stackPairsBelow={stackPairsBelow} texts={texts}
+                          validate={validate ?? drawerProps?.validate} schema={schema ?? drawerProps?.schema}
                           onApply={(values) => {
                               setFilters(values);
                               onApply?.(values);

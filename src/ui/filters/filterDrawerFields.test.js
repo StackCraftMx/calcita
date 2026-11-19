@@ -5,7 +5,9 @@ import {test} from 'node:test';
 import {
     FILTER_FIELD_KIND, FILTER_FIELD_PROBLEM, activeDrawerFilterCountOf, comparisonOf, comparisonTextOf, dateLimitsOf, dateRangeBoundsOf,
     drawerProblemsOf, drawerValuesOf, emptyDrawerValuesOf, filterDrawerChipsOf, filterDrawerKindsOf, filterKeysOf, invalidRangesOf,
+    screenProblemsOf,
 } from '@/ui/filters/filterDrawerFields.js';
+import * as Yup from 'yup';
 
 const FIELDS = [
     {name: 'status', label: 'Estatus', kind: FILTER_FIELD_KIND.multiSelect, options: [{value: 'paid', label: 'Pagado'}]},
@@ -106,4 +108,31 @@ test('una fecha tecleada fuera de los topes se dice en su campo y con el tope qu
     assert.deepEqual(drawerProblemsOf([field], {paid_from: '2026-01-01', paid_to: today}, {today}), {});
     // sin topes, como antes: solo el rango al revés
     assert.deepEqual(drawerProblemsOf(FIELDS, {created_from: '2098-01-01', created_to: ''}), {});
+});
+
+test('lo que dice la pantalla: su esquema de yup y su función, juntos; en la misma llave gana la función', () => {
+    // obligatorio el comprador y la divisa; la pareja monto y operador se exige una a la otra (las parejas van en .shape)
+    const schema = Yup.object().shape({
+        buyer: Yup.string().required('Escoja el comprador'),
+        currency: Yup.string().required(),
+        amount: Yup.string().when('operator', {is: Boolean, then: (rule) => rule.required('Falta el monto')}),
+        operator: Yup.string().when('amount', {is: Boolean, then: (rule) => rule.required('Falta el operador')}),
+    }, [['amount', 'operator']]);
+    const empty = {buyer: '', currency: '', amount: '', operator: ''};
+    const problems = screenProblemsOf(empty, {schema});
+    assert.deepEqual(Object.keys(problems).sort(), ['buyer', 'currency']);
+    assert.equal(problems.buyer, 'Escoja el comprador');
+    // la pareja: con solo uno, el otro avisa
+    assert.deepEqual(screenProblemsOf({...empty, buyer: 'B-1', currency: 'MXN', amount: '500'}, {schema}), {operator: 'Falta el operador'});
+    // la función se suma y en la misma llave gana
+    const validate = (values) => ({buyer: values.buyer === 'B-9' ? 'Ese comprador ya no opera' : undefined, currency: 'Solo pesos', amount: ''});
+    assert.deepEqual(screenProblemsOf({...empty, buyer: 'B-9'}, {schema, validate}), {buyer: 'Ese comprador ya no opera', currency: 'Solo pesos'});
+    // todo bien: nada
+    assert.deepEqual(screenProblemsOf({...empty, buyer: 'B-1', currency: 'MXN'}, {schema, validate: () => ({})}), {});
+    assert.deepEqual(screenProblemsOf(empty), {});
+});
+
+test('un esquema mal armado truena y no se esconde como aviso', () => {
+    const broken = {validateSync: () => { throw new TypeError('schema.validateSync is broken'); }};
+    assert.throws(() => screenProblemsOf({}, {schema: broken}), TypeError);
 });

@@ -1,7 +1,9 @@
 // La búsqueda en cajón: un panel que sale de un lado con los campos que filtran una lista, para cuando ya no caben arriba
 // de la tabla. Lo que se cambia adentro es un borrador: la lista no se mueve hasta «Buscar». Aquí sale de la izquierda y
 // suelto, con el calendario del navegador; Pedidos usa el de la app (slots={{dateInput: DateInput}}). Conectado a
-// ServerTable va con su botón «Filtros (N)» y sus chips:
+// ServerTable va con su botón «Filtros (N)» y sus chips. Lo que la pantalla exige (una moneda escogida, un plazo con tope) va
+// en schema (yup) y validate: el aviso sale debajo del campo al cambiarlo o al picar «Buscar», y no deja buscar.
+//
 //
 //   <ServerTable … filterDefaults={{...DEFAULTS, ...filterDrawerDefaultsOf(FIELDS)}} filterKinds={{...KINDS, ...filterDrawerKindsOf(FIELDS)}}
 //                  chipConfig={buildChipConfig(filterDrawerChipsOf(FIELDS, {t}))} toolbarExtra={<ServerTableFilterDrawer fields={FIELDS} />} />
@@ -12,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import {FILTER_DRAWER_ANCHOR, FILTER_FIELD_KIND, FilterDrawer, activeDrawerFilterCountOf} from '@stackcraftmx/calcita';
 import {MonthInput} from '@stackcraftmx/calcita/date-pickers';
+import * as Yup from 'yup';
 
 // lo que el cajón le da a un campo propio: el borrador completo, sus llaves y lo que esté mal en cada una
 type CustomFieldProps = {values: Record<string, unknown>, setValue: (key: string, value: unknown) => void, keys: string[], errors: Record<string, string>};
@@ -38,6 +41,11 @@ const FIELDS = [
     },
 ];
 
+// 2. Lo que la pantalla exige, con las llaves de los filtros: la moneda con yup (los montos se comparan en una sola) y el
+// tope del plazo con una función (el «hasta» de un rango es term_max)
+const SCHEMA = Yup.object({currency: Yup.string().required('Escoja la moneda: los montos se comparan en una sola')});
+const validate = (values: Record<string, unknown>) => (Number(values.term_max) > 360 ? {term_max: 'El plazo llega hasta 360 días'} : {});
+
 const FilterDrawerDemo = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [filters, setFilters] = useState<Record<string, unknown>>({currency: 'MXN'});
@@ -45,15 +53,16 @@ const FilterDrawerDemo = () => {
 
     return (
         <Stack spacing={1.5} sx={{alignItems: 'flex-start'}}>
-            {/* 2. El botón dice cuántos hay puestos */}
+            {/* 3. El botón dice cuántos hay puestos */}
             <Button variant={activeCount > 0 ? 'contained' : 'outlined'} startIcon={<TuneRoundedIcon />} onClick={() => setIsOpen(true)}>
                 {activeCount > 0 ? `Filtros (${activeCount})` : 'Filtros'}
             </Button>
-            {/* 3. El cajón: de qué lado sale, su ancho y su título; con stackPairsBelow, más angosto que eso cada par va uno
-                arriba del otro (aquí siempre: mide 360). «Buscar» manda todos juntos */}
+            {/* 4. El cajón: de qué lado sale, su ancho y su título; con stackPairsBelow, más angosto que eso cada par va uno
+                arriba del otro (aquí siempre: mide 360). «Buscar» manda todos juntos, si la pantalla no dice que falta algo */}
             <FilterDrawer open={isOpen} onClose={() => setIsOpen(false)} fields={FIELDS} values={filters} onApply={setFilters}
-                          anchor={FILTER_DRAWER_ANCHOR.left} width={360} stackPairsBelow={400} title="Buscar operaciones" />
-            {/* 4. Lo que viaja: el total va como operador:cantidad ('gte:500'), los rangos en dos */}
+                          anchor={FILTER_DRAWER_ANCHOR.left} width={360} stackPairsBelow={400} title="Buscar operaciones"
+                          schema={SCHEMA} validate={validate} />
+            {/* 5. Lo que viaja: el total va como operador:cantidad ('gte:500'), los rangos en dos */}
             <Typography variant="body2" color="text.secondary" sx={{overflowWrap: 'anywhere'}}>Viaja: {JSON.stringify(filters)}</Typography>
         </Stack>
     );

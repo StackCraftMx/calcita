@@ -91,6 +91,7 @@ const FILTER_DRAWER_EXTENSIONS = [
     {id: 'custom', option: "kind: 'custom' · render({value, onChange, values, setValue, keys, errors})", example: "{name: 'zone', kind: 'custom', render: ({value, onChange}) => <MiMapa value={value} onChange={onChange} />}"},
     {id: 'customRange', option: "kind: 'custom' · keys · isBackwards", example: "{name: 'period', kind: 'custom', keys: {from: 'period_from', to: 'period_to'}, isBackwards: (from, to) => to < from, render: …}"},
     {id: 'dateLimits', option: 'minDate · maxDate · disablePast · disableFuture', example: "{name: 'paid', kind: 'dateRange', minDate: '2026-01-01', disableFuture: true}"},
+    {id: 'checks', option: 'schema · validate', example: "schema={Yup.object({currency: Yup.string().required()})} validate={(values) => (values.buyer ? {} : {buyer: 'Escoja el comprador'})}"},
     {id: 'dateInput', option: 'slots.dateInput', example: "<FilterDrawer slots={{dateInput: DateInput}} … />  // DateInput de @stackcraftmx/calcita/date-pickers"},
     {id: 'dateInputTheme', option: 'theme.components.CalcitaFilterDrawer.defaultProps.slots', example: 'components: {CalcitaFilterDrawer: {defaultProps: {slots: {dateInput: DateInput}}}}'},
     {id: 'stackPairs', option: 'stackPairsBelow', example: '<FilterDrawer width={460} stackPairsBelow={400} … />'},
@@ -107,6 +108,7 @@ const READY_COLUMNS_EXTENSIONS = [
     {id: 'cards', option: 'renderCard(row, {index})', example: 'renderCard={(row) => <RecordCard title={row.business_name} … />}'},
     {id: 'view', option: 'view · defaultView · onViewChange · showViewToggle', example: "defaultView={TABLE_VIEW.cards}  // con prefix va en la dirección: ?clientes_view=cards"},
     {id: 'skeleton', option: 'cardSkeleton', example: '<RecordCardSkeleton groups={2} withHighlight={false} />'},
+    {id: 'cardsPagination', option: 'cardsPagination · TABLE_CARDS_PAGINATION', example: 'cardsPagination={TABLE_CARDS_PAGINATION.table}  // o en el tema: components.CalcitaServerTable.defaultProps'},
     {id: 'theme', option: 'CalcitaServerTable: cards · viewToggle · CalcitaStackedCell', example: "components: {CalcitaServerTable: {styleOverrides: {cards: {gridTemplateColumns: 'repeat(2, 1fr)'}}}}"},
 ];
 const DENSITY_EXTENSIONS = [

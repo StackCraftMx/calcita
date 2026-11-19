@@ -64,6 +64,13 @@ const RecordCardHighlight = piecePart(THEME_NAME, 'Highlight', Box);
 const RecordCardFooter = piecePart(THEME_NAME, 'Footer', Stack);
 const RecordCardDetails = piecePart(THEME_NAME, 'Details', Box);
 
+// La línea que separa los bloques del cuerpo (arriba en el teléfono; a la izquierda del dato principal en escritorio): el
+// estilo y el color van fijos y solo el ANCHO cambia con la pantalla (borderTopWidth: {xs: 1, md: 0}).
+// OJO, trampa pagada: con borderTop: {xs: 1} MUI escribe la forma corta («1px solid») dentro de su media query, que va
+// DESPUÉS de borderColor y le regresa el color al del texto: la línea salía casi negra (medido en Chrome: el mismo color
+// que las letras) y la tarjeta apilada se veía cuadriculada.
+const BODY_DIVIDER_LINE = Object.freeze({borderStyle: 'solid', borderWidth: 0, borderColor: 'divider'});
+
 /**
  * @param {object} props
  * @param {import('react').ReactNode} props.title el nombre del registro, ya traducido
@@ -156,7 +163,7 @@ function RecordCardContent(props) {
                 }}>
                     {groups.map((group, groupIndex) => (
                         <RecordCardGroup key={group.key ?? groupIndex} ownSx={{
-                            minWidth: 0, pt: {xs: groupIndex > 0 ? 1.5 : 0, md: 0}, borderTop: {xs: groupIndex > 0 ? 1 : 0, md: 0}, borderColor: 'divider',
+                            minWidth: 0, pt: {xs: groupIndex > 0 ? 1.5 : 0, md: 0}, ...BODY_DIVIDER_LINE, borderTopWidth: {xs: groupIndex > 0 ? 1 : 0, md: 0},
                         }}>
                             {group.title && <Typography variant="overline" color="text.secondary" component="p" sx={{lineHeight: 1.8}}>{group.title}</Typography>}
                             {group.content ?? (
@@ -175,7 +182,8 @@ function RecordCardContent(props) {
                     ))}
                     {highlight && (
                         <RecordCardHighlight ownSx={{
-                            textAlign: {xs: 'left', md: 'right'}, pl: {md: 3}, borderLeft: {md: 1}, borderTop: {xs: 1, md: 0}, pt: {xs: 1.5, md: 0}, borderColor: 'divider',
+                            textAlign: {xs: 'left', md: 'right'}, pl: {md: 3}, pt: {xs: 1.5, md: 0},
+                            ...BODY_DIVIDER_LINE, borderTopWidth: {xs: 1, md: 0}, borderLeftWidth: {md: 1},
                         }}>
                             <Typography variant="overline" color="text.secondary" component="p" sx={{lineHeight: 1.8}}>{highlight.label}</Typography>
                             <Typography variant="h5" component="p" sx={{fontWeight: 700, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'}}>{highlight.value}</Typography>
@@ -183,7 +191,7 @@ function RecordCardContent(props) {
                         </RecordCardHighlight>
                     )}
                     {trailing && (
-                        <Box sx={{minWidth: 0, alignSelf: 'center', borderTop: {xs: 1, md: 0}, pt: {xs: 1.5, md: 0}, borderColor: 'divider'}}>{trailing}</Box>
+                        <Box sx={{minWidth: 0, alignSelf: 'center', pt: {xs: 1.5, md: 0}, ...BODY_DIVIDER_LINE, borderTopWidth: {xs: 1, md: 0}}}>{trailing}</Box>
                     )}
                 </RecordCardBody>
             )}

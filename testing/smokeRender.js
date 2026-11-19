@@ -15,9 +15,11 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, RECORD_CARD_FOOTER_ALIGN, REPEATING_LAYOUT, RepeatingFields, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, TABLE_CELL_FIELD_LAYOUT, RECORD_CARD_FOOTER_ALIGN, REPEATING_LAYOUT, RepeatingFields, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
-import {ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn} from '@stackcraftmx/calcita/table';
+import {
+    ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_CARDS_PAGINATION, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn,
+} from '@stackcraftmx/calcita/table';
 // formik viene con el paquete: Formik se importa de él, como lo haría un proyecto
 import {
     ChangePasswordForm, ForgotPasswordForm, FormRepeatingFields, FormSchemaProvider, FormTextField, FormWizard, Formik, SecondStepForm, SignInForm, TwoStepVerificationCard, Yup,
@@ -204,6 +206,18 @@ const CASES = [
         rows: [{id: 1, name: 'Acme'}, {id: 2, name: 'Ferretera'}], renderCard: (row) => h(RecordCard, {title: row.name}), rowIdOf: (row) => row.id,
         isLoading: false, page: 0, pageCount: 3, onPageChange: () => {}, hasActiveFilters: false, onClearFilters: () => {},
     }), 'Ferretera'],
+    // con el pie de la tabla en vez de las burbujas: el que le pase la tabla, aunque haya varias páginas
+    ['TableCardsView con el pie que le pasa la tabla', h(TableCardsView, {
+        rows: [{id: 1, name: 'Acme'}], renderCard: (row) => h(RecordCard, {title: row.name}), rowIdOf: (row) => row.id,
+        isLoading: false, page: 0, pageCount: 3, onPageChange: () => {}, hasActiveFilters: false, onClearFilters: () => {},
+        paginationFooter: h('span', null, 'pie-de-la-tabla'),
+    }), 'pie-de-la-tabla'],
+    // la tabla en tarjetas con su pie de tabla: «Filas por página» y el conteo en español, como debajo de la tabla
+    ['ServerTable en tarjetas con el pie de la tabla', h(NuqsTestingAdapter, null, h(ServerTable, {
+        fetchPage: async () => ({rows: [], total: 0}), queryKey: 'cardsFooter', ariaLabel: 'Clientes', defaultView: TABLE_VIEW.cards,
+        columns: [textColumn({field: 'name', label: 'Empresa'})], renderCard: (row) => h(RecordCard, {title: row.name}),
+        cardsPagination: TABLE_CARDS_PAGINATION.table, showGoToPage: true,
+    })), 'Filas por página'],
     // los datos apilados: el principal, uno vacío que no se pinta, uno con etiqueta y nota, y uno con etiqueta sin valor («—»)
     ['StackedCell con datos solos, con etiqueta y vacíos', h(StackedCell, {
         entries: ['Acme', '', {label: 'Régimen', value: 'Moral', note: 'nuevo'}, {label: 'Teléfono', value: null}],
@@ -427,6 +441,8 @@ const CASES = [
         h(TextInput, {label: 'Identificación oficial vigente del representante legal', value: '', onChange: () => {}})), 'flex:1 1 auto'],
     ['FormSection con su sx', h(FormSection, {title: 'Expediente', sx: {maxWidth: 777}},
         h(TextInput, {label: 'Nombre', value: '', onChange: () => {}})), 'max-width:777px'],
+    ['FormSection con la receta de los campos en tabla (desde la raíz)', h(FormSection, {...TABLE_CELL_FIELD_LAYOUT},
+        h(TextInput, {label: 'Monto', value: '', onChange: () => {}})), 'calcita-form-row'],
     ['FormSection con labelWidth 0: la etiqueta solo para el lector', h(FormSection, {labelWidth: 0},
         h(TextInput, {label: 'Fecha de pago', value: '', onChange: () => {}})), 'clip:rect(0 0 0 0)'],
     ['SectionCard con el título afuera', h(SectionCard, {title: 'Quién lo recibe', titlePlacement: SECTION_TITLE_PLACEMENT.outside}, 'contenido'), 'CalcitaSectionCard-card'],

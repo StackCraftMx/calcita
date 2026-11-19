@@ -351,6 +351,16 @@ Un `custom` con `keys` es un rango propio en un solo campo: guarda en sus dos ll
 y, con `isBackwards`, tampoco deja buscar al revés. Su `render` recibe todo el borrador (`values`, `setValue`), sus `keys` y
 lo que esté mal en cada una (`errors`), ya dicho. En un cajón angosto, `stackPairsBelow` pone cada par uno arriba del otro.
 
+Lo que exige la pantalla (un filtro obligatorio, una pareja valor y operador) va en `schema` (yup) o en `validate`, con las
+llaves de los filtros. El aviso sale debajo de su campo como en un formulario: al cambiar ese campo o al picar «Buscar», que
+entonces no busca; al abrir el cajón o con «Limpiar» no sale nada en rojo.
+
+```jsx
+<ServerTableFilterDrawer fields={FIELDS}
+                         schema={Yup.object({currency: Yup.string().required()})}
+                         validate={(values) => (values.buyer ? {} : {buyer: 'Escoja el comprador'})} />
+```
+
 ```jsx
 import {DateInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
 
@@ -840,7 +850,9 @@ const columns = [
 - `fixedColumn` acepta una lista: cada una se pega donde termina la anterior (las que no son la última llevan `width`).
 - `renderCard`: la misma lista en tarjetas, con la misma búsqueda, filtros, orden y páginas; un botón cambia de vista y con
   `prefix` la vista va en la dirección (`?clientes_view=cards`). `view`, `defaultView`, `onViewChange` y `showViewToggle`
-  para decidirlo desde la pantalla.
+  para decidirlo desde la pantalla. Debajo de las tarjetas van las páginas en burbujas; con
+  `cardsPagination={TABLE_CARDS_PAGINATION.table}`, el mismo pie de la tabla («Filas por página», el conteo y, con
+  `showGoToPage`, «Ir a la página»).
 - `gridSx` se combina con los estilos de la tabla regla por regla; `gridProps` pasa lo demás al DataGrid.
 
 ## Listas que se ordenan (`/sortable`)
