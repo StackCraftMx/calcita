@@ -4,6 +4,35 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.70.0] - 2026-11-19
+
+### Agregado
+
+- `ServerTable`: `cardsPagination` (`TABLE_CARDS_PAGINATION`) escoge el pie de la vista de tarjetas: las páginas en
+  burbujas (`pages`, por omisión, como siempre) o el mismo pie de la tabla (`table`): «Filas por página», «1–25 de 35» con
+  los textos del DataGrid en el idioma de la pantalla y, con `showGoToPage`, «Ir a la página». Siempre a la vista, como el
+  de la tabla, salvo con `hideFooterWhenAllRowsFit`; en el teléfono sin «Filas por página», igual que la tabla. Para toda
+  la app, en el tema: `components.CalcitaServerTable.defaultProps.cardsPagination`. `TableCardsView` recibe el pie en
+  `paginationFooter`.
+- `FilterDrawer` y `ServerTableFilterDrawer`: `schema` (yup) y `validate` (`(valores) => ({llave: mensaje})`) para lo que
+  exige la pantalla (un filtro obligatorio, una pareja valor y operador). El aviso va debajo de su campo, en todos los
+  tipos (antes solo los rangos y las fechas lo recibían), como en un formulario: al cambiar ese campo o al picar «Buscar»,
+  que entonces no busca. Al abrir el cajón o con «Limpiar» no sale nada en rojo. Los mensajes de yup se dicen con el
+  nombre del campo y los textos del proyecto, como en los formularios.
+- `TABLE_CELL_FIELD_LAYOUT` desde la raíz: la receta de los campos en tabla para una sección propia
+  (`<FormSection {...TABLE_CELL_FIELD_LAYOUT}>`).
+
+### Arreglado
+
+- `RecordCard`: las líneas que separan los bloques del cuerpo salían del color del texto, casi negras (la tarjeta apilada
+  se veía cuadriculada). Las de los grupos y la de lo del final en el teléfono, y la del dato principal en el teléfono y en
+  escritorio. Ahora van con el color de las divisiones del tema.
+
+### Documentado
+
+- Junto a `buildYupLocale`: dos campos que se exigen uno al otro truenan con «Cyclic dependency»; la lista de parejas va
+  en `.shape(campos, [['a', 'b']])`, no en `Yup.object(campos, …)`, que ignora el segundo argumento.
+
 ## [0.69.0] - 2026-11-11
 
 ### Agregado
