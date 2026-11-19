@@ -6,7 +6,7 @@ import {BUILD_WATCH_ACTION, buildWatchActionOf, publishedBuildIdOf, usePublished
 import {VALUE_FORMAT, reportSheetOf} from '@stackcraftmx/calcita/excel';
 import {reactRouterNavigation} from '@stackcraftmx/calcita/react-router';
 import {translateWithI18next} from '@stackcraftmx/calcita/i18next';
-import {ServerTable, ServerTableFilterDrawer, TABLE_DENSITY} from '@stackcraftmx/calcita/table';
+import {ServerTable, ServerTableFilterDrawer, TABLE_CARDS_PAGINATION, TABLE_DENSITY} from '@stackcraftmx/calcita/table';
 import {FormTextField} from '@stackcraftmx/calcita/forms';
 import {createCsrfRetryHandler} from '@stackcraftmx/calcita/laravel';
 import {MONEY_ROUNDING, Money} from '@stackcraftmx/calcita/money';
@@ -746,6 +746,22 @@ const styledDate = createElement(StyledDate, {label: 'Vigencia', value: '', onCh
 const wrongSx = createElement(StyledHeading, {title: 'Pedidos', sx: 'margin-top: 8px'});
 
 export {styledCard, styledHeading, styledMetric, styledSelect, styledLayout, styledDate, wrongSx};
+
+// 0.70: el pie de la tabla debajo de las tarjetas; los avisos de la pantalla en el cajón; la receta de campos en tabla
+import {TABLE_CELL_FIELD_LAYOUT, FormSection as CellLayoutSection} from '@stackcraftmx/calcita';
+const cardsWithTableFooter = createElement(ServerTable, {
+    queryKey: 'cardsFooter', fetchPage: async () => ({rows: [], total: 0}), columns: [], renderCard: () => null, cardsPagination: TABLE_CARDS_PAGINATION.table,
+});
+// @ts-expect-error a propósito: el pie de las tarjetas es pages o table
+const wrongCardsFooter = createElement(ServerTable, {queryKey: 'cardsFooter', fetchPage: async () => ({rows: [], total: 0}), columns: [], cardsPagination: 'bubbles'});
+const drawerWithChecks = createElement(FilterDrawer, {
+    open: true, onClose: () => undefined, fields: [], values: {}, onApply: () => undefined,
+    validate: (values: Record<string, unknown>) => (values.buyer ? {} : {buyer: 'Escoja el comprador'}),
+    schema: {validateSync: (values: object) => values},
+});
+const tableDrawerWithChecks = createElement(ServerTableFilterDrawer, {fields: [], validate: () => ({currency: {key: 'validation:required'}})});
+const cellLayoutSection = createElement(CellLayoutSection, {...TABLE_CELL_FIELD_LAYOUT, children: null});
+export {cardsWithTableFooter, wrongCardsFooter, drawerWithChecks, tableDrawerWithChecks, cellLayoutSection};
 export {tableRows, formikTableRows, wrongRowsLayout, combinationRule, readOnlyNumber, layoutWithoutScroll, outsideTitleCard, wrongTitlePlacement, cellSection, wrongSectionVariant, pillFieldsTheme, fixedAmount, efirmaWithoutCertificate, efirmaAllOff, wrongEfirmaPart, limitedRange, hookSchemaFields, hookSchemaLimitsHook, limitsProvider, limitedAmount, limitedReference, limitedDays, limitedChannels, limitedEvidence, limitedDelivery, limitedFormAmount, limitedFormDays, amountProblem,
     deliveryProblem, wrongLimitMode, dottedPath, loadingShapes, wrongRows, standardTable, roomyTable, bySurfaceTheme, ownDrawerStyles, backdropIsGlass, wrongSurface, wrongSelectedTab, borderedOutlinedTheme, wrongOutlinedButton, cappedTabsLayout, labeledBarButton, wrongBarButtonLabel, aboveTabBar, floatingAboveTabBar, phoneLandscapeQuery, floatingWithoutGap, cappedBarActions, cappedWithNumber, dimmedButton, dimmedButtonsTheme, oneLineTabsTheme, closeAtEnd, reorderedStops, sortableStops, sortableField, wrongSortableAlign, cardWithSlots, textWithMuiSlotProps, ownPieceElement, ownPieceWithoutTitle, allPaths, orderPath, apiIndex, filledPath, servedBase, appTexts, plainClick, readyColumns, cardsTable, statusWidth, viewHook, wrongView049, menuWithDestination, replacingTabs, twoFixedColumns, legacyProvider, headline, markedPieces, readMessage, validationHook, fieldRules, postalOk, replaceNavigation, wrongFixed, screenSx, noScreenSx, tallRowsTable, twelveHourIsland, defaultHourCycle, lastYearHeatmap, wrongHourCycle, wideBrand, removeSink, uploadError, withIcons, legacyIsland, englishDate, formattersHook, salesChart, layoutEvents, sectionToggle, schemeToggle, barSearch, rowMenu, eventDetails,
     reminder, ownTexts, wrongView, watchAction, isNotice, fileBuildId, watchBuilds, screenCapsules, backToCustomers, editingWizard, plainWizard, firstStepWithoutBack, looseWizardWithoutBack, requiredDate, requiredDateField, stackedOnPhone, blockedWizard, blockedFormWizard, documentsSection, fixedLabelSection, wrongLabelWidth, postedDownload, batchDownload, wrappedMenuLayout, boundedDrawer, tableDrawerWithCalendar, centeredToasts, plainToasts, schemaMarksRequired, isCompanyRequired, typedFormik, sharedSchema, wrongToastPosition, isInCapsule, isInMoreMenu, readCloseMoreMenu, capsulesTheme, brandMinimalTheme, appleFloating, brandFieldsTheme, appleFieldFill, tokensTheme, panelRadiusValue, rootTokens, tokenNames, pairedWordmarkLayout, desktopOnlyTheme, phoneRule, piecesTheme, startsMinimal, formFields, applyCaught, checker, cancelAction, typedColumns, noSession, missingNames, demoCode, accountParts, wrongConnector, tilesUrl, markerBounds, monthView, movedCards, columnFull, workspaceParts, ordersRequest, savedRequest, downloadRequest, isValidation, staleChunk, lazyRoutes, passkeyParts, securityParts, cleanCode, toolkitTheme, hasGlass, floatingStyles, contentStyles, floatingInset, formParts, GlassPanel, passwordAccepted, permissionGroups, grantedAfterGroup, trendUp, AuthLayout, PermissionMatrix,
