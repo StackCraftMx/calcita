@@ -53,7 +53,7 @@ const ProfileList = ({profiles, selectedKey, ownProfileKey, onSelect}) => {
                         </Stack>
                         <ListItemText sx={{m: 0}} primary={profile.description}
                                       secondary={t('page.usersCount', {count: profile.users_count})}
-                                      slotProps={{primary: {variant: 'caption', color: 'text.secondary'}, secondary: {variant: 'caption'}}} />
+                                      slotProps={{primary: {variant: 'caption', color: 'textSecondary'}, secondary: {variant: 'caption'}}} />
                     </ListItemButton>
                 ))}
             </List>

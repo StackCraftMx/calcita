@@ -87,7 +87,7 @@ export const FiscalPage = () => {
             <PageHeading title={t('page.title')} description={t('page.subtitle')} />
 
             <SectionCard title={t('samples.title')}>
-                <Typography variant="body2" color="text.secondary" sx={{mb: 1.5}}>{t('samples.text', {password: SAMPLE_KEY_PASSWORD})}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{mb: 1.5}}>{t('samples.text', {password: SAMPLE_KEY_PASSWORD})}</Typography>
                 <Stack direction="row" sx={{gap: 1, flexWrap: 'wrap'}}>
                     {SAMPLE_FILES.map(({labelKey, path}) => (
                         <TemplateDownloadButton key={path} href={publicUrlOf(path)} fileName={path.split('/').pop()} label={t(labelKey)} variant="outlined" size="small" />
@@ -96,7 +96,7 @@ export const FiscalPage = () => {
             </SectionCard>
 
             <SectionCard title={t('invoices.title')}>
-                <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('invoices.text')}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('invoices.text')}</Typography>
                 <FileInput label={t('invoices.file')} value={invoiceFile} onChange={chooseInvoice} accept=".xml" error={invoiceError ?? undefined}
                            helperText={t('invoices.fileHelp')} />
                 {invoice && (
@@ -108,7 +108,7 @@ export const FiscalPage = () => {
                                  )} />
                 )}
                 <Typography variant="subtitle2" sx={{mt: 3}}>{t('invoices.loadedTitle')}</Typography>
-                {loadedInvoices?.length === 0 && <Typography variant="body2" color="text.secondary">{t('invoices.empty')}</Typography>}
+                {loadedInvoices?.length === 0 && <Typography variant="body2" color="textSecondary">{t('invoices.empty')}</Typography>}
                 <List dense>
                     {(loadedInvoices ?? []).map((loaded) => (
                         <ListItem key={loaded.uuid} disableGutters>
@@ -123,7 +123,7 @@ export const FiscalPage = () => {
             </SectionCard>
 
             <SectionCard title={t('efirma.title')}>
-                <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('efirma.text')}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('efirma.text')}</Typography>
                 {/* «Revisar la e.firma» abre la llave en el navegador (jsrsasign): nada viaja al servidor */}
                 <EfirmaFields value={efirma} onChange={setEfirma} expectedRfc={STORE_RFC} />
             </SectionCard>

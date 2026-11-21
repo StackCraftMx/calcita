@@ -107,7 +107,7 @@ const RowByRowForm = () => {
                     </>
                 )}
             />
-            <Typography variant="body2" color="text.secondary" sx={{overflowWrap: 'anywhere'}}>
+            <Typography variant="body2" color="textSecondary" sx={{overflowWrap: 'anywhere'}}>
                 Guardado en el servidor: «{JSON.stringify(rules)}»
             </Typography>
         </Stack>

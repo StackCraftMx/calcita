@@ -1,7 +1,7 @@
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import Stack from '@mui/material/Stack';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import {initialsOf} from '@stackcraftmx/calcita';
 
 // personas de mentira

@@ -10,7 +10,7 @@ const AppearanceDemo = () => (
         <AppearanceSettings />
         <GlassPanel sx={{p: 2}}>
             <Typography variant="subtitle2">GlassPanel</Typography>
-            <Typography variant="body2" color="text.secondary">Vidrio para lo que flota sobre el contenido (con el tema de vidrio).</Typography>
+            <Typography variant="body2" color="textSecondary">Vidrio para lo que flota sobre el contenido (con el tema de vidrio).</Typography>
         </GlassPanel>
     </Stack>
 );

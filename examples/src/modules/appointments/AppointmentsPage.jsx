@@ -103,7 +103,7 @@ export const AppointmentsPage = () => {
                     {/* cuánto falta para que empiece (Countdown): al llegar a cero dice «Ya empezó» */}
                     {openAppointment && Date.parse(openAppointment.start) > Date.now() && (
                         <Stack direction="row" spacing={1} sx={{alignItems: 'baseline', mb: 1.5}}>
-                            <Typography variant="body2" color="text.secondary">{t('detail.startsIn')}</Typography>
+                            <Typography variant="body2" color="textSecondary">{t('detail.startsIn')}</Typography>
                             <Countdown until={openAppointment.start} label={t('detail.startsIn')} completedText={t('detail.started')} variant="subtitle1" />
                         </Stack>
                     )}

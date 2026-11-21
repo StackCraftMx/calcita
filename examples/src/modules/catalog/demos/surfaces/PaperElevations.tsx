@@ -16,11 +16,11 @@ const PaperElevations = () => {
         <Stack direction="row" spacing={2} useFlexGap sx={{flexWrap: 'wrap'}}>
             {ELEVATIONS.map((elevation) => (
                 <Paper key={elevation} elevation={elevation} sx={cardSx}>
-                    <Typography variant="caption" color="text.secondary">{t('surfaces.paper.elevation', {elevation})}</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('surfaces.paper.elevation', {elevation})}</Typography>
                 </Paper>
             ))}
             <Paper variant="outlined" sx={cardSx}>
-                <Typography variant="caption" color="text.secondary">{t('variants.outlined')}</Typography>
+                <Typography variant="caption" color="textSecondary">{t('variants.outlined')}</Typography>
             </Paper>
         </Stack>
     );

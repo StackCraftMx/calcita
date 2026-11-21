@@ -27,7 +27,7 @@ export const UploadStatus = ({snapshot, onCancel, describeResult}) => {
             <Stack spacing={1}>
                 <LinearProgress variant={isSending ? 'determinate' : 'indeterminate'} value={progress ?? 0} />
                 <Stack direction="row" sx={{alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Typography variant="body2" color="text.secondary" role="status">
+                    <Typography variant="body2" color="textSecondary" role="status">
                         {isSending ? t('status.sending', {percent: progress ?? 0}) : t('status.processing')}
                     </Typography>
                     <Button size="small" color="inherit" onClick={onCancel}>{t('status.cancel')}</Button>

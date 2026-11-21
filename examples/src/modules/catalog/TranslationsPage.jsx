@@ -86,7 +86,7 @@ export const TranslationsPage = () => {
             <PageHeading title={t('translations.title')} description={t('translations.description')} />
 
             <SectionCard title={t('translations.order.title')}>
-                <Typography variant="body2" color="text.secondary">{t('translations.order.description')}</Typography>
+                <Typography variant="body2" color="textSecondary">{t('translations.order.description')}</Typography>
             </SectionCard>
             <DemoSection title={t('translations.calls.title')} description={t('translations.calls.description')}
                          extensions={rowsOf('calls', CALLS_EXTENSIONS)} Demo={TranslationCalls} loadSource={loadCalls} />

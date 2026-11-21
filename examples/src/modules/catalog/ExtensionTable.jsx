@@ -67,7 +67,7 @@ export const ExtensionTable = ({rows}) => {
                 {rows.map((row) => (
                     <Box component="li" key={row.id ?? row.option}>
                         <Typography sx={{...codeSx, fontWeight: 600}}>{row.option}</Typography>
-                        <Typography variant="body2" color="text.secondary">{row.what}</Typography>
+                        <Typography variant="body2" color="textSecondary">{row.what}</Typography>
                         {row.example && <Typography sx={{...codeSx, color: 'text.secondary'}}>{row.example}</Typography>}
                     </Box>
                 ))}

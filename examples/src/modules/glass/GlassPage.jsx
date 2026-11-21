@@ -40,7 +40,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import RemoveIcon from '@mui/icons-material/Remove';
 import SearchIcon from '@mui/icons-material/Search';
 import {
@@ -131,7 +131,7 @@ const GlassScene = () => {
                         sx={{position: 'absolute', top: (theme) => theme.spacing(SCENE_EDGE_SPACING), right: (theme) => theme.spacing(SCENE_EDGE_SPACING),
                              width: QUICK_SETTINGS_WIDTH, maxWidth: `calc(100% - ${MAP_BUTTONS_COLUMN_PIXELS}px)`, p: 2}}>
                 <Typography variant="subtitle2" component="h3">{t('scene.quickSettings')}</Typography>
-                <Typography variant="caption" color="text.secondary" id="glass-brightness">{t('scene.brightness')}</Typography>
+                <Typography variant="caption" color="textSecondary" id="glass-brightness">{t('scene.brightness')}</Typography>
                 <Slider size="small" value={brightness} onChange={(event, value) => setBrightness(value)} aria-labelledby="glass-brightness" />
                 <FormControlLabel label={t('scene.airplaneMode')}
                                   control={<Switch checked={isAirplaneMode} onChange={(event) => setIsAirplaneMode(event.target.checked)} />} />
@@ -167,7 +167,7 @@ const GlassControls = () => {
 
     return (
         <SectionCard title={t('controls.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('controls.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('controls.text')}</Typography>
             <Stack spacing={2.5}>
                 <Tabs value={period} onChange={(event, value) => setPeriod(value)} aria-label={t('controls.periodLabel')}>
                     <Tab value="day" label={t('controls.day')} />
@@ -189,7 +189,7 @@ const GlassControls = () => {
                 <FormControlLabel label={t('controls.notifications')}
                                   control={<Switch checked={wantsNotifications} onChange={(event) => setWantsNotifications(event.target.checked)} />} />
                 <Box sx={{maxWidth: 320}}>
-                    <Typography variant="caption" color="text.secondary" id="glass-volume">{t('controls.volume')}</Typography>
+                    <Typography variant="caption" color="textSecondary" id="glass-volume">{t('controls.volume')}</Typography>
                     <Slider value={volume} onChange={(event, value) => setVolume(value)} aria-labelledby="glass-volume" />
                 </Box>
             </Stack>
@@ -213,7 +213,7 @@ const GlassOverlays = () => {
 
     return (
         <SectionCard title={t('overlays.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('overlays.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('overlays.text')}</Typography>
             <Stack direction="row" spacing={1.5} useFlexGap sx={{flexWrap: 'wrap', alignItems: 'center', mb: 2}}>
                 <Button variant="outlined" onClick={() => setIsDialogOpen(true)}>{t('overlays.openDialog')}</Button>
                 <Button variant="outlined" aria-haspopup="menu" aria-expanded={Boolean(menuAnchor)} onClick={(event) => setMenuAnchor(event.currentTarget)}>
@@ -253,7 +253,7 @@ export const GlassPage = () => {
             <Stack spacing={2}>
                 <Alert severity="info">{isGlass ? t('page.reduced') : t('page.off')}</Alert>
                 <SectionCard title={t('scene.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('scene.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('scene.text')}</Typography>
                     <GlassScene />
                 </SectionCard>
                 <GlassControls />

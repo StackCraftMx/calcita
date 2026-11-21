@@ -63,7 +63,7 @@ const FilterDrawerDemo = () => {
                           anchor={FILTER_DRAWER_ANCHOR.left} width={360} stackPairsBelow={400} title="Buscar operaciones"
                           schema={SCHEMA} validate={validate} />
             {/* 5. Lo que viaja: el total va como operador:cantidad ('gte:500'), los rangos en dos */}
-            <Typography variant="body2" color="text.secondary" sx={{overflowWrap: 'anywhere'}}>Viaja: {JSON.stringify(filters)}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{overflowWrap: 'anywhere'}}>Viaja: {JSON.stringify(filters)}</Typography>
         </Stack>
     );
 };

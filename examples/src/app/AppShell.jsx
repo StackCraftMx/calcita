@@ -46,7 +46,7 @@ const SidebarCard = () => {
     return (
         <Paper variant="outlined" sx={{p: 1.5, whiteSpace: 'normal', bgcolor: 'background.default'}}>
             <Typography variant="subtitle2">{t('footer.title')}</Typography>
-            <Typography variant="caption" color="text.secondary" component="p">{t('footer.text')}</Typography>
+            <Typography variant="caption" color="textSecondary" component="p">{t('footer.text')}</Typography>
         </Paper>
     );
 };

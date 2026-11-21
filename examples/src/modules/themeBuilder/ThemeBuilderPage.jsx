@@ -187,7 +187,7 @@ export const ThemeBuilderPage = () => {
                                                           control={<Switch checked={!surfacesOff.includes(surface)}
                                                                            onChange={(event) => toggleSurface(surface, event.target.checked)} />} />
                                     ))}
-                                    <Typography variant="caption" color="text.secondary">{t('look.surfacesHelp')}</Typography>
+                                    <Typography variant="caption" color="textSecondary">{t('look.surfacesHelp')}</Typography>
                                 </Stack>
                             </FormRow>
                         )}
@@ -248,7 +248,7 @@ export const ThemeBuilderPage = () => {
                 <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} sx={{alignItems: {sm: 'center'}, justifyContent: 'space-between', mb: 2}}>
                     <Box>
                         <Typography variant="h6" component="h2">{t('code.title')}</Typography>
-                        <Typography variant="body2" color="text.secondary">{t('code.description')}</Typography>
+                        <Typography variant="body2" color="textSecondary">{t('code.description')}</Typography>
                     </Box>
                     <Stack direction="row" spacing={1} sx={{alignItems: 'center', flexShrink: 0}}>
                         <SegmentedControl ariaLabel={t('code.title')} value={codeLanguage} onChange={setCodeLanguage}

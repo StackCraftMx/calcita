@@ -27,7 +27,7 @@ export const PondServerSection = () => {
 
     return (
         <SectionCard title={t('pond.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('pond.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('pond.text')}</Typography>
             <FileDropzone
                 multiple
                 value={files}
@@ -45,7 +45,7 @@ export const PondServerSection = () => {
                 )}
             >
                 {processed && (
-                    <Typography variant="body2" color="text.secondary" role="status" sx={{textAlign: 'center'}}>
+                    <Typography variant="body2" color="textSecondary" role="status" sx={{textAlign: 'center'}}>
                         {t('pond.progress', processed)}
                     </Typography>
                 )}

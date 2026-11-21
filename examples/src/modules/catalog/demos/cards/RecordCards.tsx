@@ -43,7 +43,7 @@ const RecordCards = () => (
             ]}
             highlight={{label: 'Pago mensual', value: '$22,920.00', caption: 'Con IVA de los intereses'}}
             footer={(
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                     La revisión vence en <Countdown until={inHours(30)} showSeconds={false} label="Tiempo para que venza la revisión" />
                 </Typography>
             )}

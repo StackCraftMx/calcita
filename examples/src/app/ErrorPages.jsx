@@ -15,7 +15,7 @@ export const NotFoundPage = () => {
     return (
         <ErrorPage kind={ERROR_PAGE_KIND.notFound}
                    extraActions={<Button variant="outlined" component={Link} to={APP_PATHS.orders}>{t('errorPages.goOrders')}</Button>}>
-            <Typography variant="body2" color="text.secondary">{t('errorPages.support')}</Typography>
+            <Typography variant="body2" color="textSecondary">{t('errorPages.support')}</Typography>
         </ErrorPage>
     );
 };

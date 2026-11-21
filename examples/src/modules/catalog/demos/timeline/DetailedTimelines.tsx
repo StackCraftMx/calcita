@@ -7,7 +7,7 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem, {timelineItemClasses} from '@mui/lab/TimelineItem';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
@@ -37,7 +37,7 @@ const DetailedTimelines = () => {
             <Timeline sx={{width: TIMELINE_WIDTH, m: 0}}>
                 {ORDER_STEPS.map(({key, time}, index) => (
                     <TimelineItem key={key}>
-                        <TimelineOppositeContent color="text.secondary" sx={{flex: 0.3}}>{time}</TimelineOppositeContent>
+                        <TimelineOppositeContent color="textSecondary" sx={{flex: 0.3}}>{time}</TimelineOppositeContent>
                         <TimelineSeparator>
                             <TimelineDot color="primary" variant={isLast(index) ? 'filled' : 'outlined'} />
                             {!isLast(index) && <TimelineConnector />}
@@ -56,7 +56,7 @@ const DetailedTimelines = () => {
                         </TimelineSeparator>
                         <TimelineContent sx={{py: 1.5}}>
                             <Typography variant="subtitle2" component="p">{t(`timeline.steps.${key}`)}</Typography>
-                            <Typography variant="caption" color="text.secondary">{time}</Typography>
+                            <Typography variant="caption" color="textSecondary">{time}</Typography>
                         </TimelineContent>
                     </TimelineItem>
                 ))}

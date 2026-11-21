@@ -331,7 +331,7 @@ export const MailPage = () => {
                         <KeyboardOutlinedIcon />
                     </IconButton>
                 </Tooltip>
-                <Typography variant="caption" color="text.secondary" sx={{ml: 'auto', fontVariantNumeric: 'tabular-nums'}}>
+                <Typography variant="caption" color="textSecondary" sx={{ml: 'auto', fontVariantNumeric: 'tabular-nums'}}>
                     {t('list.range', {first: formatNumber(firstShown), last: formatNumber(lastShown), total: formatNumber(list.total)})}
                 </Typography>
                 <Tooltip title={t('list.previousPage')}>

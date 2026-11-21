@@ -4,7 +4,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import {useToolkitTranslation} from '@stackcraftmx/calcita';
 

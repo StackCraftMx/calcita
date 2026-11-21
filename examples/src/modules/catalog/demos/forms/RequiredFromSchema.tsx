@@ -51,7 +51,7 @@ const RequiredFromSchema = () => {
                             <FormCheckboxGroupField name="noticesBy" label="Avisarle por" options={NOTICE_OPTIONS} />
                             <FormTextField name="nickname" label="Cómo le dicen" />
                         </FormSection>
-                        {chosenKind && <Typography variant="body2" color="text.secondary">Cambió a: {chosenKind}</Typography>}
+                        {chosenKind && <Typography variant="body2" color="textSecondary">Cambió a: {chosenKind}</Typography>}
                         <SubmitButton sx={{alignSelf: 'flex-start'}}>Guardar</SubmitButton>
                     </Stack>
                 </Form>

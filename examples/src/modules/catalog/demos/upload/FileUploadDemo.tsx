@@ -46,7 +46,7 @@ const FileUploadDemo = () => {
         <Stack spacing={1.5} sx={{maxWidth: 720}}>
             {/* 2. Cuántos van: sale de onStatusChange de cada renglón */}
             <LinearProgress variant="determinate" value={(uploadedCount / DOCUMENTS.length) * 100} aria-label="Documentos cargados" />
-            <Typography variant="body2" color="text.secondary">{uploadedCount} de {DOCUMENTS.length} cargados</Typography>
+            <Typography variant="body2" color="textSecondary">{uploadedCount} de {DOCUMENTS.length} cargados</Typography>
             {/* 3. Un renglón por documento: la etiqueta a la izquierda y el cargador mini a la derecha */}
             <FormSection>
                 {DOCUMENTS.map(({key, label, accept}) => (
@@ -65,7 +65,7 @@ const FileUploadDemo = () => {
                     />
                 ))}
             </FormSection>
-            <Typography variant="body2" color="text.secondary">Viaja: «{JSON.stringify(fileIds)}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{JSON.stringify(fileIds)}»</Typography>
         </Stack>
     );
 };

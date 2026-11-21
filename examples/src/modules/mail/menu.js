@@ -1,5 +1,5 @@
 // La entrada de la bandeja en el menú, en «Trabajo en equipo».
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 
 import {MAIL_PATH} from '@/modules/mail/routes.js';
 

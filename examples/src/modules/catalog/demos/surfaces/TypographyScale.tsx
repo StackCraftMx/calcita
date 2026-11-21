@@ -13,7 +13,7 @@ const TypographyScale = () => {
         <Stack spacing={1.5}>
             {VARIANTS.map((variant) => (
                 <Stack key={variant} direction={{xs: 'column', sm: 'row'}} spacing={{xs: 0.5, sm: 2}} sx={{alignItems: {sm: 'baseline'}}}>
-                    <Typography variant="caption" component="code" color="text.secondary"
+                    <Typography variant="caption" component="code" color="textSecondary"
                                 sx={{width: NAME_WIDTH, flexShrink: 0, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace'}}>
                         {variant}
                     </Typography>

@@ -30,7 +30,7 @@ export const GlassModeSetting = () => {
             <SettingSection label={t('glass.label')} value={glassMode === GLASS_MODES.surfaces ? GLASS_MODES.floating : glassMode} onChange={setGlassMode}
                             options={MENU_MODES.map((mode) => ({value: mode, label: t(`glass.short.${mode}`)}))} />
             {glassMode === GLASS_MODES.surfaces && (
-                <Typography variant="caption" color="text.secondary" component="p" role="status"
+                <Typography variant="caption" color="textSecondary" component="p" role="status"
                             sx={{display: 'flex', gap: 0.75, alignItems: 'flex-start', px: 2, pb: 1, maxWidth: 320, whiteSpace: 'normal'}}>
                     <WarningAmberRoundedIcon fontSize="inherit" color="warning" sx={{mt: 0.25, flexShrink: 0}} />
                     {t('glass.surfacesWarning')}

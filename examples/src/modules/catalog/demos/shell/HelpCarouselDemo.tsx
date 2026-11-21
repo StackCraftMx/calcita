@@ -25,7 +25,7 @@ const HelpCarouselDemo = () => {
         <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
             <Button variant="outlined" onClick={help.openHelp}>Ver la ayuda</Button>
             <HelpButton onClick={help.openHelp} />
-            <Typography variant="body2" color="text.secondary">{help.wasSeen ? 'Ya la vio en este navegador.' : 'Todavía no la ve.'}</Typography>
+            <Typography variant="body2" color="textSecondary">{help.wasSeen ? 'Ya la vio en este navegador.' : 'Todavía no la ve.'}</Typography>
             {/* 3. La ventana: avisa cómo se cerró (para guardarlo también en su servidor, si quiere) */}
             <HelpCarouselDialog open={help.open} title="Reportes" steps={REPORT_HELP}
                                 onClose={(reason, details) => {

@@ -83,7 +83,7 @@ const DialogKinds = () => {
             {/* la hoja de lectura: sólida, para leer con calma */}
             <ContentDialog open={openDialog === 'reading'} onClose={close} title={t('overlays.dialogs.readingTitle')}>
                 <Typography sx={{mb: 2}}>{t('overlays.dialogs.readingText')}</Typography>
-                {longParagraphs.map((paragraph) => <Typography key={paragraph} color="text.secondary" sx={{mb: 2}}>{paragraph}</Typography>)}
+                {longParagraphs.map((paragraph) => <Typography key={paragraph} color="textSecondary" sx={{mb: 2}}>{paragraph}</Typography>)}
             </ContentDialog>
         </Stack>
     );

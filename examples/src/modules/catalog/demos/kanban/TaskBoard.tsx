@@ -4,7 +4,7 @@
 // (roja si venció), pendientes, comentarios y adjuntos. Con onCardComplete cada tarjeta lleva su círculo para terminarla, y
 // una columna collapsible (el congelador) se encoge a una tira. La pantalla de Tareas de los ejemplos lo usa completo.
 import {useState} from 'react';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import {KanbanBoard, moveCard} from '@stackcraftmx/calcita/kanban';
 

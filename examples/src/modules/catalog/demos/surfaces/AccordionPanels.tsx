@@ -22,7 +22,7 @@ const AccordionPanels = () => {
                         <Typography sx={{fontWeight: 600}}>{t(`surfaces.accordion.panels.${panel}.title`)}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography variant="body2" color="text.secondary">{t(`surfaces.accordion.panels.${panel}.text`)}</Typography>
+                        <Typography variant="body2" color="textSecondary">{t(`surfaces.accordion.panels.${panel}.text`)}</Typography>
                     </AccordionDetails>
                 </Accordion>
             ))}

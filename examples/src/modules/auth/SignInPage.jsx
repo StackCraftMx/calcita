@@ -34,13 +34,13 @@ const DemoPeople = ({signIn}) => {
     return (
         <Paper variant="outlined" sx={{p: 2}}>
             <Typography variant="subtitle2">{t('demoTitle')}</Typography>
-            <Typography variant="caption" color="text.secondary" component="p" sx={{mb: 1.5}}>{t('demoText')}</Typography>
+            <Typography variant="caption" color="textSecondary" component="p" sx={{mb: 1.5}}>{t('demoText')}</Typography>
             <Stack spacing={1}>
                 {demoPeople.map((person) => (
                     <Button key={person.userId} variant="outlined" onClick={() => enterAs(person.email)} disabled={Boolean(busyEmail)}
                             sx={{justifyContent: 'space-between'}}>
                         <span>{person.name}</span>
-                        <Typography component="span" variant="caption" color="text.secondary">{person.profileName}</Typography>
+                        <Typography component="span" variant="caption" color="textSecondary">{person.profileName}</Typography>
                     </Button>
                 ))}
             </Stack>

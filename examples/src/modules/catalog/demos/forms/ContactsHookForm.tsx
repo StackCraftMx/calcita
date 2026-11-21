@@ -54,7 +54,7 @@ const ContactsHookForm = () => {
                         )}
                     />
                     <SubmitButton sx={{alignSelf: 'flex-start'}}>Guardar contactos</SubmitButton>
-                    <Typography variant="body2" color="text.secondary" sx={{overflowWrap: 'anywhere'}}>Viaja: «{JSON.stringify(contacts)}»</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{overflowWrap: 'anywhere'}}>Viaja: «{JSON.stringify(contacts)}»</Typography>
                 </Stack>
             </form>
         </FormProvider>

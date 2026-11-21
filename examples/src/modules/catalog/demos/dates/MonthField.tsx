@@ -19,7 +19,7 @@ const MonthField = () => {
             {/* 1. Un reporte: solo meses que ya empezaron */}
             <MonthInput label="Mes del reporte" value={month} onChange={setMonth} disableFuture />
             {/* 2. Lo que viaja al servidor */}
-            <Typography variant="body2" color="text.secondary">Viaja: «{month}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{month}»</Typography>
         </Stack>
     );
 };

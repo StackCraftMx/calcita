@@ -36,7 +36,7 @@ export const AttachmentsSection = () => {
 
     return (
         <SectionCard title={t('attachments.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('attachments.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('attachments.text')}</Typography>
             <FileDropzone
                 multiple
                 value={files}

@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import Stack from '@mui/material/Stack';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import DraftsOutlinedIcon from '@mui/icons-material/DraftsOutlined';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';

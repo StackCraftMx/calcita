@@ -48,7 +48,7 @@ const ScreenCapsules = () => {
                 <BarActionButton label="Archivar" icon={<ArchiveOutlinedIcon />} showLabel={showLabel} onClick={() => toastInfo('Aquí archiva el pedido.')} />
             </BarActions>
 
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
                 Estos botones están arriba a la derecha: en escritorio, en la barra; en el teléfono, flotando (se quedan al bajar), y los que no caben, en el menú «⋯».
             </Typography>
             <FormControlLabel control={<Switch checked={withLabels} onChange={(event) => setWithLabels(event.target.checked)} />}

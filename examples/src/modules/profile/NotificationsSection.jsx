@@ -45,7 +45,7 @@ export const NotificationsSection = () => {
 
     return (
         <SectionCard title={t('notifications.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('notifications.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('notifications.text')}</Typography>
             {/* guard: mientras llegan, la ruedita */}
             {notifications ? (
                 <Stack spacing={1} sx={{alignItems: 'flex-start'}}>

@@ -97,7 +97,7 @@ export const FeedbackPage = () => {
             <PageHeading title={t('page.title')} description={t('page.subtitle')} />
             <Stack spacing={2}>
                 <SectionCard title={t('confirm.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('confirm.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('confirm.text')}</Typography>
                     <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5}>
                         <Button variant="contained" disabled={reminderCustomers === null} onClick={() => reminders.open({})}>
                             {t('confirm.reminders')}
@@ -109,7 +109,7 @@ export const FeedbackPage = () => {
                 </SectionCard>
 
                 <SectionCard title={t('toasts.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('toasts.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('toasts.text')}</Typography>
                     <Stack direction="row" spacing={1.5} useFlexGap sx={{flexWrap: 'wrap'}}>
                         <Button variant="outlined" color="success" onClick={() => toastSuccess(t('toasts.successMessage'))}>{t('toasts.success')}</Button>
                         <Button variant="outlined" color="info" onClick={() => toastInfo(t('toasts.infoMessage'))}>{t('toasts.info')}</Button>
@@ -121,12 +121,12 @@ export const FeedbackPage = () => {
                 </SectionCard>
 
                 <SectionCard title={t('waiting.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('waiting.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('waiting.text')}</Typography>
                     <Button variant="contained" onClick={closeMonth}>{t('waiting.start')}</Button>
                 </SectionCard>
 
                 <SectionCard title={t('newBuild.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('newBuild.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('newBuild.text')}</Typography>
                     <Button variant="outlined" color="warning" onClick={simulateNewBuild}>{t('newBuild.simulate')}</Button>
                 </SectionCard>
             </Stack>

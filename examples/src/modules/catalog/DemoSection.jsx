@@ -43,7 +43,7 @@ export const DemoSection = ({title, description, Demo, loadSource, bare = false,
 
     const content = (
         <>
-            {description && <Typography variant="body2" color="text.secondary" sx={{mb: 2.5}}>{description}</Typography>}
+            {description && <Typography variant="body2" color="textSecondary" sx={{mb: 2.5}}>{description}</Typography>}
             {extensions && <ExtensionTable rows={extensions} />}
             <Box sx={{minWidth: 0}}>
                 <Demo />
@@ -100,7 +100,7 @@ export const CodeSection = ({title, description, loadSource, sources: fixedSourc
     const sources = fixedSources ?? loadedSources;
     return (
         <SectionCard title={title}>
-            {description && <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{description}</Typography>}
+            {description && <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{description}</Typography>}
             {extensions && <ExtensionTable rows={extensions} />}
             {sources && <CodeViewer sources={sources} />}
         </SectionCard>

@@ -16,7 +16,7 @@ const MarkedTextDemo = () => {
                             marks={{highlight: <Box component="span" sx={{color: 'primary.main', fontWeight: 700}} />}} />
             </Typography>
             {/* 2. Varias marcas, una dentro de otra: una liga con negritas adentro */}
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
                 <MarkedText text={t('translations.marked.sample.terms', {version: '2026-11'})}
                             marks={{terms: <Link href="#terminos" />, strong: 'strong'}} />
             </Typography>

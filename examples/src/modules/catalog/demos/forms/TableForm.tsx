@@ -130,7 +130,7 @@ const TableForm = () => {
                             />
                             <SubmitButton sx={{alignSelf: 'flex-start'}}>Guardar el reparto</SubmitButton>
                             {/* lo que viaja va sin espacios: se parte donde haga falta para no ensanchar la página en el teléfono */}
-                            <Typography variant="body2" color="text.secondary" sx={{overflowWrap: 'anywhere'}}>
+                            <Typography variant="body2" color="textSecondary" sx={{overflowWrap: 'anywhere'}}>
                                 Presupuesto: {formatCurrency(Number(values.budget || 0))} · Viaja: «{JSON.stringify(values.rules.map(({used, ...rule}) => rule))}»
                             </Typography>
                         </Stack>

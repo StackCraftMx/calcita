@@ -46,7 +46,7 @@ const TabVariants = () => {
                       aria-label={t('navigation.tabs.ariaLabel')} sx={{borderRight: 1, borderColor: 'divider'}}>
                     {BASIC_TABS.map((tab) => <Tab key={tab} value={tab} label={t(`navigation.tabs.items.${tab}`)} />)}
                 </Tabs>
-                <Typography sx={{p: 2}} color="text.secondary">{t(`navigation.tabs.items.${verticalTab}`)}</Typography>
+                <Typography sx={{p: 2}} color="textSecondary">{t(`navigation.tabs.items.${verticalTab}`)}</Typography>
             </Box>
         </Stack>
     );

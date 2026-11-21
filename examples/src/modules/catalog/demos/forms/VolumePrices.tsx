@@ -52,7 +52,7 @@ const VolumePrices = () => {
                         />
                         <SubmitButton sx={{alignSelf: 'flex-start'}}>Guardar precios</SubmitButton>
                         {/* 3. Lo que viaja: la lista tal cual */}
-                        <Typography variant="body2" color="text.secondary">Viaja: «{JSON.stringify(values.prices)}»</Typography>
+                        <Typography variant="body2" color="textSecondary">Viaja: «{JSON.stringify(values.prices)}»</Typography>
                     </Stack>
                 </Form>
             )}

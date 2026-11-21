@@ -26,7 +26,7 @@ const BranchMap = () => {
                  renderPopup={(marker) => (
                      <Stack spacing={0.5}>
                          <Typography variant="subtitle2" component="p">{marker.title}</Typography>
-                         <Typography variant="body2" color="text.secondary" component="p">{marker.description}</Typography>
+                         <Typography variant="body2" color="textSecondary" component="p">{marker.description}</Typography>
                          <Button size="small" onClick={() => toastInfo(`Se pidió un repartidor a ${marker.title}.`)}>Pedir repartidor</Button>
                      </Stack>
                  )}

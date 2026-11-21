@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LinkIcon from '@mui/icons-material/Link';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import {toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 
 const SHARE_TARGETS = [
@@ -57,7 +57,7 @@ const SheetKinds = () => {
             <Drawer anchor="right" open={openSheet === 'sidePanel'} onClose={close} slotProps={{paper: {sx: {width: SIDE_PANEL_WIDTH}}}}>
                 <Stack spacing={2} sx={{p: 2.5}}>
                     <Typography variant="h6" component="h2">{t('overlays.sheets.filtersTitle')}</Typography>
-                    <Typography variant="body2" color="text.secondary">{t('overlays.sheets.filtersText')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('overlays.sheets.filtersText')}</Typography>
                     <TextField label={t('samples.customer')} size="small" />
                     <TextField label={t('samples.city')} size="small" />
                     <Stack direction="row" spacing={1} sx={{justifyContent: 'flex-end'}}>

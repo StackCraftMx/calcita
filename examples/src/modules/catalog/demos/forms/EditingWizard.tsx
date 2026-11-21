@@ -49,7 +49,7 @@ const EditingWizard = () => {
                 {value: WIZARD_STEP_SELECTION.checked, label: 'Revisa antes'},
             ]} />
             <Alert severity="warning">{SERVER_REVIEW.note}</Alert>
-            <Typography variant="body2" color="text.secondary">Paso abierto: {steps.find((step) => step.key === openStepKey)?.label}</Typography>
+            <Typography variant="body2" color="textSecondary">Paso abierto: {steps.find((step) => step.key === openStepKey)?.label}</Typography>
             {/* key: con otra regla de salto, el formulario vuelve a abrir en el paso que dice el servidor */}
             <Formik key={stepSelection} initialValues={SAVED_SUPPLIER} validationSchema={schema} onSubmit={async (values) => {
                 await new Promise((resolve) => setTimeout(resolve, 600));

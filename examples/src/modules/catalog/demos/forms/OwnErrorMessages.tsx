@@ -41,7 +41,7 @@ const OwnErrorMessages = () => {
                 </FormSection>
                 <SubmitButton sx={{mt: 2}}>Revisar</SubmitButton>
                 {sent && (
-                    <Typography variant="body2" color="text.secondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>Viaja: {sent}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>Viaja: {sent}</Typography>
                 )}
             </Form>
         </Formik>

@@ -206,13 +206,13 @@ export const MetricsPage = () => {
                 </SectionCard>
 
                 <SectionCard title={t('flow.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>{t('flow.hint')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 1}}>{t('flow.hint')}</Typography>
                     <LineChart data={flowRows} series={flowSeries} periodLabel={t('monthly.period')} ariaLabel={t('flow.ariaLabel')}
                                emptyLabel={t('monthly.empty')} onSelect={(row) => navigate(ordersListFilteredWith(monthFiltersOf(row.key)))} />
                 </SectionCard>
 
                 <SectionCard title={t('products.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 1}}>{t('products.hint')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 1}}>{t('products.hint')}</Typography>
                     <BarList items={productBars} emptyLabel={t('products.empty')}
                              onSelect={(bar) => navigate(ordersListFilteredBy('product_name', bar.key))} />
                 </SectionCard>

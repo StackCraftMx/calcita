@@ -16,7 +16,7 @@ const TimeField = () => {
             {/* 2. No puede cerrar antes de abrir: el límite es la otra hora */}
             <TimeInput label="Cierra a las" value={closesAt} onChange={setClosesAt} minTime={opensAt} />
             {/* 3. Lo que viaja al servidor */}
-            <Typography variant="body2" color="text.secondary">Viaja: «{opensAt}» a «{closesAt}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{opensAt}» a «{closesAt}»</Typography>
         </Stack>
     );
 };
