@@ -24,6 +24,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 
 import {useValidationText} from '@/forms/useValidationText.js';
+import {splitAutocompleteParams} from '@/inputs/autocompleteParams.js';
 import FieldFrame from '@/inputs/FieldFrame.jsx';
 import {LIMIT_MODE, isListFull, listLimitProblemOf, wouldOverfillList} from '@/inputs/fieldLimits.js';
 import {selectAllStateOf} from '@/inputs/selectAllState.js';
@@ -192,9 +193,15 @@ function CatalogInputContent(props) {
                     limit.markLeft();
                     onBlur?.(event);
                 }}
-                renderInput={(inputProps) => (
-                    <TextField {...inputProps} inputProps={{...inputProps.inputProps, 'aria-required': required || undefined}} name={name} inputRef={inputRef} placeholder={placeholder} error={Boolean(errorText)} helperText={errorText ?? helperText} />
-                )}
+                // lo del Autocomplete llega con otra forma en MUI 7 y en MUI 9 (ver splitAutocompleteParams); el obligatorio
+                // para el lector se suma a lo suyo sin pisarlo
+                renderInput={(params) => {
+                    const {textFieldProps, slotProps} = splitAutocompleteParams(params);
+                    return (
+                        <TextField {...textFieldProps} name={name} inputRef={inputRef} placeholder={placeholder} error={Boolean(errorText)} helperText={errorText ?? helperText}
+                                   slotProps={{...slotProps, htmlInput: {...slotProps.htmlInput, 'aria-required': required || undefined}}} />
+                    );
+                }}
             />
         </FieldFrame>
     );

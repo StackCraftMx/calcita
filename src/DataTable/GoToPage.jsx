@@ -33,6 +33,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import {List} from 'react-window';
 
 import {filterPages, pageNumbersOf} from '@/DataTable/goToPageOptions.js';
+import {splitAutocompleteParams} from '@/inputs/autocompleteParams.js';
 import {popUpChevronStylesOf} from '@/theme/components/glassComponents.js';
 import {isGlassTheme} from '@/theme/glassSurface.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
@@ -248,14 +249,20 @@ function GoToPageContent(props) {
                     // la lista mide lo que el número más largo y no solo lo que el campo (MUI le da el ancho del campo)
                     popper: {sx: {minWidth: `calc(${String(pageCount).length}ch + ${LIST_ROOM_BESIDE_NUMBER_PIXELS}px)`}},
                 }}
-                renderInput={(params) => (
-                    <TextField {...params} variant="standard"
-                               slotProps={{
-                                   // sin la raya de abajo, como el Select de «Filas por página»
-                                   input: {...params.InputProps, disableUnderline: true},
-                                   htmlInput: {...params.inputProps, inputMode: 'numeric', 'aria-label': t('goToPage.ariaLabel')},
-                               }} />
-                )}
+                renderInput={(params) => {
+                    // lo del Autocomplete (la referencia, el teclado, la lista) llega con otra forma en MUI 7 y en MUI 9; lo
+                    // de la casa se suma encima sin pisarlo (si se pierde, la caja se desconecta de su lista)
+                    const {textFieldProps, slotProps} = splitAutocompleteParams(params);
+                    return (
+                        <TextField {...textFieldProps} variant="standard"
+                                   slotProps={{
+                                       ...slotProps,
+                                       // sin la raya de abajo, como el Select de «Filas por página»
+                                       input: {...slotProps.input, disableUnderline: true},
+                                       htmlInput: {...slotProps.htmlInput, inputMode: 'numeric', 'aria-label': t('goToPage.ariaLabel')},
+                                   }} />
+                    );
+                }}
             />
             <Typography variant="body2" noWrap>
                 {t('goToPage.of', {count: pageCount, total: formatNumber(pageCount)})}

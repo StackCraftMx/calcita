@@ -284,6 +284,34 @@ function clockItemStylesOf(theme) {
 }
 
 /**
+ * El día del calendario de MUI X (como el de Apple): el elegido en un círculo tenue de su color con el número legible, y hoy
+ * con el número del color del tema (legible); nada de letra negra sobre el naranja.
+ * OJO: la pieza se llama PickersDay en MUI X 8 y PickerDay en MUI X 9, y su clase de «hoy» cambia igual. Calcita acepta las
+ * dos versiones, así que el mismo estilo se registra con los dos nombres; con uno solo, en la otra versión se pierde sin aviso.
+ *
+ * @param {string} todayClass la clase de «hoy» de esa versión (MuiPickersDay-today o MuiPickerDay-today)
+ * @returns {object} el ajuste de la pieza para el tema
+ */
+function pickerDayOverridesOf(todayClass) {
+    return {
+        styleOverrides: {
+            root: ({theme}) => {
+                const palette = paletteOf(theme);
+                const selected = {
+                    backgroundColor: `color-mix(in srgb, ${palette.primary.main} 22%, transparent)`,
+                    ...accentTextStylesOf(theme),
+                    fontWeight: 600,
+                };
+                return {
+                    '&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus': selected,
+                    [`&.${todayClass}:not(.Mui-selected)`]: {border: 0, ...accentTextStylesOf(theme), fontWeight: 600},
+                };
+            },
+        },
+    };
+}
+
+/**
  * El monograma de Apple: iniciales blancas sobre gris, en claro y en oscuro (MONOGRAM_GRAY).
  *
  * @param {object} theme
@@ -920,24 +948,9 @@ export function glassComponents({surfaces = false} = {}) {
                 },
             },
         },
-        // el día del calendario de MUI X (como el de Apple): el elegido en un círculo tenue de su color con el número legible,
-        // y hoy, con el número del color del tema (legible); nada de letra negra sobre el naranja
-        MuiPickersDay: {
-            styleOverrides: {
-                root: ({theme}) => {
-                    const palette = paletteOf(theme);
-                    const selected = {
-                        backgroundColor: `color-mix(in srgb, ${palette.primary.main} 22%, transparent)`,
-                        ...accentTextStylesOf(theme),
-                        fontWeight: 600,
-                    };
-                    return {
-                        '&.Mui-selected, &.Mui-selected:hover, &.Mui-selected:focus': selected,
-                        '&.MuiPickersDay-today:not(.Mui-selected)': {border: 0, ...accentTextStylesOf(theme), fontWeight: 600},
-                    };
-                },
-            },
-        },
+        // el día del calendario de MUI X, con su nombre de MUI X 8 y con el de MUI X 9 (ver pickerDayOverridesOf)
+        MuiPickersDay: pickerDayOverridesOf('MuiPickersDay-today'),
+        MuiPickerDay: pickerDayOverridesOf('MuiPickerDay-today'),
         // las columnas de horas y minutos de MUI X: sus renglones son MenuItem, así que heredaban la palomita del menú (tapaba
         // el número y lo corría) y además MUI X les pone el color lleno con la letra de contraste (negra sobre el naranja en
         // oscuro). Aquí el elegido va como el día elegido del calendario: círculo tenue de su color y número legible, centrado
