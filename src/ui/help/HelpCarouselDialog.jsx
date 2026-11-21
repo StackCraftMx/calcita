@@ -137,9 +137,9 @@ function HelpCarouselDialogContent(props) {
                             </HelpMedia>
                         )}
                         <HelpContent ownSx={{pt: 2.5}}>
-                            {title && <Typography variant="overline" color="text.secondary" component="p">{title}</Typography>}
+                            {title && <Typography variant="overline" color="textSecondary" component="p">{title}</Typography>}
                             <Typography id={titleId} variant="h6" component="h2" sx={{pr: 4}}>{step.title}</Typography>
-                            <Typography component="div" color="text.secondary" sx={{mt: 1}}>{step.content}</Typography>
+                            <Typography component="div" color="textSecondary" sx={{mt: 1}}>{step.content}</Typography>
                         </HelpContent>
                     </div>
                 </Fade>

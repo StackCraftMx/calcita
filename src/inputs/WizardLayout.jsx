@@ -118,7 +118,7 @@ function WizardLayoutContent(props) {
         } else if (step.optional) {
             caption = t('wizard.optional');
         }
-        const optional = caption && <Typography variant="caption" color="text.secondary">{caption}</Typography>;
+        const optional = caption && <Typography variant="caption" color="textSecondary">{caption}</Typography>;
         if (isSelectable) {
             return <StepButton optional={optional} onClick={() => onStepSelect(index)}>{step.label}</StepButton>;
         }
@@ -177,7 +177,7 @@ function WizardLayoutContent(props) {
         }
         return (
             <Stack spacing={1} useFlexGap {...groupProps}>
-                <WizardNextReason id={reasonId} variant="body2" color="text.secondary" ownSx={{display: {xs: 'block', sm: 'none'}}}>
+                <WizardNextReason id={reasonId} variant="body2" color="textSecondary" ownSx={{display: {xs: 'block', sm: 'none'}}}>
                     {nextDisabledReason}
                 </WizardNextReason>
                 {buttons}
@@ -229,7 +229,7 @@ function WizardLayoutContent(props) {
                 ))}
             </WizardStepper>
             <WizardPhoneSteps ownSx={{display: {xs: 'block', sm: 'none'}}}>
-                <Typography variant="overline" color="text.secondary">{t('wizard.stepOf', {current: activeIndex + 1, total: steps.length})}</Typography>
+                <Typography variant="overline" color="textSecondary">{t('wizard.stepOf', {current: activeIndex + 1, total: steps.length})}</Typography>
                 <Typography variant="h6">{activeStep.label}</Typography>
             </WizardPhoneSteps>
 

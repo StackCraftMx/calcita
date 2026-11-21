@@ -50,7 +50,7 @@ function PermissionOption({permission, isGranted, readOnly, onToggle}) {
             label={(
                 <Box>
                     <Typography variant="body2">{permission.label}</Typography>
-                    {permission.description && <Typography variant="caption" color="text.secondary" component="p">{permission.description}</Typography>}
+                    {permission.description && <Typography variant="caption" color="textSecondary" component="p">{permission.description}</Typography>}
                 </Box>
             )}
         />

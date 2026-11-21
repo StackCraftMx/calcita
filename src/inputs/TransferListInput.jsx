@@ -85,7 +85,7 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
                           onChange={() => onMarkMany(markState.toggled())}
                           slotProps={{input: {'aria-label': t('transfer.markVisible', {list: title})}}} />
                 <Typography id={titleId} variant="subtitle2" sx={{flexGrow: 1}}>{title}</Typography>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="textSecondary">
                     {markedValues.length > 0 ? t('transfer.markedOf', {marked: markedValues.length, count: items.length}) : items.length}
                 </Typography>
             </Stack>
@@ -98,7 +98,7 @@ function TransferColumn({title, items, markedValues, onMark, onMarkMany, onMoveO
                   sx={{height: listHeight, overflowY: 'auto', py: 0}}>
                 {visibleItems.length === 0 && (
                     // vacía de verdad o vacía por lo buscado: no es lo mismo y se dice distinto
-                    <Typography variant="body2" color="text.secondary" sx={{px: 2, py: 1.5}}>
+                    <Typography variant="body2" color="textSecondary" sx={{px: 2, py: 1.5}}>
                         {items.length > 0 ? t('transfer.noMatches', {text: searchText.trim()}) : emptyText}
                     </Typography>
                 )}

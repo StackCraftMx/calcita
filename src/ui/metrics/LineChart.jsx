@@ -79,7 +79,7 @@ function LineChartContent(props) {
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!data.length) {
-        return <Typography variant="body2" color="text.secondary">{emptyLabel}</Typography>;
+        return <Typography variant="body2" color="textSecondary">{emptyLabel}</Typography>;
     }
 
     const highestValue = highestValueOf(data, drawnSeries, referenceLine);

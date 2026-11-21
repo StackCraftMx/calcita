@@ -87,7 +87,7 @@ function AccountSecuritySectionContent(props) {
             {loadError && <Alert severity="error">{loadError}</Alert>}
             {showPasswordChange && (
                 <SectionCard title={t('profile.password.title')}>
-                    <SecurityTitle variant="body2" color="text.secondary" ownSx={{mb: 2}}>{t('profile.password.text')}</SecurityTitle>
+                    <SecurityTitle variant="body2" color="textSecondary" ownSx={{mb: 2}}>{t('profile.password.text')}</SecurityTitle>
                     <SecurityForm ownSx={{maxWidth: FORM_MAX_WIDTH}}>
                         <ChangePasswordForm onSubmit={async (values) => {
                             await connector.changePassword(values);

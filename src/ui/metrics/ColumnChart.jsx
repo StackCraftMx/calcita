@@ -87,7 +87,7 @@ function ColumnChartContent(props) {
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!data.length) {
-        return <Typography variant="body2" color="text.secondary">{emptyLabel}</Typography>;
+        return <Typography variant="body2" color="textSecondary">{emptyLabel}</Typography>;
     }
 
     // el valor más alto que se dibuja (el de las columnas o el de la línea de referencia) decide el ancho del eje

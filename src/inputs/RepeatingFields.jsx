@@ -301,7 +301,7 @@ function RepeatingFieldsContent(props) {
                         ownSx={{p: {xs: 1.5, sm: 2}, ...(rowHasErrorOf?.(index) && {borderColor: 'error.main'})}}
                     >
                         <RepeatingRowHeader direction="row" ownSx={{alignItems: 'center', gap: 1, mb: 1.5}}>
-                            <Typography variant="subtitle2" sx={{flexGrow: 1, minWidth: 0}} color={rowHasErrorOf?.(index) ? 'error' : 'text.primary'}>
+                            <Typography variant="subtitle2" sx={{flexGrow: 1, minWidth: 0}} color={rowHasErrorOf?.(index) ? 'error' : 'textPrimary'}>
                                 {titleOf(index)}
                             </Typography>
                             {rowActionsOf?.(index, rowContext)}
@@ -329,7 +329,7 @@ function RepeatingFieldsContent(props) {
                     </RepeatingAddButton>
                 )}
                 {onAdd && maxRows != null && (
-                    <Typography variant="caption" color="text.secondary">{t('repeating.maxRows', {count: maxRows})}</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('repeating.maxRows', {count: maxRows})}</Typography>
                 )}
                 {footer}
             </Stack>

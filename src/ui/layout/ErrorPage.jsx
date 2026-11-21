@@ -78,7 +78,7 @@ function ErrorPageContent(props) {
         <ErrorRoot sx={sx} spacing={2} ownSx={{alignItems: 'center', textAlign: 'center', py: {xs: 6, md: 10}, px: 2, maxWidth: 560, mx: 'auto'}}>
             {icon ?? <look.Icon color={look.color} sx={{fontSize: ICON_PIXELS}} />}
             <Typography variant="h4" component="h1">{title ?? t(`${kind}.title`)}</Typography>
-            <Typography variant="body1" color="text.secondary">{text ?? t(`${kind}.text`)}</Typography>
+            <Typography variant="body1" color="textSecondary">{text ?? t(`${kind}.text`)}</Typography>
             {children}
             <ErrorActions direction={{xs: 'column', sm: 'row'}} spacing={1.5} useFlexGap ownSx={{pt: 1, flexWrap: 'wrap', justifyContent: 'center'}}>
                 {actions ?? (
@@ -89,7 +89,7 @@ function ErrorPageContent(props) {
                     </>
                 )}
             </ErrorActions>
-            {look.httpStatus && <Typography variant="caption" color="text.disabled">{look.httpStatus}</Typography>}
+            {look.httpStatus && <Typography variant="caption" color="textDisabled">{look.httpStatus}</Typography>}
         </ErrorRoot>
     );
 }

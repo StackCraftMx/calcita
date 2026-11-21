@@ -74,7 +74,7 @@ function BarListContent(props) {
 
     // guard clause: sin datos se dice, no se pinta un eje vacío
     if (!items.length) {
-        return <Typography variant="body2" color="text.secondary">{emptyLabel}</Typography>;
+        return <Typography variant="body2" color="textSecondary">{emptyLabel}</Typography>;
     }
 
     // lo más largo de la etiqueta decide el ancho del eje: sin esto el nombre se corta o sobra medio contenedor

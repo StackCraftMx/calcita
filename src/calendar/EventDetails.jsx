@@ -113,7 +113,7 @@ function EventDetailsContent(props) {
                         {canJoin && (
                             <Button variant="contained" size="small" href={event.meetingUrl} target="_blank" rel="noreferrer">{t('details.join')}</Button>
                         )}
-                        <EventLink variant="caption" color="text.secondary" ownSx={{wordBreak: 'break-all'}}>{event.meetingUrl}</EventLink>
+                        <EventLink variant="caption" color="textSecondary" ownSx={{wordBreak: 'break-all'}}>{event.meetingUrl}</EventLink>
                     </EventLinkRow>
                 </DetailRow>
             )}

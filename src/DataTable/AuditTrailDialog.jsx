@@ -47,7 +47,7 @@ function AuditTrailDialogContent(props) {
     return (
         <ContentDialog sx={sx} open={open} onClose={onClose} title={title}>
             {subtitle && (
-                <AuditDescription variant="body2" color="text.secondary" ownSx={{mb: 2}}>{subtitle}</AuditDescription>
+                <AuditDescription variant="body2" color="textSecondary" ownSx={{mb: 2}}>{subtitle}</AuditDescription>
             )}
             {header}
             <AuditTrailTable

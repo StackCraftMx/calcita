@@ -40,7 +40,8 @@ function ModalWaitingContent(props) {
     const {t} = useToolkitTranslation('common', texts);
 
     return (
-        <WaitingRoot sx={sx} open={open} disableEscapeKeyDown aria-busy="true" ownSx={{zIndex: (theme) => theme.zIndex.tooltip + 10}}>
+        // sin onClose: ni Escape ni un clic afuera la cierran (MUI 9 quitó disableEscapeKeyDown; el que manda es onClose)
+        <WaitingRoot sx={sx} open={open} aria-busy="true" ownSx={{zIndex: (theme) => theme.zIndex.tooltip + 10}}>
             <WaitingTitle ownSx={{textAlign: 'center'}}>{title ?? t('waiting.title')}</WaitingTitle>
             <DialogContent>
                 <WaitingBody spacing={2} ownSx={{alignItems: 'center'}}>

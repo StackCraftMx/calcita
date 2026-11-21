@@ -99,7 +99,7 @@ function QuickFiltersContent(props) {
     return (
         <QuickRoot sx={sx} ownSx={{mb: 1}}>
             {caption && (
-                <QuickCaption variant="caption" color="text.secondary" ownSx={{px: 0.25}}>{caption}</QuickCaption>
+                <QuickCaption variant="caption" color="textSecondary" ownSx={{px: 0.25}}>{caption}</QuickCaption>
             )}
             <ScrollableRow role="tablist" aria-label={ariaLabel}>
                 {options.map((option) => {

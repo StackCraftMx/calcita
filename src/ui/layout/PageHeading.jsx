@@ -87,7 +87,7 @@ function PageHeadingContent(props) {
                 {actions && !usesCapsules && <HeadingActions ownSx={inlineActionsSx}>{actions}</HeadingActions>}
             </HeadingTitleRow>
             {description && (
-                <HeadingDescription variant="body1" color="text.secondary" component="div" ownSx={{mt: 0.75, maxWidth: 760}}>{description}</HeadingDescription>
+                <HeadingDescription variant="body1" color="textSecondary" component="div" ownSx={{mt: 0.75, maxWidth: 760}}>{description}</HeadingDescription>
             )}
         </HeadingRoot>
     );

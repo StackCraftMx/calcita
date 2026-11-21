@@ -62,10 +62,10 @@ function MultiSelectColumnFilterContent(props) {
             )}
             <MultiList ownSx={{maxHeight: 300, overflowY: 'auto'}}>
                 {options.length === 0 && (
-                    <Typography variant="caption" color="text.secondary">{t('options.empty')}</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('options.empty')}</Typography>
                 )}
                 {options.length > 0 && visibleOptions.length === 0 && (
-                    <Typography variant="caption" color="text.secondary">{t('options.noMatch', {text: searchText})}</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('options.noMatch', {text: searchText})}</Typography>
                 )}
                 {visibleOptions.map((option) => (
                     <FormControlLabel
@@ -74,7 +74,7 @@ function MultiSelectColumnFilterContent(props) {
                         label={(
                             <MultiOption direction="row" spacing={0.75} ownSx={{alignItems: 'center'}}>
                                 {renderOption ? renderOption(option.value) : <Typography variant="body2">{option.value}</Typography>}
-                                <Typography variant="caption" color="text.secondary">{formatNumber(option.total)}</Typography>
+                                <Typography variant="caption" color="textSecondary">{formatNumber(option.total)}</Typography>
                             </MultiOption>
                         )}
                     />

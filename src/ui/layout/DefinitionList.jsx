@@ -44,7 +44,7 @@ function DefinitionListContent(props) {
         }}>
             {entries.map(({label, value}, entryPosition) => (
                 <DefinitionEntry key={label} ownSx={{display: 'contents'}}>
-                    <DefinitionLabel component="dt" variant={isStacked ? 'caption' : 'body2'} color="text.secondary"
+                    <DefinitionLabel component="dt" variant={isStacked ? 'caption' : 'body2'} color="textSecondary"
                                 ownSx={isStacked && entryPosition > 0 ? {mt: 1.25} : undefined}>
                         {label}
                     </DefinitionLabel>

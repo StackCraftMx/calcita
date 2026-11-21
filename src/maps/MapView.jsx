@@ -105,7 +105,7 @@ function DefaultPopupContent({marker}) {
     return (
         <>
             <Typography variant="subtitle2" component="p">{marker.title}</Typography>
-            {marker.description && <MapPopupText variant="body2" color="text.secondary" component="p" ownSx={{m: 0}}>{marker.description}</MapPopupText>}
+            {marker.description && <MapPopupText variant="body2" color="textSecondary" component="p" ownSx={{m: 0}}>{marker.description}</MapPopupText>}
         </>
     );
 }

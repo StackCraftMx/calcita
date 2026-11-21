@@ -58,12 +58,12 @@ function MessageHeader({entry, t}) {
             <Avatar>{initialsOf(entry.from.name)}</Avatar>
             <MessageHeaderText ownSx={{minWidth: 0, flex: 1}}>
                 <Typography variant="subtitle2" component="p" noWrap>
-                    {entry.from.name} <Typography component="span" variant="body2" color="text.secondary">&lt;{entry.from.email}&gt;</Typography>
+                    {entry.from.name} <Typography component="span" variant="body2" color="textSecondary">&lt;{entry.from.email}&gt;</Typography>
                 </Typography>
-                {entry.to?.length > 0 && <Typography variant="caption" color="text.secondary" component="p">{t('to', {to: entry.to.join(', ')})}</Typography>}
-                {entry.cc?.length > 0 && <Typography variant="caption" color="text.secondary" component="p">{t('cc', {cc: entry.cc.join(', ')})}</Typography>}
+                {entry.to?.length > 0 && <Typography variant="caption" color="textSecondary" component="p">{t('to', {to: entry.to.join(', ')})}</Typography>}
+                {entry.cc?.length > 0 && <Typography variant="caption" color="textSecondary" component="p">{t('cc', {cc: entry.cc.join(', ')})}</Typography>}
                 {/* la fecha debajo y no a la derecha: en el teléfono apretaba el «Para» a dos renglones */}
-                <Typography variant="caption" color="text.secondary" component="p">{formatDateTime(entry.receivedAt)}</Typography>
+                <Typography variant="caption" color="textSecondary" component="p">{formatDateTime(entry.receivedAt)}</Typography>
             </MessageHeaderText>
         </MessageHeaderPart>
     );
@@ -113,7 +113,7 @@ function MessageViewContent(props) {
     const [expanded, setExpanded] = useState({messageId: null, ids: []});
 
     if (!message) {
-        return <MessageEmpty variant="body2" color="text.secondary" ownSx={{p: 4, textAlign: 'center'}}>{t('noMessageSelected')}</MessageEmpty>;
+        return <MessageEmpty variant="body2" color="textSecondary" ownSx={{p: 4, textAlign: 'center'}}>{t('noMessageSelected')}</MessageEmpty>;
     }
 
     const expandedIds = expanded.messageId === message.id ? expanded.ids : [];
@@ -137,7 +137,7 @@ function MessageViewContent(props) {
                 )}
             </Box>
             {message.thread?.length > 0 && (
-                <Typography variant="caption" color="text.secondary">{t('threadCount', {count: message.thread.length + 1})}</Typography>
+                <Typography variant="caption" color="textSecondary">{t('threadCount', {count: message.thread.length + 1})}</Typography>
             )}
             {/* los anteriores: encogidos en un renglón; abiertos, completos y con su línea abajo */}
             {message.thread?.map((entry) => (expandedIds.includes(entry.id) ? (
@@ -151,9 +151,9 @@ function MessageViewContent(props) {
                     <MessageCollapsedAvatar ownSx={{width: 32, height: 32, fontSize: 13}}>{initialsOf(entry.from.name)}</MessageCollapsedAvatar>
                     <MessageCollapsedText ownSx={{minWidth: 0, flex: 1}}>
                         <MessageCollapsedSender variant="body2" ownSx={{fontWeight: 600}} noWrap>{entry.from.name}</MessageCollapsedSender>
-                        <Typography variant="body2" color="text.secondary" noWrap>{entry.body.replace(/\s+/g, ' ').slice(0, PREVIEW_LENGTH)}</Typography>
+                        <Typography variant="body2" color="textSecondary" noWrap>{entry.body.replace(/\s+/g, ' ').slice(0, PREVIEW_LENGTH)}</Typography>
                     </MessageCollapsedText>
-                    <MessageCollapsedDate variant="caption" color="text.secondary" ownSx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt, new Date(), formatters)}</MessageCollapsedDate>
+                    <MessageCollapsedDate variant="caption" color="textSecondary" ownSx={{flexShrink: 0}}>{inboxDateOf(entry.receivedAt, new Date(), formatters)}</MessageCollapsedDate>
                 </MessageCollapsed>
             )))}
             {message.thread?.length > 0 && <Divider />}

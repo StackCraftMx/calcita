@@ -93,7 +93,7 @@ function ProfileDataSection({extraFields, onProfileSaved, texts}) {
 
     return (
         <SectionCard title={t('profile.data.title')}>
-            <ProfileScreenSectionTitle variant="body2" color="text.secondary" ownSx={{mb: 2}}>{t('profile.data.text')}</ProfileScreenSectionTitle>
+            <ProfileScreenSectionTitle variant="body2" color="textSecondary" ownSx={{mb: 2}}>{t('profile.data.text')}</ProfileScreenSectionTitle>
             <Formik initialValues={initialValues} validationSchema={schema} onSubmit={save}>
                 <Form noValidate>
                     <ProfileScreenForm spacing={2} ownSx={{maxWidth: FORM_MAX_WIDTH}}>
@@ -172,7 +172,7 @@ function ProfileScreenContent(props) {
             {activeTab === PROFILE_TAB.security && <AccountSecuritySection />}
             {activeTab === PROFILE_TAB.preferences && (
                 <SectionCard title={t('profile.preferences.title')}>
-                    <ProfileScreenSectionTitle variant="body2" color="text.secondary" ownSx={{mb: 1}}>{t('profile.preferences.text')}</ProfileScreenSectionTitle>
+                    <ProfileScreenSectionTitle variant="body2" color="textSecondary" ownSx={{mb: 1}}>{t('profile.preferences.text')}</ProfileScreenSectionTitle>
                     <ProfileScreenPreferences ownSx={{maxWidth: FORM_MAX_WIDTH, mx: -1}}>
                         <AppearanceSettings showColorScheme={showColorScheme} />
                     </ProfileScreenPreferences>

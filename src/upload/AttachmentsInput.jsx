@@ -151,7 +151,7 @@ function AttachmentsInputContent(props) {
                 </AttachmentsList>
             )}
             {limitsText && (
-                <AttachmentsLimits variant="caption" color="text.secondary" ownSx={{display: 'block', mt: 0.5}}>{limitsText}</AttachmentsLimits>
+                <AttachmentsLimits variant="caption" color="textSecondary" ownSx={{display: 'block', mt: 0.5}}>{limitsText}</AttachmentsLimits>
             )}
             {bottomText && <FormHelperText error={Boolean(errorText)}>{bottomText}</FormHelperText>}
         </AttachmentsRoot>

@@ -105,7 +105,7 @@ function FileInputContent(props) {
                         <FileChip file={value} ChipComponent={FileInputChip} removeLabel={t('upload.remove', {name: value.name})}
                                   onRemove={isLocked ? undefined : () => change(null)} />
                     ) : (
-                        <FileInputEmpty variant="body2" color="text.secondary">{emptyText ?? t('upload.empty')}</FileInputEmpty>
+                        <FileInputEmpty variant="body2" color="textSecondary">{emptyText ?? t('upload.empty')}</FileInputEmpty>
                     )}
                     {template && <TemplateDownloadButton size="small" texts={texts} {...template} />}
                     {actions}

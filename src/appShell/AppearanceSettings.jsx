@@ -63,7 +63,7 @@ export function SettingSection({label, value, options, onChange}) {
     }
     return (
         <AppearanceSection ownSx={{px: 1, py: 0.5}}>
-            <AppearanceSectionLabel variant="overline" color="text.secondary" component="p" ownSx={{px: 1, lineHeight: 1.6}}>{label}</AppearanceSectionLabel>
+            <AppearanceSectionLabel variant="overline" color="textSecondary" component="p" ownSx={{px: 1, lineHeight: 1.6}}>{label}</AppearanceSectionLabel>
             <ToggleButtonGroup value={value} exclusive fullWidth size="small" aria-label={label}
                                onChange={(event, nextValue) => {
                                    // al picar la opción ya elegida MUI manda null: se queda la que estaba

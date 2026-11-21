@@ -93,7 +93,7 @@ function SelectInputContent(props) {
     const placeholderText = (
         <Typography component="span"
                     // OJO: el placeholder de un select activo se lee (text.secondary); text.disabled solo con el campo inactivo
-                    color={disabled ? 'text.disabled' : 'text.secondary'}>{placeholder ?? t('form.selectPlaceholder')}</Typography>
+                    color={disabled ? 'textDisabled' : 'textSecondary'}>{placeholder ?? t('form.selectPlaceholder')}</Typography>
     );
     const renderSelectedValue = (selectedValue) => {
         if (multiple) {
@@ -164,7 +164,7 @@ function SelectInputContent(props) {
                         <SelectOptionText component="span" ownSx={{display: 'flex', flexDirection: 'column', minWidth: 0, flexGrow: 1}}>
                             <Typography component="span" variant="body2">{option.label}</Typography>
                             {option.description && (
-                                <Typography component="span" variant="caption" color="text.secondary">{option.description}</Typography>
+                                <Typography component="span" variant="caption" color="textSecondary">{option.description}</Typography>
                             )}
                         </SelectOptionText>
                     </SelectOption>

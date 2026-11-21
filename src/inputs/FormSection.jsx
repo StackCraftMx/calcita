@@ -307,7 +307,7 @@ export default function FormSection(props) {
         <FormSectionContext value={layout}>
             <FormSectionRoot component="section" aria-labelledby={title ? titleId : undefined} sx={sx}>
                 {title && (
-                    <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="text.secondary" ownerState={ownerState}>
+                    <FormSectionTitle id={titleId} variant="subtitle2" component="h2" color="textSecondary" ownerState={ownerState}>
                         {title}
                     </FormSectionTitle>
                 )}
@@ -321,7 +321,7 @@ export default function FormSection(props) {
                     </FormSectionCard>
                 )}
                 {footer && (
-                    <FormSectionFooter variant="caption" component="p" color="text.secondary" ownerState={ownerState}>{footer}</FormSectionFooter>
+                    <FormSectionFooter variant="caption" component="p" color="textSecondary" ownerState={ownerState}>{footer}</FormSectionFooter>
                 )}
             </FormSectionRoot>
         </FormSectionContext>

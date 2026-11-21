@@ -166,7 +166,7 @@ function DefaultCard({card, t, today, onComplete}) {
                 )}
                 <KanbanCardTitle variant="subtitle2" component="p" ownSx={{color: card.completed ? 'text.secondary' : undefined}}>{card.title}</KanbanCardTitle>
             </KanbanTitleRow>
-            {card.description && <Typography variant="body2" color="text.secondary">{card.description}</Typography>}
+            {card.description && <Typography variant="body2" color="textSecondary">{card.description}</Typography>}
             {hasFooter && (
                 <KanbanMeta direction="row" spacing={1.25} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap', color: 'text.secondary'}}>
                     {dueStatus && (
@@ -411,7 +411,7 @@ function KanbanBoardContent(props) {
                                         {droppableProvided.placeholder}
                                         {/* vacía de verdad, o con tarjetas que el filtro de la pantalla esconde (no se dice «sin tarjetas») */}
                                         {columnCards.length === 0 && !droppableSnapshot.isDraggingOver && addingColumnId !== column.id && (
-                                            <KanbanEmpty variant="caption" color="text.secondary" ownSx={{textAlign: 'center', py: 3}}>
+                                            <KanbanEmpty variant="caption" color="textSecondary" ownSx={{textAlign: 'center', py: 3}}>
                                                 {total > 0 ? t('emptyFiltered') : t('empty')}
                                             </KanbanEmpty>
                                         )}

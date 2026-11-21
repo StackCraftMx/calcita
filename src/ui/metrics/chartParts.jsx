@@ -176,7 +176,7 @@ function ChartLegendContent({series, showsDash = false, ariaLabel, ...unknownPro
                     ) : (
                         <ChartLegendSwatch aria-hidden="true" ownSx={{width: 10, height: 10, borderRadius: 0.5, bgcolor: item.color}} />
                     )}
-                    <Typography variant="caption" color="text.secondary">{item.label}</Typography>
+                    <Typography variant="caption" color="textSecondary">{item.label}</Typography>
                 </ChartLegendItem>
             ))}
         </ChartLegendPart>
@@ -197,7 +197,7 @@ function ReferenceCaptionContent({referenceLine, ...unknownProps}) {
     return (
         <ChartReference ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.75, mt: 0.5}}>
             <ChartReferenceLine aria-hidden="true" ownSx={{width: SWATCH_PIXELS, borderTop: '2px dashed', borderColor: 'text.secondary'}} />
-            <Typography variant="caption" color="text.secondary">{referenceLine.label}</Typography>
+            <Typography variant="caption" color="textSecondary">{referenceLine.label}</Typography>
         </ChartReference>
     );
 }

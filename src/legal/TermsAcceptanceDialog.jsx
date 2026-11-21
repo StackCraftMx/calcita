@@ -111,7 +111,7 @@ function TermsAcceptanceDialogContent(props) {
                 onClose={(event, reason) => !IGNORED_CLOSE_REASONS.has(reason) && onDecline()}>
             <DialogTitle id={titleId}>
                 {title ?? t('legal.terms.title')}
-                <Typography component="span" variant="body2" color="text.secondary" sx={{display: 'block'}}>
+                <Typography component="span" variant="body2" color="textSecondary" sx={{display: 'block'}}>
                     {t('legal.terms.version', {version})}
                 </Typography>
             </DialogTitle>
@@ -128,7 +128,7 @@ function TermsAcceptanceDialogContent(props) {
                     control={<Checkbox checked={isChecked} onChange={(event) => setIsChecked(event.target.checked)} disabled={!hasReadToEnd || isSaving} />}
                     label={checkboxLabel ?? t('legal.terms.checkbox')}
                 />
-                {!hasReadToEnd && <Typography variant="caption" color="text.secondary">{t('legal.terms.readToEnd')}</Typography>}
+                {!hasReadToEnd && <Typography variant="caption" color="textSecondary">{t('legal.terms.readToEnd')}</Typography>}
             </TermsFooter>
             <DialogActions sx={{px: 3, pb: 2}}>
                 <Button onClick={onDecline} disabled={isSaving}>{declineLabel ?? t('legal.terms.decline')}</Button>
