@@ -14,6 +14,16 @@
 export const WIZARD_ORIENTATION = Object.freeze({horizontal: 'horizontal', vertical: 'vertical'});
 
 /**
+ * Dónde van los botones del paso (Anterior · Omitir · Siguiente o Enviar):
+ *   bottom  abajo de los campos (lo de siempre);
+ *   top     arriba de los campos: en fila, entre los pasos y los campos; en vertical, dentro del paso abierto, bajo su título;
+ *   both    arriba y abajo: para pasos largos (una tabla de 25 renglones) en los que bajar hasta el fondo para avanzar o
+ *           regresar cansa. Cada botonera es un grupo con su nombre («Botones del paso, arriba»), para distinguirlas con el
+ *           teclado y en las pruebas.
+ */
+export const WIZARD_ACTIONS_PLACEMENT = Object.freeze({bottom: 'bottom', top: 'top', both: 'both'});
+
+/**
  * Qué pasa al pulsar el título de otro paso:
  *   none     los títulos no se pulsan (lo de siempre): se avanza con «Siguiente»;
  *   free     salta directo, sin revisar el paso en el que está; al enviar, el formulario regresa al primer paso con error;

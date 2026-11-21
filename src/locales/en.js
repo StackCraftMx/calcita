@@ -260,7 +260,9 @@ export default Object.freeze({
             "skip": "Skip this step",
             "optional": "Optional",
             "skipped": "Skipped",
-            "stepOf": "Step {{current}} of {{total}}"
+            "stepOf": "Step {{current}} of {{total}}",
+            "actionsTop": "Step buttons, top",
+            "actionsBottom": "Step buttons, bottom"
         },
         "language": {
             "switchTo": {

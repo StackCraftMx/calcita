@@ -143,7 +143,7 @@ export {UNSAVED_ROWS, createRowDraftsStore} from '@/inputs/rowDrafts.js';
 export {default as UnsavedRowsBar} from '@/inputs/UnsavedRowsBar.jsx';
 export {default as SelectInput} from '@/inputs/SelectInput.jsx';
 export {default as WizardLayout} from '@/inputs/WizardLayout.jsx';
-export {WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, isStepCompleted, openingStepOf, stepSelectionActionOf} from '@/inputs/wizardSteps.js';
+export {WIZARD_ACTIONS_PLACEMENT, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, isStepCompleted, openingStepOf, stepSelectionActionOf} from '@/inputs/wizardSteps.js';
 export {default as TextInput} from '@/inputs/TextInput.jsx';
 export {HEX_COLOR, MIN_CONTRAST, contrastOnWhite, readableVariantOf} from '@/inputs/colorContrast.js';
 export {cleanNumberText, completeDecimals, groupThousands} from '@/inputs/numberText.js';
