@@ -59,7 +59,7 @@ export const __Name__Page = () => {
             <SectionCard title={t('page.listTitle')}>
                 {loadError && <Alert severity="error">{loadError}</Alert>}
                 {!records && !loadError && <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
-                {records?.length === 0 && <Typography variant="body2" color="text.secondary">{t('page.empty')}</Typography>}
+                {records?.length === 0 && <Typography variant="body2" color="textSecondary">{t('page.empty')}</Typography>}
                 {records?.length > 0 && (
                     <List disablePadding aria-label={t('page.listTitle')}>
                         {records.map((record) => (

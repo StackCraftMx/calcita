@@ -15,7 +15,7 @@ export const __PageName__Page = () => {
         <Stack spacing={3}>
             <PageHeading title={t('__pageName__Page.title')} description={t('__pageName__Page.description')} />
             <SectionCard title={t('__pageName__Page.sectionTitle')}>
-                <Typography variant="body2" color="text.secondary">{t('__pageName__Page.empty')}</Typography>
+                <Typography variant="body2" color="textSecondary">{t('__pageName__Page.empty')}</Typography>
             </SectionCard>
         </Stack>
     );
