@@ -4,6 +4,46 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.72.0] - 2026-11-21
+
+### Agregado
+
+- **Calcita acepta MUI 9 sin dejar MUI 7**: funciona con el que use su proyecto. Pide `@mui/material` y
+  `@mui/icons-material` `^7.0.0 || ^9.5.0`, `@mui/x-data-grid` y `@mui/x-date-pickers` `^8.0.0 || ^9.0.0`, y `@mui/lab` 7 o
+  9 (los dos en beta). Cada versión se prueba completa con las dos parejas: Material 7.3 con MUI X 8.29, y Material 9.5
+  con MUI X 9.18. Un proyecto en MUI 7 sube a la 0.72 sin tocar nada. Con MUI 9, los navegadores son los que pide MUI 9:
+  Safari 17 (iOS 17), Chrome 117, Edge 121 y Firefox 121.
+- Con MUI 9, los títulos de los pasos de `WizardLayout` que se pulsan (`onStepSelect`) son pestañas para el teclado, como
+  los pone MUI 9: Tab llega al paso abierto y las flechas recorren los demás. Con MUI 7 siguen como antes.
+
+### Arreglado (para que se vea igual con MUI 7 y con MUI 9)
+
+- Los textos grises: MUI 9 ya no lee `color="text.secondary"` en un Typography (salía del color normal, sin aviso). Calcita
+  usa los nombres que leen los dos (`textSecondary`, `textDisabled`, `textPrimary`). Medido en las 70 pantallas de los
+  ejemplos: los 10,448 textos con el mismo color y peso que antes. También en las plantillas de página y de módulo del CLI.
+- «Ir a la página» y `CatalogInput` leen lo que el Autocomplete le pasa a su caja con la forma de MUI 7 y con la de MUI 9.
+  Si se leía la equivocada, la caja de «Ir a la página» se desconectaba de su lista y el obligatorio del catálogo no
+  llegaba al lector de pantalla.
+- Los íconos que MUI 9 quitó (`ErrorOutline`, `CheckCircleOutline`…) van con su versión `…Outlined`, que existe en los dos.
+- `ModalWaiting` y `RecoveryCodesDialog` sin `disableEscapeKeyDown`, que MUI 9 quitó: siguen sin cerrarse con Esc.
+- El vidrio del calendario: el día elegido y el de hoy llevan su estilo con MUI X 8 y con MUI X 9 (la pieza cambió de nombre:
+  `PickersDay` a `PickerDay`).
+
+### Para su proyecto al pasar a MUI 9
+
+Lo que cambia en el código del proyecto, no en Calcita. Todo esto funciona también en MUI 7, así que se puede hacer antes:
+
+- `color="text.secondary"` en sus Typography pasa a `color="textSecondary"` (en `sx`, `color: 'text.secondary'` sigue igual).
+- `inputProps` ya no se lee: en `Checkbox`, `Radio` y `Switch` va en `slotProps.input`; en `TextField` y en los campos de
+  Calcita, en `slotProps.htmlInput`. En el `renderInput` del Autocomplete, `params.InputProps` pasa a
+  `params.slotProps.input` y `params.inputProps` a `params.slotProps.htmlInput`.
+- Las clases que juntan variante y color ya no salen (`.MuiChip-outlinedPrimary`, `.MuiButton-textInherit`…): se escriben
+  juntas, `.MuiChip-outlined.MuiChip-colorPrimary`. En `Tabs`, `flexContainer` pasa a `list`.
+- Los íconos `…Outline` pasan a `…Outlined`. `disableEscapeKeyDown` se cambia por ignorar `escapeKeyDown` en `onClose`.
+- Las props de estilo sueltas (`alignItems`, `mt`, `fontWeight`…) en Box, Stack, Typography, Link y Grid van en `sx`, y
+  `paragraph` en un Typography se cambia por `sx={{mb: 2}}`.
+- La guía completa: https://mui.com/material-ui/migration/upgrade-to-v9/
+
 ## [0.71.0] - 2026-11-21
 
 ### Agregado
