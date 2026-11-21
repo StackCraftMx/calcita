@@ -81,7 +81,7 @@ function CollapsibleSectionContent(props) {
                             {isExpanded ? expandedTitle : collapsedTitle}
                         </CollapsibleCollapsedTitle>
                         {!isExpanded && hint && (
-                            <CollapsibleExpandedTitle variant="caption" component="span" color="text.secondary" ownSx={{display: 'block'}}>{hint}</CollapsibleExpandedTitle>
+                            <CollapsibleExpandedTitle variant="caption" component="span" color="textSecondary" ownSx={{display: 'block'}}>{hint}</CollapsibleExpandedTitle>
                         )}
                     </CollapsibleTitleArea>
                 </CollapsibleSummary>

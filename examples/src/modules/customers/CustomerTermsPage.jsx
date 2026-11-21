@@ -36,11 +36,11 @@ const SplitSummary = ({rows, creditLimit, t}) => {
         limit = null;
     }
     if (!limit) {
-        return <Typography variant="body2" color="text.secondary">{t('terms.split.totalOnly', {total: split.format()})}</Typography>;
+        return <Typography variant="body2" color="textSecondary">{t('terms.split.totalOnly', {total: split.format()})}</Typography>;
     }
     const isOver = split.isGreaterThan(limit);
     return (
-        <Typography variant="body2" color={isOver ? 'error' : 'text.secondary'} role="status">
+        <Typography variant="body2" color={isOver ? 'error' : 'textSecondary'} role="status">
             {isOver
                 ? t('terms.split.over', {total: split.format(), max: limit.format(), over: split.minus(limit).format()})
                 : t('terms.split.left', {total: split.format(), max: limit.format(), left: limit.minus(split).format()})}

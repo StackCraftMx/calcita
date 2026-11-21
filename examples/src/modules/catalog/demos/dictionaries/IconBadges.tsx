@@ -36,7 +36,7 @@ const IconBadges = () => (
         <Stack direction="row" useFlexGap sx={{gap: 1, flexWrap: 'wrap', alignItems: 'center'}}>
             <IconBadge dictionary={PAYMENT_METHOD} value="card" variant={ICON_BADGE_VARIANT.soft} />
             <IconBadge dictionary={PAYMENT_METHOD} value="transfer" variant={ICON_BADGE_VARIANT.soft} />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
                 Pagado con <IconBadge dictionary={PAYMENT_METHOD} value="card" variant={ICON_BADGE_VARIANT.plain} /> el 2 de noviembre.
             </Typography>
         </Stack>

@@ -15,7 +15,7 @@ const RichTextViewDemo = () => (
         {/* 1. La vista: el texto con su formato, sin el script, sin el onclick y sin la liga javascript: */}
         <RichTextView value={SAVED_HTML} sx={{p: 2, borderRadius: 2, bgcolor: 'action.hover'}} />
         {/* 2. Lo que llegó del servidor, tal cual */}
-        <Typography variant="caption" color="text.secondary" sx={{fontFamily: 'monospace', overflowWrap: 'anywhere'}}>Llegó: {SAVED_HTML}</Typography>
+        <Typography variant="caption" color="textSecondary" sx={{fontFamily: 'monospace', overflowWrap: 'anywhere'}}>Llegó: {SAVED_HTML}</Typography>
     </Stack>
 );
 

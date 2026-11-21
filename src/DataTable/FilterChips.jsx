@@ -60,7 +60,7 @@ function FilterChipsContent(props) {
     return (
         <ChipsRoot sx={sx} ownSx={{mb: 1.5, minWidth: 0}}>
             <ChipsHeader direction="row" spacing={1} ownSx={{px: 0.25, alignItems: 'center', justifyContent: 'space-between'}}>
-                <Typography variant="caption" color="text.secondary" noWrap>
+                <Typography variant="caption" color="textSecondary" noWrap>
                     {t('chips.applied', {count: activeCount})}
                 </Typography>
                 <ChipsClearButton size="small" color="error" startIcon={<ClearAllIcon fontSize="small" />} onClick={onClearAll}

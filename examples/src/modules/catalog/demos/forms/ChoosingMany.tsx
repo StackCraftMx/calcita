@@ -38,7 +38,7 @@ const ChoosingMany = () => {
                               multiple selectAll checkboxes limitTags={3} placeholder="Busque un estado" />
             </FormSection>
             {/* 4. Lo que viaja: las claves */}
-            <Typography variant="body2" color="text.secondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>
+            <Typography variant="body2" color="textSecondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>
                 Viaja: {JSON.stringify({channels, days, states})}
             </Typography>
         </>

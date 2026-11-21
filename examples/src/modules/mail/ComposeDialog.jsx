@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import {AttachmentsInput, toastProblem, toastSuccess, useToolkitTranslation} from '@stackcraftmx/calcita';
 import {
     Form, FormProblemAlert, FormTextField, Formik, SubmitButton, Yup, applyServerProblem, useFormikContext,

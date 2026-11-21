@@ -12,7 +12,7 @@ import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import SmartButtonOutlinedIcon from '@mui/icons-material/SmartButtonOutlined';

@@ -30,7 +30,7 @@ const CardKinds = () => {
                 <CardHeader avatar={<Avatar>{initialsOf(SAMPLE_PERSON)}</Avatar>} title={SAMPLE_PERSON} subheader={t('surfaces.card.subheader')}
                             action={<IconButton aria-label={t('samples.more')}><MoreVertIcon /></IconButton>} />
                 <CardContent>
-                    <Typography variant="body2" color="text.secondary">{t('surfaces.card.body')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('surfaces.card.body')}</Typography>
                 </CardContent>
                 <CardActions>
                     <Button size="small">{t('samples.reply')}</Button>

@@ -157,7 +157,7 @@ function SideMenuContent(props) {
                                 <MenuBrandLogo ownSx={{width: 28, height: 28, flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{logo}</MenuBrandLogo>
                                 <MenuBrandText ownSx={(theme) => ({minWidth: 0, textAlign: 'left', ...fadeWhenCollapsed(theme)})}>
                                     <MenuBrandName variant="subtitle2" component="span" noWrap ownSx={{display: 'block', fontWeight: 600, lineHeight: 1.3}}>{brandName}</MenuBrandName>
-                                    {brandCaption && <MenuBrandCaption variant="caption" component="span" color="text.secondary" noWrap ownSx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</MenuBrandCaption>}
+                                    {brandCaption && <MenuBrandCaption variant="caption" component="span" color="textSecondary" noWrap ownSx={{display: 'block', lineHeight: 1.3}}>{brandCaption}</MenuBrandCaption>}
                                 </MenuBrandText>
                             </>
                         )}

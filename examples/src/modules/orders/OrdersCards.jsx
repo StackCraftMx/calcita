@@ -36,7 +36,7 @@ const OrderTracking = ({orderId}) => {
         getOrderEvents(orderId, controller.signal).then(setEvents).catch((error) => error.name !== 'AbortError' && toastProblem(error));
         return () => controller.abort();
     }, [orderId]);
-    return events ? <DeliveryTimeline events={events} /> : <Typography variant="body2" color="text.secondary">{t('cards.loadingTracking')}</Typography>;
+    return events ? <DeliveryTimeline events={events} /> : <Typography variant="body2" color="textSecondary">{t('cards.loadingTracking')}</Typography>;
 };
 
 /**

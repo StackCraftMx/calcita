@@ -129,7 +129,7 @@ function GroupedTimelineContent(props) {
                                     </TimelineGroupTitle>
                                     {/* plegado, el grupo dice cuántos eventos trae: se sabe qué hay sin abrirlo */}
                                     {isCollapsible && timelineGroup.summary && (
-                                        <Typography variant="body2" color="text.secondary" component="span">{timelineGroup.summary}</Typography>
+                                        <Typography variant="body2" color="textSecondary" component="span">{timelineGroup.summary}</Typography>
                                     )}
                                     {isCollapsible && (
                                         <TimelineExpandIcon fontSize="small" ownSx={{
@@ -151,7 +151,7 @@ function GroupedTimelineContent(props) {
                                     return (
                                         <TimelineItem key={timelineEntry.key}>
                                             {isWide && (
-                                                <TimelineOpposite variant="body2" color="text.secondary" ownSx={{m: 'auto 0'}}>
+                                                <TimelineOpposite variant="body2" color="textSecondary" ownSx={{m: 'auto 0'}}>
                                                     {timelineEntry.timestamp}
                                                 </TimelineOpposite>
                                             )}
@@ -167,7 +167,7 @@ function GroupedTimelineContent(props) {
                                                     {timelineEntry.title}
                                                 </TimelineEntryTitle>
                                                 {!isWide && timelineEntry.timestamp && (
-                                                    <Typography variant="caption" color="text.secondary" component="p">{timelineEntry.timestamp}</Typography>
+                                                    <Typography variant="caption" color="textSecondary" component="p">{timelineEntry.timestamp}</Typography>
                                                 )}
                                                 {timelineEntry.details}
                                             </TimelineContentPart>

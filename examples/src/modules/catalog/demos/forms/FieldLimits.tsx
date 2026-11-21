@@ -78,7 +78,7 @@ const FieldLimits = () => {
                             <SubmitButton sx={{alignSelf: 'flex-start'}}>Pedir</SubmitButton>
                             {/* 5. Lo que recibe la pantalla al corregirse solo un campo */}
                             {lastFix && (
-                                <Typography variant="body2" color="text.secondary" data-testid="last-limit-fix">
+                                <Typography variant="body2" color="textSecondary" data-testid="last-limit-fix">
                                     onLimitFix: {lastFix.typedValue} → {lastFix.fixedValue} (tope {lastFix.rule === 'min' ? 'mínimo' : 'máximo'}: {lastFix.limit})
                                 </Typography>
                             )}

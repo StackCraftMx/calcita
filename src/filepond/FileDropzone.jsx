@@ -452,7 +452,7 @@ function FileDropzoneContent(props) {
                 </PondSummary>
             )}
             {limitHints.length > 0 && (
-                <PondLimits variant="caption" color="text.secondary" ownSx={{display: 'block', textAlign: 'center', mt: 0.5}}>
+                <PondLimits variant="caption" color="textSecondary" ownSx={{display: 'block', textAlign: 'center', mt: 0.5}}>
                     {limitHints.join(' · ')}
                 </PondLimits>
             )}

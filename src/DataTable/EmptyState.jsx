@@ -44,7 +44,7 @@ function EmptyStateContent(props) {
             <EmptyIcon ownSx={{color: 'text.disabled', display: 'flex'}}>
                 <Icon fontSize="large" />
             </EmptyIcon>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="textSecondary">
                 {filtered ? t('empty.filtered') : (label ?? t('empty.default'))}
             </Typography>
             {filtered && onClearFilters && (

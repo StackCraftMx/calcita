@@ -13,7 +13,7 @@ const RichTextEditorDemo = () => {
             {/* 1. Todos los botones, con tope de caracteres */}
             <RichTextEditor label="Notas del pedido" value={notes} onChange={setNotes} placeholder="Escriba aquí…" maxLength={500} />
             {/* 2. Lo que viaja al servidor */}
-            <Typography variant="body2" color="text.secondary" sx={{fontFamily: 'monospace', overflowWrap: 'anywhere'}}>Viaja: {notes || "''"}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{fontFamily: 'monospace', overflowWrap: 'anywhere'}}>Viaja: {notes || "''"}</Typography>
         </Stack>
     );
 };

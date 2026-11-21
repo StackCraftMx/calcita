@@ -110,7 +110,7 @@ export const BranchesPage = () => {
                                               sx={{width: '100%', height: 110, objectFit: 'cover', borderRadius: 1, display: 'block'}} />
                                      )}
                                      <Typography variant="subtitle2" component="p">{marker.title}</Typography>
-                                     <Typography variant="body2" color="text.secondary" component="p">{marker.description}</Typography>
+                                     <Typography variant="body2" color="textSecondary" component="p">{marker.description}</Typography>
                                      <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
                                          <Tag label={t(`status.${marker.status}`)} color={marker.tone} />
                                          {marker.orders > 0 && <Typography variant="caption">{t('orders', {count: formatNumber(marker.orders)})}</Typography>}

@@ -19,7 +19,7 @@ const OwnPickerDemo = () => {
             <CardActionArea onClick={picker.open} {...picker.dropHandlers} sx={{p: 3, textAlign: 'center'}}>
                 <ReceiptLongOutlinedIcon color="primary" fontSize="large" />
                 <Typography variant="subtitle1">{ticket ? ticket.name : 'Suelte aquí la foto del ticket'}</Typography>
-                <Typography variant="body2" color="text.secondary">o pique para elegirla · imagen de hasta 3 MB</Typography>
+                <Typography variant="body2" color="textSecondary">o pique para elegirla · imagen de hasta 3 MB</Typography>
             </CardActionArea>
         </Card>
     );

@@ -23,7 +23,7 @@ const DateTimeField = () => {
             {/* 2. El mismo instante en la hora de otra sucursal: cambiar uno cambia el otro */}
             <DateTimeInput label="La misma hora en Tijuana" value={sendAt} onChange={setSendAt} timeZone="America/Tijuana" />
             {/* 3. Lo que viaja al servidor: el instante en UTC, con la Z al final */}
-            <Typography variant="body2" color="text.secondary">Viaja: «{sendAt}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{sendAt}»</Typography>
         </Stack>
     );
 };

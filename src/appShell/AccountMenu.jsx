@@ -24,7 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import LogoutIcon from '@mui/icons-material/Logout';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 
 import {initialsOf} from '@/appShell/menuItemText.js';
 import {barMenuPlacementOf} from '@/appShell/barMenuPlacement.js';
@@ -91,8 +91,8 @@ function AccountMenuContent(props) {
                           slotProps={{paper: {sx: {minWidth: settings ? 300 : 240, maxWidth: 360, ...placement.gapSx}}}}>
                 <AccountHeader ownSx={{px: 2, py: 1.25}}>
                     <AccountName variant="subtitle2" noWrap ownSx={{fontWeight: 600}}>{user.name}</AccountName>
-                    {user.email && <Typography variant="body2" color="text.secondary" noWrap>{user.email}</Typography>}
-                    {user.subtitle && <Typography variant="caption" color="text.secondary" component="p" noWrap>{user.subtitle}</Typography>}
+                    {user.email && <Typography variant="body2" color="textSecondary" noWrap>{user.email}</Typography>}
+                    {user.subtitle && <Typography variant="caption" color="textSecondary" component="p" noWrap>{user.subtitle}</Typography>}
                 </AccountHeader>
                 {/* los ajustes de la app (letra, idioma, claro u oscuro y los del proyecto): en la cuenta y no sueltos en la barra */}
                 {settings && <Divider />}

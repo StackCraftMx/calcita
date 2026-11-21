@@ -88,8 +88,9 @@ function RecoveryCodesDialogContent(props) {
     };
 
     return (
-        // ni Esc ni un clic afuera lo cierran: solo «Listo», después de marcar que los guardó
-        <Dialog sx={sx} open={isOpen} maxWidth="xs" fullWidth disableEscapeKeyDown onClose={() => {}}>
+        // ni Esc ni un clic afuera lo cierran: solo «Listo», después de marcar que los guardó. onClose no hace nada con
+        // ningún motivo (escapeKeyDown, backdropClick); MUI 9 quitó disableEscapeKeyDown
+        <Dialog sx={sx} open={isOpen} maxWidth="xs" fullWidth onClose={() => {}}>
             <DialogTitle>{t('recoveryCodes.title')}</DialogTitle>
             <DialogContent>
                 <Stack spacing={2}>

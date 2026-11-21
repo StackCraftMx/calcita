@@ -49,7 +49,7 @@ function DetailHeaderContent(props) {
             <DetailTitleArea ownSx={{minWidth: 0}}>
                 {/* el contexto se lee de un vistazo (en overline se veía
                     muy chico); text.secondary y no text.disabled: se lee (WCAG no lo exime) */}
-                {eyebrow && <DetailTitle variant="subtitle1" color="text.secondary" component="p" ownSx={{fontWeight: 700}}>{eyebrow}</DetailTitle>}
+                {eyebrow && <DetailTitle variant="subtitle1" color="textSecondary" component="p" ownSx={{fontWeight: 700}}>{eyebrow}</DetailTitle>}
                 <DetailBadges direction="row" spacing={1.5} useFlexGap ownSx={{alignItems: 'center', flexWrap: 'wrap'}}>
                     <Typography ref={titleRef} variant="h5" component="h1">{title}</Typography>
                     {badges}

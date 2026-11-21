@@ -20,7 +20,7 @@ const LetterMonthDate = () => {
             {/* 2. Igual con hora */}
             <DateTimeInput label="Firma del contrato" value={signedAt} onChange={setSignedAt} format={`${LETTER_DATE_FORMAT} HH:mm`} />
             {/* 3. Lo que viaja no cambia */}
-            <Typography variant="body2" color="text.secondary">Viaja: «{validUntil}» y «{signedAt}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{validUntil}» y «{signedAt}»</Typography>
         </Stack>
     );
 };

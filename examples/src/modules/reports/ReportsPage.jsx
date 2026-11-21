@@ -207,7 +207,7 @@ export const ReportsPage = () => {
                 </SectionCard>
 
                 <SectionCard title={t('panel.title')}>
-                    <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('panel.text')}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('panel.text')}</Typography>
                     <Stack direction={{xs: 'column', sm: 'row'}} spacing={1.5}>
                         <Button variant="outlined" onClick={() => ordersLog.open({})}>{t('panel.log')}</Button>
                         <Button variant="outlined" disabled={!metrics?.months.length} onClick={() => logByMonth.open({})}>{t('panel.byMonth')}</Button>

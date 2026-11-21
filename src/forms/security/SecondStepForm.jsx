@@ -131,7 +131,7 @@ function SecondStepFormContent(props) {
 
     return (
         <Stack sx={sx} spacing={2.5}>
-            <Typography variant="body2" color="text.secondary">{t('secondStep.intro')}</Typography>
+            <Typography variant="body2" color="textSecondary">{t('secondStep.intro')}</Typography>
 
             {hasPasskey && (
                 <>

@@ -43,7 +43,7 @@ function DemoTotpCodeButtonContent(props) {
     return (
         <TotpRoot spacing={0.5} ownSx={{alignItems: 'center'}}>
             <Button size="small" startIcon={<ScienceOutlinedIcon />} onClick={fillCode}>{t('demo.totpCode')}</Button>
-            <TotpCode variant="caption" color="text.secondary" ownSx={{textAlign: 'center'}}>{t('demo.totpCodeHelp')}</TotpCode>
+            <TotpCode variant="caption" color="textSecondary" ownSx={{textAlign: 'center'}}>{t('demo.totpCodeHelp')}</TotpCode>
         </TotpRoot>
     );
 }

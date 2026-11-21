@@ -777,7 +777,7 @@ function ServerTableContent(props) {
                     // el ancho de distancia y no se leía como parte de la misma tabla (caso del selector de año)
                     <TableCount direction="row" spacing={2} useFlexGap ownSx={{flexGrow: 1, alignItems: 'center', flexWrap: 'wrap'}}>
                         <TableCountRow direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
-                            <Typography variant="body2" color="text.secondary" role="status" aria-live="polite">
+                            <Typography variant="body2" color="textSecondary" role="status" aria-live="polite">
                                 {capped ? t('count.capped', {total: formattedTotal}) : countText}
                             </Typography>
                             {capped && <Tag label={t('count.cappedTag')} color="warning" tooltip={t('count.cappedTooltip')} />}

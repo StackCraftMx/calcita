@@ -277,7 +277,7 @@ function FileUploadInputContent(props) {
                 {shownFile && (
                     // el nombre cortado si es largo y completo al pasar el cursor; en el teléfono baja a su renglón
                     <Tooltip title={shownFile.size != null ? `${shownFile.name} · ${formatFileSize(shownFile.size)}` : shownFile.name}>
-                        <FileUploadName variant="caption" color="text.secondary" noWrap
+                        <FileUploadName variant="caption" color="textSecondary" noWrap
                                         ownSx={{minWidth: 0, flexShrink: 1, flexBasis: {xs: '100%', sm: 'auto'}, textAlign: {xs: 'right', sm: 'left'}}}>
                             {shownFile.name}
                         </FileUploadName>

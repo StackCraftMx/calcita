@@ -11,7 +11,7 @@ import {ERROR_PAGE_KIND, ErrorPage, toastInfo} from '@stackcraftmx/calcita';
 // lo que el proyecto le suma a una página (aquí a «no existe»)
 const projectExtrasOf = (kind: string) => (kind !== ERROR_PAGE_KIND.notFound ? {} : {
     extraActions: <Button variant="outlined" onClick={() => toastInfo('Se abrió el chat de soporte.')}>Contactar a soporte</Button>,
-    children: <Typography variant="body2" color="text.secondary">¿Llegó por una liga? Avísenos y la corregimos.</Typography>,
+    children: <Typography variant="body2" color="textSecondary">¿Llegó por una liga? Avísenos y la corregimos.</Typography>,
 });
 
 const ErrorPages = () => (

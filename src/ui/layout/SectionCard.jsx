@@ -59,7 +59,7 @@ function SectionCardContent(props) {
         return (
             <SectionOutsideRoot sx={sx} component="section" ownSx={{minWidth: 0}}>
                 <SectionHeader ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 0.75}}>
-                    <SectionTitle variant="subtitle2" color="text.secondary" component="h2" ownSx={{px: 2, fontWeight: 600}}>{title}</SectionTitle>
+                    <SectionTitle variant="subtitle2" color="textSecondary" component="h2" ownSx={{px: 2, fontWeight: 600}}>{title}</SectionTitle>
                     {action}
                 </SectionHeader>
                 <SectionCardPart variant="outlined" ownSx={{p: CARD_PADDING, minWidth: 0}}>
@@ -72,7 +72,7 @@ function SectionCardContent(props) {
     return (
         <SectionRoot sx={sx} component="section" variant="outlined" ownSx={{p: CARD_PADDING, minWidth: 0}}>
             <SectionHeader ownSx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1.5}}>
-                <SectionTitle variant="overline" color="text.secondary" component="h2" ownSx={{lineHeight: 1.6}}>{title}</SectionTitle>
+                <SectionTitle variant="overline" color="textSecondary" component="h2" ownSx={{lineHeight: 1.6}}>{title}</SectionTitle>
                 {action}
             </SectionHeader>
             {children}

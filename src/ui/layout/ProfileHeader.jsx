@@ -87,8 +87,8 @@ function ProfileHeaderContent(props) {
                 </ProfileAvatar>
                 <ProfileText ownSx={{flexGrow: 1, minWidth: 0}}>
                     <ProfileName ref={titleRef} variant="h5" component="h1" ownSx={{fontWeight: 600}}>{name}</ProfileName>
-                    {email && <Typography variant="body2" color="text.secondary">{email}</Typography>}
-                    {subtitle && <Typography variant="body2" color="text.secondary">{subtitle}</Typography>}
+                    {email && <Typography variant="body2" color="textSecondary">{email}</Typography>}
+                    {subtitle && <Typography variant="body2" color="textSecondary">{subtitle}</Typography>}
                     {chips.length > 0 && (
                         <ProfileChips direction="row" spacing={1} useFlexGap ownSx={{flexWrap: 'wrap', mt: 1}}>
                             {chips.map((chip) => <Chip key={chip} label={chip} size="small" color="primary" variant="outlined" />)}

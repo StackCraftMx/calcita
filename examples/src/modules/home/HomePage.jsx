@@ -33,7 +33,7 @@ export const HomePage = () => {
                         <SectionCard title={menuItemLabelOf(menuItem, t)} action={<Button component={Link} to={menuItem.to}>{t('open')}</Button>}>
                             <Stack direction="row" spacing={1.5} sx={{alignItems: 'flex-start'}}>
                                 {menuItem.Icon && <menuItem.Icon color="primary" />}
-                                <Typography variant="body2" color="text.secondary">{menuItemDescriptionOf(menuItem, t)}</Typography>
+                                <Typography variant="body2" color="textSecondary">{menuItemDescriptionOf(menuItem, t)}</Typography>
                             </Stack>
                         </SectionCard>
                     </Grid>

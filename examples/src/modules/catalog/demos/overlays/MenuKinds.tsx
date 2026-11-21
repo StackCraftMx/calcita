@@ -10,7 +10,7 @@ import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import ShareIcon from '@mui/icons-material/Share';
 import {useToolkitTranslation} from '@stackcraftmx/calcita';
@@ -62,7 +62,7 @@ const MenuKinds = () => {
             <Popover anchorEl={openMenu.anchor} open={isOpen('popover')} onClose={close} anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}>
                 <Box sx={{p: 2, maxWidth: 280}}>
                     <Typography variant="subtitle2" sx={{mb: 0.5}}>{t('overlays.menus.popoverTitle')}</Typography>
-                    <Typography variant="body2" color="text.secondary">{t('overlays.menus.popoverText')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('overlays.menus.popoverText')}</Typography>
                 </Box>
             </Popover>
         </Stack>

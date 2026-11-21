@@ -26,7 +26,7 @@ const ImageInputDemo = () => {
                         alt="Lámpara de escritorio" />
             {/* 3. Lo que viaja al guardar */}
             <Stack sx={{px: 2, py: 1}}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                     Viaja: {photo instanceof File ? `«${photo.name}» (nuevo)` : 'sin foto'} · {productImage instanceof File ? `«${productImage.name}» (nuevo)` : productImage ? 'la guardada' : 'sin imagen'}
                 </Typography>
             </Stack>

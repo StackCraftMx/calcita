@@ -91,7 +91,7 @@ const AuthLayoutContent = (props) => {
                 </AuthBrand>
                 <AuthCard variant="outlined" ownSx={[{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, p: {xs: 3, sm: 4}}, cardSurfaceOf]}>
                     <Typography variant="h5" component="h1">{title}</Typography>
-                    {description && <AuthDescription variant="body2" color="text.secondary" ownSx={{mt: 1}}>{description}</AuthDescription>}
+                    {description && <AuthDescription variant="body2" color="textSecondary" ownSx={{mt: 1}}>{description}</AuthDescription>}
                     <AuthContent ownSx={{mt: 3}}>{children}</AuthContent>
                 </AuthCard>
                 {footer && <AuthFooter ownSx={{width: '100%', maxWidth: CARD_MAX_WIDTH_PIXELS, mt: 2}}>{footer}</AuthFooter>}

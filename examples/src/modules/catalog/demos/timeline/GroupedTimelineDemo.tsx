@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
@@ -50,7 +50,7 @@ const GroupedTimelineDemo = () => {
                 {
                     key: 'failed-1', icon: ReportProblemOutlinedIcon, tone: 'warning', title: t('timeline.steps.failed'),
                     timestamp: t('timeline.framework.yesterday', {time: '19:10'}),
-                    details: <Typography variant="body2" color="text.secondary">{t('timeline.framework.failedNote')}</Typography>,
+                    details: <Typography variant="body2" color="textSecondary">{t('timeline.framework.failedNote')}</Typography>,
                 },
             ],
         },

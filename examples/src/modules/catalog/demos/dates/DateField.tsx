@@ -16,7 +16,7 @@ const DateField = () => {
             {/* 2. Una entrega: de hoy en adelante */}
             <DateInput label="Fecha de entrega" value={deliveryDate} onChange={setDeliveryDate} disablePast />
             {/* 3. Lo que viaja al servidor: texto, '' si está vacía */}
-            <Typography variant="body2" color="text.secondary">Viaja: «{birthDate}» y «{deliveryDate}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{birthDate}» y «{deliveryDate}»</Typography>
         </Stack>
     );
 };

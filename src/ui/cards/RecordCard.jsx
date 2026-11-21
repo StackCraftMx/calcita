@@ -132,9 +132,9 @@ function RecordCardContent(props) {
                     </RecordCardAvatar>
                 )}
                 <RecordCardTitles ownSx={{flex: 1, minWidth: 0, order: 1}}>
-                    {eyebrow && <Typography variant="caption" color="text.secondary" component="p" sx={{fontVariantNumeric: 'tabular-nums'}}>{eyebrow}</Typography>}
+                    {eyebrow && <Typography variant="caption" color="textSecondary" component="p" sx={{fontVariantNumeric: 'tabular-nums'}}>{eyebrow}</Typography>}
                     <Typography id={titleId} variant="subtitle1" component="h3" sx={{fontWeight: 600, overflowWrap: 'anywhere'}}>{title}</Typography>
-                    {subtitle && <Typography variant="body2" color="text.secondary">{subtitle}</Typography>}
+                    {subtitle && <Typography variant="body2" color="textSecondary">{subtitle}</Typography>}
                 </RecordCardTitles>
                 {status && (
                     <RecordCardStatus direction="row" ownSx={{
@@ -165,12 +165,12 @@ function RecordCardContent(props) {
                         <RecordCardGroup key={group.key ?? groupIndex} ownSx={{
                             minWidth: 0, pt: {xs: groupIndex > 0 ? 1.5 : 0, md: 0}, ...BODY_DIVIDER_LINE, borderTopWidth: {xs: groupIndex > 0 ? 1 : 0, md: 0},
                         }}>
-                            {group.title && <Typography variant="overline" color="text.secondary" component="p" sx={{lineHeight: 1.8}}>{group.title}</Typography>}
+                            {group.title && <Typography variant="overline" color="textSecondary" component="p" sx={{lineHeight: 1.8}}>{group.title}</Typography>}
                             {group.content ?? (
                             <Box component="dl" sx={{m: 0, display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: 1.5, rowGap: 0.5}}>
                                 {(group.facts ?? []).map((fact, factIndex) => (
                                     <RecordCardFact key={factIndex} ownSx={{display: 'contents'}}>
-                                        <Typography component="dt" variant="body2" color="text.secondary">{fact.label}</Typography>
+                                        <Typography component="dt" variant="body2" color="textSecondary">{fact.label}</Typography>
                                         <Typography component="dd" variant="body2" sx={{m: 0, textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: fact.emphasis ? 600 : 400, overflowWrap: 'anywhere'}}>
                                             {fact.value}
                                         </Typography>
@@ -185,9 +185,9 @@ function RecordCardContent(props) {
                             textAlign: {xs: 'left', md: 'right'}, pl: {md: 3}, pt: {xs: 1.5, md: 0},
                             ...BODY_DIVIDER_LINE, borderTopWidth: {xs: 1, md: 0}, borderLeftWidth: {md: 1},
                         }}>
-                            <Typography variant="overline" color="text.secondary" component="p" sx={{lineHeight: 1.8}}>{highlight.label}</Typography>
+                            <Typography variant="overline" color="textSecondary" component="p" sx={{lineHeight: 1.8}}>{highlight.label}</Typography>
                             <Typography variant="h5" component="p" sx={{fontWeight: 700, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'}}>{highlight.value}</Typography>
-                            {highlight.caption && <Typography variant="caption" color="text.secondary" component="p">{highlight.caption}</Typography>}
+                            {highlight.caption && <Typography variant="caption" color="textSecondary" component="p">{highlight.caption}</Typography>}
                         </RecordCardHighlight>
                     )}
                     {trailing && (

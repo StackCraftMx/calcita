@@ -72,7 +72,7 @@ const ChunkedMiniDemo = () => {
 
     return (
         <Stack spacing={1.5} sx={{maxWidth: 720}}>
-            <Typography variant="body2" color="text.secondary">{uploadedCount} de {BACKUPS.length} cargados</Typography>
+            <Typography variant="body2" color="textSecondary">{uploadedCount} de {BACKUPS.length} cargados</Typography>
             {/* 3. Un renglón por archivo, con la subida por trozos como su upload */}
             <FormSection>
                 {BACKUPS.map(({key, label}) => (
@@ -88,7 +88,7 @@ const ChunkedMiniDemo = () => {
                     />
                 ))}
             </FormSection>
-            <Typography variant="body2" color="text.secondary">Viaja: «{JSON.stringify(fileIds)}»</Typography>
+            <Typography variant="body2" color="textSecondary">Viaja: «{JSON.stringify(fileIds)}»</Typography>
         </Stack>
     );
 };

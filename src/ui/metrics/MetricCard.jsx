@@ -125,7 +125,7 @@ function MetricCardContent(props) {
                             {icon}
                         </CardIcon>
                     )}
-                    <CardLabel variant="overline" color="text.secondary" component="p" ownSx={{minWidth: 0}}>{label}</CardLabel>
+                    <CardLabel variant="overline" color="textSecondary" component="p" ownSx={{minWidth: 0}}>{label}</CardLabel>
                 </Stack>
                 {trend && !isLoading && <TrendChip trend={trend} texts={texts} />}
             </CardHeader>
@@ -140,7 +140,7 @@ function MetricCardContent(props) {
                 {isLoading ? <Skeleton width={120} /> : value}
             </CardValue>
             {caption && (
-                <CardCaption variant="caption" color="text.secondary" component="p" ownSx={{mt: 0.5}}>
+                <CardCaption variant="caption" color="textSecondary" component="p" ownSx={{mt: 0.5}}>
                     {isLoading ? <Skeleton width={160} /> : caption}
                 </CardCaption>
             )}

@@ -142,7 +142,7 @@ export const OrderDetailPage = () => {
                 <Grid size={{xs: 12, md: 6}}>
                     <SectionCard title={t('detail.dataTitle')}>
                         <DefinitionList entries={dataEntries} />
-                        <Typography variant="caption" color="text.secondary" component="p" sx={{mt: 2}}>
+                        <Typography variant="caption" color="textSecondary" component="p" sx={{mt: 2}}>
                             {t('detail.timeZoneNote')}
                         </Typography>
                     </SectionCard>

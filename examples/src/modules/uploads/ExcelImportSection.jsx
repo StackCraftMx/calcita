@@ -33,7 +33,7 @@ export const ExcelImportSection = () => {
 
     return (
         <SectionCard title={t('excel.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>{t('excel.text')}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>{t('excel.text')}</Typography>
             <FileDropzone
                 value={file}
                 onChange={chooseFile}

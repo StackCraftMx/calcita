@@ -121,7 +121,7 @@ function CheckboxGroupInputContent(props) {
                             label={option.description ? (
                                 <Stack component="span">
                                     <Typography component="span" variant="body2">{option.label}</Typography>
-                                    <Typography component="span" variant="caption" color="text.secondary">{option.description}</Typography>
+                                    <Typography component="span" variant="caption" color="textSecondary">{option.description}</Typography>
                                 </Stack>
                             ) : option.label}
                         />

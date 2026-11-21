@@ -86,7 +86,7 @@ function CfdiSummaryContent(props) {
             <SummaryAmounts direction="row" ownSx={{gap: 3, flexWrap: 'wrap', mt: 2}}>
                 {[['subtotal', cfdi.subtotal], ['taxes', cfdi.taxes.transferred], ['total', cfdi.total]].map(([key, amount]) => (
                     <Box key={key}>
-                        <Typography variant="caption" color="text.secondary" component="p">{t(`cfdi.${key}`)}</Typography>
+                        <Typography variant="caption" color="textSecondary" component="p">{t(`cfdi.${key}`)}</Typography>
                         <Typography variant={key === 'total' ? 'h6' : 'body1'} component="p" sx={{fontVariantNumeric: 'tabular-nums'}}>
                             {moneyOf(amount)}
                         </Typography>

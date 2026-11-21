@@ -89,10 +89,10 @@ function ActivityLogContent(props) {
     return (
         <SectionCard sx={sx} title={t('activity.title')}>
             <Stack spacing={2}>
-                <Typography variant="body2" color="text.secondary">{t('activity.description')}</Typography>
+                <Typography variant="body2" color="textSecondary">{t('activity.description')}</Typography>
                 {error && <Alert severity="error">{error}</Alert>}
                 {!events && !error && <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
-                {events?.length === 0 && <Typography variant="body2" color="text.secondary">{t('activity.empty')}</Typography>}
+                {events?.length === 0 && <Typography variant="body2" color="textSecondary">{t('activity.empty')}</Typography>}
                 {events?.length > 0 && (
                     <List dense disablePadding>
                         {events.map((event) => {

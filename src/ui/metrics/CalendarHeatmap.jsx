@@ -124,7 +124,7 @@ function CalendarHeatmapContent(props) {
     return (
         <Box sx={sx}>
             <HeatmapHeader direction="row" spacing={2} ownSx={{justifyContent: 'space-between', alignItems: 'center', mb: 1}}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                     {activeDays.length ? summary : emptyLabel}
                 </Typography>
                 <HeatmapToggle ownSx={{flexShrink: 0}}>
@@ -174,14 +174,14 @@ function CalendarHeatmapContent(props) {
                          }}>
                         <Box />
                         {monthMarks.map((month, column) => (
-                            <HeatmapMonthLabel key={`month-${column}`} variant="caption" color="text.secondary"
+                            <HeatmapMonthLabel key={`month-${column}`} variant="caption" color="textSecondary"
                                         ownSx={{fontSize: 10, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'visible', width: CELL_PIXELS}}>
                                 {month ? formatMonthShortName(month) : ''}
                             </HeatmapMonthLabel>
                         ))}
                         {[1, 2, 3, 4, 5, 6, 7].map((isoWeekday) => (
                             <HeatmapWeek key={`weekday-${isoWeekday}`} ownSx={{display: 'contents'}}>
-                                <HeatmapDayLabel variant="caption" color="text.secondary"
+                                <HeatmapDayLabel variant="caption" color="textSecondary"
                                             ownSx={{fontSize: 10, lineHeight: {xs: `${CELL_PIXELS.xs}px`, md: `${CELL_PIXELS.md}px`}, pr: 0.75}}>
                                     {LABELED_WEEKDAYS.has(isoWeekday) ? formatWeekdayShortName(isoWeekday) : ''}
                                 </HeatmapDayLabel>
@@ -206,11 +206,11 @@ function CalendarHeatmapContent(props) {
 
             {!asTable && (
                 <HeatmapLegend direction="row" spacing={0.5} ownSx={{alignItems: 'center', justifyContent: 'flex-end', mt: 1}} aria-hidden="true">
-                    <HeatmapLegendLess variant="caption" color="text.secondary" ownSx={{mr: 0.5}}>{t('charts.less')}</HeatmapLegendLess>
+                    <HeatmapLegendLess variant="caption" color="textSecondary" ownSx={{mr: 0.5}}>{t('charts.less')}</HeatmapLegendLess>
                     {HEATMAP_LEVELS.map((level) => (
                         <HeatmapLegendCell key={level} ownSx={(theme) => ({width: CELL_PIXELS, height: CELL_PIXELS, borderRadius: '3px', bgcolor: levelFill(theme, tone, level)})} />
                     ))}
-                    <HeatmapLegendMore variant="caption" color="text.secondary" ownSx={{ml: 0.5}}>{t('charts.more')}</HeatmapLegendMore>
+                    <HeatmapLegendMore variant="caption" color="textSecondary" ownSx={{ml: 0.5}}>{t('charts.more')}</HeatmapLegendMore>
                 </HeatmapLegend>
             )}
         </Box>

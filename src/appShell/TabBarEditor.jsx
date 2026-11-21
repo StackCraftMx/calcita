@@ -61,7 +61,7 @@ function TabBarEditorContent(props) {
         <EditorRoot ownSx={{display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0}}>
             <EditorHeader ownSx={{px: 2, pt: 2, pb: 1, flexShrink: 0}}>
                 <EditorTitle variant="subtitle1" component="h2" ownSx={{fontWeight: 600}}>{t('drawer.editTabs')}</EditorTitle>
-                <Typography variant="body2" color="text.secondary">{t('drawer.editTabsHint', {count: limit})}</Typography>
+                <Typography variant="body2" color="textSecondary">{t('drawer.editTabsHint', {count: limit})}</Typography>
             </EditorHeader>
             <EditorList dense ownSx={{overflowY: 'auto', flex: '1 1 auto', minHeight: 0, px: 1}}>
                 {menuItems.map((menuItem) => {

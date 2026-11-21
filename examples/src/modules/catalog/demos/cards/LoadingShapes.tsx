@@ -32,7 +32,7 @@ const FakeDashboard = ({onReady}: {onReady: () => void}) => {
     }, [onReady]);
     return (
         <Box sx={{height: 240, display: 'grid', placeItems: 'center', bgcolor: 'action.hover', borderRadius: 2}}>
-            <Typography color="text.secondary">El tablero ya está listo</Typography>
+            <Typography color="textSecondary">El tablero ya está listo</Typography>
         </Box>
     );
 };

@@ -21,7 +21,7 @@ const CountdownField = () => {
         <Stack spacing={2}>
             {/* 1. Segundo a segundo: al llegar a cero dice lo suyo y avisa una vez */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>
-                <Typography color="text.secondary">Las inscripciones cierran en</Typography>
+                <Typography color="textSecondary">Las inscripciones cierran en</Typography>
                 <Countdown until={closesAt} label="Tiempo para que cierren las inscripciones" completedText="Cerradas"
                            onComplete={() => toastSuccess('Se cerraron las inscripciones.')} variant="h6" />
                 <Button size="small" onClick={() => setClosesAt(inSeconds(CLOSING_SOON_SECONDS))}>Cerrar en 10 segundos</Button>
@@ -29,7 +29,7 @@ const CountdownField = () => {
             </Stack>
             {/* 2. Con días cuando faltan (showSeconds={false} quita los segundos) */}
             <Stack direction="row" spacing={1} sx={{alignItems: 'baseline'}}>
-                <Typography color="text.secondary">La oferta termina en</Typography>
+                <Typography color="textSecondary">La oferta termina en</Typography>
                 <Countdown until={saleEndsAt} label="Tiempo para que termine la oferta" />
             </Stack>
             {/* 3. A su manera: las partes en sus propias cajas, con segundos */}
@@ -39,7 +39,7 @@ const CountdownField = () => {
                         {[[days, 'días'], [hours, 'horas'], [minutes, 'min'], [seconds, 'seg']].map(([amount, unit]) => (
                             <Stack key={unit} sx={{px: 1.5, py: 1, borderRadius: 2, bgcolor: 'action.hover', alignItems: 'center', minWidth: 64}}>
                                 <Typography variant="h6" sx={{fontVariantNumeric: 'tabular-nums'}}>{amount}</Typography>
-                                <Typography variant="caption" color="text.secondary">{unit}</Typography>
+                                <Typography variant="caption" color="textSecondary">{unit}</Typography>
                             </Stack>
                         ))}
                     </Stack>

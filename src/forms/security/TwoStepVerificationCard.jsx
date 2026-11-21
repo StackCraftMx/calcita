@@ -156,7 +156,7 @@ function TotpDialog({setup, onConfirm, onClose}) {
                                     <TwoStepQr component="img" src={setup.qrImageUrl} alt={t('twoStep.totpQrAlt')}
                                          ownSx={{width: QR_SIZE_PIXELS, height: QR_SIZE_PIXELS, alignSelf: 'center', borderRadius: 1, bgcolor: 'common.white'}} />
                                 )}
-                                <Typography variant="caption" color="text.secondary">{t('twoStep.totpCantScan')}</Typography>
+                                <Typography variant="caption" color="textSecondary">{t('twoStep.totpCantScan')}</Typography>
                                 <TwoStepSecret direction="row" spacing={1} ownSx={{alignItems: 'center'}}>
                                     <TwoStepSecretCode component="code" ownSx={{fontFamily: CODE_FONT, fontSize: 13, wordBreak: 'break-all'}}>{setup?.secret}</TwoStepSecretCode>
                                     <CopyButton value={setup?.secret ?? ''} />
@@ -222,7 +222,7 @@ function PasskeyDialog({open, onAdd, onClose, notice}) {
  *
  * @param {{Icon: import('react').ElementType, title: string, caption?: import('react').ReactNode, captionColor?: string, action?: import('react').ReactNode}} props
  */
-function SettingRow({Icon, title, caption, captionColor = 'text.secondary', action}) {
+function SettingRow({Icon, title, caption, captionColor = 'textSecondary', action}) {
     return (
         <TwoStepHeader direction="row" spacing={1} ownSx={{alignItems: 'center', justifyContent: 'space-between'}}>
             <TwoStepHeaderTitle direction="row" spacing={1.5} ownSx={{alignItems: 'center', minWidth: 0}}>
@@ -298,7 +298,7 @@ function TwoStepVerificationCardContent(props) {
         <ComponentTexts namespace="security" texts={texts}>
             <SectionCard sx={sx} title={t('twoStep.title')}>
                 <Stack spacing={2}>
-                    <Typography variant="body2" color="text.secondary">{t('twoStep.description')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('twoStep.description')}</Typography>
                     <Box>
                         {security.isEnabled
                             ? <Tag label={t('twoStep.active')} color="success" tooltip={t('twoStep.activeSince', {date: formatDateTime(security.enabledAt)})} />
@@ -344,7 +344,7 @@ function TwoStepVerificationCardContent(props) {
                             <Divider />
                             <SettingRow Icon={VpnKeyOutlinedIcon} title={t('twoStep.codesTitle')}
                                         caption={codesLeft ? t('twoStep.codesRemaining', {count: codesLeft}) : t('twoStep.codesNone')}
-                                        captionColor={codesLeft <= FEW_CODES_LEFT ? 'warning.main' : 'text.secondary'}
+                                        captionColor={codesLeft <= FEW_CODES_LEFT ? 'warning' : 'textSecondary'}
                                         action={<Button size="small" onClick={() => setDialog({kind: 'regenerateCodes'})}>{t('twoStep.regenerate')}</Button>} />
                         </>
                     )}

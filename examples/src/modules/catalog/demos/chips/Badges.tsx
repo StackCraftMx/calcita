@@ -1,7 +1,7 @@
 import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import {useToolkitTranslation} from '@stackcraftmx/calcita';
 

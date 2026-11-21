@@ -115,7 +115,7 @@ function FileDropzoneContent(props) {
             </DropzoneActions>
             {/* el límite, discreto, solo si hay límite */}
             {picker.maxBytes && (
-                <DropzoneLimits variant="caption" color="text.secondary" ownSx={{display: 'block', mt: 1.5}}>
+                <DropzoneLimits variant="caption" color="textSecondary" ownSx={{display: 'block', mt: 1.5}}>
                     {t('upload.maxSizeHint', {max: formatFileSize(picker.maxBytes)})}
                 </DropzoneLimits>
             )}

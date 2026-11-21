@@ -44,11 +44,11 @@ function PageHeaderContent(props) {
             <DocumentTitle title={documentTitle ?? title} />
             {/* text.secondary y no text.disabled: el eyebrow se lee, WCAG no lo exime (disabled daba 2.57:1 sobre el lienzo) */}
             {eyebrow && (
-                <Typography variant="overline" color="text.secondary">{eyebrow}</Typography>
+                <Typography variant="overline" color="textSecondary">{eyebrow}</Typography>
             )}
             <Typography ref={titleRef} variant="h4" component="h1">{title}</Typography>
             {subtitle && (
-                <HeaderSubtitle variant="body1" color="text.secondary" ownSx={{maxWidth: 640}}>{subtitle}</HeaderSubtitle>
+                <HeaderSubtitle variant="body1" color="textSecondary" ownSx={{maxWidth: 640}}>{subtitle}</HeaderSubtitle>
             )}
             {action && <HeaderAction ownSx={{pt: 1.5}}>{action}</HeaderAction>}
         </HeaderRoot>

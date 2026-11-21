@@ -51,7 +51,7 @@ function FieldFrameContent(props) {
 
     return (
         <FieldFrameRoot sx={sx} spacing={0.75}>
-            <FieldFrameLabel component="label" id={labelId} htmlFor={inputId} variant="overline" color="text.secondary"
+            <FieldFrameLabel component="label" id={labelId} htmlFor={inputId} variant="overline" color="textSecondary"
                              {...(required && {[REQUIRED_LABEL_ATTRIBUTE]: 'true'})} ownSx={required ? requiredMarkSxOf(t('form.requiredMark')) : undefined}>
                 {label}
             </FieldFrameLabel>

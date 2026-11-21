@@ -90,7 +90,7 @@ function MessageListContent(props) {
     const formatters = useFormatters();
 
     if (messages.length === 0) {
-        return <MessagesEmpty variant="body2" color="text.secondary" ownSx={{p: 3, textAlign: 'center'}}>{emptyText ?? t('empty')}</MessagesEmpty>;
+        return <MessagesEmpty variant="body2" color="textSecondary" ownSx={{p: 3, textAlign: 'center'}}>{emptyText ?? t('empty')}</MessagesEmpty>;
     }
 
     const toggleSelected = (messageId, isChecked) => {
@@ -145,18 +145,18 @@ function MessageListContent(props) {
                                         <MessagesSender variant="body2" noWrap ownSx={{fontWeight: weight, flex: 1}}>
                                             {message.from.name}
                                             {message.threadCount > 1 && (
-                                                <MessagesThreadCount component="span" variant="caption" color="text.secondary" ownSx={{ml: 0.5}} aria-label={t('threadCount', {count: message.threadCount})}>
+                                                <MessagesThreadCount component="span" variant="caption" color="textSecondary" ownSx={{ml: 0.5}} aria-label={t('threadCount', {count: message.threadCount})}>
                                                     ({message.threadCount})
                                                 </MessagesThreadCount>
                                             )}
                                         </MessagesSender>
                                         {message.hasAttachments && <AttachFileRoundedIcon fontSize="inherit" color="action" aria-label={t('attachments')} />}
-                                        <MessagesDate variant="caption" color="text.secondary" ownSx={{flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
+                                        <MessagesDate variant="caption" color="textSecondary" ownSx={{flexShrink: 0, fontVariantNumeric: 'tabular-nums'}}>
                                             {inboxDateOf(message.receivedAt, new Date(), formatters)}
                                         </MessagesDate>
                                     </MessagesTopRow>
                                     <MessagesSubject variant="body2" noWrap ownSx={{fontWeight: weight}}>{message.subject}</MessagesSubject>
-                                    <Typography variant="body2" color="text.secondary" noWrap>{message.preview}</Typography>
+                                    <Typography variant="body2" color="textSecondary" noWrap>{message.preview}</Typography>
                                     {message.labels?.length > 0 && (
                                         <MessagesLabels direction="row" spacing={0.5} useFlexGap ownSx={{flexWrap: 'wrap', mt: 0.5}}>
                                             {message.labels.map((rawLabel) => {

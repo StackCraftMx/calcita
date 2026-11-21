@@ -19,7 +19,7 @@ import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';

@@ -7,7 +7,7 @@
 //   - isRowSelectable dice cuáles se pueden elegir (aquí, los cancelados no).
 //   - Los textos de la barra se cambian con `texts` (la forma de `table` en los textos del paquete).
 import {useMemo, useState} from 'react';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import {ConfirmDialog, DictionaryText, StatusChip, dictionaryEntryOf, formatNumber, toastSuccess, useConfirmAction} from '@stackcraftmx/calcita';
 import {FILTER_KINDS, ServerTable, facetColumn, textColumn} from '@stackcraftmx/calcita/table';

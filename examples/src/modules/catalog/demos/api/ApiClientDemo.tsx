@@ -138,7 +138,7 @@ const ApiClientDemo = () => {
                     {Object.entries(fieldErrorsOf(outcome.error.problem)).map(([field, messages]) => (
                         <Typography key={field} variant="body2">• {field}: {messages.join(' ')}</Typography>
                     ))}
-                    <Typography variant="caption" color="text.secondary" component="p" sx={{mt: 1}}>
+                    <Typography variant="caption" color="textSecondary" component="p" sx={{mt: 1}}>
                         {t('api.client.reference', {status: outcome.error.status, requestId: outcome.error.requestId ?? '—'})}
                     </Typography>
                 </Alert>

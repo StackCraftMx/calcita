@@ -45,7 +45,7 @@ function PasswordChecklistContent(props) {
     const {t} = useToolkitTranslation('auth', texts);
     return (
         <Box sx={sx} id={id}>
-            <ChecklistTitle variant="caption" color="text.secondary" component="p" ownSx={{mb: 0.5}}>{t('passwordRules.title')}</ChecklistTitle>
+            <ChecklistTitle variant="caption" color="textSecondary" component="p" ownSx={{mb: 0.5}}>{t('passwordRules.title')}</ChecklistTitle>
             <ChecklistList component="ul" ownSx={{listStyle: 'none', m: 0, p: 0, display: 'grid', gap: 0.5}}>
                 {passwordChecksOf(password, policy).map((check) => (
                     <ChecklistItem component="li" key={check.rule} data-rule={check.rule} data-met={check.isMet}

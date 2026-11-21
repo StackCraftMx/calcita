@@ -23,7 +23,7 @@ const MaskedFields = () => {
                 <MaskedInput label="Contrato" mask="AAA-9999" placeholder="ABC-1234" {...fieldOf('contract')} />
             </FormSection>
             {/* 4. Lo que viaja al servidor: limpio, sin separadores */}
-            <Typography variant="body2" color="text.secondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>
+            <Typography variant="body2" color="textSecondary" sx={{mt: 1.5, overflowWrap: 'anywhere'}}>
                 Viaja: {JSON.stringify(values)}
             </Typography>
         </>

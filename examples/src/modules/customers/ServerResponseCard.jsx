@@ -25,7 +25,7 @@ export const ServerResponseCard = ({value, onChange}) => {
         <SectionCard title={t('server.title')}>
             {/* si no se elige ninguna, el selector se queda en la que estaba */}
             <SegmentedControl options={options} value={value} onChange={(response) => onChange(response ?? value)} ariaLabel={t('server.ariaLabel')} />
-            <Typography variant="body2" color="text.secondary" sx={{mt: 1.5}}>{t(HINT_KEY_BY_RESPONSE[value])}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mt: 1.5}}>{t(HINT_KEY_BY_RESPONSE[value])}</Typography>
         </SectionCard>
     );
 };

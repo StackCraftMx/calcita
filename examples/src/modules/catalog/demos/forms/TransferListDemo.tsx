@@ -22,7 +22,7 @@ const TransferListDemo = () => {
             <TransferListInput label="Sucursales donde puede comprar" value={allowedBranches} onChange={setAllowedBranches} options={BRANCHES}
                                availableTitle="Todas las sucursales" chosenTitle="Puede comprar en" />
             {/* 2. Lo que viaja: los elegidos, en el orden en que se pasaron */}
-            <Typography variant="body2" color="text.secondary" sx={{mt: 1, overflowWrap: 'anywhere'}}>Viaja: {JSON.stringify(allowedBranches)}</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{mt: 1, overflowWrap: 'anywhere'}}>Viaja: {JSON.stringify(allowedBranches)}</Typography>
         </>
     );
 };

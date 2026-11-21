@@ -7,7 +7,7 @@
 // Lo renderiza la app: arrow (regla de la casa).
 import Typography from '@mui/material/Typography';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
@@ -49,7 +49,7 @@ export const DeliveryTimeline = ({events}) => {
             title: <DictionaryText dictionary={ORDER_EVENT} value={event.event} />,
             timestamp: formatDateTime(event.occurred_at),
             details: (
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="textSecondary">
                     {actorText}
                     {event.note && ` · ${event.note}`}
                 </Typography>
@@ -84,7 +84,7 @@ export const DeliveryTimeline = ({events}) => {
         <>
             <GroupedTimeline groups={groups} />
             {attempts.length === 0 && (
-                <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>{t('delivery.notShipped')}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{mt: 1}}>{t('delivery.notShipped')}</Typography>
             )}
         </>
     );

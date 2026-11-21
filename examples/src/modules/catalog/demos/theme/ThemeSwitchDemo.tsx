@@ -77,12 +77,12 @@ const ThemeSwitchDemo = () => {
             <SegmentedControl options={THEME_CHOICES} value={choice} onChange={setChoice} ariaLabel="Tema de la vista previa" />
             <Stack direction={{xs: 'column', sm: 'row'}} spacing={3} sx={{maxWidth: 560}}>
                 <Box sx={{flex: 1}}>
-                    <Typography variant="caption" color="text.secondary">--calcita-panel-radius: {panelRadius}px</Typography>
+                    <Typography variant="caption" color="textSecondary">--calcita-panel-radius: {panelRadius}px</Typography>
                     <Slider size="small" min={0} max={28} value={panelRadius} onChange={(event, value) => setPanelRadius(value as number)}
                             aria-label="Esquinas de los paneles" />
                 </Box>
                 <Box sx={{flex: 1}}>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="textSecondary">
                         --calcita-field-radius: {fieldRadius === null ? 'de fábrica' : `${fieldRadius}px`}
                     </Typography>
                     <Slider size="small" min={0} max={20} value={fieldRadius ?? 20} onChange={(event, value) => setFieldRadius(value as number)}

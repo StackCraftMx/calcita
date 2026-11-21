@@ -68,7 +68,7 @@ export const ChunkedBackupSection = () => {
 
     return (
         <SectionCard title={t('chunked.title')}>
-            <Typography variant="body2" color="text.secondary" sx={{mb: 2}}>
+            <Typography variant="body2" color="textSecondary" sx={{mb: 2}}>
                 {t('chunked.text', {max: formatFileSize(BACKUP_MAX_BYTES)})}
             </Typography>
             <FileDropzone
@@ -101,7 +101,7 @@ export const ChunkedBackupSection = () => {
                 </FormSection>
                 <Typography variant="subtitle2" component="h3" sx={{mt: 2}}>{t('chunked.logTitle')}</Typography>
                 {serverLog.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">{t('chunked.logEmpty')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('chunked.logEmpty')}</Typography>
                 ) : (
                     <List dense role="log" aria-label={t('chunked.logTitle')}>
                         {serverLog.map((event) => (

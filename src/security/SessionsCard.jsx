@@ -103,7 +103,7 @@ function SessionsCardContent(props) {
         <ComponentTexts namespace="security" texts={texts}>
             <SectionCard sx={sx} title={t('sessions.title')}>
                 <Stack spacing={2}>
-                    <Typography variant="body2" color="text.secondary">{t('sessions.description')}</Typography>
+                    <Typography variant="body2" color="textSecondary">{t('sessions.description')}</Typography>
                     {error && <Alert severity="error">{error}</Alert>}
                     {!sessions && !error && <Skeleton variant="rounded" height={LOADING_HEIGHT_PIXELS} />}
                     {sessions && (
@@ -117,7 +117,7 @@ function SessionsCardContent(props) {
                         </List>
                     )}
                     <SessionsActions spacing={1} ownSx={{alignItems: 'flex-start'}}>
-                        {sessions && othersCount === 0 && <Typography variant="caption" color="text.secondary">{t('sessions.onlyThis')}</Typography>}
+                        {sessions && othersCount === 0 && <Typography variant="caption" color="textSecondary">{t('sessions.onlyThis')}</Typography>}
                         <Button variant="outlined" color="warning" disabled={!sessions || othersCount === 0} onClick={() => confirmation.open({})}>
                             {t('sessions.closeOthers')}
                         </Button>

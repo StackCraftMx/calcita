@@ -51,7 +51,7 @@ const StepperVariants = () => {
                     <Step key={step}>
                         <StepLabel>{stepLabelOf(step)}</StepLabel>
                         <StepContent>
-                            <Typography variant="body2" color="text.secondary" sx={{mb: 1.5}}>{t(`navigation.stepper.help.${step}`)}</Typography>
+                            <Typography variant="body2" color="textSecondary" sx={{mb: 1.5}}>{t(`navigation.stepper.help.${step}`)}</Typography>
                             <Stack direction="row" spacing={1}>
                                 <Button size="small" disabled={index === 0} onClick={() => setVerticalStep(index - 1)}>{t('samples.back')}</Button>
                                 <Button size="small" variant="contained" onClick={() => setVerticalStep(Math.min(index + 1, CHECKOUT_STEPS.length - 1))}>

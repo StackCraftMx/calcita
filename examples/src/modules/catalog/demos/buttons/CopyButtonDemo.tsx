@@ -19,7 +19,7 @@ const CopyButtonDemo = () => (
         </Stack>
         {/* 2. Un renglón entero, listo para pegar en Excel */}
         <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
-            <Typography variant="body2" color="text.secondary">{SAMPLE_ORDER_ROW.join(' · ')}</Typography>
+            <Typography variant="body2" color="textSecondary">{SAMPLE_ORDER_ROW.join(' · ')}</Typography>
             <CopyButton label="Copiar el renglón para Excel" value={() => tableRowTextOf(SAMPLE_ORDER_ROW)}
                         onCopyFailed={(error) => log.warn('No se pudo copiar el renglón', {error})} />
         </Stack>
