@@ -1671,13 +1671,16 @@ export const catalogPageTexts = {
                 },
                 documentsStep: {
                     title: '14. Un expediente: no avanza sin sus documentos',
-                    description: 'Un paso que todavía no se puede dejar lo dice con su motivo: «Siguiente» se ve apagado y, al pasar el cursor o al llegar con Tab, sale por qué (en el teléfono va escrito arriba de los botones). Los nombres de los documentos son largos: con la columna de las etiquetas en auto, el nombre se lleva lo que sobre y el cargador solo lo que ocupa. Escriba la razón social, pase a «Documentos» y cargue los dos obligatorios.',
+                    description: 'Un paso que todavía no se puede dejar lo dice con su motivo: «Siguiente» se ve apagado y, al pasar el cursor o al llegar con Tab, sale por qué (en el teléfono va escrito arriba de los botones). Los nombres de los documentos son largos: con la columna de las etiquetas en auto, el nombre se lleva lo que sobre y el cargador solo lo que ocupa. Escriba la razón social, pase a «Documentos» y cargue los dos obligatorios. Los botones van arriba y abajo del paso (actionsPlacement both), para avanzar o regresar sin bajar hasta el fondo; el selector de arriba los cambia.',
                     extend: {
                         reason: 'El motivo del paso, ya traducido. Mientras lo tenga, «Siguiente» no avanza; en el último paso se apaga el de enviar; con stepSelection checked tampoco se salta hacia adelante. null: como siempre.',
                         layoutReason: 'Lo mismo en el armazón suelto, para un asistente propio. En el último paso el botón de enviar es suyo: apáguelo usted.',
                         reasonTheme: 'El motivo escrito del teléfono, desde el tema.',
                         labelWidth: 'Lo ancho de la columna de las etiquetas de esa sección: auto (lo que sobre), un ancho de CSS o un número en px. Por omisión el 38 % hasta 200 px, como siempre; las demás secciones no cambian. En el teléfono, con auto, júntelo con topOnPhone.',
                         sectionSx: 'Los estilos de la sección en esa pantalla, como en las demás piezas.',
+                        actionsPlacement: 'Dónde van los botones del paso: bottom (abajo, por omisión, como siempre), top (arriba de los campos) o both (los dos, para pasos largos). En vertical, «arriba» es dentro del paso abierto, bajo su título. El aviso del servidor sale una sola vez, junto a los de abajo.',
+                        actionsTheme: 'Para todos los asistentes del proyecto, una vez en el tema (FormWizard de formik y de react-hook-form, y WizardLayout).',
+                        actionsTexts: 'Con las dos botoneras, cada una es un grupo con su nombre: el lector de pantalla las distingue y las pruebas las encuentran con getByRole(\'group\', {name: …}).',
                     },
                 },
                 rowByRowHookForm: {
@@ -4087,13 +4090,16 @@ export const catalogPageTexts = {
                 },
                 documentsStep: {
                     title: '14. A file: no moving on without its documents',
-                    description: 'A step that cannot be left yet says so with its reason: «Siguiente» looks disabled and, when you hover it or reach it with Tab, it says why (on phones it is written above the buttons). Document names are long: with the label column on auto, the name takes what is left and the uploader only what it needs. Type the company name, go to «Documentos» and upload the two required ones.',
+                    description: 'A step that cannot be left yet says so with its reason: «Siguiente» looks disabled and, when you hover it or reach it with Tab, it says why (on phones it is written above the buttons). Document names are long: with the label column on auto, the name takes what is left and the uploader only what it needs. Type the company name, go to «Documentos» and upload the two required ones. The buttons go above and below the step (actionsPlacement both), to move on or back without scrolling to the bottom; the selector above changes them.',
                     extend: {
                         reason: 'The step reason, already translated. While it has one, «Siguiente» does not move on; on the last step the submit button is disabled; with stepSelection checked you cannot jump forward either. null: as always.',
                         layoutReason: 'The same in the bare layout, for a wizard of your own. On the last step the submit button is yours: disable it yourself.',
                         reasonTheme: 'The written reason on phones, from the theme.',
                         labelWidth: 'How wide the label column of that section is: auto (what is left), a CSS width or a number in px. By default 38 % up to 200 px, as always; other sections do not change. On phones, pair auto with topOnPhone.',
                         sectionSx: 'The section styles on that screen, as in the other pieces.',
+                        actionsPlacement: 'Where the step buttons go: bottom (by default, as always), top (above the fields) or both (for long steps). In vertical, «top» means inside the open step, under its title. The server notice shows only once, next to the bottom ones.',
+                        actionsTheme: 'For every wizard in the project, once in the theme (the formik and react-hook-form FormWizard, and WizardLayout).',
+                        actionsTexts: 'With both bars, each one is a group with its name: screen readers tell them apart and tests find them with getByRole(\'group\', {name: …}).',
                     },
                 },
                 rowByRowHookForm: {

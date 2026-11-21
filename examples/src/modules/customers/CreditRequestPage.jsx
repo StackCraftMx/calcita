@@ -4,6 +4,8 @@
 // subidos. Mientras falte uno obligatorio, «Siguiente» se ve apagado y dice cuántos faltan (steps[].nextDisabledReason); los
 // nombres de los documentos son largos y su sección va con labelWidth auto: el nombre se lleva lo que sobre y el cargador
 // solo lo que ocupa. Al final, el folio con su botón de copiar y la clave que se enseña una sola vez (SecretField).
+// Los pasos son largos (el de documentos con sus cargadores): los botones van arriba y abajo de cada paso (actionsPlacement
+// both), también al corregir en vertical.
 //
 // La página solo declara sus pasos (qué campos lleva cada uno); revisar por paso, omitir, enviar y regresar al paso con el
 // error del servidor lo hace FormWizard.
@@ -18,7 +20,7 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import {
-    CopyButton, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, toastProblem,
+    CopyButton, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FormSection, INPUT_MASK, PageHeading, SecretField, SectionCard, WIZARD_ACTIONS_PLACEMENT, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, toastProblem,
     toastSuccess,
     useToolkitTranslation,
 } from '@stackcraftmx/calcita';
@@ -188,7 +190,7 @@ export const CreditRequestPage = () => {
                             <Stack spacing={2} sx={{maxWidth: 640}}>
                                 {correction?.review && <Alert severity="warning">{t('credit.fixing', {folio: correction.folio, note: correction.review.note})}</Alert>}
                                 <FormWizard steps={stepsOf(values)} submitLabel={t(correction ? 'credit.saveChanges' : 'credit.submit')} hideBackOnFirstStep
-                                            {...correctionWizardProps} />
+                                            actionsPlacement={WIZARD_ACTIONS_PLACEMENT.both} {...correctionWizardProps} />
                             </Stack>
                         </Form>
                     )}
