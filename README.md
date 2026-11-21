@@ -1254,6 +1254,17 @@ const steps = [
 ];
 ```
 
+En un paso largo (una tabla de 25 renglones), bajar hasta el fondo para avanzar o regresar cansa: `actionsPlacement`
+(`WIZARD_ACTIONS_PLACEMENT`) pone los botones arriba de los campos (`top`) o arriba y abajo (`both`); por omisión, abajo
+(`bottom`), como siempre. Con las dos, cada botonera es un grupo con su nombre («Botones del paso, arriba» y «…, abajo»,
+`common.wizard.actionsTop` / `actionsBottom`), cada «Siguiente» apagado lleva su propio motivo y el aviso del servidor sale una
+sola vez, junto a los de abajo. En vertical, «arriba» es dentro del paso abierto, bajo su título. Para todos los asistentes,
+una vez en el tema: `components: {CalcitaWizardLayout: {defaultProps: {actionsPlacement: 'both'}}}`.
+
+```jsx
+<FormWizard steps={steps} submitLabel="Enviar solicitud" actionsPlacement={WIZARD_ACTIONS_PLACEMENT.both} />
+```
+
 El `onChange` y el `onBlur` que la pantalla le pase a un campo de formik o de react-hook-form también corren, después de los
 del formulario y con el valor nuevo: `<FormSelectField name="kind" … onChange={(kind) => loadRatesFor(kind)} />`. Antes los
 del formulario los pisaban sin avisar.
