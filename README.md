@@ -1,6 +1,6 @@
 # Calcita
 
-`@stackcraftmx/calcita` · un framework de React sobre MUI 7 con el vidrio líquido de Apple. La calcita es el cristal
+`@stackcraftmx/calcita` · un framework de React sobre MUI 7 o MUI 9 con el vidrio líquido de Apple. La calcita es el cristal
 transparente famoso por doblar la luz, y eso es lo que define al vidrio líquido: su lente.
 
 Arranca un proyecto sin copiar y volver a probar lo de siempre: el marco de la app con menú y permisos, tabla de servidor,
@@ -11,9 +11,10 @@ vidrio líquido, interpretado componente por componente según la guía de Apple
 JavaScript con sus tipos generados: se usa igual desde un proyecto en TypeScript. Sirve para un proyecto nuevo y también
 para meterlo por pedazos en un sistema que ya existe (ver «En un sistema que ya existe»).
 
-> **Versiones:** Calcita está hecha y probada con **MUI 7** (Material 7.3, MUI X 8), React 19 y react-router 7. MUI 9 ya
-> existe, pero cambia piezas que Calcita usa: todavía no está soportado. Con MUI 9 en el proyecto, quédese en MUI 7 por
-> ahora.
+> **Versiones:** desde la 0.72, Calcita funciona con **MUI 7 o con MUI 9**, el que use su proyecto, con React 19 y
+> react-router 7. Cada versión se prueba completa con las dos parejas: Material 7.3 con MUI X 8.29, y Material 9.5 con
+> MUI X 9.18. Con MUI 9, los navegadores son los que pide MUI 9: Safari 17 (iOS 17), Chrome 117, Edge 121 y Firefox 121. Lo
+> que su proyecto cambia al pasar de MUI 7 a MUI 9 está en el CHANGELOG, en la 0.72.0.
 
 ## Arrancar un proyecto con el CLI
 
