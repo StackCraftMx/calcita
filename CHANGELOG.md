@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.71.0] - 2026-11-21
+
+### Agregado
+
+- `WizardLayout` y los dos `FormWizard` (formik y react-hook-form): `actionsPlacement` (`WIZARD_ACTIONS_PLACEMENT`) dice
+  dónde van los botones del paso: abajo (`bottom`, por omisión, como siempre), arriba de los campos (`top`) o arriba y abajo
+  (`both`), para los pasos largos en los que bajar hasta el fondo para avanzar o regresar cansa. En vertical, «arriba» es
+  dentro del paso abierto, bajo su título. Con las dos botoneras, cada una es un grupo con su nombre
+  (`common.wizard.actionsTop` / `actionsBottom`: «Botones del paso, arriba» y «…, abajo») y cada «Siguiente» apagado
+  apunta a su propio motivo, sin ids repetidos. El aviso de errores del servidor sale una sola vez, junto a los de abajo
+  (con solo `top`, junto a los de arriba). Para todo el proyecto, en el tema:
+  `components.CalcitaWizardLayout.defaultProps.actionsPlacement`.
+
 ## [0.70.0] - 2026-11-19
 
 ### Agregado
