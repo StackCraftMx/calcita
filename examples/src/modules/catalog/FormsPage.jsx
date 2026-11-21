@@ -110,6 +110,9 @@ const DOCUMENTS_STEP_EXTENSIONS = [
     {id: 'reasonTheme', option: 'CalcitaWizardLayout nextReason', example: "components: {CalcitaWizardLayout: {styleOverrides: {nextReason: {color: 'red'}}}}"},
     {id: 'labelWidth', option: 'labelWidth · FORM_LABEL_WIDTH', example: '<FormSection labelWidth={FORM_LABEL_WIDTH.auto} labelPlacement={FORM_LABEL_PLACEMENT.topOnPhone}>  // o labelWidth="320px" · {280}'},
     {id: 'sectionSx', option: 'FormSection sx', example: '<FormSection sx={{mb: 3}}>'},
+    {id: 'actionsPlacement', option: 'actionsPlacement · WIZARD_ACTIONS_PLACEMENT', example: 'actionsPlacement={WIZARD_ACTIONS_PLACEMENT.both}  // arriba y abajo del paso'},
+    {id: 'actionsTheme', option: 'CalcitaWizardLayout defaultProps', example: "components: {CalcitaWizardLayout: {defaultProps: {actionsPlacement: 'both'}}}"},
+    {id: 'actionsTexts', option: 'texts common.wizard.actionsTop · actionsBottom', example: "texts={{es: {common: {wizard: {actionsTop: 'Botones de arriba'}}}}}"},
 ];
 const HOOK_WIZARD_EXTENSIONS = [
     {id: 'entry', option: "FormWizard de '@stackcraftmx/calcita/react-hook-form'", example: '<FormProvider {...form}><form onSubmit={form.handleSubmit(send)}><FormWizard … /></form></FormProvider>'},

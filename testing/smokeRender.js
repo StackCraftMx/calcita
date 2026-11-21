@@ -15,7 +15,7 @@ import {
     AppearanceSettings, AuthLayout, FormSection, SegmentedControl, GlassLensFilter, GlassPanel, PasswordChecklist, PermissionMatrix, ProfileHeader, QuickFilters, SecretField, SectionCard, StatusChip, Tag,
     TREND_DIRECTION, TextInput, ToolkitProvider, createToolkitTheme, dictionaryEntryOf, formatCurrency, formatDate,
     ActivityLog, ERROR_PAGE_KIND, ErrorPage, SessionsCard, StaleBuildBoundary, InboxLayout, MessageList, MessageView, createBrowserNavigation,
-    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, TABLE_CELL_FIELD_LAYOUT, RECORD_CARD_FOOTER_ALIGN, REPEATING_LAYOUT, RepeatingFields, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
+    createHashNavigation, FORM_LABEL_PLACEMENT, FORM_LABEL_WIDTH, FORM_SECTION_VARIANT, TABLE_CELL_FIELD_LAYOUT, RECORD_CARD_FOOTER_ALIGN, REPEATING_LAYOUT, RepeatingFields, SECTION_TITLE_PLACEMENT, TOASTER_POSITION, Toaster, WIZARD_ACTIONS_PLACEMENT, WIZARD_ORIENTATION, WIZARD_STEP_SELECTION, WizardLayout,
 } from '@stackcraftmx/calcita';
 import {
     ACTIONS_COLUMN_FIELD, ServerTable, StackedCell, TABLE_CARDS_PAGINATION, TABLE_VIEW, TableCardsView, actionsColumn, stackedColumn, statusColumn, textColumn,
@@ -534,6 +534,67 @@ for (const [name, element, expectedText, caseTheme = defaultTheme] of CASES) {
         ['SortableTable con moveButtons={false} sin «Subir» ni «Bajar»', !htmlOf(h(SortableTable, {
             rows: [{id: 'centro', name: 'Centro'}], columns: [{field: 'name', headerName: 'Sucursal'}], onReorder: () => {}, ariaLabel: 'Ruta', moveButtons: false,
         })).includes('Bajar «Centro»')],
+    ];
+    for (const [name, isFine] of checks) {
+        if (!isFine) {
+            failures += 1;
+        }
+        console.log(`${isFine ? 'OK    ' : 'FALLA '} ${name}`);
+    }
+}
+
+// los botones del asistente arriba, abajo o en los dos lados (actionsPlacement). De fábrica, una sola botonera abajo y sin
+// grupo, como antes; con both, dos grupos con su nombre, cada «Siguiente» apagado con SU motivo (ningún id repetido) y el
+// aviso del servidor una sola vez, junto a los de abajo
+{
+    const htmlOf = (element) => renderToString(h(ThemeProvider, {theme: defaultTheme}, h(ToolkitProvider, {}, element)));
+    const wizardOf = (extra) => htmlOf(h(WizardLayout, {
+        steps: [{key: 'a', label: 'Datos', content: 'CAMPOS-DEL-PASO'}, {key: 'b', label: 'Fin', content: 'CAMPOS-DEL-PASO'}], activeIndex: 0,
+        onBack: () => {}, onNext: () => {}, submitButton: 'Enviar', ...extra,
+    }));
+    const countOf = (html, text) => html.split(text).length - 1;
+    const idsOf = (html) => [...html.matchAll(/ id="([^"]+)"/g)].map((match) => match[1]);
+    const describedByOf = (html) => [...html.matchAll(/aria-describedby="([^"]+)"/g)].map((match) => match[1]);
+    const hasRepeatedIds = (html) => new Set(idsOf(html)).size !== idsOf(html).length;
+    // en orden: lo primero va antes que lo segundo, y así
+    const isInOrder = (html, ...texts) => texts.every((text, index) => index === 0 || html.indexOf(texts[index - 1]) < html.indexOf(text));
+    const BLOCKED = {nextDisabledReason: 'Faltan 2 documentos'};
+    const LAST_STEP_WITH_ALERT = {activeIndex: 1, problemAlert: h('div', {role: 'alert'}, 'AVISO-DEL-SERVIDOR')};
+    const TOP = 'aria-label="Botones del paso, arriba"';
+    const BOTTOM = 'aria-label="Botones del paso, abajo"';
+    const checks = [
+        ['WizardLayout de siempre: una botonera, sin grupo', countOf(wizardOf({}), 'Siguiente') === 1 && !wizardOf({}).includes('role="group"')],
+        ['WizardLayout con un valor que no es del diccionario: abajo, como antes', isInOrder(wizardOf({actionsPlacement: 'middle'}), 'CAMPOS-DEL-PASO', 'Siguiente')],
+        ['WizardLayout both: dos «Siguiente», arriba y abajo de los campos', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.both});
+            return countOf(html, 'Siguiente') === 2 && countOf(html, 'role="group"') === 2 && isInOrder(html, TOP, 'CAMPOS-DEL-PASO', BOTTOM);
+        })()],
+        ['WizardLayout both con motivo: cada «Siguiente» apunta a su motivo y ningún id se repite', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.both, ...BLOCKED});
+            const describedBy = describedByOf(html);
+            return !hasRepeatedIds(html) && describedBy.length === 2 && describedBy[0] !== describedBy[1]
+                && describedBy.every((id) => idsOf(html).includes(id)) && countOf(html, '>Faltan 2 documentos<') === 2
+                && isInOrder(html, TOP, 'Faltan 2 documentos', 'CAMPOS-DEL-PASO', BOTTOM);
+        })()],
+        ['WizardLayout top: una botonera, antes de los campos', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.top});
+            return countOf(html, 'Siguiente') === 1 && !html.includes('role="group"') && isInOrder(html, 'Siguiente', 'CAMPOS-DEL-PASO');
+        })()],
+        ['WizardLayout both en el último paso: el aviso del servidor una vez, junto a los de abajo', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.both, ...LAST_STEP_WITH_ALERT});
+            return countOf(html, 'AVISO-DEL-SERVIDOR') === 1 && isInOrder(html, TOP, 'CAMPOS-DEL-PASO', 'AVISO-DEL-SERVIDOR', BOTTOM);
+        })()],
+        ['WizardLayout top en el último paso: el aviso arriba de los botones', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.top, ...LAST_STEP_WITH_ALERT});
+            return countOf(html, 'AVISO-DEL-SERVIDOR') === 1 && isInOrder(html, 'AVISO-DEL-SERVIDOR', 'Enviar', 'CAMPOS-DEL-PASO');
+        })()],
+        ['WizardLayout vertical both: los de arriba dentro del paso, antes de sus campos', (() => {
+            const html = wizardOf({actionsPlacement: WIZARD_ACTIONS_PLACEMENT.both, orientation: WIZARD_ORIENTATION.vertical});
+            return countOf(html, 'Siguiente') === 2 && isInOrder(html, 'Datos', TOP, 'CAMPOS-DEL-PASO', BOTTOM, 'Fin');
+        })()],
+        ['FormWizard de formik pasa actionsPlacement', countOf(htmlOf(h(Formik, {initialValues: {email: ''}, onSubmit: () => {}}, () => h(FormWizard, {
+            submitLabel: 'Enviar', actionsPlacement: WIZARD_ACTIONS_PLACEMENT.both, steps: [{key: 'a', label: 'Datos', content: 'uno'}, {key: 'b', label: 'Fin', content: 'dos'}],
+        }))), 'Siguiente') === 2],
     ];
     for (const [name, isFine] of checks) {
         if (!isFine) {

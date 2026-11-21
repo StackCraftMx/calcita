@@ -11,6 +11,7 @@
 //   - para editar un registro (se entra a corregir un dato suelto): initialStepKey abre en el paso que diga el servidor,
 //     orientation="vertical" pone los campos dentro de su paso, y stepSelection deja pulsar el título de otro paso para
 //     saltar directo (free) o solo si el paso abierto no tiene errores (checked). onStepChange avisa cada cambio de paso.
+//   - en pasos largos (una tabla de 25 renglones), actionsPlacement="both" pone los botones también arriba de los campos.
 //
 // Va DENTRO de <Formik> y <Form>:
 //   <Formik initialValues={…} validationSchema={…} onSubmit={…}>
@@ -60,16 +61,18 @@ function firstStepWithErrorOf(steps, errors) {
  * @param {boolean} [props.steps[].completed] lleva la palomita (cuando los títulos se pulsan, solo si la pantalla lo dice)
  * @param {string} props.submitLabel ya traducido: el botón del último paso
  * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
+ * @param {'bottom'|'top'|'both'} [props.actionsPlacement] uno de WIZARD_ACTIONS_PLACEMENT: dónde van los botones del paso; por
+ *   omisión abajo, como antes. Con `both`, arriba y abajo (pasos largos)
  * @param {boolean} [props.hideBackOnFirstStep] en el primer paso no se pinta «Anterior»; por omisión sale apagado, como antes
  * @param {string} [props.initialStepKey] la llave del paso en el que se abre (la que diga el servidor); por omisión el primero
  * @param {'none'|'free'|'checked'} [props.stepSelection] uno de WIZARD_STEP_SELECTION: si el título de otro paso se pulsa y qué
  *   revisa antes; por omisión none (se avanza con «Siguiente», como siempre)
  * @param {(stepKey: string, index: number) => void} [props.onStepChange] cada vez que cambia el paso abierto
- * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf, actionsTop, actionsBottom}}
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en el acomodo de los pasos (WizardLayout)
  */
 export default function FormWizard({
-    steps, submitLabel, orientation, hideBackOnFirstStep, initialStepKey, stepSelection, onStepChange, texts, sx, ...unknownProps
+    steps, submitLabel, orientation, actionsPlacement, hideBackOnFirstStep, initialStepKey, stepSelection, onStepChange, texts, sx, ...unknownProps
 }) {
     warnUnknownProps('FormWizard', unknownProps);
     const {validateForm, setFieldTouched, setFieldValue, initialValues, errors, isSubmitting} = useFormikContext();
@@ -119,7 +122,8 @@ export default function FormWizard({
     return (
         // un paso con su motivo para no avanzar (steps[].nextDisabledReason): «Siguiente» apagado y, en el último, también el de
         // enviar; este sí con disabled de verdad, así un Enter en un campo tampoco envía
-        <WizardLayout sx={sx} steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation} hideBackOnFirstStep={hideBackOnFirstStep}
+        <WizardLayout sx={sx} steps={steps} activeIndex={activeIndex} skippedKeys={skippedKeys} isSubmitting={isSubmitting} orientation={orientation}
+                      actionsPlacement={actionsPlacement} hideBackOnFirstStep={hideBackOnFirstStep}
                       nextDisabledReason={activeStep.nextDisabledReason} onBack={() => setActiveIndex((currentIndex) => currentIndex - 1)}
                       onNext={goNext} onSkip={skipStep} onStepSelect={selectStep}
                       submitButton={<SubmitButton disabled={Boolean(activeStep.nextDisabledReason)}>{submitLabel}</SubmitButton>}

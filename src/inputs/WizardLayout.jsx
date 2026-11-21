@@ -8,6 +8,12 @@
 //   vertical    uno debajo del otro, como un acordeón: los campos y los botones van dentro del paso abierto (también en el
 //               teléfono). Es el de editar un expediente: se ve de un vistazo qué pasos hay y se entra al que hace falta.
 //
+// Los botones van abajo de los campos; con actionsPlacement (WIZARD_ACTIONS_PLACEMENT) van arriba, o arriba y abajo para los
+// pasos largos. Con las dos botoneras, cada una es un grupo con su nombre (wizard.actionsTop / wizard.actionsBottom) y cada
+// una lleva su propio motivo para no avanzar: con un solo id, los dos «Siguiente» apuntarían al mismo párrafo (HTML con un id
+// repetido, y el lector de pantalla lee el primero que encuentra aunque el botón sea el otro). El aviso de errores del
+// servidor sale una sola vez, junto a los botones de abajo (con solo `top`, junto a los de arriba).
+//
 // Con onStepSelect los títulos de los pasos se pulsan (con teclado también: son botones) y avisan qué paso se pidió; quien lo
 // usa decide si salta. Sin él, los títulos solo informan (lo de siempre). Omitir es opcional: sin onSkip no sale el botón.
 //
@@ -21,7 +27,8 @@
 // Los textos se cambian con `texts`, con la forma de `common` en los textos del paquete: {wizard: {next: 'Continuar'}}.
 //
 // Se cambia desde el tema del proyecto, como las piezas de MUI: components.CalcitaWizardLayout con defaultProps y
-// styleOverrides de sus partes: stepper, phoneSteps, actions, nextReason (el motivo escrito en el teléfono).
+// styleOverrides de sus partes: stepper, phoneSteps, actions, nextReason (el motivo escrito en el teléfono). Con
+// las dos botoneras, las dos son la parte actions.
 //
 // Genérico del paquete: function (regla de la casa).
 import {useId} from 'react';
@@ -36,7 +43,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import {WIZARD_ORIENTATION, isStepCompleted} from '@/inputs/wizardSteps.js';
+import {WIZARD_ACTIONS_PLACEMENT, WIZARD_ORIENTATION, isStepCompleted} from '@/inputs/wizardSteps.js';
 import {piecePart, usePieceProps, withPieceSlots} from '@/theme/themePieces.js';
 import {warnUnknownProps} from '@/toolkit/unknownProps.js';
 
@@ -65,6 +72,8 @@ const WizardNextReason = piecePart(THEME_NAME, 'NextReason', Typography);
  *     («Faltan 2 documentos»). «Siguiente» se ve apagado y no avanza, y el motivo sale en un aviso (escrito, en el teléfono).
  *     En el último paso, apague usted su submitButton. Sin él, como siempre
  * @param {'horizontal'|'vertical'} [props.orientation] uno de WIZARD_ORIENTATION; por omisión horizontal
+ * @param {'bottom'|'top'|'both'} [props.actionsPlacement] uno de WIZARD_ACTIONS_PLACEMENT: dónde van los botones del paso;
+ *     por omisión abajo, como antes. Con `both`, arriba y abajo (pasos largos)
  * @param {boolean} [props.hideBackOnFirstStep] en el primer paso no se pinta «Anterior» (no hay a dónde volver); por omisión
  *     sale apagado, como antes
  * @param {() => void} props.onBack
@@ -73,25 +82,33 @@ const WizardNextReason = piecePart(THEME_NAME, 'NextReason', Typography);
  * @param {(index: number) => void} [props.onStepSelect] con él, los títulos de los pasos se pulsan y avisan cuál se pidió
  * @param {import('react').ReactNode} props.submitButton el botón de enviar del último paso
  * @param {import('react').ReactNode} [props.problemAlert] el aviso de errores del servidor, arriba de los botones del último paso
- * @param {object} [props.texts] los textos que cambian, con la forma de `common`: {wizard: {next, back, skip, optional, skipped, stepOf}}
+ *     (con las dos botoneras, una sola vez: arriba de los de abajo)
+ * @param {object} [props.texts] los textos que cambian, con la forma de `common`:
+ *     {wizard: {next, back, skip, optional, skipped, stepOf, actionsTop, actionsBottom}}
  * @param {import('@mui/material').SxProps<import('@mui/material').Theme>} [props.sx] los estilos de esta pantalla en la columna de los pasos
  */
 function WizardLayoutContent(props) {
     // lo que el proyecto puso en su tema (components.CalcitaWizardLayout.defaultProps) y encima lo que llega aquí
     const {
         steps, activeIndex, skippedKeys = NO_SKIPPED_KEYS, isSubmitting = false, nextDisabledReason = null,
-        orientation = WIZARD_ORIENTATION.horizontal, hideBackOnFirstStep = false, onBack, onNext, onSkip, onStepSelect, submitButton,
-        problemAlert, texts, sx, ...unknownProps
+        orientation = WIZARD_ORIENTATION.horizontal, actionsPlacement = WIZARD_ACTIONS_PLACEMENT.bottom, hideBackOnFirstStep = false,
+        onBack, onNext, onSkip, onStepSelect, submitButton, problemAlert, texts, sx, ...unknownProps
     } = usePieceProps(props, THEME_NAME);
     warnUnknownProps(THEME_NAME, unknownProps);
     const {t} = useToolkitTranslation('common', texts);
-    const reasonId = useId();
+    // un id del motivo por botonera: cada «Siguiente» apunta al suyo (ver el encabezado)
+    const topReasonId = useId();
+    const bottomReasonId = useId();
     const activeStep = steps[activeIndex];
     const isLastStep = activeIndex === steps.length - 1;
     const isVertical = orientation === WIZARD_ORIENTATION.vertical;
     const isSelectable = typeof onStepSelect === 'function';
     const isBackHidden = hideBackOnFirstStep && activeIndex === 0;
     const isNextBlocked = Boolean(nextDisabledReason);
+    // dónde van los botones: un valor que no es del diccionario se queda abajo, como antes
+    const hasTopActions = actionsPlacement === WIZARD_ACTIONS_PLACEMENT.top || actionsPlacement === WIZARD_ACTIONS_PLACEMENT.both;
+    const hasBottomActions = actionsPlacement !== WIZARD_ACTIONS_PLACEMENT.top;
+    const hasTwoActionBars = hasTopActions && hasBottomActions;
 
     // el título de un paso: con onStepSelect es un botón (se pulsa y se llega con Tab); sin él, solo informa
     const stepTitleOf = (step, index) => {
@@ -109,49 +126,70 @@ function WizardLayoutContent(props) {
     };
 
     // el botón de seguir: «Siguiente», o el de enviar en el último paso. Con un motivo para no avanzar, «Siguiente» se ve
-    // apagado pero se sigue alcanzando con Tab (aria-disabled, no disabled: ver el encabezado) y no hace nada al pulsarlo
-    const nextButton = isLastStep ? submitButton : (
-        <Button variant="contained" size="large" onClick={isNextBlocked ? undefined : onNext}
-                {...(isNextBlocked && {'aria-disabled': true, 'aria-describedby': reasonId, className: buttonClasses.disabled})}>
-            {t('wizard.next')}
-        </Button>
-    );
-    // el aviso va sobre una caja alrededor del botón: un botón que se ve apagado no recibe el cursor (MUI le quita los eventos)
-    // y la caja sí. En el teléfono no se abre con el dedo: ahí el motivo va escrito
-    const forwardButton = isNextBlocked ? (
-        <Tooltip title={nextDisabledReason} describeChild disableTouchListener>
-            <Box component="span" sx={{display: 'flex', flexDirection: 'column'}}>{nextButton}</Box>
-        </Tooltip>
-    ) : nextButton;
+    // apagado pero se sigue alcanzando con Tab (aria-disabled, no disabled: ver el encabezado), no hace nada al pulsarlo y
+    // apunta al motivo de SU botonera (reasonId)
+    const forwardButtonOf = (reasonId) => {
+        const nextButton = isLastStep ? submitButton : (
+            <Button variant="contained" size="large" onClick={isNextBlocked ? undefined : onNext}
+                    {...(isNextBlocked && {'aria-disabled': true, 'aria-describedby': reasonId, className: buttonClasses.disabled})}>
+                {t('wizard.next')}
+            </Button>
+        );
+        // el aviso va sobre una caja alrededor del botón: un botón que se ve apagado no recibe el cursor (MUI le quita los
+        // eventos) y la caja sí. En el teléfono no se abre con el dedo: ahí el motivo va escrito
+        if (!isNextBlocked) {
+            return nextButton;
+        }
+        return (
+            <Tooltip title={nextDisabledReason} describeChild disableTouchListener>
+                <Box component="span" sx={{display: 'flex', flexDirection: 'column'}}>{nextButton}</Box>
+            </Tooltip>
+        );
+    };
 
-    // los botones del paso abierto: en fila van abajo de los campos; en vertical, dentro del paso
-    const buttons = (
-        // sin «Anterior», los de seguir se quedan a la derecha (solos, space-between los mandaba a la izquierda; un margen
-        // automático no sirve: Stack les pone margin 0 a sus hijos con más fuerza)
-        <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: isBackHidden ? 'flex-end' : 'space-between'}}>
-            {!isBackHidden && (
-                <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting} onClick={onBack}>
-                    {t('wizard.back')}
-                </Button>
-            )}
-            <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5}>
-                {activeStep.optional && !isLastStep && onSkip && (
-                    <Button variant="text" onClick={onSkip}>{t('wizard.skip')}</Button>
+    // una botonera del paso abierto. Con las dos, cada una es un grupo con su nombre («Botones del paso, arriba»); con una
+    // sola, sin grupo, como siempre
+    const actionsOf = (reasonId, groupLabelKey) => {
+        const groupProps = hasTwoActionBars ? {role: 'group', 'aria-label': t(groupLabelKey)} : {};
+        const buttons = (
+            // sin «Anterior», los de seguir se quedan a la derecha (solos, space-between los mandaba a la izquierda; un margen
+            // automático no sirve: Stack les pone margin 0 a sus hijos con más fuerza)
+            <WizardActions direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5} ownSx={{justifyContent: isBackHidden ? 'flex-end' : 'space-between'}}
+                           {...(!isNextBlocked && groupProps)}>
+                {!isBackHidden && (
+                    <Button variant="text" color="inherit" disabled={activeIndex === 0 || isSubmitting} onClick={onBack}>
+                        {t('wizard.back')}
+                    </Button>
                 )}
-                {forwardButton}
+                <Stack direction={{xs: 'column-reverse', sm: 'row'}} spacing={1.5}>
+                    {activeStep.optional && !isLastStep && onSkip && (
+                        <Button variant="text" onClick={onSkip}>{t('wizard.skip')}</Button>
+                    )}
+                    {forwardButtonOf(reasonId)}
+                </Stack>
+            </WizardActions>
+        );
+        // sin motivo, los botones solos, como siempre. Con un motivo, escrito arriba de los botones en el teléfono (en
+        // pantallas anchas lo dice el aviso), y el grupo abarca el motivo y los botones. useFlexGap: el motivo escondido no
+        // deja hueco arriba de los botones
+        if (!isNextBlocked) {
+            return buttons;
+        }
+        return (
+            <Stack spacing={1} useFlexGap {...groupProps}>
+                <WizardNextReason id={reasonId} variant="body2" color="text.secondary" ownSx={{display: {xs: 'block', sm: 'none'}}}>
+                    {nextDisabledReason}
+                </WizardNextReason>
+                {buttons}
             </Stack>
-        </WizardActions>
-    );
-    // con un motivo, escrito arriba de los botones en el teléfono (en pantallas anchas lo dice el aviso). Sin motivo, los
-    // botones solos, como siempre. useFlexGap: el motivo escondido no deja hueco arriba de los botones
-    const actions = isNextBlocked ? (
-        <Stack spacing={1} useFlexGap>
-            <WizardNextReason id={reasonId} variant="body2" color="text.secondary" ownSx={{display: {xs: 'block', sm: 'none'}}}>
-                {nextDisabledReason}
-            </WizardNextReason>
-            {buttons}
-        </Stack>
-    ) : buttons;
+        );
+    };
+    const topActions = hasTopActions ? actionsOf(topReasonId, 'wizard.actionsTop') : null;
+    const bottomActions = hasBottomActions ? actionsOf(bottomReasonId, 'wizard.actionsBottom') : null;
+    // el aviso de errores del servidor, una sola vez y en el último paso: junto a los botones de abajo; con solo los de
+    // arriba, junto a esos (arriba de los botones, como siempre)
+    const problemAlertAboveTop = isLastStep && !hasBottomActions ? problemAlert : null;
+    const problemAlertAboveBottom = isLastStep && hasBottomActions ? problemAlert : null;
     const completedOf = (step, index) => isStepCompleted(step, {index, activeIndex, skippedKeys, isSelectable});
 
     if (isVertical) {
@@ -165,10 +203,13 @@ function WizardLayoutContent(props) {
                             van solo en el abierto: el que se cierra (la animación dura un momento) ya no es el paso de esos
                             botones, y un «Guardar» repetido confunde */}
                         <StepContent slotProps={{transition: {unmountOnExit: true}}}>
+                            {/* los de arriba, bajo el título del paso y antes de los campos (con actionsPlacement top o both) */}
                             <Stack spacing={3} sx={{pt: 1}}>
+                                {index === activeIndex && problemAlertAboveTop}
+                                {index === activeIndex && topActions}
                                 <Box>{step.content}</Box>
-                                {index === activeIndex && isLastStep && problemAlert}
-                                {index === activeIndex && actions}
+                                {index === activeIndex && problemAlertAboveBottom}
+                                {index === activeIndex && bottomActions}
                             </Stack>
                         </StepContent>
                     </Step>
@@ -192,11 +233,14 @@ function WizardLayoutContent(props) {
                 <Typography variant="h6">{activeStep.label}</Typography>
             </WizardPhoneSteps>
 
+            {/* los de arriba, entre los pasos y los campos (con actionsPlacement top o both) */}
+            {problemAlertAboveTop}
+            {topActions}
+
             <Box>{activeStep.content}</Box>
 
-            {isLastStep && problemAlert}
-
-            {actions}
+            {problemAlertAboveBottom}
+            {bottomActions}
         </Stack>
     );
 }
