@@ -29,7 +29,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import {FormRepeatingFields as HookRepeatingFields, FormTextField as HookTextField} from '@stackcraftmx/calcita/react-hook-form';
 import {BarList, ColumnChart} from '@stackcraftmx/calcita/charts';
 import {GroupedTimeline} from '@stackcraftmx/calcita/timeline';
-import {DateInput, DateTimeInput, MonthInput, TimeInput} from '@stackcraftmx/calcita/date-pickers';
+import {DateInput, DateTimeInput, INSTANT_FORMAT, MonthInput, TimeInput, zonedDayjs} from '@stackcraftmx/calcita/date-pickers';
 import {CfdiSummary, EfirmaFields, readCfdi} from '@stackcraftmx/calcita/mexico';
 import {RichTextEditor, RichTextView} from '@stackcraftmx/calcita/rich-text';
 import {EventCalendar} from '@stackcraftmx/calcita/calendar';
@@ -728,6 +728,14 @@ if (looseFormats === '5 ene 2027 · $1,234.50') {
 } else {
     failures += 1;
     console.log(`FALLA  formatos sueltos: salió «${looseFormats}» y se esperaba «5 ene 2027 · $1,234.50»`);
+}
+// el dayjs con zonas sale por /date-pickers (antes existía y no salía): un instante armado a mano en otra zona, desde dist/
+const groupDeadline = zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City').utc().format(INSTANT_FORMAT);
+if (groupDeadline === '2026-11-24T00:00:00Z') {
+    console.log(`OK     zonedDayjs sale de /date-pickers: las 18:00 en México son ${groupDeadline}`);
+} else {
+    failures += 1;
+    console.log(`FALLA  zonedDayjs: salió «${groupDeadline}» y se esperaba «2026-11-24T00:00:00Z»`);
 }
 process.exitCode = failures === 0 ? 0 : 1;
 console.log(failures === 0 ? 'todo pinta' : `${failures} con problema`);

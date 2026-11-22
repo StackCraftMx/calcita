@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 
 import {
-    displayFormatsOf, earliestInstantFromNow, instantPlusMinutes, instantTextOf, latestInstantOf, monthTextOf, pickerInstantOf, pickerMonthOf, pickerTimeOf, timeTextOf, timeZoneNameOf,
+    INSTANT_FORMAT, displayFormatsOf, earliestInstantFromNow, instantPlusMinutes, instantTextOf, latestInstantOf, monthTextOf, pickerInstantOf, pickerMonthOf, pickerTimeOf, timeTextOf, timeZoneNameOf,
+    zonedDayjs,
 } from '@/datePickers/pickerValues.js';
 import {minutesAfterRule, minutesFromNowRule} from '@/datePickers/dateTimeRules.js';
 
@@ -12,6 +13,14 @@ test('un instante se pinta en la zona del proveedor y regresa en UTC', () => {
     // en México no hay horario de verano desde 2022: siempre 6 horas menos
     assert.equal(shown.format('YYYY-MM-DD HH:mm'), '2026-11-01 12:30');
     assert.equal(instantTextOf(shown), '2026-11-01T18:30:00Z');
+});
+
+test('zonedDayjs arma a mano un instante en otra zona y lo regresa en UTC', () => {
+    // «mañana a las 18:00 en México»: México va 6 horas detrás de UTC, así que en UTC ya es el día siguiente
+    const deadline = zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City');
+    assert.equal(deadline.utc().format(INSTANT_FORMAT), '2026-11-24T00:00:00Z');
+    // en Tijuana (UTC-8 en noviembre) las mismas 18:00 son dos horas más tarde en UTC
+    assert.equal(zonedDayjs().tz('2026-11-23 18:00', 'America/Tijuana').utc().format(INSTANT_FORMAT), '2026-11-24T02:00:00Z');
 });
 
 test('un instante con desfase (como lo manda un backend) se lee igual', () => {

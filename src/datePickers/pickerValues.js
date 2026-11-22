@@ -11,6 +11,10 @@
 // Puro (sin React): se prueba con node (pickerValues.test.js).
 //
 // Genérico del paquete: function (regla de la casa).
+// los tipos de los dos complementos viajan con los de Calcita: sin estas dos líneas, un proyecto en TypeScript no ve .tz() ni
+// .utc() en lo que regresa zonedDayjs() (los import de abajo solo sirven al correr y no quedan en los tipos)
+/// <reference types="dayjs/plugin/timezone" preserve="true" />
+/// <reference types="dayjs/plugin/utc" preserve="true" />
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
@@ -43,9 +47,12 @@ const DISPLAY_FORMATS_BY_LANGUAGE = Object.freeze({
 const TIME_DISPLAY_FORMATS = Object.freeze({h23: 'HH:mm', h12: 'hh:mm a'});
 
 /**
- * dayjs con las zonas horarias puestas: el selector de MUI X las necesita para pintar un instante en otra zona.
- * OJO: se llama al usarla y no al importar el archivo: el paquete se declara sin efectos al importar (sideEffects: false)
- * y un import solo por su efecto se lo puede saltar el empaquetador del proyecto.
+ * dayjs con las zonas horarias puestas (sus complementos utc y timezone). Los campos de fecha con hora la usan por dentro
+ * para pintar un instante en otra zona; el proyecto la pide cuando arma un instante a mano:
+ *   zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City').utc().format(INSTANT_FORMAT)  // '2026-11-24T00:00:00Z'
+ * OJO: los complementos se ponen al llamarla y no al importar este archivo. Calcita se declara sin efectos al importar
+ * (sideEffects: false), y un import que solo sirve por su efecto se lo puede saltar el empaquetador de quien instala
+ * Calcita. Por eso se llama zonedDayjs() cada vez, en vez de confiar en que dayjs ya los trae puestos.
  *
  * @returns {typeof dayjs}
  */

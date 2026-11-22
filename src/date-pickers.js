@@ -1,9 +1,12 @@
 // Fechas y horas con los selectores de MUI X (@stackcraftmx/calcita/date-pickers): cada campo suelto y su versión de formik.
-// Pide @mui/x-date-pickers (8) y dayjs. Todos viajan en texto:
+// Pide @mui/x-date-pickers (8 o 9) y dayjs. Todos viajan en texto:
 //   DateInput      / FormDateField       fecha            'AAAA-MM-DD'
 //   DateTimeInput  / FormDateTimeField   fecha con hora   instante en UTC '2026-11-01T18:30:00Z', pintado en la zona del proveedor
 //   TimeInput      / FormTimeField       hora del día     'HH:mm'
 //   MonthInput     / FormMonthField      mes              'AAAA-MM'
+//
+// Para armar a mano un instante en otra zona («mañana a las 18:00 en México»): zonedDayjs(), el dayjs de Calcita con sus
+// complementos de zona ya puestos.
 //
 // Los minutos van de uno en uno. Para lo que depende del reloj o de otro campo (publicar con anticipación, algo que dura un
 // mínimo): minimumMinutesFromNow e instantPlusMinutes en el campo, y minutesFromNowRule / minutesAfterRule en yup.
@@ -23,7 +26,7 @@ export {default as MonthInput} from '@/datePickers/MonthInput.jsx';
 export {default as FormMonthField} from '@/datePickers/FormMonthField.jsx';
 export {
     CALENDAR_DATE_FORMAT, CALENDAR_MONTH_FORMAT, DEFAULT_MINUTES_STEP, INSTANT_FORMAT, TIME_OF_DAY_FORMAT, earliestInstantFromNow,
-    instantPlusMinutes, latestInstantOf, timeZoneNameOf,
+    instantPlusMinutes, latestInstantOf, timeZoneNameOf, zonedDayjs,
 } from '@/datePickers/pickerValues.js';
 export {minutesAfterRule, minutesFromNowRule} from '@/datePickers/dateTimeRules.js';
 export {useCurrentMinute} from '@/datePickers/useCurrentMinute.js';
