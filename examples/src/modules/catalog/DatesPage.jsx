@@ -49,6 +49,7 @@ const DATE_TIME_EXTENSIONS = [
     {id: 'minutesStep', option: 'minutesStep', example: 'minutesStep={15}  // por omisión, de uno en uno'},
     {id: 'timeZone', option: 'timeZone', example: 'timeZone={branch.time_zone}  // America/Tijuana'},
     {id: 'zoneLabel', option: 'showTimeZone · timeZoneLabel', example: 'timeZoneLabel="Hora de la sucursal"'},
+    {id: 'zonedDayjs', option: 'zonedDayjs', example: "zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City').utc().format(INSTANT_FORMAT)  // '2026-11-24T00:00:00Z'"},
     {id: 'hourCycle', option: 'ToolkitProvider hourCycle', example: '<ToolkitProvider hourCycle={HOUR_CYCLE.twelveHours}>'},
     ...SHARED_EXTENSIONS,
 ];
