@@ -4,6 +4,19 @@ Lo que cambia en Calcita en cada versión. El formato sigue [Keep a Changelog](h
 y las versiones, [SemVer](https://semver.org/lang/es/): mientras sea 0.x, cada versión con funciones nuevas sube el
 número de en medio (0.9.0 → 0.10.0 → 0.11.0) y cada arreglo, el último.
 
+## [0.73.0] - 2026-11-22
+
+### Agregado
+
+- **`zonedDayjs` sale por `/date-pickers`**: el dayjs de Calcita con las zonas horarias ya puestas, para armar a mano un
+  momento en otra zona (`zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City')`) sin repetir en cada lugar los
+  complementos de dayjs. Ya existía y su nota hablaba para el proyecto, pero no se podía importar. Sus tipos traen los de
+  los complementos: en TypeScript se ven `.tz()` y `.utc()` sin importar nada más.
+
+### Arreglado
+
+- La tabla de entradas del README y la nota de `/date-pickers` todavía decían MUI X 8: es 8 o 9 desde la 0.72.
+
 ## [0.72.0] - 2026-11-21
 
 ### Agregado
