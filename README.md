@@ -233,7 +233,7 @@ Cada puerta pide solo sus librerías; un proyecto instala lo que usa.
 | `@stackcraftmx/calcita/table` | `ServerTable`: paginada, filtrada y ordenada en el servidor, con su estado en la URL; `ServerTableFilterDrawer`, su búsqueda en cajón | `@mui/x-data-grid`, `nuqs`, `react-window` |
 | `@stackcraftmx/calcita/forms` | campos de formik (texto, lista de una o varias opciones, número con miles, catálogo, color), formulario por pasos, aviso de arriba, errores del servidor pegados a cada campo | `formik`, `yup` |
 | `@stackcraftmx/calcita/react-hook-form` | los mismos campos con los mismos nombres, conectados a react-hook-form, su formulario por pasos y `yupResolver` | `react-hook-form`, `@hookform/resolvers` (y `yup` si valida con yup) |
-| `@stackcraftmx/calcita/date-pickers` | fecha, fecha con hora, hora y mes con los selectores de MUI X (`DateInput`, `DateTimeInput`, `TimeInput`, `MonthInput` y su versión de formik); cada uno viaja en texto | `@mui/x-date-pickers` 8, `dayjs` |
+| `@stackcraftmx/calcita/date-pickers` | fecha, fecha con hora, hora y mes con los selectores de MUI X (`DateInput`, `DateTimeInput`, `TimeInput`, `MonthInput` y su versión de formik); cada uno viaja en texto | `@mui/x-date-pickers` 8 o 9, `dayjs` |
 | `@stackcraftmx/calcita/charts` | barras, columnas y líneas (una serie o varias), cada una con su vista de tabla, y `ChartTooltip` para las propias | `recharts` |
 | `@stackcraftmx/calcita/timeline` | línea de tiempo por grupos | `@mui/lab` |
 | `@stackcraftmx/calcita/excel` | reporte en Excel (Resumen y Datos) y CSV | `exceljs`, que se le pasa al llamarlo |
@@ -1430,6 +1430,16 @@ const schema = Yup.object({
 
 <FormDateTimeField name="startsAt" label="Empieza" minimumMinutesFromNow={5} />
 <FormDateTimeField name="endsAt" label="Termina" minDateTime={instantPlusMinutes(values.startsAt, 30)} />
+```
+
+Para armar a mano un momento en otra zona («mañana a las 18:00 en México»), `zonedDayjs()` da el dayjs de Calcita con
+las zonas ya puestas, sin importar sus complementos de su lado. Se llama cada vez que se usa: Calcita no los deja puestos
+al importar.
+
+```js
+import {INSTANT_FORMAT, zonedDayjs} from '@stackcraftmx/calcita/date-pickers';
+
+zonedDayjs().tz('2026-11-23 18:00', 'America/Mexico_City').utc().format(INSTANT_FORMAT);  // '2026-11-24T00:00:00Z'
 ```
 
 ### Renglones que se repiten
